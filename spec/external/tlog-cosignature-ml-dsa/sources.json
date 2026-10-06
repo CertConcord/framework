@@ -1,0 +1,31 @@
+{
+  "reviewDate": "2026-10-05",
+  "sources": [
+    {
+      "id": "c2spCosignature",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-cosignature.md",
+      "sha256": "d5fc06ef7c1eb77b869148e52784074190db8b5209b5551fb91bfce329b805bd",
+      "bytes": 9427,
+      "retrievedAt": "2026-10-06T01:50:24.341Z"
+    },
+    {
+      "id": "c2spNote",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/signed-note.md",
+      "sha256": "870f329f0c71b81b9b739baa85f09dab287cd6a29b99177333a53209d65450e1",
+      "bytes": 7610
+    },
+    {
+      "id": "mtc",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-06.txt",
+      "sha256": "9a15490077423ad0cc1986b84d3c63ab97479dcdfd902ec1f95922961152ea94",
+      "bytes": 227864
+    },
+    {
+      "id": "mtcEditor",
+      "url": "https://raw.githubusercontent.com/ietf-plants-wg/merkle-tree-certs/44b1c0b8c54669a35e8d9e96f0e55bb3cab67757/draft-ietf-plants-merkle-tree-certs.md",
+      "sha256": "b778cb1f9c325b64bba9f177c78f5edc6b790b1695dd5cce27941fe26a5569cb",
+      "bytes": 192184,
+      "retrievedAt": "2026-10-06T02:05:12.059Z"
+    }
+  ]
+}

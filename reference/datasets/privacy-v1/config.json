@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "synthetic": true,
+  "seed": "certconcord-mtc-synthetic-privacy-v1",
+  "subjects": 64,
+  "verifiers": 4,
+  "visits": 3,
+  "scenarios": [
+    "REUSED_KEY",
+    "PAIRWISE_KEY_STABLE_CREDENTIAL",
+    "PAIRWISE_CREDENTIAL",
+    "ONE_USE_BATCHED"
+  ],
+  "license": "CC-BY-4.0"
+}

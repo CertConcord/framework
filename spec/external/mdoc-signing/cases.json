@@ -1,0 +1,12 @@
+{
+  "cases":[
+    {"id":"separate-ml-dsa-key","expected":"INDEPENDENT_PQ"},
+    {"id":"same-holder-document-p256","expected":"DEVICE_KEY"},
+    {"id":"separate-associated-p256","expected":"PASSKEY_KEY","limit":"parent association requires the selected application profile"},
+    {"id":"device-key-substitution","expected":"DOCUMENT_DEVICE_KEY_BINDING"},
+    {"id":"same-key-declared-independent","expected":"DOCUMENT_PASSKEY_KEY_BINDING"},
+    {"id":"classical-key-declared-pq","expected":"DOCUMENT_INDEPENDENT_PQ_KEY"},
+    {"id":"presentation-reinterpreted-as-signature","expected":"INVALID","coverage":"document-signature contract"},
+    {"id":"untrusted-identity-issuer-as-signing-anchor","expected":"INVALID","coverage":"issuer-policy contract"}
+  ]
+}

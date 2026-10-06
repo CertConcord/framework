@@ -1,0 +1,607 @@
+{
+  "schemaVersion": 1,
+  "synthetic": true,
+  "environment": {
+    "node": "v24.15.0",
+    "openssl": "3.5.5",
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11370H @ 3.30GHz",
+    "logicalCPUs": 8,
+    "totalMemory": 34163216384,
+    "timestamp": "2026-10-06T02:48:54.226Z"
+  },
+  "method": {
+    "warmup": 5,
+    "algorithmSamples": 40,
+    "proofSamples": 20,
+    "evidenceSamples": 1,
+    "clock": "performance.now",
+    "storage": "SQLite in-memory indexed rows",
+    "network": "loopback only",
+    "keys": "fresh synthetic software keys"
+  },
+  "algorithm": [
+    {
+      "name": "ec-sign",
+      "samples": 40,
+      "p50Ms": 0.07339999999999236,
+      "p95Ms": 0.11959999999999127,
+      "documentBytes": 4096,
+      "spkiBytes": 91,
+      "signatureBytes": 71
+    },
+    {
+      "name": "ec-verify",
+      "samples": 40,
+      "p50Ms": 0.09390000000001919,
+      "p95Ms": 0.15569999999999595,
+      "documentBytes": 4096,
+      "spkiBytes": 91,
+      "signatureBytes": 71
+    },
+    {
+      "name": "ml-dsa-65-sign",
+      "samples": 40,
+      "p50Ms": 0.6376000000000204,
+      "p95Ms": 2.302199999999999,
+      "documentBytes": 4096,
+      "spkiBytes": 1974,
+      "signatureBytes": 3309
+    },
+    {
+      "name": "ml-dsa-65-verify",
+      "samples": 40,
+      "p50Ms": 0.17490000000000805,
+      "p95Ms": 0.3007000000000062,
+      "documentBytes": 4096,
+      "spkiBytes": 1974,
+      "signatureBytes": 3309
+    },
+    {
+      "name": "ml-dsa-87-sign",
+      "samples": 40,
+      "p50Ms": 1.1256999999999948,
+      "p95Ms": 2.66640000000001,
+      "documentBytes": 4096,
+      "spkiBytes": 2614,
+      "signatureBytes": 4627
+    },
+    {
+      "name": "ml-dsa-87-verify",
+      "samples": 40,
+      "p50Ms": 0.45029999999997017,
+      "p95Ms": 0.6812999999999647,
+      "documentBytes": 4096,
+      "spkiBytes": 2614,
+      "signatureBytes": 4627
+    }
+  ],
+  "merkle": [
+    {
+      "name": "proof-1",
+      "samples": 20,
+      "p50Ms": 0.05009999999998627,
+      "p95Ms": 0.17680000000001428,
+      "treeSize": 1,
+      "proofNodes": 0,
+      "proofBytes": 0,
+      "appendBatchMs": 1.4395000000000095
+    },
+    {
+      "name": "proof-16",
+      "samples": 20,
+      "p50Ms": 0.31349999999997635,
+      "p95Ms": 0.6208000000000311,
+      "treeSize": 16,
+      "proofNodes": 4,
+      "proofBytes": 128,
+      "appendBatchMs": 7.640199999999993
+    },
+    {
+      "name": "proof-256",
+      "samples": 20,
+      "p50Ms": 0.34739999999999327,
+      "p95Ms": 4.0306999999999675,
+      "treeSize": 256,
+      "proofNodes": 8,
+      "proofBytes": 256,
+      "appendBatchMs": 105.44380000000001
+    },
+    {
+      "name": "proof-4096",
+      "samples": 20,
+      "p50Ms": 0.43100000000004,
+      "p95Ms": 0.7096000000001368,
+      "treeSize": 4096,
+      "proofNodes": 12,
+      "proofBytes": 384,
+      "appendBatchMs": 1104.7736
+    },
+    {
+      "name": "proof-16384",
+      "samples": 20,
+      "p50Ms": 0.8481999999994514,
+      "p95Ms": 3.4318999999995867,
+      "treeSize": 16384,
+      "proofNodes": 14,
+      "proofBytes": 448,
+      "appendBatchMs": 3941.0161
+    }
+  ],
+  "evidence": [
+    {
+      "format": "CMS",
+      "fullExchangeMs": 307.4420999999993,
+      "evidenceBytes": 90097,
+      "proof": {
+        "format": "MTC_DRAFT_06",
+        "totalBytes": 18555,
+        "authenticationPathBytes": 0,
+        "signatures": [
+          {
+            "algorithm": "ML-DSA-87",
+            "bytes": 4627
+          },
+          {
+            "algorithm": "ML-DSA-87",
+            "bytes": 4627
+          },
+          {
+            "algorithm": "ML-DSA-87",
+            "bytes": 4627
+          },
+          {
+            "algorithm": "ML-DSA-87",
+            "bytes": 4627
+          }
+        ]
+      },
+      "objects": [
+        {
+          "type": "Document",
+          "bytes": 32
+        },
+        {
+          "type": "Certificate",
+          "bytes": 20975
+        },
+        {
+          "type": "SIM",
+          "bytes": 1011
+        },
+        {
+          "type": "SignaturePolicy",
+          "bytes": 278
+        },
+        {
+          "type": "ActivationContext",
+          "bytes": 825
+        },
+        {
+          "type": "OperationPermit",
+          "bytes": 13517
+        },
+        {
+          "type": "ExecutionReceipt",
+          "bytes": 13022
+        },
+        {
+          "type": "CertificateStatus",
+          "bytes": 12733
+        },
+        {
+          "type": "CMS",
+          "bytes": 25020
+        },
+        {
+          "type": "VerificationPlan",
+          "bytes": 774
+        }
+      ],
+      "result": "VALID_UNDER_POLICY"
+    },
+    {
+      "format": "MDOC_PQ",
+      "fullExchangeMs": 270.90139999999974,
+      "evidenceBytes": 76249,
+      "proof": {
+        "format": "CERTCONCORD_MDOC_ISSUANCE_LOG",
+        "totalBytes": 20166,
+        "authenticationPathBytes": 0,
+        "checkpointBytes": 209,
+        "mirrorReceiptBytes": [
+          6421,
+          6421,
+          6421
+        ]
+      },
+      "objects": [
+        {
+          "type": "Document",
+          "bytes": 71
+        },
+        {
+          "type": "PersonalMdoc",
+          "bytes": 5939
+        },
+        {
+          "type": "CredentialSeal",
+          "bytes": 33143
+        },
+        {
+          "type": "CredentialStatusList",
+          "bytes": 1353
+        },
+        {
+          "type": "SIM",
+          "bytes": 1035
+        },
+        {
+          "type": "SignaturePolicy",
+          "bytes": 354
+        },
+        {
+          "type": "ActivationContext",
+          "bytes": 826
+        },
+        {
+          "type": "OperationPermit",
+          "bytes": 13538
+        },
+        {
+          "type": "ExecutionReceipt",
+          "bytes": 13042
+        },
+        {
+          "type": "COSE",
+          "bytes": 3982
+        },
+        {
+          "type": "VerificationPlan",
+          "bytes": 861
+        }
+      ],
+      "result": "VALID_UNDER_POLICY"
+    },
+    {
+      "format": "MDOC_DEVICE",
+      "fullExchangeMs": 182.90729999999985,
+      "evidenceBytes": 71136,
+      "proof": {
+        "format": "CERTCONCORD_MDOC_ISSUANCE_LOG",
+        "totalBytes": 20166,
+        "authenticationPathBytes": 0,
+        "checkpointBytes": 209,
+        "mirrorReceiptBytes": [
+          6421,
+          6421,
+          6421
+        ]
+      },
+      "objects": [
+        {
+          "type": "Document",
+          "bytes": 67
+        },
+        {
+          "type": "PersonalMdoc",
+          "bytes": 4056
+        },
+        {
+          "type": "CredentialSeal",
+          "bytes": 33143
+        },
+        {
+          "type": "CredentialStatusList",
+          "bytes": 1353
+        },
+        {
+          "type": "SIM",
+          "bytes": 1042
+        },
+        {
+          "type": "SignaturePolicy",
+          "bytes": 361
+        },
+        {
+          "type": "ActivationContext",
+          "bytes": 826
+        },
+        {
+          "type": "OperationPermit",
+          "bytes": 13538
+        },
+        {
+          "type": "ExecutionReceipt",
+          "bytes": 13042
+        },
+        {
+          "type": "COSE",
+          "bytes": 742
+        },
+        {
+          "type": "VerificationPlan",
+          "bytes": 861
+        }
+      ],
+      "result": "VALID_UNDER_POLICY"
+    },
+    {
+      "format": "MDOC_PASSKEY",
+      "fullExchangeMs": 315.4238999999998,
+      "evidenceBytes": 74339,
+      "proof": {
+        "format": "CERTCONCORD_MDOC_ISSUANCE_LOG",
+        "totalBytes": 20166,
+        "authenticationPathBytes": 0,
+        "checkpointBytes": 209,
+        "mirrorReceiptBytes": [
+          6421,
+          6421,
+          6421
+        ]
+      },
+      "objects": [
+        {
+          "type": "Document",
+          "bytes": 68
+        },
+        {
+          "type": "PersonalMdoc",
+          "bytes": 5800
+        },
+        {
+          "type": "CredentialSeal",
+          "bytes": 33143
+        },
+        {
+          "type": "CredentialStatusList",
+          "bytes": 1358
+        },
+        {
+          "type": "SIM",
+          "bytes": 1043
+        },
+        {
+          "type": "SignaturePolicy",
+          "bytes": 366
+        },
+        {
+          "type": "ActivationContext",
+          "bytes": 826
+        },
+        {
+          "type": "OperationPermit",
+          "bytes": 13542
+        },
+        {
+          "type": "ExecutionReceipt",
+          "bytes": 13260
+        },
+        {
+          "type": "COSE",
+          "bytes": 743
+        },
+        {
+          "type": "PasskeyRawEvidence",
+          "bytes": 946
+        },
+        {
+          "type": "VerificationPlan",
+          "bytes": 945
+        }
+      ],
+      "result": "VALID_UNDER_POLICY"
+    },
+    {
+      "format": "CMS_EXECUTION",
+      "fullExchangeMs": 142.33269999999993,
+      "evidenceBytes": 103880,
+      "proof": {
+        "format": "MTC_DRAFT_06",
+        "totalBytes": 18555,
+        "authenticationPathBytes": 0,
+        "signatures": [
+          {
+            "algorithm": "ML-DSA-87",
+            "bytes": 4627
+          },
+          {
+            "algorithm": "ML-DSA-87",
+            "bytes": 4627
+          },
+          {
+            "algorithm": "ML-DSA-87",
+            "bytes": 4627
+          },
+          {
+            "algorithm": "ML-DSA-87",
+            "bytes": 4627
+          }
+        ]
+      },
+      "objects": [
+        {
+          "type": "Document",
+          "bytes": 32
+        },
+        {
+          "type": "Certificate",
+          "bytes": 20975
+        },
+        {
+          "type": "SIM",
+          "bytes": 1011
+        },
+        {
+          "type": "SignaturePolicy",
+          "bytes": 391
+        },
+        {
+          "type": "ActivationContext",
+          "bytes": 825
+        },
+        {
+          "type": "OperationPermit",
+          "bytes": 13517
+        },
+        {
+          "type": "ExecutionReceipt",
+          "bytes": 13292
+        },
+        {
+          "type": "CertificateStatus",
+          "bytes": 12733
+        },
+        {
+          "type": "CMS",
+          "bytes": 25020
+        },
+        {
+          "type": "ExecutionBindingEvidence",
+          "bytes": 13100
+        },
+        {
+          "type": "VerificationPlan",
+          "bytes": 873
+        }
+      ],
+      "result": "VALID_UNDER_POLICY"
+    },
+    {
+      "format": "MDOC_PQ_EXECUTION",
+      "fullExchangeMs": 196.33860000000004,
+      "evidenceBytes": 90056,
+      "proof": {
+        "format": "CERTCONCORD_MDOC_ISSUANCE_LOG",
+        "totalBytes": 20166,
+        "authenticationPathBytes": 0,
+        "checkpointBytes": 209,
+        "mirrorReceiptBytes": [
+          6421,
+          6421,
+          6421
+        ]
+      },
+      "objects": [
+        {
+          "type": "Document",
+          "bytes": 71
+        },
+        {
+          "type": "PersonalMdoc",
+          "bytes": 5937
+        },
+        {
+          "type": "CredentialSeal",
+          "bytes": 33143
+        },
+        {
+          "type": "CredentialStatusList",
+          "bytes": 1353
+        },
+        {
+          "type": "SIM",
+          "bytes": 1035
+        },
+        {
+          "type": "SignaturePolicy",
+          "bytes": 467
+        },
+        {
+          "type": "ActivationContext",
+          "bytes": 826
+        },
+        {
+          "type": "OperationPermit",
+          "bytes": 13538
+        },
+        {
+          "type": "ExecutionReceipt",
+          "bytes": 13312
+        },
+        {
+          "type": "COSE",
+          "bytes": 3982
+        },
+        {
+          "type": "ExecutionBindingEvidence",
+          "bytes": 13126
+        },
+        {
+          "type": "VerificationPlan",
+          "bytes": 960
+        }
+      ],
+      "result": "VALID_UNDER_POLICY"
+    },
+    {
+      "format": "MDOC_DEVICE_EXECUTION",
+      "fullExchangeMs": 187.7407000000003,
+      "evidenceBytes": 84953,
+      "proof": {
+        "format": "CERTCONCORD_MDOC_ISSUANCE_LOG",
+        "totalBytes": 20166,
+        "authenticationPathBytes": 0,
+        "checkpointBytes": 209,
+        "mirrorReceiptBytes": [
+          6421,
+          6421,
+          6421
+        ]
+      },
+      "objects": [
+        {
+          "type": "Document",
+          "bytes": 67
+        },
+        {
+          "type": "PersonalMdoc",
+          "bytes": 4059
+        },
+        {
+          "type": "CredentialSeal",
+          "bytes": 33143
+        },
+        {
+          "type": "CredentialStatusList",
+          "bytes": 1358
+        },
+        {
+          "type": "SIM",
+          "bytes": 1042
+        },
+        {
+          "type": "SignaturePolicy",
+          "bytes": 474
+        },
+        {
+          "type": "ActivationContext",
+          "bytes": 826
+        },
+        {
+          "type": "OperationPermit",
+          "bytes": 13538
+        },
+        {
+          "type": "ExecutionReceipt",
+          "bytes": 13312
+        },
+        {
+          "type": "COSE",
+          "bytes": 742
+        },
+        {
+          "type": "ExecutionBindingEvidence",
+          "bytes": 13126
+        },
+        {
+          "type": "VerificationPlan",
+          "bytes": 960
+        }
+      ],
+      "result": "VALID_UNDER_POLICY"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "release": "0.2.0-draft.1",
+  "date": "2026-10-03",
+  "allocation": "UUID-derived OID under ITU-T X.667; not an IETF/IANA assignment",
+  "entries": [
+    {
+      "name": "id-aa-certconcordSignatureContext",
+      "uuid": "20d9bb1c-dfb0-4f66-90d2-fe2ac2f36414",
+      "oid": "2.25.43665819381632101883451524414537163796",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-aa-certconcordSigningIntent",
+      "uuid": "61fcd669-02c5-4efa-b894-f5343969fe39",
+      "oid": "2.25.130247923154957363064964121504810401337",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-aa-certconcordSignaturePolicy",
+      "uuid": "0248c659-39b0-4c1e-bca4-1d6898cab31e",
+      "oid": "2.25.3036324351646102106248683104202568478",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-aa-certconcordActivationEvidence",
+      "uuid": "e6640fd4-6851-4cf1-af6d-88aa0360dc9e",
+      "oid": "2.25.306241989781183368700792204497935981726",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-pe-certconcordAuthorizationID",
+      "uuid": "4297e459-4fe1-4994-aead-8d205b494d4f",
+      "oid": "2.25.88517716012860974494699872813281004879",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-pe-certconcordKeyAssurance",
+      "uuid": "d72eb52e-c125-42ec-a2f6-fb6bc52d0fe9",
+      "oid": "2.25.286026539569658904545944844401011134441",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-kp-certconcordDocumentSigning",
+      "uuid": "921b9b62-1b32-4fab-ab3d-6db02fe92526",
+      "oid": "2.25.194210630946043567986588520971235829030",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-kp-certconcordOrganizationSeal",
+      "uuid": "fd44f290-7b75-4bad-b956-069ac14328dc",
+      "oid": "2.25.336652678910152027792758632754937276636",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-kp-certconcordDocumentEncryption",
+      "uuid": "626d7613-7f82-4c0e-b08b-61311c29cab1",
+      "oid": "2.25.130832698813632486198904565142066416305",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-kp-certconcordServiceSigning",
+      "uuid": "e338cef2-3365-41a4-8c99-5b4288d0ccee",
+      "oid": "2.25.302029721032753681190327261094457953518",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-kp-certconcordEvidenceSigning",
+      "uuid": "d676734c-90aa-4cc6-9b12-aba01d4c5d98",
+      "oid": "2.25.285069820670495598854860104383310093720",
+      "status": "CERTCONCORD_DEFINED"
+    },
+    {
+      "name": "id-pe-certconcordPasskeyBinding",
+      "uuid": "a45d61a6-618c-461b-92bd-86b80c04cb3d",
+      "oid": "2.25.218478255492366100347295023697519495997",
+      "status": "CERTCONCORD_DEFINED"
+    }
+  ]
+}

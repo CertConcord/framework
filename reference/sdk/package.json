@@ -1,0 +1,32 @@
+{
+  "name": "@certconcord/verifier",
+  "version": "0.2.0-draft.1",
+  "private": true,
+  "description": "CertConcord draft evidence verification with explicit relying-party trust and policy",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=24.15.0 <27"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "LICENSE",
+    "NOTICE",
+    "THIRD-PARTY-NOTICES.txt",
+    "README.md",
+    "sbom.cdx.json"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CertConcord/framework.git",
+    "directory": "reference/sdk"
+  }
+}

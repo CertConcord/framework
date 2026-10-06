@@ -1,0 +1,253 @@
+; CertConcord draft 02 candidate control and evidence shapes.
+; Historical RRA wire labels retain their exact experimental meanings.
+; Deterministic encoding, semantic equality, policy and lifetime rules are in COMMON.
+; ISO mdoc, DER/CMS, JOSE and upstream transport objects keep their own encodings.
+id32 = bstr .size 32
+hash64 = bstr .size 64
+time = uint
+domain-object = ["CertConcord", 1, tstr, any]
+document-scope = {
+  documentID: id32, mediaType: tstr, digestAlgorithm: "SHA-512",
+  digest: hash64, scope: "CMS_CONTENT" / "PDF_BYTE_RANGE" / "JWS_PAYLOAD" / "COSE_PAYLOAD",
+  displayName: tstr
+}
+signing-intent = {
+  schemaVersion: 1, trustDomainID: id32, transactionID: id32,
+  subjectID: id32, profileID: tstr, keyID: hash64,
+  certificateID: hash64, certificateRepresentationHash: hash64,
+  ? credentialType: "MDOC", container: "CMS" / "PDF" / "JWS" / "COSE",
+  adapterID: tstr, documents: [document-scope], purpose: tstr, origin: tstr,
+  policyHash: hash64, issuedAt: time, expiresAt: time, nonce: id32, displayText: tstr,
+  ? organizationID: id32, ? organizationAuthorizationID: id32
+}
+activation-context = {
+  schemaVersion: 1, trustDomainID: id32, transactionID: id32, operationID: id32,
+  simHash: hash64, tbsHash: hash64,
+  tbsKind: "CMS_SIGNED_ATTRS_DER" / "JWS_SIGNING_INPUT" / "ADAPTER_MESSAGE",
+  keyID: hash64, certificateID: hash64, certificateRepresentationHash: hash64,
+  policyHash: hash64, origin: tstr, rpID: tstr, audience: tstr,
+  serverNonce: id32, issuedAt: time, expiresAt: time, ? batchHash: hash64
+}
+operation-permit = {
+  schemaVersion: 1, activation: activation-context, activationEvidenceHash: hash64,
+  proofMode: "HUMAN_WEBAUTHN" / "HUMAN_MDOC" / "HUMAN_SESSION" / "WORKLOAD",
+  issuedAt: time, expiresAt: time
+}
+execution-receipt = {
+  schemaVersion: 1, operationID: id32, activationHash: hash64,
+  permitHash: hash64, keyID: hash64, tbsHash: hash64, signatureHash: hash64,
+  executedAt: time, provider: tstr,
+  ? enforcement: "PREAUTHORIZED_EVIDENCE", ? bindingHash: hash64,
+  ? rawProofHash: hash64, ? dispatchedAt: time
+}
+registration-authorization = {
+  schemaVersion: 1, requestID: id32, subjectID: id32, profileID: tstr,
+  policyHash: hash64, identityEvidenceHash: hash64, spkiHash: hash64,
+  csrHash: hash64, possessionMode: tstr, issuedAt: time, expiresAt: time,
+  ? trustDomainID: id32, ? audience: tstr, ? credentialFormat: "mso_mdoc",
+  ? identityAssurance: tstr, ? keyBindingID: id32, ? keyBindingHash: hash64,
+  ? kemPossessionEvidenceHash: hash64
+}
+identity-enrollment = {
+  schemaVersion: 1, trustDomainID: id32, policyHash: hash64, csrHash: hash64,
+  profileID: tstr, sessionIDHash: hash64, nonce: id32, ? keyBindingID: id32
+}
+identity-claim-rule = {
+  type: "string" / "boolean" / "uint" / "bytes" / "any",
+  ? maxLength: 1..65536
+}
+identity-admission-profile = {
+  id: tstr, docType: tstr, namespace: tstr,
+  namespaces: {1*16 tstr => {1*128 tstr => identity-claim-rule}},
+  certificateProfile: "ISO_MDOC" / "EUDI_PID_ARF_1_4",
+  statusMode: "ISSUER_AND_VALIDITY" / "PER_CREDENTIAL" / "UNCONFIGURED",
+  maxCredentialLifetime: uint
+}
+; UNCONFIGURED and zero lifetime cannot authorize identity admission.
+; An any-typed field requires the RA's explicit semantic decision; the type itself adds no assurance.
+identity-status-assessment = {
+  mode: "ISSUER_AND_VALIDITY" / "PER_CREDENTIAL",
+  coverage: "ISSUER_CERTIFICATE" / "ISSUER_AND_CREDENTIAL",
+  credentialStatus: "NOT_PROVIDED" / "GOOD",
+  checkedAt: time, validUntil: time, evidenceHash: hash64
+}
+device-registration-authorization = {
+  schemaVersion: 1, trustDomainID: id32, subjectID: id32, ? profileID: tstr,
+  holderKeyID: hash64, documentKeyID: hash64, policyHash: hash64,
+  attestationEvidenceHash: hash64, keyAssurance: tstr, localUVPolicy: tstr,
+  audience: tstr, issuedAt: time, expiresAt: time, ? bindingExpiresAt: time
+}
+device-registration-proof = {
+  schemaVersion: 1, authorizationHash: hash64, nonce: tstr, audience: tstr
+}
+device-binding = {
+  schemaVersion: 1, trustDomainID: id32, bindingID: id32, subjectID: id32,
+  holderKeyID: hash64, holderThumbprint: tstr, holderSPKI: bstr,
+  documentKeyID: hash64, policyHash: hash64, authorizationHash: hash64,
+  attestationEvidenceHash: hash64, keyAssurance: tstr, localUVPolicy: tstr,
+  keyAdmission: key-admission, ? profileID: tstr,
+  epoch: uint, status: tstr, createdAt: time, expiresAt: time
+}
+personal-mdoc-log-entry = {
+  schemaVersion: 1, trustDomainID: id32, credentialID: hash64,
+  raAuthorizationHash: hash64, documentKeyID: hash64, policyHash: hash64
+}
+credential-log-proof = {
+  schemaVersion: 1, adapterID: "certconcord-mdoc-issuance-log-v1", entry: bstr,
+  index: uint, size: uint, root: bstr .size 32, path: [* bstr .size 32],
+  checkpoint: tstr, receipts: [* {operatorID: tstr, note: tstr}]
+}
+mdoc-credential-seal = {
+  schemaVersion: 1, trustDomainID: id32, credentialID: hash64,
+  issuerAuthHash: hash64, policyHash: hash64, documentKeyID: hash64,
+  logProof: credential-log-proof, issuedAt: time, expiresAt: time
+}
+evidence-object = {
+  id: hash64, type: tstr, version: 1, payload: bstr, dependencies: [* hash64]
+}
+evidence-package = {
+  schemaVersion: 1, root: hash64, objects: [+ evidence-object]
+}
+verification-plan = {
+  schemaVersion: 1,
+  profile: "certconcord-ecp-mdoc-attested-v1" / "certconcord-ecp-cms-attested-v1" /
+    "certconcord-ecp-mdoc-passkey-v1" / "certconcord-ecp-cms-passkey-v1" /
+    "certconcord-ecp-cms-execution-draft-02" / "certconcord-ecp-mdoc-execution-draft-02" /
+    "certconcord-ecp-cms-attested-draft-02" / "certconcord-ecp-mdoc-attested-draft-02",
+  objects: {+ tstr => hash64}
+}
+
+document-evidence-selection = {
+  profile: "certconcord-document-evidence-draft-02", organizationAuthorization: bool
+}
+document-time-proof = {
+  schemaVersion: 1, format: "CMS" / "MDOC",
+  objects: [+ {type: tstr, payloadHash: hash64}]
+}
+organization-authorization = {
+  schemaVersion: 1, authorizationID: id32, trustDomainID: id32, organizationID: id32,
+  actorID: id32, actorType: "PERSON" / "WORKLOAD", keyID: hash64, certificateID: hash64,
+  purpose: "ORGANIZATION_SEAL", activationHash: hash64, policyHash: hash64,
+  issuedAt: time, expiresAt: time
+}
+organization-authorization-status = {
+  schemaVersion: 1, authorizationID: id32, authorizationHash: hash64, trustDomainID: id32,
+  scope: "ORGANIZATION_AUTHORIZATION", status: "GOOD" / "REVOKED" / "UNKNOWN",
+  publishedAt: time, nextUpdate: time, ? effectiveTime: time, ? compromiseStart: time
+}
+document-delivery-header = (
+  schemaVersion: 1, profile: "certconcord-document-encryption-draft-02",
+  suite: "ML-KEM-HKDF-SHA256-AES256KW-AES256GCM", trustDomainID: id32, deliveryID: id32
+)
+document-recipient-binding = {
+  subjectID: id32, certificateID: hash64, representationHash: hash64, keyID: hash64
+}
+encrypted-document = {document-delivery-header, ciphertext: bstr}
+encrypted-document-plaintext = {
+  document-delivery-header, createdAt: time, recipients: [1*100 document-recipient-binding],
+  documentHash: hash64, document: bstr
+}
+
+key-admission = {
+  schemaVersion: 1, format: "none" / "android-key" / "apple-managed-acme" / "tpm2-certify",
+  ? policyID: tstr, holderKeyID: hash64, evidenceHash: hash64,
+  assurance: "UNATTESTED" / "HARDWARE_KEY_VERIFIED", keyAssurance: "KAL1" / "KAL2",
+  boundary: tstr, localUVPolicy: "UNASSESSED" / "PER_USE_AUTH_REQUIRED",
+  verifiedAt: time, expiresAt: time,
+  ? trustAnchorHash: bstr .size 32, ? statusEvidenceHash: hash64,
+  ? enrollmentEvidenceHash: hash64
+}
+key-attestation-evidence =
+  {format: "none"} /
+  {format: "android-key" / "apple-managed-acme", x5c: [1*6 bstr]} /
+  {format: "tpm2-certify", akID: tstr, pubArea: bstr, certInfo: bstr, signature: bstr}
+; X.509 certificate chains are leaf first. TPM byte strings omit TPM2B length prefixes.
+
+passkey-version = "previewSign-4" / "previewSign5-2026-09-09"
+passkey-operation-algorithm = -9 / -300 / -65539
+passkey-custody = "SECURE_ELEMENT" / "TEE" / "TPM" / "SECURE_ENCLAVE"
+passkey-enrollment = {
+  schemaVersion: 1, requestID: id32, trustDomainID: id32, subjectID: id32,
+  subject: bstr, policyHash: hash64, ? identityEvidenceHash: hash64,
+  profileID: "CERTCONCORD-PERSON-PASSKEY-SIGN-v1", rpID: tstr, origin: tstr,
+  version: passkey-version, algorithms: [1*3 passkey-operation-algorithm],
+  issuedAt: time, expiresAt: time
+}
+passkey-possession = {
+  schemaVersion: 1, enrollmentHash: hash64, documentKeyID: hash64,
+  csrInfoHash: hash64, parentCredentialIDHash: hash64, keyHandleHash: hash64,
+  version: passkey-version, algorithm: passkey-operation-algorithm,
+  additionalArgsHash: hash64
+}
+passkey-arkg-derivation = {ikm: id32, context: hash64, ticket: bstr .size 81}
+passkey-signing-binding = {
+  schemaVersion: 1, bindingID: id32, trustDomainID: id32, subjectID: id32,
+  policyHash: hash64, profileID: "CERTCONCORD-PERSON-PASSKEY-SIGN-v1",
+  ? identityEvidenceHash: hash64, csrHash: hash64,
+  documentKeyID: hash64, documentSPKI: bstr,
+  parentCredentialIDHash: hash64, parentSPKIHash: hash64,
+  rpID: tstr, origin: tstr, version: passkey-version,
+  algorithm: passkey-operation-algorithm, keyHandleHash: hash64,
+  additionalArgsHash: hash64, attestationHash: hash64,
+  generationProofHash: hash64, possessionProofHash: hash64, modelPolicyHash: hash64,
+  keyAssurance: {level: "KAL2", custody: passkey-custody, fixedFlags: 5},
+  issuedAt: time, expiresAt: time,
+  ? derivation: passkey-arkg-derivation, ? seedHash: hash64
+}
+; The two ARKG fields are present together, only for algorithm -65539.
+passkey-binding-change = {
+  schemaVersion: 1, trustDomainID: id32, policyHash: hash64,
+  bindingID: id32, revision: uint, status: "SUSPENDED" / "REVOKED",
+  reason: tstr, ? cascadeParent: bool, issuedAt: time, expiresAt: time
+}
+passkey-raw-operation = {schemaVersion: 1, permitHash: hash64, bindingHash: hash64}
+passkey-authenticator-model = {
+  aaguid: bstr .size 16, rootHash: bstr .size 32,
+  versions: [+ passkey-version], algorithms: [+ passkey-operation-algorithm],
+  custody: passkey-custody, nonExportable: true, status: "APPROVED", expiresAt: time
+}
+; Assertion and registration fields preserve base64url original WebAuthn response bytes.
+webauthn-public-assertion = {
+  type: "public-key", id: tstr, rawId: tstr,
+  response: {clientDataJSON: tstr, authenticatorData: tstr, signature: tstr, userHandle: tstr / null}
+}
+passkey-parent-registration = {
+  credentialID: bstr, publicKeyDER: bstr, counter: uint,
+  backupEligible: bool, backedUp: bool, attestationVerified: true,
+  rpID: tstr, origin: tstr, ? aaguid: bstr .size 16
+}
+passkey-raw-evidence = {
+  assertion: webauthn-public-assertion,
+  registration: {credentialID: bstr, publicKeyDER: bstr, counter: uint,
+    backupEligible: false, origin: tstr, rpID: tstr}
+}
+
+execution-profile = "certconcord-execution-binding-draft-02"
+execution-provider-id = tstr .regexp "[A-Za-z0-9][A-Za-z0-9._:-]{0,127}"
+execution-policy-selection = {
+  profile: execution-profile, providerID: execution-provider-id,
+  maxLeaseSeconds: 1..86400
+}
+execution-binding = {
+  schemaVersion: 1, profile: execution-profile, trustDomainID: id32,
+  providerID: execution-provider-id, epoch: 1..9007199254740991,
+  status: "ACTIVE" / "SUSPENDED" / "REVOKED",
+  keyID: hash64, permitKeyID: hash64, receiptKeyID: hash64, policyHash: hash64,
+  audience: tstr, enforcement: "BROKER_ENFORCED", issuedAt: time, expiresAt: time
+}
+; CMS D("ExecutionBinding", execution-binding) is at most 65536 bytes.
+execution-input = {permit: bstr .size (1..1048576), tbs: bstr .size (1..16777216), sim: signing-intent}
+intent-execution-request = {
+  schemaVersion: 1, profile: execution-profile, bindingHash: hash64,
+  permitHash: hash64, activationHash: hash64, simHash: hash64, tbsHash: hash64, keyID: hash64
+}
+bound-execution-receipt = {
+  schemaVersion: 1, operationID: id32, activationHash: hash64,
+  permitHash: hash64, keyID: hash64, tbsHash: hash64, signatureHash: hash64,
+  executedAt: time, dispatchedAt: time, provider: execution-provider-id,
+  executionProfile: execution-profile, enforcement: "BROKER_ENFORCED",
+  executionBindingHash: hash64, executionRequestHash: hash64
+}
+execution-binding-evidence = {binding: bstr .size (1..65536)}
+; Policy, exact container input, chronological containment, authority pins, status,
+; monotonic epoch and durable key-lock semantics are additional mandatory checks.

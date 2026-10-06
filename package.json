@@ -1,0 +1,33 @@
+{
+  "name": "certconcord-workspace",
+  "version": "0.2.0-draft.1",
+  "private": true,
+  "type": "module",
+  "description": "CertConcord certificate trust framework — working draft",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=24.15.0 <27"
+  },
+  "workspaces": [
+    "reference"
+  ],
+  "scripts": {
+    "check": "node tools/check.mjs",
+    "draft:manifest": "node tools/manifest.mjs --write",
+    "test": "npm run test --workspace @certconcord/reference --",
+    "demo": "npm run demo --workspace @certconcord/reference --",
+    "demo:mtc": "npm run demo:mtc --workspace @certconcord/reference --",
+    "demo:document": "npm run demo:document --workspace @certconcord/reference --",
+    "start": "npm run start --workspace @certconcord/reference --",
+    "demo:passkey": "npm run demo:passkey --workspace @certconcord/reference --",
+    "test:postgres": "npm run test:postgres --workspace @certconcord/reference --",
+    "fuzz:seed": "npm run fuzz:seed --workspace @certconcord/reference --",
+    "fuzz:replay": "npm run fuzz:replay --workspace @certconcord/reference --",
+    "fuzz": "npm run fuzz --workspace @certconcord/reference --",
+    "benchmark": "npm run benchmark --workspace @certconcord/reference --",
+    "privacy": "npm run privacy --workspace @certconcord/reference --",
+    "sdk:build": "npm run sdk:build --workspace @certconcord/reference --",
+    "sdk:test": "npm run sdk:test --workspace @certconcord/reference --",
+    "demo:archive": "npm run demo:archive --workspace @certconcord/reference --"
+  }
+}

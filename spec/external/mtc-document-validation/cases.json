@@ -1,0 +1,12 @@
+{
+  "cases": [
+    {"id":"timely-hash-renewal","expected":"VALID"},
+    {"id":"late-initial-protection","expected":"ERS_INITIAL_PROTECTION_LATE"},
+    {"id":"overlapping-time-intervals","expected":"ERS_INTERVAL_ORDER"},
+    {"id":"late-tsa-renewal","expected":"ERS_RENEWAL_LATE"},
+    {"id":"expired-final-protection","expected":"ERS_FINAL_PROTECTION_EXPIRED"},
+    {"id":"missing-hash-policy","expected":"ERS_HASH_LIFETIME_REQUIRED"},
+    {"id":"timestamp-renewal-does-not-replace-data-hash","expected":"ERS_HASH_RENEWAL_LATE"},
+    {"id":"unknown-or-stale-historical-status","expected":"INDETERMINATE","coverage":"application requirement; not implemented by the lifetime function"}
+  ]
+}

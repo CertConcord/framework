@@ -1,0 +1,10 @@
+{
+  "name": "CertConcord",
+  "edition": "draft-02",
+  "status": "working-draft",
+  "referenceVersion": "0.2.0-draft.1",
+  "stable": false,
+  "initialComposition": "certconcord-governed-draft-02",
+  "firstBaseline": "document-trust",
+  "otherApplications": ["smime", "trusted-timestamp-service"]
+}

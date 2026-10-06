@@ -1,0 +1,10 @@
+{"cases":[
+  {"id":"ml-dsa-87-prefix-subtree","expected":"VALID"},
+  {"id":"origin-substitution","expected":"INVALID"},
+  {"id":"witness-substitution","expected":"INVALID"},
+  {"id":"range-substitution","expected":"INVALID"},
+  {"id":"root-substitution","expected":"INVALID"},
+  {"id":"timestamp-substitution","expected":"INVALID"},
+  {"id":"algorithm-substitution","expected":"NOTE_KEY_SCHEME"},
+  {"id":"non-prefix-timestamp","expected":"SUBTREE_CONTEXT"}
+]}

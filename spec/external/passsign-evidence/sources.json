@@ -1,0 +1,23 @@
+{
+  "reviewDate": "2026-10-05",
+  "sources": [
+    {
+      "id": "passSignRFC",
+      "url": "https://raw.githubusercontent.com/codedpills/pass-sign/4ae5a3d077040632b0885947b63329ba99413fb3/docs/research/deliverables/doc-6-rfc-draft-v0.1.md",
+      "sha256": "6a257416597a20eb91d4a246ef9a7f9f83c440cdc100233d9c311c9f38a1154d",
+      "bytes": 33025
+    },
+    {
+      "id": "passSignProposal",
+      "url": "https://raw.githubusercontent.com/codedpills/pass-sign/4ae5a3d077040632b0885947b63329ba99413fb3/docs/research/deliverables/doc-5-protocol-proposal.md",
+      "sha256": "51349416841a710b4658ae7e4359b69bab6a3cf6219fc18c1052ff935b910801",
+      "bytes": 21047
+    },
+    {
+      "id": "rfc3161",
+      "url": "https://www.rfc-editor.org/rfc/rfc3161.txt",
+      "sha256": "39fd17644ff2d654bc83814a78b1c5b5e7517f496741f34ead5064943eb98240",
+      "bytes": 54585
+    }
+  ]
+}

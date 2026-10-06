@@ -1,0 +1,12 @@
+{"cases":[
+  {"id":"same-id-same-completed-input","expected":"return original authenticated result without invoking the key"},
+  {"id":"same-id-changed-input","expected":"reject"},
+  {"id":"lost-response-after-dispatch","expected":"unresolved until original outcome is reconciled"},
+  {"id":"crash-before-dispatch","expected":"recover according to durable reservation; do not restore spent authority"},
+  {"id":"provider-or-key-substitution","expected":"new authorization required"},
+  {"id":"expired-authorization-before-dispatch","expected":"reject"},
+  {"id":"unattested-protected-enforcement-claim","expected":"reject claim; preserve narrower declared capability"},
+  {"id":"context-added-only-to-unsigned-response","expected":"no protected-enforcement evidence"},
+  {"id":"cancellation-after-dispatch","expected":"must not claim non-execution"},
+  {"id":"recovery-resets-replay-state","expected":"reject"}
+]}

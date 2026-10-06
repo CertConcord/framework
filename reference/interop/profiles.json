@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "core": "1.1",
+  "pscp": "1.0",
+  "sep": "1.0",
+  "oidf": {
+    "repository": "https://github.com/openid-certification/conformance-suite",
+    "revision": "949724883989f9f067ea728c7c13cacc18bbd81f",
+    "plans": [
+      {
+        "plan": "oid4vci-1_0-issuer-test-plan",
+        "source": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vci10issuer/VCIIssuerTestPlan.java",
+        "sourceID": "oidf-VCIIssuerTestPlan",
+        "role": "ISSUER",
+        "haip": false,
+        "credentialFormats": ["mso_mdoc", "dc+sd-jwt"]
+      },
+      {
+        "plan": "oid4vci-1_0-issuer-haip-test-plan",
+        "source": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vci10issuer/VCIIssuerTestPlanHaip.java",
+        "sourceID": "oidf-VCIIssuerTestPlanHaip",
+        "role": "ISSUER",
+        "haip": true,
+        "credentialFormats": ["mso_mdoc", "dc+sd-jwt"]
+      },
+      {
+        "plan": "oid4vci-1_0-wallet-test-plan",
+        "source": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vci10wallet/VCIWalletTestPlan.java",
+        "sourceID": "oidf-VCIWalletTestPlan",
+        "role": "WALLET",
+        "haip": false,
+        "credentialFormats": ["mso_mdoc", "dc+sd-jwt"]
+      },
+      {
+        "plan": "oid4vci-1_0-wallet-haip-test-plan",
+        "source": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vci10wallet/VCIWalletTestPlanHaip.java",
+        "sourceID": "oidf-VCIWalletTestPlanHaip",
+        "role": "WALLET",
+        "haip": true,
+        "credentialFormats": ["mso_mdoc", "dc+sd-jwt"]
+      },
+      {
+        "plan": "oid4vp-1final-verifier-test-plan",
+        "source": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vp1finalverifier/VP1FinalVerifierTestPlan.java",
+        "sourceID": "oidf-VP1FinalVerifierTestPlan",
+        "role": "VERIFIER",
+        "haip": false,
+        "credentialFormats": ["mso_mdoc", "dc+sd-jwt"]
+      },
+      {
+        "plan": "oid4vp-1final-verifier-haip-test-plan",
+        "source": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vp1finalverifier/VP1FinalVerifierTestPlanHaip.java",
+        "sourceID": "oidf-VP1FinalVerifierTestPlanHaip",
+        "role": "VERIFIER",
+        "haip": true,
+        "credentialFormats": ["mso_mdoc", "dc+sd-jwt"]
+      },
+      {
+        "plan": "oid4vp-1final-wallet-test-plan",
+        "source": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vp1finalwallet/VP1FinalWalletTestPlan.java",
+        "sourceID": "oidf-VP1FinalWalletTestPlan",
+        "role": "WALLET",
+        "haip": false,
+        "credentialFormats": ["mso_mdoc", "dc+sd-jwt"]
+      },
+      {
+        "plan": "oid4vp-1final-wallet-haip-test-plan",
+        "source": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vp1finalwallet/VP1FinalWalletTestPlanHaip.java",
+        "sourceID": "oidf-VP1FinalWalletTestPlanHaip",
+        "role": "WALLET",
+        "haip": true,
+        "credentialFormats": ["mso_mdoc", "dc+sd-jwt"]
+      }
+    ]
+  },
+  "fcaf": {
+    "repository": "https://github.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment",
+    "revision": "2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1",
+    "maturity": "SUBMITTED",
+    "sut": "WALLET_SOLUTION",
+    "selectionRequires": [
+      "ICS",
+      "applicable test cases",
+      "rulebook revision",
+      "assessment maturity"
+    ],
+    "sources": [
+      {
+        "id": "fcafIndex",
+        "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment/2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1/docs/fcaf/index.md"
+      },
+      {
+        "id": "fcafICS",
+        "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment/2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1/docs/fcaf/ics.md"
+      },
+      {
+        "id": "fcafRP",
+        "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment/2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1/docs/fcaf/suts/wallet_solution/relying_party/test-cases.md"
+      },
+      {
+        "id": "fcafProvider",
+        "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment/2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1/docs/fcaf/suts/wallet_solution/attestation_provider/test-cases.md"
+      }
+    ]
+  }
+}

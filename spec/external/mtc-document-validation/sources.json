@@ -1,0 +1,71 @@
+{
+  "reviewDate": "2026-10-05",
+  "sources": [
+    {
+      "id": "mtc",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-06.txt",
+      "sha256": "9a15490077423ad0cc1986b84d3c63ab97479dcdfd902ec1f95922961152ea94",
+      "bytes": 227864
+    },
+    {
+      "id": "mtcEditor",
+      "url": "https://raw.githubusercontent.com/ietf-plants-wg/merkle-tree-certs/44b1c0b8c54669a35e8d9e96f0e55bb3cab67757/draft-ietf-plants-merkle-tree-certs.md",
+      "sha256": "b778cb1f9c325b64bba9f177c78f5edc6b790b1695dd5cce27941fe26a5569cb",
+      "bytes": 192184,
+      "retrievedAt": "2026-10-06T02:05:12.059Z"
+    },
+    {
+      "id": "mtcDeploymentUseCases",
+      "url": "https://www.ietf.org/archive/id/draft-gray-plants-mtc-deploy-use-cases-01.txt",
+      "sha256": "aafbe7ba8fdac9556982712bc0839e6c62d0dbd07710451868f8af7bdff9d4a6",
+      "bytes": 60372,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "rfc3161",
+      "url": "https://www.rfc-editor.org/rfc/rfc3161.txt",
+      "sha256": "39fd17644ff2d654bc83814a78b1c5b5e7517f496741f34ead5064943eb98240",
+      "bytes": 54585
+    },
+    {
+      "id": "rfc4998",
+      "url": "https://www.rfc-editor.org/rfc/rfc4998.txt",
+      "sha256": "c194b696364f6b5ed1e2fac6da676fc8d29219b84e48a2e2d30d20fde5b14b43",
+      "bytes": 66888
+    },
+    {
+      "id": "rfc6283",
+      "url": "https://www.rfc-editor.org/rfc/rfc6283.txt",
+      "sha256": "898cdca15baac3471239ae3b26c875b4ef02a3e1aa86c9c61e3c41ad68b1ff24",
+      "bytes": 99031
+    },
+    {
+      "id": "cades",
+      "url": "https://www.etsi.org/deliver/etsi_EN/319100_319199/31912201/01.03.01_60/en_31912201v010301p.pdf",
+      "sha256": "e99e76e519d9bd8e1410775bccedb1a588021e5e7c705c9fcc1f91c6a6227c21",
+      "bytes": 557208,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "pades",
+      "url": "https://www.etsi.org/deliver/etsi_EN/319100_319199/31914201/01.02.01_60/en_31914201v010201p.pdf",
+      "sha256": "93e01407673ae22bdd0fadfc3a85df76411f1cfb1a3b53db47326a9d9658efb3",
+      "bytes": 215803,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "jades",
+      "url": "https://www.etsi.org/deliver/etsi_TS/119100_119199/11918201/01.02.01_60/ts_11918201v010201p.pdf",
+      "sha256": "6af9bc5621c878b1ee7dfb64e2ba617368b351ddb91ece755879597c42368f9f",
+      "bytes": 394938,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "adesValidation",
+      "url": "https://www.etsi.org/deliver/etsi_EN/319100_319199/31910201/01.04.01_60/en_31910201v010401p.pdf",
+      "sha256": "11168f0059997cb58915c83ec1347fc66fdbabcd827e5ca7c23ecaf3cf457b3d",
+      "bytes": 1695899,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    }
+  ]
+}

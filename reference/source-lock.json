@@ -1,0 +1,761 @@
+{
+  "release": "0.2.0-draft.1",
+  "retrievedAt": "2026-10-04T01:08:28.376Z",
+  "sources": [
+    {
+      "id": "mtc",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-06.txt",
+      "sha256": "9a15490077423ad0cc1986b84d3c63ab97479dcdfd902ec1f95922961152ea94",
+      "bytes": 227864
+    },
+    {
+      "id": "webauthn",
+      "url": "https://www.w3.org/TR/2026/REC-webauthn-3-20260825/",
+      "sha256": "157030c980d44a3ce4b1ec5bcfaa16790c7dfefac20709af6ed2b11c7120970b",
+      "bytes": 2739242
+    },
+    {
+      "id": "rawSigning",
+      "url": "https://raw.githubusercontent.com/w3c/webauthn/9d88b7681b10926a41fd18b78e206a01804ed855/explainers/raw-signing-extension.md",
+      "sha256": "1a238c521c126f853bb92d8c41ef98418a468c45d621d5982f03b6c9ad922236",
+      "bytes": 25063
+    },
+    {
+      "id": "oid4vci",
+      "url": "https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html",
+      "sha256": "f123c3178cacd27688b15b762098a045e9eb35eccfe2f5f18a357c3815e06ba7",
+      "bytes": 504445
+    },
+    {
+      "id": "oid4vp",
+      "url": "https://openid.net/specs/openid-4-verifiable-presentations-1_0.html",
+      "sha256": "e4f0abc689afd0a4f6c41b83954d7f970c5263a26143ad861216aea9918993bb",
+      "bytes": 515401
+    },
+    {
+      "id": "haip",
+      "url": "https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0-final.html",
+      "sha256": "3996e0479d06b72d6d68668b8ae3cd39fddfc29ae9220c0c3fead7dc060ec4fb",
+      "bytes": 150031
+    },
+    {
+      "id": "c2spMirror",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-mirror.md",
+      "sha256": "cb46bd3117bc3987337b7fbb0dc71c26b5b20e02ed571b8c82863d50fcb2732a",
+      "bytes": 23215
+    },
+    {
+      "id": "c2spWitness",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-witness.md",
+      "sha256": "3c87eb314d7d54d35ef7d18ac91bf57abd6c5676cbe1765becb328097ed25f86",
+      "bytes": 14613
+    },
+    {
+      "id": "c2spCosignature",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-cosignature.md",
+      "sha256": "d5fc06ef7c1eb77b869148e52784074190db8b5209b5551fb91bfce329b805bd",
+      "bytes": 9427,
+      "retrievedAt": "2026-10-06T01:50:24.341Z"
+    },
+    {
+      "id": "c2spNote",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/signed-note.md",
+      "sha256": "870f329f0c71b81b9b739baa85f09dab287cd6a29b99177333a53209d65450e1",
+      "bytes": 7610
+    },
+    {
+      "id": "c2spTiles",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-tiles.md",
+      "sha256": "1287c9da80964fbfeff80e34e071b83d8fcee3a917082905bd8ebf405d2250a2",
+      "bytes": 12259
+    },
+    {
+      "id": "pkcs11",
+      "url": "https://raw.githubusercontent.com/oasis-tcs/pkcs11/6edf334c5b324626c95e82b0cb9737eaaa37a340/published/3-02/pkcs11t.h",
+      "sha256": "95738fdcd9b5c9c73f55f9132aefa87354556cec1c46f681b8a2000b8b5dbccb",
+      "bytes": 103080
+    },
+    {
+      "id": "csc",
+      "url": "https://cloudsignatureconsortium.org/wp-content/uploads/2025/11/csc-api.pdf",
+      "sha256": "339cb9905a9ae3779e4a99ff2dc57a3f5243528dfb3578ee5c91745929fa76c1",
+      "bytes": 4143407,
+      "retrievedAt": "2026-10-05T22:01:10.771Z"
+    },
+    {
+      "id": "acmeProfiles",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-acme-profiles-02.txt",
+      "sha256": "5a7917314a967cadd1f1ec88ea1737d6497623a74de3fc2e294368759c985f5a",
+      "bytes": 17674
+    },
+    {
+      "id": "sdJWTVC",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-19.txt",
+      "sha256": "394c4640c581c301adaf24d1d356238e2c290b5c9e8b130141ca0e28732144fb",
+      "bytes": 154916
+    },
+    {
+      "id": "tokenStatusList",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-oauth-status-list-21.txt",
+      "sha256": "21e4867a01f73cee2ebc1408d150c87f77898c3d1549ebc25c80fa352221f846",
+      "bytes": 159913
+    },
+    {
+      "id": "digitalCredentialsAPI",
+      "url": "https://www.w3.org/TR/2026/WD-digital-credentials-20260904/",
+      "sha256": "fe8ddb0e12b85e6b8beaeb29805c2f0d2f4c39c49bc055e79ec1d45ab5545638",
+      "bytes": 729395
+    },
+    {
+      "id": "multipazMdoc",
+      "url": "https://raw.githubusercontent.com/openwallet-foundation/multipaz/0.100.0/multipaz/src/commonMain/kotlin/org/multipaz/mdoc/util/MdocUtil.kt",
+      "sha256": "e0be3d9ce76041da8f4a4c05794efa0c520e9efca03b7b4cd3ba84374fef8604",
+      "bytes": 31158
+    },
+    {
+      "id": "multipazAnnexC",
+      "url": "https://raw.githubusercontent.com/openwallet-foundation/multipaz/0.100.0/multipaz/src/commonMain/kotlin/org/multipaz/verification/VerificationUtil.kt",
+      "sha256": "e30be01f2fd41cea4dc8e3a2b4ebccb7be51ac876adeab042711258a9e0635c6",
+      "bytes": 64259
+    },
+    {
+      "id": "rfc5280",
+      "url": "https://www.rfc-editor.org/rfc/rfc5280.txt",
+      "sha256": "a2f2628c0a83b873fc4786abd921f9b2c02395954b655d190bf16b831633345d",
+      "bytes": 352580
+    },
+    {
+      "id": "rfc5652",
+      "url": "https://www.rfc-editor.org/rfc/rfc5652.txt",
+      "sha256": "dbd209ae7844031f51722c4d9e2d1fa3fff3081319851d581f914f5f0147f918",
+      "bytes": 126813
+    },
+    {
+      "id": "rfc5869",
+      "url": "https://www.rfc-editor.org/rfc/rfc5869.txt",
+      "sha256": "7a40eb3835b35fc947eb12a2ed614db079d43b26e50dbc537c31fba16397089c",
+      "bytes": 25854
+    },
+    {
+      "id": "rfc3394",
+      "url": "https://www.rfc-editor.org/rfc/rfc3394.txt",
+      "sha256": "faa400c69c22e5f4a911222dc19c17091931a4b8c0658adc7011163e63b253ff",
+      "bytes": 73072
+    },
+    {
+      "id": "rfc5649",
+      "url": "https://www.rfc-editor.org/rfc/rfc5649.txt",
+      "sha256": "5555b0a3a22543985d56c2136c8ad3c5c3bf30835638006d56096b84ffb63a91",
+      "bytes": 22507
+    },
+    {
+      "id": "rfc8949",
+      "url": "https://www.rfc-editor.org/rfc/rfc8949.txt",
+      "sha256": "f1164a5b31a39350ad46abe29b83575eb933ca6c45366989c118b6b1058a214a",
+      "bytes": 185226
+    },
+    {
+      "id": "rfc9629",
+      "url": "https://www.rfc-editor.org/rfc/rfc9629.txt",
+      "sha256": "97a356fa3bd0931338d820f79943a208aceb673629af8381dafdcd6c92dc7ba1",
+      "bytes": 33555
+    },
+    {
+      "id": "rfc9881",
+      "url": "https://www.rfc-editor.org/rfc/rfc9881.txt",
+      "sha256": "20ae3b519bc69e32989fa6e625ab8746453eddf457e20ddbfd79d841a44237a2",
+      "bytes": 229857
+    },
+    {
+      "id": "rfc9882",
+      "url": "https://www.rfc-editor.org/rfc/rfc9882.txt",
+      "sha256": "0f37a65c11978081e6b648e8e13e6b95b8d1d6f45cdcdf3623312d65628c4ea3",
+      "bytes": 71043
+    },
+    {
+      "id": "rfc9883",
+      "url": "https://www.rfc-editor.org/rfc/rfc9883.txt",
+      "sha256": "c1c6f72c15ae71131c78ae84a5fb1f44c76ca05b91a51de712a3439099d2b5de",
+      "bytes": 37837
+    },
+    {
+      "id": "rfc9935",
+      "url": "https://www.rfc-editor.org/rfc/rfc9935.txt",
+      "sha256": "9a369bca93a613d0b89b8f4ed119ba9ded91c00acd97ae5b9a2f9b3f02e49b4f",
+      "bytes": 169530
+    },
+    {
+      "id": "rfc9936",
+      "url": "https://www.rfc-editor.org/rfc/rfc9936.txt",
+      "sha256": "7bbac39e518bed30b85fcfd1ba9d385219d4ad38dbd952f648649158920d86a5",
+      "bytes": 40747
+    },
+    {
+      "id": "rfc3161",
+      "url": "https://www.rfc-editor.org/rfc/rfc3161.txt",
+      "sha256": "39fd17644ff2d654bc83814a78b1c5b5e7517f496741f34ead5064943eb98240",
+      "bytes": 54585
+    },
+    {
+      "id": "rfc5816",
+      "url": "https://www.rfc-editor.org/rfc/rfc5816.txt",
+      "sha256": "9a3eba6ecf14afc7820c51034a608d54d188344a43e9189b0e023d4a6a98f649",
+      "bytes": 10216
+    },
+    {
+      "id": "rfc5035",
+      "url": "https://www.rfc-editor.org/rfc/rfc5035.txt",
+      "sha256": "7c4a793911463367bd777e6d6104e52ec709f0c553da237cdf6782ee49b6d32b",
+      "bytes": 32674
+    },
+    {
+      "id": "rfc4998",
+      "url": "https://www.rfc-editor.org/rfc/rfc4998.txt",
+      "sha256": "c194b696364f6b5ed1e2fac6da676fc8d29219b84e48a2e2d30d20fde5b14b43",
+      "bytes": 66888
+    },
+    {
+      "id": "rfc6283",
+      "url": "https://www.rfc-editor.org/rfc/rfc6283.txt",
+      "sha256": "898cdca15baac3471239ae3b26c875b4ef02a3e1aa86c9c61e3c41ad68b1ff24",
+      "bytes": 99031
+    },
+    {
+      "id": "rfc8555",
+      "url": "https://www.rfc-editor.org/rfc/rfc8555.txt",
+      "sha256": "a40983bbf91f2bd3a976d1c16520aa4418c02ba6d6f1ddcaf772881f823b2497",
+      "bytes": 196903
+    },
+    {
+      "id": "rfc9901",
+      "url": "https://www.rfc-editor.org/rfc/rfc9901.txt",
+      "sha256": "fd4cb79184162fa7ef95f4f63abab8ee6d03c9a04c19b8f83758946464b284eb",
+      "bytes": 177316
+    },
+    {
+      "id": "rfc9449",
+      "url": "https://www.rfc-editor.org/rfc/rfc9449.txt",
+      "sha256": "3842c58e1f6043389416023b9bb8d765048266024982fbbd90640e05943f4e13",
+      "bytes": 92478
+    },
+    {
+      "id": "rfc9964",
+      "url": "https://www.rfc-editor.org/rfc/rfc9964.txt",
+      "sha256": "8c42035b948301b197d431de8b3f40019bdaa3bb40150dc523306923948f34cf",
+      "bytes": 180564
+    },
+    {
+      "id": "rfc9180",
+      "url": "https://www.rfc-editor.org/rfc/rfc9180.txt",
+      "sha256": "f45a8b7c30231b26d668b1e8168074e5ab514b174d656b67e859895117f1f8f6",
+      "bytes": 192749
+    },
+    {
+      "id": "rfc6960",
+      "url": "https://www.rfc-editor.org/rfc/rfc6960.txt",
+      "sha256": "7e63ffa1ea2ce2737d9aaf895a63776e9105ddbdfc97b8ae4029e3e825b4cdea",
+      "bytes": 82037
+    },
+    {
+      "id": "rfc2986",
+      "url": "https://www.rfc-editor.org/rfc/rfc2986.txt",
+      "sha256": "9f93627442b9fa03b24336646ffdfb3f33ed8cfd575e6b984fddab5fe88d03c0",
+      "bytes": 27794
+    },
+    {
+      "id": "rfc9810",
+      "url": "https://www.rfc-editor.org/rfc/rfc9810.txt",
+      "sha256": "d868aef93912b9226cfa6896b31de5f4ee2947494b8d5dfc2afe5e3211b9f1db",
+      "bytes": 281395
+    },
+    {
+      "id": "rfc7797",
+      "url": "https://www.rfc-editor.org/rfc/rfc7797.txt",
+      "sha256": "5bbed0e2df28126e147f79dde99058fd1ca18977b7f9f0e5e75626d8efa31138",
+      "bytes": 23108
+    },
+    {
+      "id": "rfc7515",
+      "url": "https://www.rfc-editor.org/rfc/rfc7515.txt",
+      "sha256": "ecbf84674118e62526511c1237e1deaa86aada86d25b247623a2a7e04ae62e40",
+      "bytes": 131110
+    },
+    {
+      "id": "rfc7516",
+      "url": "https://www.rfc-editor.org/rfc/rfc7516.txt",
+      "sha256": "722cfcddc15f58e746891ba4b846853d3711153a774e4dd55ad6db100474a21f",
+      "bytes": 108322
+    },
+    {
+      "id": "rfc7518",
+      "url": "https://www.rfc-editor.org/rfc/rfc7518.txt",
+      "sha256": "9a9ae524b09ea700ad3f189bac115df95ba69af84b26ffdbe3cdfb8d2152b1fc",
+      "bytes": 155905
+    },
+    {
+      "id": "rfc7638",
+      "url": "https://www.rfc-editor.org/rfc/rfc7638.txt",
+      "sha256": "98b29ab9652070e6a5fec748d43e221bbedc66b6b22e05903fb5366c04ef3110",
+      "bytes": 27593
+    },
+    {
+      "id": "androidAttestation",
+      "url": "https://source.android.com/docs/security/features/keystore/attestation",
+      "sha256": "1927c69d4e84525f217a0a043d111cb1e72052832befb4ae4396f4c1ad5fc1ea",
+      "bytes": 249412
+    },
+    {
+      "id": "androidKeyTrust",
+      "url": "https://developer.android.com/privacy-and-security/security-key-attestation",
+      "sha256": "bdf2ed9b122a439a698fdf3fa35eb51ba7a5a77292a669e84e3647fddb9c3e35",
+      "bytes": 338002
+    },
+    {
+      "id": "androidVCIKeyProof",
+      "url": "https://developer.android.com/identity/digital-credentials/credential-issuer/keystore-attestation",
+      "sha256": "5731ce0638d38ad09bf36e89f3c15048a1c037a637a4eefa5904eb79069ce0ca",
+      "bytes": 308397
+    },
+    {
+      "id": "appleManagedAttestation",
+      "url": "https://support.apple.com/en-ca/guide/security/sec8a37b4cb2/web",
+      "sha256": "51e99defe7cc72638c6d2d4cc414441506612379a07fcf3f70a26a5d915479a2",
+      "bytes": 719896
+    },
+    {
+      "id": "appleAttestationValidation",
+      "url": "https://developer.apple.com/tutorials/data/documentation/devicemanagement/validating-a-managed-device-attestation-attestation.json",
+      "sha256": "71a92ae25ef6ee2f30382c803c115b13aad2cd1565c9efa2b2d396cd98b65714",
+      "bytes": 13557
+    },
+    {
+      "id": "appleACMEPayload",
+      "url": "https://developer.apple.com/tutorials/data/documentation/devicemanagement/acmecertificate.json",
+      "sha256": "b388d81cdf144c35426a824723b2680ece296c9d6ae3715efdb87bba92eac983",
+      "bytes": 32760
+    },
+    {
+      "id": "acmeDeviceAttestation",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-acme-device-attest-10.txt",
+      "sha256": "62bf7f82411ef5154e8eefc82757a5aa8c8e0179299a0ce36ed85f5a3565617b",
+      "bytes": 48564
+    },
+    {
+      "id": "microsoftTBS",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/tbs/nf-tbs-tbsip_submit_command",
+      "sha256": "03dab992bbec8232f832f47f1eedba911d82c460c92e8d9a4fe10eb2790b48a1",
+      "bytes": 55598
+    },
+    {
+      "id": "tpmCertify",
+      "url": "https://tpm2-tools.readthedocs.io/en/latest/man/tpm2_certify.1/",
+      "sha256": "02782b98c49a56cc28f13c30f20a829907365f2a922e08f207cf789e3f4bffd8",
+      "bytes": 33614
+    },
+    {
+      "id": "multipazPhotoID",
+      "url": "https://raw.githubusercontent.com/openwallet-foundation/multipaz/0.100.0/multipaz-doctypes/src/commonMain/kotlin/org/multipaz/documenttype/knowntypes/PhotoID.kt",
+      "sha256": "c6f6d765ead113d20a51a487585a5f664f075556a545b80a47a795e2cef843ba",
+      "bytes": 33731
+    },
+    {
+      "id": "eudiARF14",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/v1.4.0/docs/arf.md",
+      "sha256": "d89270032adbe47067c4ea53283227a00dfd9a0d2f59c9928d0eceb21b553dcc",
+      "bytes": 178776
+    },
+    {
+      "id": "eudiPID14",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/v1.4.0/docs/annexes/annex-3/annex-3.01-pid-rulebook.md",
+      "sha256": "c53d998888b4c1e15fa5988f19b86bfb9bcaac52c779af0a7984c9943be63a8f",
+      "bytes": 27892
+    },
+    {
+      "id": "eudiRequirements14",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/v1.4.0/docs/annexes/annex-2/annex-2-high-level-requirements.md",
+      "sha256": "224c8e39e0bd0ed848f3df9dfd669a4b49c7cdf71745162a0c9ac7d787f26e46",
+      "bytes": 155064
+    },
+    {
+      "id": "appleIdentityServices",
+      "url": "https://developer.apple.com/documentation/identitydocumentservices.md",
+      "sha256": "f0652c3f21d7baae86891e2a835e92bf2777406296d113cd9182224452a05021",
+      "bytes": 4572
+    },
+    {
+      "id": "appleIdentityProvider",
+      "url": "https://developer.apple.com/documentation/identitydocumentservices/implenting-as-an-identity-document-provider.md",
+      "sha256": "10fa201bcd4a12202eeb3ac3df9e3d4ae67c29ac10943d848bb4e76582bf95a8",
+      "bytes": 11523
+    },
+    {
+      "id": "appleIdentityWeb",
+      "url": "https://developer.apple.com/documentation/identitydocumentservices/requesting-a-mobile-document-on-the-web.md",
+      "sha256": "fa994a21c1bd99709d275871c4e4f342eb4cea3c63f15c2d94234190abb3d3e5",
+      "bytes": 9122
+    },
+    {
+      "id": "appleIdentityEntitlement",
+      "url": "https://developer.apple.com/tutorials/data/documentation/bundleresources/entitlements/com.apple.developer.identity-document-services.document-provider.mobile-document-types.json",
+      "sha256": "98229cc3e6db07adf8a1e0476a490bd2331aa3eff1b2fbaf9b86c13686ca4b0b",
+      "bytes": 7183
+    },
+    {
+      "id": "appleIdentityRegistration",
+      "url": "https://developer.apple.com/documentation/identitydocumentservices/mobiledocumentregistration.md",
+      "sha256": "a35fcc84c4de74b6fc840c8c0638bddceb8a47739e633909d8e817157d890c58",
+      "bytes": 2943
+    },
+    {
+      "id": "appleIdentityContext",
+      "url": "https://developer.apple.com/documentation/identitydocumentservicesui/iso18013mobiledocumentrequestcontext.md",
+      "sha256": "555903e06fd67142cbbeff12fe956207485364de9027a8e82d39afdd25c1868b",
+      "bytes": 2480
+    },
+    {
+      "id": "appleIdentityDocumentRequest",
+      "url": "https://developer.apple.com/documentation/identitydocumentservices/iso18013mobiledocumentrequest/documentrequest.md",
+      "sha256": "0a730377fbdfc4b7cc08663c4fe4fc9e18aa41eb6ccb68f45bede667dbdd88d7",
+      "bytes": 2384
+    },
+    {
+      "id": "appleIdentityElementInfo",
+      "url": "https://developer.apple.com/documentation/identitydocumentservices/iso18013mobiledocumentrequest/elementinfo.md",
+      "sha256": "1c7c099af614394a1899d71fb86cbe5ada3af3024c2146e45ad6e9462e854c8e",
+      "bytes": 1507
+    },
+    {
+      "id": "appleIdentityRequestType",
+      "url": "https://developer.apple.com/documentation/identitydocumentservices/identitydocumentwebpresentmentrawrequest/requesttype-swift.enum.md",
+      "sha256": "68d301a6d8eaa87c5d2957bb6e86f881bd5bc254216d3ef435e240eb724c6702",
+      "bytes": 1486
+    },
+    {
+      "id": "appleDigitalID",
+      "url": "https://developer.apple.com/documentation/identitydocumentservices/verifying-a-mobile-document-from-a-passport.md",
+      "sha256": "188ba4c133a9d3bbf5013a6061e728a4623a41121a8cbf0b337972e4b1f1ff2c",
+      "bytes": 14235
+    },
+    {
+      "id": "passSignProposal",
+      "url": "https://raw.githubusercontent.com/codedpills/pass-sign/4ae5a3d077040632b0885947b63329ba99413fb3/docs/research/deliverables/doc-5-protocol-proposal.md",
+      "sha256": "51349416841a710b4658ae7e4359b69bab6a3cf6219fc18c1052ff935b910801",
+      "bytes": 21047
+    },
+    {
+      "id": "passSignRFC",
+      "url": "https://raw.githubusercontent.com/codedpills/pass-sign/4ae5a3d077040632b0885947b63329ba99413fb3/docs/research/deliverables/doc-6-rfc-draft-v0.1.md",
+      "sha256": "6a257416597a20eb91d4a246ef9a7f9f83c440cdc100233d9c311c9f38a1154d",
+      "bytes": 33025
+    },
+    {
+      "id": "rawSigningV4",
+      "url": "https://yubicolabs.github.io/webauthn-sign-extension/4/",
+      "sha256": "29359265d3b0f3dbc738482d4a33865beeb5c698e38651d2d12f14b7b5e6d86c",
+      "bytes": 2834409
+    },
+    {
+      "id": "rawSigningV5",
+      "url": "https://raw.githubusercontent.com/yubicolabs/webauthn-sign-extension/812b911a2a5d737d2ebdb91ead8bfd78f8277710/index.bs",
+      "sha256": "b4f2e8972d6e8d6ef786eba852eba2c834baf665293c1f74cf0d46c70b869f43",
+      "bytes": 738213
+    },
+    {
+      "id": "webauthnPR2078",
+      "url": "https://raw.githubusercontent.com/w3c/webauthn/28e878d6b31130a3621c0eb793529a65bf3dc162/index.bs",
+      "sha256": "afa96f650bfaafa309cb62a5d1a01d39fc6b00e026b8bd66def4509f431c5fc3",
+      "bytes": 696191
+    },
+    {
+      "id": "webKitRemoteKeys",
+      "url": "https://raw.githubusercontent.com/WebKit/explainers/6ce73fa4f91bbe7fb1990b6c1e7276c8dbd12609/remote-cryptokeys/README.md",
+      "sha256": "f2468ad1eab92dc7d1824beae50d4733e02a47779a352e2a7d3985a9774c9074",
+      "bytes": 10384
+    },
+    {
+      "id": "arkgP256",
+      "url": "https://raw.githubusercontent.com/Yubico/arkg-rfc/8ddd04d27ef7ea479d372c7b8bdfecfdad0d1e1c/draft-bradleylundberg-cfrg-arkg.md",
+      "sha256": "bc793af281e3f01d4c9409c9a1945d36596d6404777c1f90340e88a815afdc86",
+      "bytes": 82953
+    },
+    {
+      "id": "yubicoARKGPreview",
+      "url": "https://raw.githubusercontent.com/YubicoLabs/build-with-us/b6fd13109a62936072d8ef84102262560507fb61/quickstart/ios/ARKGPreviewSign/ARKGQuickstart/ARKG/ARKG.swift",
+      "sha256": "638ebf28b760faecfd4a56efde5c23b39842db04a18ce577a111049fcbe027ac",
+      "bytes": 8627
+    },
+    {
+      "id": "nobleCurves24",
+      "url": "https://raw.githubusercontent.com/paulmillr/noble-curves/656c4364dffa44c64aa0c49914b8000b278b67a9/README.md",
+      "sha256": "5d7a7d4811d1e09a6fc7c1b7e3716453875fc214d2c132a8ee5fcca1fb928a1d",
+      "bytes": 38129
+    },
+    {
+      "id": "webauthn4",
+      "url": "https://www.w3.org/TR/2026/WD-webauthn-4-20260915/",
+      "sha256": "c04cf126320bad02a0ca4c60c890cd944853e5c3ec326e96ace87bc029aff061",
+      "bytes": 2801031
+    },
+    {
+      "id": "eudiFunctions3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/main/02-eudi-wallet-functionalities.md",
+      "sha256": "9ef8061b703b2556c1f39ea3903593055fc813ac2887ef6772d996c611c57ef8",
+      "bytes": 24687
+    },
+    {
+      "id": "eudiRoles3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/main/03-roles-within-the-eudi-wallet-ecosystem.md",
+      "sha256": "98fdcebc9b8659ee5a77a0ca14888138d6f311b6387bc825afebcd391cb968e5",
+      "bytes": 39553
+    },
+    {
+      "id": "eudiArchitecture3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/main/04-high-level-architecture.md",
+      "sha256": "00413039fad130ac66a56b90e809c157a22b38c6ff8ed4a3939ed1e86fd1ddd9",
+      "bytes": 75627
+    },
+    {
+      "id": "eudiData3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/main/05-data-model-and-data-exchange-protocols.md",
+      "sha256": "a2391c64ce6dafdbefcc32d505e2ad0e5e43b20563577e50bea9165ca3c79a7b",
+      "bytes": 36922
+    },
+    {
+      "id": "eudiTrust3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/main/06-trust-model.md",
+      "sha256": "668d65ccb9a4041e941ae75809d34825d6e9d5e0b00c66c5c50c04df000a5091",
+      "bytes": 178584
+    },
+    {
+      "id": "eudiConformance3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/main/07-wallet-solution-certification-and-risk-management.md",
+      "sha256": "7a433d102823a09e66f9662e868885d678ea6a24ab362cbcd82bd5190d9e5679",
+      "bytes": 34136
+    },
+    {
+      "id": "eudiRequirements3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/annexes/annex-2/annex-2.02-high-level-requirements-by-topic.md",
+      "sha256": "ed18af764d028e9b4675d93e291602fca899eec85c54f36b16b60583028244f6",
+      "bytes": 395792
+    },
+    {
+      "id": "eudiPIDReference3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/annexes/annex-3/annex-3.01-pid-rulebook.md",
+      "sha256": "6b332254bd18bb51d48eb23f9a38c5d4a754a9beada9497a0c2be3ba43356042",
+      "bytes": 400
+    },
+    {
+      "id": "eudiWUAReference3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/technical-specifications/ts3-wallet-unit-attestation.md",
+      "sha256": "49557d012e8331ff22385b328b1579c43aa4176515fb0283d7f4111f075558c5",
+      "bytes": 433
+    },
+    {
+      "id": "eudiPeerReference3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/technical-specifications/ts9-wallet-to-wallet-interactions.md",
+      "sha256": "ae66b72d000d30d8e9bf4b17f25a155ebf12fadab9a9042f14e9632c80c2d86e",
+      "bytes": 347
+    },
+    {
+      "id": "eudiLicense3",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/LICENCE",
+      "sha256": "642eba3b157b1d3cf1e8b175830e29f1e7a8b165826eb1fc062d4638f2409a47",
+      "bytes": 249
+    },
+    {
+      "id": "oidf-VCIIssuerTestPlan",
+      "url": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vci10issuer/VCIIssuerTestPlan.java",
+      "sha256": "70efae4a1d8c0eb9f5249a1c15b61cc288ce86f9f8975043c7848c0926e80a5c",
+      "bytes": 2371
+    },
+    {
+      "id": "oidf-VCIIssuerTestPlanHaip",
+      "url": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vci10issuer/VCIIssuerTestPlanHaip.java",
+      "sha256": "e5848b8a5cf5936799dbe20d3730ec9637658bb0188f3ccc651a7cfa80a6574a",
+      "bytes": 12051
+    },
+    {
+      "id": "oidf-VCIWalletTestPlan",
+      "url": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vci10wallet/VCIWalletTestPlan.java",
+      "sha256": "bfc3e8a57f98969b2085a4c6ba4cc453f94d564202d0c6a6839244f39dcf7cff",
+      "bytes": 1362
+    },
+    {
+      "id": "oidf-VCIWalletTestPlanHaip",
+      "url": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vci10wallet/VCIWalletTestPlanHaip.java",
+      "sha256": "604f082c315d894c8d29fab14f1193f21ca293284caa53931293bfe2e903eb26",
+      "bytes": 10940
+    },
+    {
+      "id": "oidf-VP1FinalVerifierTestPlan",
+      "url": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vp1finalverifier/VP1FinalVerifierTestPlan.java",
+      "sha256": "890df04d36098926ef9b1bfc38595e846471cb3960f23099189dfee3107b9bbf",
+      "bytes": 1483
+    },
+    {
+      "id": "oidf-VP1FinalVerifierTestPlanHaip",
+      "url": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vp1finalverifier/VP1FinalVerifierTestPlanHaip.java",
+      "sha256": "804f2367c6b5789e034e6ee3bf7089140dec0efd149178141b73bf96bd0f2c11",
+      "bytes": 1585
+    },
+    {
+      "id": "oidf-VP1FinalWalletTestPlan",
+      "url": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vp1finalwallet/VP1FinalWalletTestPlan.java",
+      "sha256": "1ace4d4e0d7dc6a82fa112c03f5833217b8afc3b25b67656f9c9c7fb8ec007de",
+      "bytes": 4620
+    },
+    {
+      "id": "oidf-VP1FinalWalletTestPlanHaip",
+      "url": "https://raw.githubusercontent.com/openid-certification/conformance-suite/949724883989f9f067ea728c7c13cacc18bbd81f/src/main/java/net/openid/conformance/vp1finalwallet/VP1FinalWalletTestPlanHaip.java",
+      "sha256": "0c64721f03c653c976ec14784a0e09ae0c333ddc8b24dd96d84c61eefc29e998",
+      "bytes": 4317
+    },
+    {
+      "id": "postgres18",
+      "url": "https://www.postgresql.org/docs/18/warm-standby.html",
+      "sha256": "2a98c532cb7ba62a7a40b1fe2735db807f7dcf50a99e99302c8cbc8d0e3ae7e7",
+      "bytes": 62779
+    },
+    {
+      "id": "jazzer4",
+      "url": "https://raw.githubusercontent.com/CodeIntelligenceTesting/jazzer.js/v4.0.0/docs/fuzz-targets.md",
+      "sha256": "ab098487fea849da51711bc41da77c0331c5177da67efe488b612c33e4b407d5",
+      "bytes": 14503
+    },
+    {
+      "id": "fcafIndex",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment/2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1/docs/fcaf/index.md",
+      "sha256": "e3437b518ada01b6a9d848fa5dcf7b58c5e4c0dee51bbdf32b157ac487d71355",
+      "bytes": 12483
+    },
+    {
+      "id": "fcafICS",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment/2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1/docs/fcaf/ics.md",
+      "sha256": "a77bccbb79d53f3f2f4aca119f79530cbf83dfc84f24e3d4e2364191881e2f1a",
+      "bytes": 6669
+    },
+    {
+      "id": "fcafRP",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment/2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1/docs/fcaf/suts/wallet_solution/relying_party/test-cases.md",
+      "sha256": "636768ffce6baa563a9bc5c877b81b8824816e2110d3776cba1723d592363dae",
+      "bytes": 170
+    },
+    {
+      "id": "fcafProvider",
+      "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-functional-conformance-assessment/2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1/docs/fcaf/suts/wallet_solution/attestation_provider/test-cases.md",
+      "sha256": "85049f8769ef979499d0203c31f3c4f0be59903fda4ffeeb81a9cc1684a176df",
+      "bytes": 104
+    },
+    {
+      "id": "openssl365",
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-3.6.5/openssl-3.6.5.tar.gz",
+      "sha256": "a2157c2830efdec3788939b00c9b0638306d3f0bbb76dc4832ee503bb397df98",
+      "bytes": 55078161
+    },
+    {
+      "id": "cscDataModel",
+      "url": "https://cloudsignatureconsortium.org/wp-content/uploads/2025/10/csc-dm.pdf",
+      "sha256": "15d19fbe2d6078ce5f3247d52a3c43d28f801115091940f9cebe860858e956bb",
+      "bytes": 623417,
+      "retrievedAt": "2026-10-05T22:01:10.771Z"
+    },
+    {
+      "id": "mtcDeploymentUseCases",
+      "url": "https://www.ietf.org/archive/id/draft-gray-plants-mtc-deploy-use-cases-01.txt",
+      "sha256": "aafbe7ba8fdac9556982712bc0839e6c62d0dbd07710451868f8af7bdff9d4a6",
+      "bytes": 60372,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "cades",
+      "url": "https://www.etsi.org/deliver/etsi_EN/319100_319199/31912201/01.03.01_60/en_31912201v010301p.pdf",
+      "sha256": "e99e76e519d9bd8e1410775bccedb1a588021e5e7c705c9fcc1f91c6a6227c21",
+      "bytes": 557208,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "pades",
+      "url": "https://www.etsi.org/deliver/etsi_EN/319100_319199/31914201/01.02.01_60/en_31914201v010201p.pdf",
+      "sha256": "93e01407673ae22bdd0fadfc3a85df76411f1cfb1a3b53db47326a9d9658efb3",
+      "bytes": 215803,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "jades",
+      "url": "https://www.etsi.org/deliver/etsi_TS/119100_119199/11918201/01.02.01_60/ts_11918201v010201p.pdf",
+      "sha256": "6af9bc5621c878b1ee7dfb64e2ba617368b351ddb91ece755879597c42368f9f",
+      "bytes": 394938,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "adesValidation",
+      "url": "https://www.etsi.org/deliver/etsi_EN/319100_319199/31910201/01.04.01_60/en_31910201v010401p.pdf",
+      "sha256": "11168f0059997cb58915c83ec1347fc66fdbabcd827e5ca7c23ecaf3cf457b3d",
+      "bytes": 1695899,
+      "retrievedAt": "2026-10-05T22:08:27.915Z"
+    },
+    {
+      "id": "arkgDraft",
+      "url": "https://www.ietf.org/archive/id/draft-bradleylundberg-cfrg-arkg-11.txt",
+      "sha256": "c76982b03be286ec82e493860610f761ede198cbe6c97805d47fee05f7210b5d",
+      "bytes": 109743,
+      "retrievedAt": "2026-10-06T01:50:24.434Z"
+    },
+    {
+      "id": "coseSplitSigning",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-cose-split-signing-algs-01.txt",
+      "sha256": "b09ffd2ad33dad912f01bf916722d2b7eb439cf5c0f5b4591bb81fcef93a95ec",
+      "bytes": 54472,
+      "retrievedAt": "2026-10-06T01:50:24.497Z"
+    },
+    {
+      "id": "rfc9052",
+      "url": "https://www.rfc-editor.org/rfc/rfc9052.txt",
+      "sha256": "01eecd7f646537600e7aad665b1fa581ce6ec33dae4ef4add0997aaf38cd0a45",
+      "bytes": 149835,
+      "retrievedAt": "2026-10-06T01:56:07.402Z"
+    },
+    {
+      "id": "mtcEditor",
+      "url": "https://raw.githubusercontent.com/ietf-plants-wg/merkle-tree-certs/44b1c0b8c54669a35e8d9e96f0e55bb3cab67757/draft-ietf-plants-merkle-tree-certs.md",
+      "sha256": "b778cb1f9c325b64bba9f177c78f5edc6b790b1695dd5cce27941fe26a5569cb",
+      "bytes": 192184,
+      "retrievedAt": "2026-10-06T02:05:12.059Z"
+    },
+    {
+      "id": "oid4vp11",
+      "url": "https://raw.githubusercontent.com/openid/OpenID4VP/003e1b39e3244a2f293905dd503e7fd19f9434df/1.1/openid-4-verifiable-presentations-1_1.md",
+      "sha256": "3c22a6eea57004e78d00cbb65e1f50ded83680725c94aafcf7a64f4e20fa29ad",
+      "bytes": 239948,
+      "retrievedAt": "2026-10-06T02:08:50.908Z"
+    },
+    {
+      "id": "oid4vci11",
+      "url": "https://raw.githubusercontent.com/openid/OpenID4VCI/ebd8b70ae54ab97eaabf23a6648378a0a0729572/1.1/openid-4-verifiable-credential-issuance-1_1.md",
+      "sha256": "0718963d1bd74fb6de92505164483504d21ae3d7a74f5e8a0ad73a6864de7866",
+      "bytes": 261206,
+      "retrievedAt": "2026-10-06T02:08:50.931Z"
+    },
+    {
+      "id": "haip11",
+      "url": "https://raw.githubusercontent.com/openid/OpenID4VC-HAIP/aac5372e4aa735667cd066ce4975904b27d120b4/1.1/openid4vc-high-assurance-interoperability-profile-1_1.md",
+      "sha256": "aca91e4fb2b8e5f224fcd6e967be9dd31d5cebf3c0e5c67bcc81cad72a3f5b47",
+      "bytes": 55070,
+      "retrievedAt": "2026-10-06T02:08:50.950Z"
+    },
+    {
+      "id": "joseHPKE",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-jose-hpke-encrypt-22.txt",
+      "sha256": "6e9c0df346df528d3c5dad1dea1a221716bd614dd2ec2357b3f531664f00b8cc",
+      "bytes": 97447,
+      "retrievedAt": "2026-10-06T02:08:51.106Z"
+    },
+    {
+      "id": "oauthFirstParty",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-oauth-first-party-apps-04.txt",
+      "sha256": "29dbb506f935217584974956056f377a3f7aac67d77dc20a29664dd3568657e4",
+      "bytes": 91617,
+      "retrievedAt": "2026-10-06T02:08:51.190Z"
+    }
+  ]
+}

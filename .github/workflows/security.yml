@@ -1,0 +1,115 @@
+name: Security assurance
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 4 * * 1'
+permissions:
+  contents: read
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  dependencies:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=moderate
+      - run: npm sbom --sbom-format cyclonedx > source-sbom.cdx.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: source-sbom
+          path: source-sbom.cdx.json
+  sdk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - run: npm ci
+      - run: npm run sdk:build
+      - run: npm run sdk:test
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: sdk
+          path: |
+            reference/dist/*.tgz
+            reference/dist/sdk/sbom.cdx.json
+  postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722
+        env:
+          POSTGRES_USER: certconcord_test
+          POSTGRES_PASSWORD: synthetic-test-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 12
+    env:
+      CERTCONCORD_PG_HOST: 127.0.0.1
+      CERTCONCORD_PG_USER: certconcord_test
+      CERTCONCORD_PG_PASSWORD: synthetic-test-only
+      PGPASSWORD: synthetic-test-only
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - run: npm ci
+      - run: psql -h 127.0.0.1 -U certconcord_test -d postgres -v ON_ERROR_STOP=1 -f reference/storage/schema.sql
+      - run: npm run test:postgres
+  fuzz:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [parsers, containers, documents]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - run: npm ci
+      - run: npm run fuzz:seed
+      - run: npm run fuzz:replay
+      - name: Coverage guided campaign
+        env:
+          FUZZ_TARGET: ${{ matrix.target }}
+          FUZZ_SECONDS: ${{ github.event_name == 'schedule' && '600' || '60' }}
+        run: node fuzz/run.mjs "$FUZZ_TARGET" "$FUZZ_SECONDS"
+        working-directory: reference
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: fuzz-${{ matrix.target }}
+          path: |
+            reference/.runtime/fuzz-corpus
+            reference/.runtime/fuzz-artifacts
+          include-hidden-files: true
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294
+        with:
+          fail-on-severity: moderate

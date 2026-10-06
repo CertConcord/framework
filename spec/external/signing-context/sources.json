@@ -1,0 +1,23 @@
+{
+  "reviewDate": "2026-10-05",
+  "sources": [
+    {
+      "id": "rawSigningV5",
+      "url": "https://raw.githubusercontent.com/yubicolabs/webauthn-sign-extension/812b911a2a5d737d2ebdb91ead8bfd78f8277710/index.bs",
+      "sha256": "b4f2e8972d6e8d6ef786eba852eba2c834baf665293c1f74cf0d46c70b869f43",
+      "bytes": 738213
+    },
+    {
+      "id": "webauthnPR2078",
+      "url": "https://raw.githubusercontent.com/w3c/webauthn/28e878d6b31130a3621c0eb793529a65bf3dc162/index.bs",
+      "sha256": "afa96f650bfaafa309cb62a5d1a01d39fc6b00e026b8bd66def4509f431c5fc3",
+      "bytes": 696191
+    },
+    {
+      "id": "webKitRemoteKeys",
+      "url": "https://raw.githubusercontent.com/WebKit/explainers/6ce73fa4f91bbe7fb1990b6c1e7276c8dbd12609/remote-cryptokeys/README.md",
+      "sha256": "f2468ad1eab92dc7d1824beae50d4733e02a47779a352e2a7d3985a9774c9074",
+      "bytes": 10384
+    }
+  ]
+}

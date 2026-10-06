@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "components": [
+    {
+      "name": "mtc-document-validation",
+      "repository": "https://github.com/CertConcord/mtc-document-validation",
+      "commit": "4634abae861dfc4c08bc3424867cf8392628f87e",
+      "edition": "draft-01",
+      "role": "selected-draft",
+      "files": [
+        {
+          "source": "draft.md",
+          "path": "spec/external/mtc-document-validation/draft.md",
+          "sha256": "4df426bd52076d83e08ff8f43021a15b41993ee9a9e047bd1589a048cbf4a5f4"
+        },
+        {
+          "source": "sources.json",
+          "path": "spec/external/mtc-document-validation/sources.json",
+          "sha256": "83de90f3e932ddc5a8cd08eda8629672f2ea304c6796b291539284f31700745d"
+        },
+        {
+          "source": "cases.json",
+          "path": "spec/external/mtc-document-validation/cases.json",
+          "sha256": "578d71806fedc7f089a4210e0f4b0ebcbb6ba369d6ed8653a8db77fba970e733"
+        },
+        {
+          "source": "NOTICE",
+          "path": "spec/external/mtc-document-validation/NOTICE",
+          "sha256": "0c7078242f8212c49d7db398d87a09a831ba68bc7143cd07de2b822a684d3678"
+        },
+        {
+          "source": "upstream-amendment.md",
+          "path": "spec/external/mtc-document-validation/upstream-amendment.md",
+          "sha256": "c8b066d8eb5e4031df53bbf2c52f9935e2ac83fbaa5fd7321b853ea2797e976d"
+        },
+        {
+          "source": "reference/lifetimes.mjs",
+          "path": "reference/vendor/mtc-document-validation/lifetimes.mjs",
+          "sha256": "aa65dc8ac151623810d4c3105c9e5480faed675bfafe49bebb7fb310db670260"
+        }
+      ]
+    },
+    {
+      "name": "mdoc-signing",
+      "repository": "https://github.com/CertConcord/mdoc-signing",
+      "commit": "1ccdf65db01d63fd5e47f1d680d01db90fe969ab",
+      "edition": "draft-01",
+      "role": "selected-draft",
+      "files": [
+        {
+          "source": "draft.md",
+          "path": "spec/external/mdoc-signing/draft.md",
+          "sha256": "74a2da41d7e0c64b05444de52f2e01630d1d1594cb2c1ddf3ea744253ff847c6"
+        },
+        {
+          "source": "sources.json",
+          "path": "spec/external/mdoc-signing/sources.json",
+          "sha256": "f78d1b05a7aba4b49a00c1536a8bf0fdd89bae389efa4cd812ea19785a51680c"
+        },
+        {
+          "source": "cases.json",
+          "path": "spec/external/mdoc-signing/cases.json",
+          "sha256": "92cae9f792fda069ac1590d538ec2c42b212193ffe246674540b4cb5d026174b"
+        },
+        {
+          "source": "NOTICE",
+          "path": "spec/external/mdoc-signing/NOTICE",
+          "sha256": "997db8d0f79550d2bef3b845ff6669669b031252d5e2213a3c9486d69f2e4e64"
+        },
+        {
+          "source": "reference/key-relation.mjs",
+          "path": "reference/vendor/mdoc-signing/key-relation.mjs",
+          "sha256": "70048d9dbfc9ed6adeeb24f7994155cef8010414a44184179a944709172e7f5f"
+        }
+      ]
+    },
+    {
+      "name": "tlog-cosignature-ml-dsa",
+      "repository": "https://github.com/CertConcord/tlog-cosignature-ml-dsa",
+      "commit": "26f4e60b100f25f1a4b3591da305a46897778bbd",
+      "edition": "draft-01",
+      "role": "selected-draft",
+      "files": [
+        {
+          "source": "draft.md",
+          "path": "spec/external/tlog-cosignature-ml-dsa/draft.md",
+          "sha256": "9305062ea523b7c779880b6eefd4f29e7e8737a4c5e8e9915673321c2eeec7bd"
+        },
+        {
+          "source": "sources.json",
+          "path": "spec/external/tlog-cosignature-ml-dsa/sources.json",
+          "sha256": "5071a097284a038757e20ce781897ba15347e149bacd7df6206018073ee2892f"
+        },
+        {
+          "source": "cases.json",
+          "path": "spec/external/tlog-cosignature-ml-dsa/cases.json",
+          "sha256": "ff610056ce05eaf27aaa097ab1bd8d053c3422a0d3a4235ac229ef64877d4eda"
+        },
+        {
+          "source": "NOTICE",
+          "path": "spec/external/tlog-cosignature-ml-dsa/NOTICE",
+          "sha256": "f723a6f06febe7064fade97c827dcd2de35b30f30d348958e06d3084fcef8a12"
+        },
+        {
+          "source": "reference/extension.mjs",
+          "path": "reference/vendor/tlog-cosignature-ml-dsa/extension.mjs",
+          "sha256": "222b703730dea6e2dca06333cd4724d75cd9ed27bea49b5f725785c230b1abbc"
+        },
+        {
+          "source": "vectors/prefix.json",
+          "path": "spec/external/tlog-cosignature-ml-dsa/vectors/prefix.json",
+          "sha256": "0b54e1010a0a8d1ef47e92140111f97c94c5f6829003688704dee2d2847547bb"
+        }
+      ]
+    },
+    {
+      "name": "signing-context",
+      "repository": "https://github.com/CertConcord/signing-context",
+      "commit": "a1e233542e927a878ceb8eacf78f4d443cb2f19a",
+      "edition": "draft-01",
+      "role": "proposed-amendment",
+      "files": [
+        {
+          "source": "draft.md",
+          "path": "spec/external/signing-context/draft.md",
+          "sha256": "8014601a33623b320280021930fd43381ecc6b31ef8ba0df2fc8bfc7c6afdbfb"
+        },
+        {
+          "source": "sources.json",
+          "path": "spec/external/signing-context/sources.json",
+          "sha256": "8cc142d25badb9fe8d4925fcda265b477615a333dfb5a10504f5e0857e15d5cb"
+        },
+        {
+          "source": "cases.json",
+          "path": "spec/external/signing-context/cases.json",
+          "sha256": "338adb2450c04696b7de7166a96bdf12a747d24d5d97473de643c405102c8ee6"
+        },
+        {
+          "source": "NOTICE",
+          "path": "spec/external/signing-context/NOTICE",
+          "sha256": "3996035a53efab280429f5e9899edc94e00156c85c11f70a8928968e9c7febb2"
+        }
+      ]
+    },
+    {
+      "name": "passsign-evidence",
+      "repository": "https://github.com/CertConcord/passsign-evidence",
+      "commit": "38c8dbc9ec95dcce4b55e209cd6b9dee9a00265a",
+      "edition": "draft-01",
+      "role": "proposed-amendment",
+      "files": [
+        {
+          "source": "draft.md",
+          "path": "spec/external/passsign-evidence/draft.md",
+          "sha256": "24a055453efd3d4cc5f38427a16a6afc54f8f8c8e16f4b12a6768ad936f1f1d3"
+        },
+        {
+          "source": "sources.json",
+          "path": "spec/external/passsign-evidence/sources.json",
+          "sha256": "49b5b6edc9547a174f80930564cd8af536864776c0e96e03fee3ac9e573468b1"
+        },
+        {
+          "source": "cases.json",
+          "path": "spec/external/passsign-evidence/cases.json",
+          "sha256": "b8d60de749c67d9e4367ddc89c560f7c72a62d64efecb7cc176e6f0f9d01a34c"
+        },
+        {
+          "source": "NOTICE",
+          "path": "spec/external/passsign-evidence/NOTICE",
+          "sha256": "ae7d5fc6be75b46ef7486bf59aeb75bf96d07a5a05e65999e3edd856117a6e02"
+        }
+      ]
+    }
+  ]
+}

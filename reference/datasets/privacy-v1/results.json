@@ -1,0 +1,231 @@
+{
+  "config": {
+    "schemaVersion": 1,
+    "synthetic": true,
+    "seed": "certconcord-mtc-synthetic-privacy-v1",
+    "subjects": 64,
+    "verifiers": 4,
+    "visits": 3,
+    "scenarios": [
+      "REUSED_KEY",
+      "PAIRWISE_KEY_STABLE_CREDENTIAL",
+      "PAIRWISE_CREDENTIAL",
+      "ONE_USE_BATCHED"
+    ],
+    "license": "CC-BY-4.0"
+  },
+  "reports": [
+    {
+      "scenario": "REUSED_KEY",
+      "presentations": 768,
+      "statusNetworkRequests": 768,
+      "assumption": "All verifiers collude; equality attacker; no IP, timing, browser fingerprint or disclosed-name features",
+      "metrics": {
+        "deviceKey": {
+          "tp": 3456,
+          "fp": 0,
+          "fn": 0,
+          "tn": 217728,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0
+        },
+        "credentialID": {
+          "tp": 3456,
+          "fp": 0,
+          "fn": 0,
+          "tn": 217728,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0
+        },
+        "statusIndex": {
+          "tp": 3456,
+          "fp": 0,
+          "fn": 0,
+          "tn": 217728,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0
+        },
+        "statusNetworkURL": {
+          "tp": 3456,
+          "fp": 0,
+          "fn": 0,
+          "tn": 217728,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0
+        },
+        "issuerAndType": {
+          "tp": 3456,
+          "fp": 51840,
+          "fn": 0,
+          "tn": 165888,
+          "precision": 0.0625,
+          "recall": 1,
+          "falsePositiveRate": 0.23809523809523808
+        }
+      }
+    },
+    {
+      "scenario": "PAIRWISE_KEY_STABLE_CREDENTIAL",
+      "presentations": 768,
+      "statusNetworkRequests": 768,
+      "assumption": "All verifiers collude; equality attacker; no IP, timing, browser fingerprint or disclosed-name features",
+      "metrics": {
+        "deviceKey": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3456,
+          "tn": 217728,
+          "precision": null,
+          "recall": 0,
+          "falsePositiveRate": 0
+        },
+        "credentialID": {
+          "tp": 3456,
+          "fp": 0,
+          "fn": 0,
+          "tn": 217728,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0
+        },
+        "statusIndex": {
+          "tp": 3456,
+          "fp": 0,
+          "fn": 0,
+          "tn": 217728,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0
+        },
+        "statusNetworkURL": {
+          "tp": 3456,
+          "fp": 0,
+          "fn": 0,
+          "tn": 217728,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0
+        },
+        "issuerAndType": {
+          "tp": 3456,
+          "fp": 51840,
+          "fn": 0,
+          "tn": 165888,
+          "precision": 0.0625,
+          "recall": 1,
+          "falsePositiveRate": 0.23809523809523808
+        }
+      }
+    },
+    {
+      "scenario": "PAIRWISE_CREDENTIAL",
+      "presentations": 768,
+      "statusNetworkRequests": 768,
+      "assumption": "All verifiers collude; equality attacker; no IP, timing, browser fingerprint or disclosed-name features",
+      "metrics": {
+        "deviceKey": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3456,
+          "tn": 217728,
+          "precision": null,
+          "recall": 0,
+          "falsePositiveRate": 0
+        },
+        "credentialID": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3456,
+          "tn": 217728,
+          "precision": null,
+          "recall": 0,
+          "falsePositiveRate": 0
+        },
+        "statusIndex": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3456,
+          "tn": 217728,
+          "precision": null,
+          "recall": 0,
+          "falsePositiveRate": 0
+        },
+        "statusNetworkURL": {
+          "tp": 3456,
+          "fp": 0,
+          "fn": 0,
+          "tn": 217728,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0
+        },
+        "issuerAndType": {
+          "tp": 3456,
+          "fp": 51840,
+          "fn": 0,
+          "tn": 165888,
+          "precision": 0.0625,
+          "recall": 1,
+          "falsePositiveRate": 0.23809523809523808
+        }
+      }
+    },
+    {
+      "scenario": "ONE_USE_BATCHED",
+      "presentations": 768,
+      "statusNetworkRequests": 48,
+      "assumption": "All verifiers collude; equality attacker; no IP, timing, browser fingerprint or disclosed-name features",
+      "metrics": {
+        "deviceKey": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3456,
+          "tn": 217728,
+          "precision": null,
+          "recall": 0,
+          "falsePositiveRate": 0
+        },
+        "credentialID": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3456,
+          "tn": 217728,
+          "precision": null,
+          "recall": 0,
+          "falsePositiveRate": 0
+        },
+        "statusIndex": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3456,
+          "tn": 217728,
+          "precision": null,
+          "recall": 0,
+          "falsePositiveRate": 0
+        },
+        "statusNetworkURL": {
+          "tp": 3456,
+          "fp": 51840,
+          "fn": 0,
+          "tn": 165888,
+          "precision": 0.0625,
+          "recall": 1,
+          "falsePositiveRate": 0.23809523809523808
+        },
+        "issuerAndType": {
+          "tp": 3456,
+          "fp": 51840,
+          "fn": 0,
+          "tn": 165888,
+          "precision": 0.0625,
+          "recall": 1,
+          "falsePositiveRate": 0.23809523809523808
+        }
+      }
+    }
+  ]
+}

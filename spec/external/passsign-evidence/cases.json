@@ -1,0 +1,9 @@
+{"cases":[
+  {"id":"unchanged-core-with-later-token","expected":"same original timestamp imprint"},
+  {"id":"changed-core-payload","expected":"different timestamp imprint"},
+  {"id":"changed-service-signature","expected":"different timestamp imprint"},
+  {"id":"whitespace-normalization","expected":"reject non-exact compact serialization"},
+  {"id":"self-covering-timestamp","expected":"excluded by the revised payload contract"},
+  {"id":"lost-timestamp-response","expected":"retry the same frozen bytes without repeating signing"},
+  {"id":"late-timestamp","expected":"cannot repair a missed application deadline"}
+]}

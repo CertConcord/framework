@@ -1,0 +1,46 @@
+{
+  "name": "@certconcord/reference",
+  "version": "0.2.0-draft.1",
+  "private": true,
+  "description": "CertConcord working-draft reference implementation",
+  "type": "module",
+  "engines": {
+    "node": ">=24.15.0 <27"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 *.test.mjs",
+    "demo": "node foundation-demo.mjs",
+    "demo:mtc": "node demo.mjs",
+    "demo:document": "node document-demo.mjs",
+    "start": "node server.mjs",
+    "check": "node ../tools/check.mjs",
+    "demo:passkey": "node passkey-demo.mjs",
+    "test:postgres": "node --test --test-concurrency=1 --test-timeout=60000 storage/postgres.test.mjs",
+    "fuzz:seed": "node fuzz/seed.mjs",
+    "fuzz:replay": "node fuzz/replay.mjs",
+    "fuzz": "node fuzz/run.mjs",
+    "benchmark": "node benchmarks/run.mjs",
+    "privacy": "node benchmarks/privacy.mjs",
+    "sdk:build": "node sdk/build.mjs",
+    "sdk:test": "node sdk/consumer-test.mjs",
+    "demo:archive": "node archive-demo.mjs"
+  },
+  "dependencies": {
+    "@hpke/core": "1.9.0",
+    "@noble/curves": "2.4.0",
+    "@noble/hashes": "2.4.0",
+    "@xmldom/xmldom": "0.9.12",
+    "cbor-x": "1.6.6",
+    "koffi": "3.3.2",
+    "pdf-lib": "1.17.1",
+    "pg": "8.23.1",
+    "xml-crypto": "6.3.2"
+  },
+  "devDependencies": {
+    "@jazzer.js/core": "4.0.0",
+    "esbuild": "0.28.2",
+    "jose": "6.1.0",
+    "prettier": "3.6.2"
+  },
+  "license": "Apache-2.0"
+}

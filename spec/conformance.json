@@ -1,0 +1,416 @@
+{
+  "draft": "draft-02",
+  "claim": "coverage-index-not-certification",
+  "requirements": [
+    {
+      "id": "CC-CORE-01",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/sdk-results.test.mjs",
+          "name": "SDK distinguishes invalid, incomplete and unsupported evidence for CMS and mdoc"
+        },
+        {
+          "file": "reference/state-security.test.mjs",
+          "name": "trust bootstrap rejects duplicate roots and threshold overrides; restart preserves fork detection"
+        }
+      ],
+      "gap": "Fixed bootstrap pins and durable watermarks are exercised. Dynamic root rotation, emergency replacement and independent deployment review remain unimplemented or unassessed."
+    },
+    {
+      "id": "CC-CORE-02",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/authority.test.mjs",
+          "name": "RA decision and signed RAR bind issuer policy, profile, subject request and one issuance"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "document evidence binds trusted time and subject admission for CMS and native mdoc"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "certified encryption closes admission, delivery and recovery with purpose and replay controls"
+        }
+      ],
+      "gap": "Selected CMS and native mdoc admission paths are covered; external identity and custody assessment remains separate."
+    },
+    {
+      "id": "CC-CORE-03",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/foundation-security.test.mjs",
+          "name": "identity admission cannot authorize a wrong session, denied identity or replayed approval"
+        },
+        {
+          "file": "reference/foundation.test.mjs",
+          "name": "a governed government issuer directly issues a combined mDL and signer mdoc"
+        }
+      ],
+      "gap": "Synthetic admission and direct issuer flows do not establish third-party issuer interoperability."
+    },
+    {
+      "id": "CC-CORE-04",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/foundation-security.test.mjs",
+          "name": "native credential log: growth, unavailable mirror, quorum and durable failed allocation"
+        }
+      ],
+      "gap": "Operator independence, privacy and deployment failure assumptions require assessed evidence."
+    },
+    {
+      "id": "CC-CORE-05",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/execution-binding.test.mjs",
+          "name": "lost results survive restart, block concurrent key use and reconcile without another invocation"
+        },
+        {
+          "file": "reference/sdk-results.test.mjs",
+          "name": "execution plans are declared in CDDL and SDK enforces the selected policy"
+        }
+      ],
+      "gap": "Durable execution evidence covers selected providers; all operation/provider combinations are not assessed."
+    },
+    {
+      "id": "CC-CORE-06",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/authority.test.mjs",
+          "name": "CRL and OCSP bind issuer, serial, nonce, publication interval and revocation"
+        },
+        {
+          "file": "reference/lifecycle.test.mjs",
+          "name": "encryption recovery needs distinct approvals, encrypts only to bound recipient, excludes signing paths"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "certified encryption closes admission, delivery and recovery with purpose and replay controls"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "timestamp accuracy and historical status cannot manufacture an earlier proof bound"
+        },
+        {
+          "file": "reference/state-security.test.mjs",
+          "name": "recovery separation rejects omitted or misspelled signing targets and reaches through cycles"
+        },
+        {
+          "file": "reference/state-security.test.mjs",
+          "name": "wrapper verification and commit are atomic across write failure, restart and stale retirement"
+        }
+      ],
+      "gap": "Document recovery and bounded historical status are covered; cross-application operational compromise review remains open."
+    },
+    {
+      "id": "CC-CORE-07",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/sdk-results.test.mjs",
+          "name": "SDK distinguishes invalid, incomplete and unsupported evidence for CMS and mdoc"
+        }
+      ],
+      "gap": "Nested unsupported algorithms and complete per-dimension result reporting remain incomplete."
+    },
+    {
+      "id": "CC-CORE-08",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/foundation.test.mjs",
+          "name": "DeviceKey and independent ML-DSA profiles preserve distinct key and algorithm semantics"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "document evidence binds trusted time and subject admission for CMS and native mdoc"
+        },
+        {
+          "file": "reference/openssl.test.mjs",
+          "name": "independent OpenSSL and reference exchange ML-KEM AuthEnvelopedData in both directions"
+        }
+      ],
+      "gap": "A per-assertion security-claim matrix is documented; independent composition and cryptanalytic review remain open."
+    },
+    {
+      "id": "CC-CORE-09",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/containers.test.mjs",
+          "name": "RFC4998 creation, timestamp renewal and original-data hash renewal"
+        },
+        {
+          "file": "reference/archive-security.test.mjs",
+          "name": "ERS preservation enforces initial, TSA and hash lifetimes across renewal"
+        },
+        {
+          "file": "reference/archive-security.test.mjs",
+          "name": "ERS preservation uses whole accuracy intervals and the timestamp hash when omitted"
+        },
+        {
+          "file": "reference/archive-security.test.mjs",
+          "name": "standalone MTC document evidence survives certificate expiry with a distinct historical result"
+        },
+        {
+          "file": "reference/archive-security.test.mjs",
+          "name": "preserved GOOD evidence cannot override subsequently known certificate compromise"
+        }
+      ],
+      "gap": "A bounded RFC 4998 lifecycle covers TSA replacement, hash renewal, explicit lifetimes and historical replay after signer-certificate expiry; stale current status remains INDETERMINATE. Generic historical authority/status resolution, container-specific AdES LT/LTA augmentation and operational archive succession remain draft implementation gaps. Independent implementation and assessment are later stability evidence."
+    },
+    {
+      "id": "CC-CORE-10",
+      "coverage": "planned",
+      "tests": [],
+      "gap": "S/MIME and standalone timestamp application profiles have not yet been specified completely."
+    },
+    {
+      "id": "CC-DOC-01",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/sdk-results.test.mjs",
+          "name": "execution plans are declared in CDDL and SDK enforces the selected policy"
+        },
+        {
+          "file": "reference/passkey.test.mjs",
+          "name": "raw proof rejects an ordinary assertion, substituted raw output, and double-hashed input"
+        },
+        {
+          "file": "reference/foundation.test.mjs",
+          "name": "a governed government issuer directly issues a combined mDL and signer mdoc"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "document evidence binds trusted time and subject admission for CMS and native mdoc"
+        },
+        {
+          "file": "reference/sdk-results.test.mjs",
+          "name": "ordinary WebAuthn completes CMS and mdoc document verification without raw signing or execution proposals"
+        }
+      ],
+      "gap": "Ordinary WebAuthn completes selected CMS and mdoc document plans without raw-signing or execution proposals. Independent full-profile interoperability remains unrecorded."
+    },
+    {
+      "id": "CC-DOC-02",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "organization evidence rejects authority substitution, wrong grants and revocation at the proof bound"
+        }
+      ],
+      "gap": "Direct authority-to-operation seals are specified and exercised; hierarchical delegation, organizational mdoc and assessed custody remain open."
+    },
+    {
+      "id": "CC-DOC-03",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/lifecycle.test.mjs",
+          "name": "encryption recovery needs distinct approvals, encrypts only to bound recipient, excludes signing paths"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "certified encryption closes admission, delivery and recovery with purpose and replay controls"
+        },
+        {
+          "file": "reference/openssl.test.mjs",
+          "name": "independent OpenSSL and reference exchange ML-KEM AuthEnvelopedData in both directions"
+        }
+      ],
+      "gap": "Certified recipient delivery and two-operator encryption-key recovery are exercised; external recovery services and hardware key import remain unassessed."
+    },
+    {
+      "id": "CC-DOC-04",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/containers.test.mjs",
+          "name": "PAdES actual PDF ByteRange, detached CMS and incremental second signature"
+        },
+        {
+          "file": "reference/security-engineering.test.mjs",
+          "name": "CMS rejects relative OIDs and wrong signed-attribute value types even with a valid signature"
+        }
+      ],
+      "gap": "Selected container behavior is tested. The custom reference parsers and SDK are not recommended production security boundaries; evaluated production parser integration, semantic equivalence and complete rendering coverage need independent review."
+    },
+    {
+      "id": "CC-DOC-05",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/containers.test.mjs",
+          "name": "RFC3161 TSA request/response validates imprint, nonce, policy, EKU and POE interval"
+        },
+        {
+          "file": "reference/containers.test.mjs",
+          "name": "RFC4998 creation, timestamp renewal and original-data hash renewal"
+        },
+        {
+          "file": "reference/authority.test.mjs",
+          "name": "CRL and OCSP bind issuer, serial, nonce, publication interval and revocation"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "document evidence binds trusted time and subject admission for CMS and native mdoc"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "organization evidence rejects authority substitution, wrong grants and revocation at the proof bound"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "timestamp accuracy and historical status cannot manufacture an earlier proof bound"
+        },
+        {
+          "file": "reference/document-evidence.test.mjs",
+          "name": "offline document verification retains standalone MTC trust, time and status requirements"
+        },
+        {
+          "file": "reference/archive-security.test.mjs",
+          "name": "ERS preservation enforces initial, TSA and hash lifetimes across renewal"
+        },
+        {
+          "file": "reference/archive-security.test.mjs",
+          "name": "ERS preservation uses whole accuracy intervals and the timestamp hash when omitted"
+        },
+        {
+          "file": "reference/archive-security.test.mjs",
+          "name": "standalone MTC document evidence survives certificate expiry with a distinct historical result"
+        },
+        {
+          "file": "reference/archive-security.test.mjs",
+          "name": "preserved GOOD evidence cannot override subsequently known certificate compromise"
+        }
+      ],
+      "gap": "A bounded RFC 4998 lifecycle covers TSA replacement, hash renewal, explicit lifetimes and historical replay after signer-certificate expiry; stale current status remains INDETERMINATE. Generic historical authority/status resolution, container-specific AdES LT/LTA augmentation and operational archive succession remain draft implementation gaps. Independent implementation and assessment are later stability evidence."
+    },
+    {
+      "id": "CC-DOC-06",
+      "coverage": "planned",
+      "tests": [],
+      "gap": "Draft acceptance develops the public verification contract and reproducible vectors. A second independently developed complete implementation and interoperability record are later stability requirements, not prerequisites for continuing draft development."
+    },
+    {
+      "id": "CC-MDOC-01",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/foundation-security.test.mjs",
+          "name": "identity admission cannot authorize a wrong session, denied identity or replayed approval"
+        },
+        {
+          "file": "reference/authority.test.mjs",
+          "name": "RA decision and signed RAR bind issuer policy, profile, subject request and one issuance"
+        }
+      ],
+      "gap": "Add explicit cross-domain substitution vectors for all accepted identity sources."
+    },
+    {
+      "id": "CC-MDOC-02",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/foundation.test.mjs",
+          "name": "a governed government issuer directly issues a combined mDL and signer mdoc"
+        }
+      ],
+      "gap": "Government-style issuance is synthetic; external government or independent CA interoperability is not recorded."
+    },
+    {
+      "id": "CC-MDOC-03",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/foundation.test.mjs",
+          "name": "a governed government issuer directly issues a combined mDL and signer mdoc"
+        },
+        {
+          "file": "reference/foundation.test.mjs",
+          "name": "DeviceKey and independent ML-DSA profiles preserve distinct key and algorithm semantics"
+        }
+      ],
+      "gap": "Native certificate semantics need full external parser/issuer interoperability vectors."
+    },
+    {
+      "id": "CC-MDOC-04",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/foundation.test.mjs",
+          "name": "DeviceKey and independent ML-DSA profiles preserve distinct key and algorithm semantics"
+        },
+        {
+          "file": "reference/sdk-results.test.mjs",
+          "name": "execution plans are declared in CDDL and SDK enforces the selected policy"
+        }
+      ],
+      "gap": "Candidate same/separate key modes are tested; additional original designs need their own contracts."
+    },
+    {
+      "id": "CC-MDOC-05",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/foundation.test.mjs",
+          "name": "DeviceKey and independent ML-DSA profiles preserve distinct key and algorithm semantics"
+        }
+      ],
+      "gap": "Classical/PQ assertion separation still needs reviewed threat-model and long-term assurance analysis."
+    },
+    {
+      "id": "CC-PASSKEY-01",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/passkey.test.mjs",
+          "name": "raw proof rejects an ordinary assertion, substituted raw output, and double-hashed input"
+        },
+        {
+          "file": "reference/passkey.test.mjs",
+          "name": "raw browser driver rejects unavailable capability and excessive messages before prompting"
+        },
+        {
+          "file": "reference/sdk-results.test.mjs",
+          "name": "ordinary WebAuthn completes CMS and mdoc document verification without raw signing or execution proposals"
+        }
+      ],
+      "gap": "Software authenticator examples do not prove support in deployed authenticators."
+    },
+    {
+      "id": "CC-PASSKEY-02",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/passkey.test.mjs",
+          "name": "registry consumes enrollment once and rejects issuance with a different subject or identity"
+        }
+      ],
+      "gap": "Real-device custody, recovery and device-change assurance need external evaluation."
+    },
+    {
+      "id": "CC-PASSKEY-03",
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/passkey.test.mjs",
+          "name": "raw browser driver rejects unavailable capability and excessive messages before prompting"
+        },
+        {
+          "file": "reference/sdk-results.test.mjs",
+          "name": "execution plans are declared in CDDL and SDK enforces the selected policy"
+        }
+      ],
+      "gap": "Negative capability and plan checks cover selected candidates, not all future extensions."
+    }
+  ]
+}

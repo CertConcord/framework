@@ -1,0 +1,36 @@
+{
+  "reviewDate": "2026-10-05",
+  "sources": [
+    {
+      "id": "rfc9052",
+      "url": "https://www.rfc-editor.org/rfc/rfc9052.txt",
+      "sha256": "01eecd7f646537600e7aad665b1fa581ce6ec33dae4ef4add0997aaf38cd0a45",
+      "bytes": 149835,
+      "retrievedAt": "2026-10-06T01:56:07.402Z"
+    },
+    {
+      "id": "multipazMdoc",
+      "url": "https://raw.githubusercontent.com/openwallet-foundation/multipaz/0.100.0/multipaz/src/commonMain/kotlin/org/multipaz/mdoc/util/MdocUtil.kt",
+      "sha256": "e0be3d9ce76041da8f4a4c05794efa0c520e9efca03b7b4cd3ba84374fef8604",
+      "bytes": 31158
+    },
+    {
+      "id": "multipazAnnexC",
+      "url": "https://raw.githubusercontent.com/openwallet-foundation/multipaz/0.100.0/multipaz/src/commonMain/kotlin/org/multipaz/verification/VerificationUtil.kt",
+      "sha256": "e30be01f2fd41cea4dc8e3a2b4ebccb7be51ac876adeab042711258a9e0635c6",
+      "bytes": 64259
+    },
+    {
+      "id": "rfc9881",
+      "url": "https://www.rfc-editor.org/rfc/rfc9881.txt",
+      "sha256": "20ae3b519bc69e32989fa6e625ab8746453eddf457e20ddbfd79d841a44237a2",
+      "bytes": 229857
+    },
+    {
+      "id": "rfc9964",
+      "url": "https://www.rfc-editor.org/rfc/rfc9964.txt",
+      "sha256": "8c42035b948301b197d431de8b3f40019bdaa3bb40150dc523306923948f34cf",
+      "bytes": 180564
+    }
+  ]
+}
