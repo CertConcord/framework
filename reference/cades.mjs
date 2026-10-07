@@ -150,6 +150,39 @@ function attributes(node, signed) {
   });
 }
 
+function signerIdentifierVersion(signer) {
+  check(
+    signer?.tag === 0x30 && signer.children.length >= 6 && signer.children.length <= 7,
+    'CADES_SIGNER_INFO',
+  );
+  const si = signer.children,
+    version = intValue(si[0]);
+  check(
+    si[5].tag === 4 &&
+      ((version === 1n &&
+        si[1].tag === 0x30 &&
+        si[1].children.length === 2 &&
+        si[1].children[1].tag === 2) ||
+        (version === 3n && si[1].tag === 0x80 && si[1].value.length > 0)),
+    'CADES_SIGNER_IDENTIFIER',
+  );
+  return version;
+}
+function signedDataVersion(certificates, crls, signers, contentType) {
+  // RFC 5652 section 5.1 derives the container version from every raw Choice
+  // and SignerInfo, including recognized choices outside the selected profile.
+  const versions = signers.map(signerIdentifierVersion);
+  if (certificates.some((raw) => raw[0] === 0xa3) || crls.some((raw) => raw[0] === 0xa1)) return 5n;
+  if (certificates.some((raw) => raw[0] === 0xa2)) return 4n;
+  if (
+    certificates.some((raw) => raw[0] === 0xa1) ||
+    versions.includes(3n) ||
+    contentType !== OID.data
+  )
+    return 3n;
+  return 1n;
+}
+
 function parseCMS(raw, content, expectedType = OID.data) {
   check(Buffer.isBuffer(raw), 'CADES_CMS_REQUIRED');
   const root = parseDER(raw);
@@ -175,8 +208,6 @@ function parseCMS(raw, content, expectedType = OID.data) {
   );
   const eci = sd[2].children,
     contentType = oidText(eci[0]);
-  check(contentType === expectedType, 'CADES_CONTENT_TYPE_UNSUPPORTED', 'UNSUPPORTED');
-  check(version === (contentType === OID.data ? 1n : 3n), 'CADES_SIGNED_DATA_VERSION');
   let embedded;
   if (eci[1]) {
     check(
@@ -192,9 +223,12 @@ function parseCMS(raw, content, expectedType = OID.data) {
     certificates = [],
     crls = [],
     unsupported = [];
+  if (contentType !== expectedType)
+    unsupported.push(result('UNSUPPORTED', 'CADES_CONTENT_TYPE_UNSUPPORTED'));
   if (sd[at]?.tag === 0xa0) {
     canonicalImplicit(sd[at], 0xa0, 'CADES_CERTIFICATE_SET');
     certificates = sd[at++].children.map((n) => {
+      check([0x30, 0xa0, 0xa1, 0xa2, 0xa3].includes(n.tag), 'CADES_CERTIFICATE_CHOICE_ENCODING');
       if (n.tag !== 0x30) unsupported.push(result('UNSUPPORTED', 'CADES_CERTIFICATE_CHOICE'));
       return n.raw;
     });
@@ -204,6 +238,7 @@ function parseCMS(raw, content, expectedType = OID.data) {
   if (sd[at]?.tag === 0xa1) {
     canonicalImplicit(sd[at], 0xa1, 'CADES_REVOCATION_SET');
     crls = sd[at++].children.map((n) => {
+      check([0x30, 0xa1].includes(n.tag), 'CADES_REVOCATION_CHOICE_ENCODING');
       if (n.tag !== 0x30) unsupported.push(result('UNSUPPORTED', 'CADES_REVOCATION_CHOICE'));
       return n.raw;
     });
@@ -212,21 +247,14 @@ function parseCMS(raw, content, expectedType = OID.data) {
   }
   check(at === sd.length - 1 && sd[at].tag === 0x31, 'CADES_SIGNER_INFOS');
   check(sd[at].children.length <= 16, 'CADES_SIGNER_LIMIT');
+  check(
+    version === signedDataVersion(certificates, crls, sd[at].children, contentType),
+    'CADES_SIGNED_DATA_VERSION',
+  );
   check(sd[at].children.length === 1, 'CADES_MULTIPLE_SIGNERS', 'UNSUPPORTED');
-  const signer = sd[at].children[0];
-  check(
-    signer.tag === 0x30 && signer.children.length >= 6 && signer.children.length <= 7,
-    'CADES_SIGNER_INFO',
-  );
-  const si = signer.children;
-  check(
-    intValue(si[0]) === 1n &&
-      si[1].tag === 0x30 &&
-      si[1].children.length === 2 &&
-      si[1].children[1].tag === 2 &&
-      si[5].tag === 4,
-    'CADES_SIGNER_IDENTIFIER',
-  );
+  const si = sd[at].children[0].children;
+  if (si[1].tag === 0x80)
+    unsupported.push(result('UNSUPPORTED', 'CADES_SIGNER_IDENTIFIER_UNSUPPORTED'));
   const signed = attributes(si[3], true),
     unsigned = attributes(si[6], false);
   check(
@@ -392,10 +420,20 @@ function inspectSignature(parsed, failures, isTimestamp = false) {
   });
   const ess = attempt(failures, () => essBinding(parsed));
   const candidates = [];
+  const unselectedIdentifier = parsed.si[1].tag === 0x80;
   for (const cert of parsed.certificates) {
     if (cert[0] !== 0x30) continue;
     const identity = attempt(failures, () => certificateIdentity(cert));
-    if (identity && equal(identity.sid, parsed.si[1].raw)) candidates.push({ cert, ...identity });
+    // SKI identification remains unsupported. An exact ESS-bound certificate
+    // still supplies a key for the bounded mathematical scan; it never grants
+    // profile acceptance or an unimplemented SKI binding decision.
+    if (
+      identity &&
+      (unselectedIdentifier
+        ? ess && equal(digest(ess.hashOID, cert), ess.hash)
+        : equal(identity.sid, parsed.si[1].raw))
+    )
+      candidates.push({ cert, ...identity });
   }
   let selected = ess
     ? candidates.find((c) => equal(digest(ess.hashOID, c.cert), ess.hash))
@@ -406,6 +444,7 @@ function inspectSignature(parsed, failures, isTimestamp = false) {
   }
   if (!selected) {
     const replacement =
+      !unselectedIdentifier &&
       signatureOID === ECDSA_SHA256 &&
       parsed.certificates.some((raw) => {
         try {
@@ -490,14 +529,30 @@ function inspectMultipleSigners(raw, content, expectedType, failures, isTimestam
         fields.length < 6 ||
         fields.length > 7 ||
         fields[0].tag !== 2 ||
-        intValue(fields[0]) !== 1n ||
-        fields[1].tag !== 0x30
+        ![1n, 3n].includes(intValue(fields[0])) ||
+        ![0x30, 0x80].includes(fields[1].tag)
       )
         continue;
       attempt(failures, () => {
+        const certificates = sd.slice(3, -1).find((n) => n.tag === 0xa0)?.children ?? [],
+          crls = sd.slice(3, -1).find((n) => n.tag === 0xa1)?.children ?? [];
         const single = seq(
           root.children[0].raw,
-          der(0xa0, seq(...sd.slice(0, -1).map((n) => n.raw), set(signer.raw))),
+          der(
+            0xa0,
+            seq(
+              integer(
+                signedDataVersion(
+                  certificates.map((n) => n.raw),
+                  crls.map((n) => n.raw),
+                  [signer],
+                  oidText(sd[2].children[0]),
+                ),
+              ),
+              ...sd.slice(1, -1).map((n) => n.raw),
+              set(signer.raw),
+            ),
+          ),
         );
         inspectSignature(parseCMS(single, content, expectedType), failures, isTimestamp);
       });
@@ -769,7 +824,10 @@ function timestamp(parsed, value, failures, policy, times, archive) {
     return undefined;
   }
   const signature = inspectSignature(cms, local, true);
-  const info = attempt(local, () => parseTimestampInfo(cms.content));
+  const info =
+    cms.contentType === OID.tstInfo
+      ? attempt(local, () => parseTimestampInfo(cms.content))
+      : undefined;
   let coverage;
   if (info) {
     attempt(local, () => {
@@ -893,13 +951,17 @@ function materialFor(
   if (!signature.certificate || !instant(stateTime) || stateTime > times.knowledgeTime)
     return undefined;
   const evaluate = (covered) => {
-    const certificates = covered?.certificates ?? parsed.certificates;
-    const crls = covered?.crls ?? parsed.crls;
+    // Preserve all original CMS Choice TLVs for ATS coverage, but do not hand
+    // recognized unselected choices to the X.509/full-CRL material parser.
+    const certificates = (covered?.certificates ?? parsed.certificates).filter(
+      (b) => b[0] === 0x30,
+    );
+    const crls = (covered?.crls ?? parsed.crls).filter((b) => b[0] === 0x30);
     let response = validateCAdESMaterial({
       certificate: Buffer.from(signature.certificate),
       certificates: copy(certificates),
       crls: copy(crls),
-      knownCRLs: copy(parsed.crls),
+      knownCRLs: copy(parsed.crls.filter((b) => b[0] === 0x30)),
       purpose,
       stateTime,
       knowledgeTime: times.knowledgeTime,
@@ -1300,7 +1362,10 @@ export function prepareCAdESAugmentation(
         const timestampCMS = parseCMS(token, undefined, OID.tstInfo);
         const timestampFailures = [];
         inspectSignature(timestampCMS, timestampFailures, true);
-        const info = attempt(timestampFailures, () => parseTimestampInfo(timestampCMS.content));
+        const info =
+          timestampCMS.contentType === OID.tstInfo
+            ? attempt(timestampFailures, () => parseTimestampInfo(timestampCMS.content))
+            : undefined;
         if (info)
           attempt(timestampFailures, () =>
             check(
