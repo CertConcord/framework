@@ -2,7 +2,7 @@
 
 This guide describes the repository's executable examples, module interfaces and verification tools. The [profile catalog](../spec/profiles.md) identifies the applicable specifications; the [adapter catalog](adapters.md) identifies each implementation's supported wire and capability profile.
 
-These examples implement the `certconcord-governed-draft-02` composition and its selected extensions. [FRAMEWORK draft 02](../spec/bindings/FRAMEWORK-draft-02.md) defines how other governance models, issuance mechanisms, protocol editions and wallets can be specified. Runtime support follows the concrete modules and admitted capabilities; a different composition requires its own executable bindings and assessment. The framework's extension model does not cause existing verifiers to accept unknown formats or mechanisms.
+These examples implement the `certconcord-governed-draft-03` composition and its selected extensions. [FRAMEWORK draft 03](../spec/bindings/FRAMEWORK-draft-03.md) defines how other governance models, issuance mechanisms, protocol editions and wallets can be specified. Runtime support follows the concrete modules and admitted capabilities; a different composition requires its own executable bindings and assessment. The framework's extension model does not cause existing verifiers to accept unknown formats or mechanisms.
 
 The wallet integration follows the selected CertConcord holder contracts; EUDI is an optional ecosystem configuration. Future implementations may adopt another holder architecture or a successor to MTC with incompatible formats and APIs. Continued support for these examples' interfaces is not a condition for that architectural advance.
 
@@ -16,7 +16,7 @@ npm ci
 
 Generated example state, keys and local databases are stored under the ignored `.runtime/` directory. Examples generate synthetic identities and software keys for their own trust domain.
 
-The independently packaged [verification SDK](../reference/sdk/README.md) exposes `createVerifier` and `profiles` for protocol experiments and interoperability tests. It bundles the same experimental parsers used by the reference implementation, even though it excludes their direct public API. It is not a recommended production verification boundary. Production implementations SHOULD use mature, independently evaluated parser and crypto stacks and MUST retain CertConcord's additional semantic checks, as specified in [SEP section 2](../spec/bindings/SEP-draft-02.md#2-parser-and-execution-boundaries). [Storage](storage.md), [security assurance](assurance.md) and [measurement methods](benchmarks.md) describe the remaining runtime and evidence boundaries.
+The independently packaged [verification SDK](../reference/sdk/README.md) exposes `createVerifier` and `profiles` for protocol experiments and interoperability tests. It bundles the same experimental parsers used by the reference implementation, even though it excludes their direct public API. It is not a recommended production verification boundary. Production implementations SHOULD use mature, independently evaluated parser and crypto stacks and MUST retain CertConcord's additional semantic checks, as specified in [SEP section 2](../spec/bindings/SEP-draft-03.md#2-parser-and-execution-boundaries). [Storage](storage.md), [security assurance](assurance.md) and [measurement methods](benchmarks.md) describe the remaining runtime and evidence boundaries.
 
 ## Personal mdoc signing example
 
@@ -114,7 +114,7 @@ PSCP uses `PasskeySigningRegistry.begin`, `stage` and `finish` to bind enrollmen
 
 Claims may be requested as `[namespace, element]` pairs. A legacy string selects an element in the configured primary namespace. Both `PresentationVerifier` and `AnnexCVerifier` group requests by namespace, validate the exact returned disclosure and retain the profile commitment. The RA receives `namespaces` with the original namespace separation; the primary-namespace `claims` view is retained for existing callers. A changed profile invalidates an outstanding request before consumption.
 
-An issuer registry additionally supplies authorized roots/DS certificates and a status validator. A custom schema does not create identity assurance by itself. See [DCP section 11](../spec/bindings/DCP-draft-02.md#11-external-identity-admission) for admission policy and [EUDI architecture](eudi-architecture.md) for the PID and wallet mapping.
+An issuer registry additionally supplies authorized roots/DS certificates and a status validator. A custom schema does not create identity assurance by itself. See [DCP section 11](../spec/bindings/DCP-draft-03.md#11-external-identity-admission) for admission policy and [EUDI architecture](eudi-architecture.md) for the PID and wallet mapping.
 
 ## Integration interfaces
 
@@ -177,7 +177,7 @@ node tpm-simulator-check.mjs
 
 `hardware-check.mjs` requires SoftHSM 2 and its library. It creates an isolated token store, calls the PKCS #11 key-generation and signing interfaces and independently verifies the result. `PKCS11_LIBRARY` selects the library path. `tpm-simulator-check.mjs` requires Linux, `swtpm` and `tpm2-tools`; it validates the TPM ReadPublic/Certify exchange against a new software TPM, including key, Name and challenge substitution cases.
 
-Apple and Android builds, physical key operations, attestation enrollment and app-to-wallet integration are documented in [native/README.md](../reference/native/README.md). Protocol tests, native builds and device evaluations provide evidence for different requirements in [CONFORMANCE.md](../spec/bindings/CONFORMANCE-draft-02.md).
+Apple and Android builds, physical key operations, attestation enrollment and app-to-wallet integration are documented in [native/README.md](../reference/native/README.md). Protocol tests, native builds and device evaluations provide evidence for different requirements in [CONFORMANCE.md](../spec/bindings/CONFORMANCE-draft-03.md).
 
 ## Source and profile integrity
 

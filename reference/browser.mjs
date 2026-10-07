@@ -57,7 +57,7 @@ export function encode(value) {
     });
   return concat(head(5, entries.length), ...entries.flat());
 }
-const domain = (label, value) => encode(['CertConcord', 2, label, value]);
+const domain = (label, value) => encode(['CertConcord', 3, label, value]);
 function rejectCleartextPRF(credential) {
   const results = credential.getClientExtensionResults?.().prf?.results;
   if (!results) return;

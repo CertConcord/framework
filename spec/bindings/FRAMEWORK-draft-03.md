@@ -1,8 +1,8 @@
-# CertConcord Framework Architecture and Evolution — draft 02
+# CertConcord Framework Architecture and Evolution — draft 03
 
-> Candidate binding for CertConcord draft 02. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 02 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
+> Candidate binding for CertConcord draft 03. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 03 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
 
-Status: draft 02. Normative language: English.
+Status: draft 03. Normative language: English.
 
 ## 1. Scope
 
@@ -74,11 +74,11 @@ A profile declaration is configuration and assessment material. It does not itse
 
 ### 5.1 CERTCONCORD-governed composition
 
-`certconcord-governed-draft-02` names the composition defined by [COMMON draft 02](COMMON-draft-02.md), [DTI draft 02](DTI-draft-02.md), [DSCP draft 02](DSCP-draft-02.md), [PRF-KPP draft 02](PRF-KPP-draft-02.md) and [DCP draft 02](DCP-draft-02.md), with applicable [PSCP draft 02](PSCP-draft-02.md), [SEP draft 02](SEP-draft-02.md) and explicitly selected extensions such as [EBP draft 02](EBP-draft-02.md). Its detailed applicability and evaluation rules are in [CONFORMANCE](CONFORMANCE-draft-02.md).
+`certconcord-governed-draft-03` names the composition defined by [COMMON draft 03](COMMON-draft-03.md), [DTI draft 03](DTI-draft-03.md), [DSCP draft 03](DSCP-draft-03.md), [PRF-KPP draft 03](PRF-KPP-draft-03.md) and [DCP draft 03](DCP-draft-03.md), with applicable [PSCP draft 03](PSCP-draft-03.md), [SEP draft 03](SEP-draft-03.md) and explicitly selected extensions such as [EBP draft 03](EBP-draft-03.md). Its detailed applicability and evaluation rules are in [CONFORMANCE](CONFORMANCE-draft-03.md).
 
 This composition uses offline root governance, a Root Trust Manifest, scoped RRA/RA/issuer roles and the declared authority/evidence objects. It includes MTC certificate issuance and native signer-mdoc branches with their respective evidence requirements. MTC requirements apply where the MTC branch is selected. Other enabled branches retain their own mandatory requirements. None of these selections establishes a framework-wide requirement to use MTC or a single wallet.
 
-`certconcord-governed-draft-02` identifies the current composition. Draft 02 selects the domain-separated encoding `DCBOR(["CertConcord", 2, label, value])`, the `certconcord-` and `CERTCONCORD-` profile namespace, and the explicitly pinned component bindings. Earlier evidence is not retroactively upgraded to the framework edition or a new composition merely by adopting this architectural description. Alternative governance or issuance profiles require their own specifications, implementations and assessment; the existing verifier cannot accept an undefined replacement.
+`certconcord-governed-draft-03` identifies the current composition. Draft 03 selects the domain-separated encoding `DCBOR(["CertConcord", 3, label, value])`, the `certconcord-` and `CERTCONCORD-` profile namespace, schema-2 flat evidence plans and the explicitly pinned component bindings. Earlier evidence is not retroactively upgraded to the framework edition or a new composition merely by adopting this architectural description. This runtime rejects prior experimental domains and layouts without rewriting their bytes. Alternative governance or issuance profiles require their own specifications, implementations and assessment; the existing verifier cannot accept an undefined replacement.
 
 ## 6. Standards and draft evolution
 

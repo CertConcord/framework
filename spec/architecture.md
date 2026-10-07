@@ -1,4 +1,4 @@
-# CertConcord architecture — draft 02
+# CertConcord architecture — draft 03
 
 Status: working draft. Normative language: English. The BCP 14 keywords MUST, MUST NOT, SHOULD and MAY express requirements only when capitalized. These requirements are proposed contracts for this draft, not a final standard.
 

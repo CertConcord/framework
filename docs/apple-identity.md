@@ -1,6 +1,6 @@
 # Apple IdentityDocumentServices Integration
 
-This document maps Apple's system-mediated mdoc presentment interfaces to DTI, DCP, DSCP and PRF-KPP in the `certconcord-governed-draft-02` composition. Platform availability, protocol selection and document-type eligibility are explicit deployment capabilities. The adopted documentation is identified in `source-lock.json`. The [framework evolution contract](../spec/bindings/FRAMEWORK-draft-02.md) defines holder roles independently of any wallet ecosystem. Apple system mediation is one selected interface; neither it nor an EUDI architecture is a universal dependency.
+This document maps Apple's system-mediated mdoc presentment interfaces to DTI, DCP, DSCP and PRF-KPP in the `certconcord-governed-draft-03` composition. Platform availability, protocol selection and document-type eligibility are explicit deployment capabilities. The adopted documentation is identified in `source-lock.json`. The [framework evolution contract](../spec/bindings/FRAMEWORK-draft-03.md) defines holder roles independently of any wallet ecosystem. Apple system mediation is one selected interface; neither it nor an EUDI architecture is a universal dependency.
 
 ## System role and placement
 

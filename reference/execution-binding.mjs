@@ -21,7 +21,7 @@ import {
 import { parseCertificate, signCMS } from './pki.mjs';
 import { readControl, validateActivation } from './state.mjs';
 
-export const EXECUTION_BINDING_PROFILE = 'certconcord-execution-binding-draft-02';
+export const EXECUTION_BINDING_PROFILE = 'certconcord-execution-binding-draft-03';
 const copy = (value) => decodeCBOR(dcbor(value));
 const bindingFields = [
   'schemaVersion',

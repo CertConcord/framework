@@ -1,8 +1,8 @@
-# CertConcord Execution Binding Profile — Draft 02
+# CertConcord Execution Binding Profile — Draft 03
 
-> Candidate binding for CertConcord draft 02. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 02 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
+> Candidate binding for CertConcord draft 03. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 03 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
 
-Status: draft 02. Wire identifier: `certconcord-execution-binding-draft-02`. Normative language: English. This is a CertConcord proposal with an executable broker profile. COMMON-draft-02, DTI-draft-02, DSCP-draft-02 and SEP-draft-02 apply. Adoption by an external standards body is a separate event.
+Status: draft 03. Wire identifier: `certconcord-execution-binding-draft-03`. Normative language: English. This is a CertConcord proposal with an executable broker profile. COMMON-draft-03, DTI-draft-03, DSCP-draft-03 and SEP-draft-03 apply. Adoption by an external standards body is a separate event.
 
 ## 1. Problem and scope
 
@@ -10,7 +10,7 @@ An authorization service can approve exact bytes while a subsequent provider cal
 
 EBP connects an admitted execution boundary to the existing SIM, ActivationContext, OperationPermit and ECP. The document still has its normal CMS or COSE signature. An additional governed ExecutionBinding identifies the provider, document key, control authorities, policy, admission epoch and lease. It is not a new document-signature algorithm or a replacement for RA/CA qualification.
 
-Draft 02 implements `BROKER_ENFORCED`. The broker controls exclusive access to its backend credentials, performs authorization checks and retains durable state. Its admission authority evaluates that deployment boundary. A signed admission is an accountable assertion by that authority; it does not cryptographically demonstrate hardware behavior, a trusted display, or absence of another key-use channel. KAL and SAL retain COMMON's independent requirements.
+Draft 03 implements `BROKER_ENFORCED`. The broker controls exclusive access to its backend credentials, performs authorization checks and retains durable state. Its admission authority evaluates that deployment boundary. A signed admission is an accountable assertion by that authority; it does not cryptographically demonstrate hardware behavior, a trusted display, or absence of another key-use channel. KAL and SAL retain COMMON's independent requirements.
 
 The implemented profile supports separate ML-DSA document keys and explicitly admitted P-256 document keys, represented through CMS/MTC/X.509 or a signer mdoc. It does not replace PSCP's parent assertion and raw-signing evidence. Selecting both PSCP and this draft's broker evidence plan is rejected until an explicit composition specifies and verifies both execution boundaries. Ordinary WebAuthn activation remains usable with EBP.
 
@@ -23,7 +23,7 @@ The SignaturePolicy contains this critical selection:
 ```json
 {
   "executionBinding": {
-    "profile": "certconcord-execution-binding-draft-02",
+    "profile": "certconcord-execution-binding-draft-03",
     "providerID": "example-broker",
     "maxLeaseSeconds": 300
   }
@@ -40,7 +40,7 @@ The binding is deterministic RRA CBOR inside CMS `D("ExecutionBinding", binding)
 
 | Field                     | Meaning                                                                  |
 | ------------------------- | ------------------------------------------------------------------------ |
-| schemaVersion, profile    | `1`, `certconcord-execution-binding-draft-02`                                    |
+| schemaVersion, profile    | `1`, `certconcord-execution-binding-draft-03`                                    |
 | trustDomainID             | Governing 32-byte domain                                                 |
 | providerID                | Selected provider identity                                               |
 | epoch                     | Positive integer, monotonically increasing per provider and document key |
@@ -76,7 +76,7 @@ The exact request commitment is:
 ```text
 H("IntentExecutionRequest", {
   schemaVersion: 1,
-  profile: "certconcord-execution-binding-draft-02",
+  profile: "certconcord-execution-binding-draft-03",
   bindingHash: SHA-512(original ExecutionBinding CMS),
   permitHash: SHA-512(original OperationPermit CMS),
   activationHash: H("ActivationContext", activation),
@@ -119,14 +119,14 @@ The ordinary signed ExecutionReceipt retains OperationID, activationHash, permit
 
 - provider: the admitted providerID;
 - dispatchedAt: retained reservation time;
-- executionProfile: `certconcord-execution-binding-draft-02`;
+- executionProfile: `certconcord-execution-binding-draft-03`;
 - enforcement: `BROKER_ENFORCED`;
 - executionBindingHash: SHA-512 of the original binding envelope;
 - executionRequestHash: the section 4 commitment.
 
 Unknown receipt fields fail this revision. The receipt key must match the binding. Dispatch is no earlier than permit issuance or binding issuance and no later than execution. Both dispatch and execution must occur within the binding lifetime; execution must also occur within the SIM, activation and permit lifetimes. A binding admitted after the declared dispatch cannot retroactively authorize that dispatch.
 
-The additional evidence object is `ExecutionBindingEvidence`, encoded as `{binding: bstr}`. The mandatory plans are `certconcord-ecp-cms-execution-draft-02` and `certconcord-ecp-mdoc-execution-draft-02`. They include every object required by their existing CMS or mdoc plans plus this object. Removing it, selecting the legacy plan, or adding EBP evidence to a policy that does not select EBP is rejected.
+The additional evidence object is `ExecutionBindingEvidence`, encoded as `{binding: bstr}`. The mandatory plans are `certconcord-ecp-cms-execution-draft-03` and `certconcord-ecp-mdoc-execution-draft-03`. They include every object required by their existing CMS or mdoc plans plus this object. Removing it, selecting the legacy plan, or adding EBP evidence to a policy that does not select EBP is rejected.
 
 The verifier receives `executionBindingCertificate` and synchronous `executionStatus(binding, {at, knowledgeTime})` from its governed configuration. The latter must affirm the applicable historical/current provider admission at the declared execution and knowledge times. A self-supplied GOOD flag in a package is not accepted. The verifier checks the whole original binding, permit, exact TBS, document signature, request commitment and receipt in addition to normal CA/MTC/mdoc, policy, status and evidence checks.
 

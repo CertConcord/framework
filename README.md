@@ -2,7 +2,7 @@
 
 **Certificate trust for document signing and encryption, with transparent issuance and post-quantum evolution.**
 
-**Working draft 02 · reference software 0.2.0-draft.1 · no stable specification release.**
+**Working draft 03 · reference software 0.3.0-draft.1 · no stable specification release.**
 
 CertConcord develops certificate structures and trust protocols around **MTC-based issuance and transparency, post-quantum cryptography, native mdoc signing certificates, and expanded Passkey capabilities**. The initial lifecycle is **MTC/PQC for long-term documents**: intentional signing, retained certificate and status evidence, offline verification after issuer retirement, and timely preservation renewal. Signer-certificate validity and document retention have distinct lifetimes.
 
@@ -52,7 +52,7 @@ The [component map](docs/components.md) identifies canonical ownership, exact co
 
 A draft document can contain normative requirements without being a final standard. Passing the reference tests does not establish independent interoperability, production assurance, regulatory qualification, or patent clearance. [Conformance](spec/conformance.md) records these distinct questions and the current gaps.
 
-MTC certificate/proof semantics, C2SP mirror/witness protocols and RRA governance have distinct origins. Their selection and combination here belong to CertConcord. The reference parsers and verifier SDK demonstrate protocol semantics; production implementations should use mature, independently evaluated parser/crypto stacks and enforce the [additional semantic checks](spec/bindings/SEP-draft-02.md#2-parser-and-execution-boundaries).
+MTC certificate/proof semantics, C2SP mirror/witness protocols and RRA governance have distinct origins. Their selection and combination here belong to CertConcord. The reference parsers and verifier SDK demonstrate protocol semantics; production implementations should use mature, independently evaluated parser/crypto stacks and enforce the [additional semantic checks](spec/bindings/SEP-draft-03.md#2-parser-and-execution-boundaries).
 
 ## Run the reference
 
@@ -73,13 +73,13 @@ npm run sdk:build
 npm run sdk:test
 ```
 
-The document example covers organizational authorization, MTC issuance, a seal with trusted-time evidence, certified ML-KEM recipients, encrypted delivery, verification after decryption, and two-operator encryption-key recovery. Its [binding](spec/bindings/DOCUMENT-draft-02.md) states the exact evidence and limitations. The [security-claim matrix](docs/security-claims.md) separates the assurance of each path.
+The document example covers organizational authorization, MTC issuance, a seal with trusted-time evidence, certified ML-KEM recipients, encrypted delivery, verification after decryption, and two-operator encryption-key recovery. Its [binding](spec/bindings/DOCUMENT-draft-03.md) states the exact evidence and limitations. The [security-claim matrix](docs/security-claims.md) separates the assurance of each path.
 
 The archive example retains the complete MTC document evidence package through TSA replacement, hash renewal and signer-certificate expiry. It separates preserved historical validation from current admissibility; stale current status cannot yield VALID. Second-implementation and external-assessment evidence belong to later stability gates, not prerequisites for this draft research.
 
 The examples use generated software keys, synthetic identities and a synthetic clock. The raw Passkey signing example exercises a selected proposal through a software authenticator; it is not a claim that ordinary deployed Passkeys implement that extension. Independent CMS KEM exchange requires OpenSSL 3.6 or later; CI pins OpenSSL 3.6.5 and requires the check. Use OPENSSL_BIN to select a compatible executable. A 3.5 build can run the signature checks but cannot establish CMS KEM interoperability.
 
-No stable tag, GitHub release or npm publication is part of draft 02. The manual draft-artifact workflow produces review artifacts only. Both npm packages remain private to prevent accidental registry publication; the repository itself is public.
+No stable tag, GitHub release or npm publication is part of draft 03. The manual draft-artifact workflow produces review artifacts only. Both npm packages remain private to prevent accidental registry publication; the repository itself is public.
 
 ## Participation and rights
 

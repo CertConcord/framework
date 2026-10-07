@@ -1,19 +1,19 @@
-# Profiles, sources and maturity — draft 02
+# Profiles, sources and maturity — draft 03
 
-Draft edition: draft-02. Reference package: 0.2.0-draft.1. Initial composition: certconcord-governed-draft-02. All project specifications in this repository are working drafts, including detailed bindings inherited from earlier research. An upstream standard's edition is independent of this draft's maturity.
+Draft edition: draft-03. Reference package: 0.3.0-draft.1. Initial composition: certconcord-governed-draft-03. All project specifications in this repository are working drafts, including detailed bindings inherited from earlier research. An upstream standard's edition is independent of this draft's maturity.
 
 | Material                                                                                           | Status and role                                                                                                                       |
 | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | Architecture, trust core, mdoc/Passkey contracts, document baseline                                | Current framework draft and its first application scope                                                                               |
-| [COMMON](bindings/COMMON-draft-02.md), [DTI](bindings/DTI-draft-02.md)                             | Detailed candidate bindings for shared objects and the RRA/RA/CA composition                                                          |
-| [DSCP](bindings/DSCP-draft-02.md), [DCP](bindings/DCP-draft-02.md)                                 | Document signature/provider and native mdoc credential candidates                                                                     |
-| [PRF-KPP](bindings/PRF-KPP-draft-02.md) | Optional local key-protection candidate; not required for ordinary WebAuthn activation |
-| [PSCP](bindings/PSCP-draft-02.md) | Optional experimental Passkey-associated signing; proposal and device support are not baseline prerequisites |
-| [SEP](bindings/SEP-draft-02.md)                                                                    | Candidate security engineering requirements                                                                                           |
-| [EBP](bindings/EBP-draft-02.md)                                                                    | Published experimental execution-binding proposal                                                                                     |
-| [Document evidence and delivery](bindings/DOCUMENT-draft-02.md)                                    | Candidate subject/organizational authorization, trusted-time and certified-encryption composition; attested CMS and native mdoc plans |
-| [Framework composition detail](bindings/FRAMEWORK-draft-02.md)                                     | Detailed mechanism/evolution contract, subject to the current architecture                                                            |
-| [Binding conformance](bindings/CONFORMANCE-draft-02.md)                                            | Detailed role/capability criteria; not a certificate or complete assessment                                                           |
+| [COMMON](bindings/COMMON-draft-03.md), [DTI](bindings/DTI-draft-03.md)                             | Detailed candidate bindings for shared objects and the RRA/RA/CA composition                                                          |
+| [DSCP](bindings/DSCP-draft-03.md), [DCP](bindings/DCP-draft-03.md)                                 | Document signature/provider and native mdoc credential candidates                                                                     |
+| [PRF-KPP](bindings/PRF-KPP-draft-03.md) | Optional local key-protection candidate; not required for ordinary WebAuthn activation |
+| [PSCP](bindings/PSCP-draft-03.md) | Optional experimental Passkey-associated signing; proposal and device support are not baseline prerequisites |
+| [SEP](bindings/SEP-draft-03.md)                                                                    | Candidate security engineering requirements                                                                                           |
+| [EBP](bindings/EBP-draft-03.md)                                                                    | Published experimental execution-binding proposal                                                                                     |
+| [Document evidence and delivery](bindings/DOCUMENT-draft-03.md)                                    | Candidate subject/organizational authorization, trusted-time and certified-encryption composition; attested CMS and native mdoc plans |
+| [Framework composition detail](bindings/FRAMEWORK-draft-03.md)                                     | Detailed mechanism/evolution contract, subject to the current architecture                                                            |
+| [Binding conformance](bindings/CONFORMANCE-draft-03.md)                                            | Detailed role/capability criteria; not a certificate or complete assessment                                                           |
 | [Adapter selections](../reference/adapter-lock.json), [source pins](../reference/source-lock.json) | Exact implementation bindings and cited upstream bytes; a pin is not a statement that a draft is final or still the newest edition    |
 | Platform and ecosystem guides                                                                      | Optional mappings; selecting one adds its own requirements without redefining the core                                                |
 

@@ -32,9 +32,20 @@ mdoc document evidence retains the independent registration decision. The SDK
 requires explicit scope and resolver inputs; evidence cannot appoint its own
 authorities.
 
+Actual verified MTC signers require COSIGNER admission. Native issuance requires
+TRANSPARENCY_LOG admission for the log and MIRROR admission for the verified mirror
+signers. Quorums count distinct authorized operators; an extra revoked member
+cannot veto enough valid members. Trusted-time plans require the same contributing
+key to be authorized at issuance and at the first trusted proof upper bound.
+Self-declared issuance cannot bypass a later compromise. Normal retirement before
+that first proof can also prevent acceptance without an earlier authenticated
+anchor. These checks belong to the framework composition, not its independent
+MTC or C2SP wire components.
+
 `example-authorities.mjs` creates synthetic test policy. It is not an authenticated
 operational directory. Durable tests, known-answer cases, and local examples do
 not establish external implementation interoperability or production assurance.
-This change is an intermediate working-draft dependency of the flat draft-03
-evidence format and historical preservation profile; it does not define a stable
-deployment or compatibility mode.
+This is the authority contract of the flat draft-03 evidence format and selected
+retained preservation profile. Prior unscoped decisions and experimental wire
+domains are unsupported; this remains a working draft, without a stable
+deployment or legacy compatibility claim.

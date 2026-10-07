@@ -1,6 +1,6 @@
 {
   "name": "certconcord-workspace",
-  "version": "0.2.0-draft.1",
+  "version": "0.3.0-draft.1",
   "private": true,
   "type": "module",
   "description": "CertConcord certificate trust framework — working draft",

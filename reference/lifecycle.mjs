@@ -1,7 +1,10 @@
+import { createPublicKey } from 'node:crypto';
+import { requireAuthorities } from './control-authority.mjs';
 import {
   D,
   H,
   dcbor,
+  decodeCBOR,
   sha256,
   sha512,
   equal,
@@ -12,6 +15,7 @@ import {
   spki,
   publicFromDER,
   random,
+  fields,
 } from './core.mjs';
 import { signCMS, parseCertificate } from './pki.mjs';
 import {
@@ -229,9 +233,20 @@ export class EncryptionRecoveryService {
     loadEncryptionRoot,
     certificate,
     privateKey,
+    trustDomainID,
+    authorityResolver,
   }) {
     requireThat(
-      threshold >= 2 &&
+      Buffer.isBuffer(trustDomainID) &&
+        trustDomainID.length === 32 &&
+        typeof loadEncryptionRoot === 'function',
+      'RECOVERY_CONFIGURATION',
+    );
+    requireThat(
+      Number.isSafeInteger(threshold) &&
+        threshold >= 2 &&
+        Array.isArray(approvers) &&
+        approvers.every((a) => typeof a.operatorID === 'string' && a.operatorID.length > 0) &&
         threshold <= approvers.length &&
         new Set(approvers.map((a) => b64u(keyID(parseCertificate(a.certificate).publicKey))))
           .size === approvers.length &&
@@ -241,23 +256,51 @@ export class EncryptionRecoveryService {
     assertRecoverySeparation(graph, attackerRoots, signingTargets);
     Object.assign(this, {
       journal,
-      approvers,
+      approvers: approvers.map((a) => ({
+        certificate: Buffer.from(a.certificate),
+        operatorID: a.operatorID,
+      })),
       threshold,
-      graph,
-      attackerRoots,
-      signingTargets,
+      graph: decodeCBOR(dcbor(graph)),
+      attackerRoots: [...attackerRoots],
+      signingTargets: [...signingTargets],
       loadEncryptionRoot,
-      certificate,
+      certificate: Buffer.from(certificate),
       privateKey,
+      trustDomainID: Buffer.from(trustDomainID),
+      authorityResolver,
     });
   }
   async recover(request, approvals, recipientPublicKey) {
+    request = decodeCBOR(dcbor(request));
+    fields(request, [
+      'schemaVersion',
+      'trustDomainID',
+      'requestID',
+      'targetRootID',
+      'subjectID',
+      'recipientKeyID',
+      'purpose',
+      'issuedAt',
+      'expiresAt',
+    ]);
+    requireThat(
+      Array.isArray(approvals) &&
+        approvals.length <= 128 &&
+        approvals.every((approval) => Buffer.isBuffer(approval)),
+      'RECOVERY_APPROVAL',
+    );
+    approvals = approvals.map((approval) => Buffer.from(approval));
     requireThat(
       request.schemaVersion === 1 &&
         request.purpose === 'ENCRYPTION_VAULT_WRAP' &&
-        request.requestID.length === 32 &&
-        request.targetRootID.length === 32 &&
-        request.subjectID.length === 32 &&
+        equal(request.trustDomainID, this.trustDomainID) &&
+        [request.requestID, request.targetRootID, request.subjectID].every(
+          (value) => Buffer.isBuffer(value) && value.length === 32,
+        ) &&
+        Number.isSafeInteger(request.issuedAt) &&
+        request.issuedAt >= 0 &&
+        Number.isSafeInteger(request.expiresAt) &&
         request.issuedAt <= now() &&
         request.expiresAt > now() &&
         request.expiresAt - request.issuedAt <= 300 &&
@@ -267,23 +310,55 @@ export class EncryptionRecoveryService {
     );
     assertRecoverySeparation(this.graph, this.attackerRoots, this.signingTargets);
     const hash = H('EncryptionRecoveryRequest', request),
-      operators = new Set();
+      operators = new Set(),
+      approvalAuthorities = new Map();
     for (const approval of approvals) {
       for (const authority of this.approvers) {
         try {
           const a = readControl(approval, 'EncryptionRecoveryApproval', authority.certificate);
+          fields(a, ['requestHash', 'approved', 'expiresAt']);
           requireThat(
-            equal(a.requestHash, hash) && a.approved === true && a.expiresAt >= request.expiresAt,
+            equal(a.requestHash, hash) &&
+              a.approved === true &&
+              Number.isSafeInteger(a.expiresAt) &&
+              a.expiresAt >= request.expiresAt,
             'RECOVERY_APPROVAL',
           );
           operators.add(authority.operatorID);
+          approvalAuthorities.set(
+            b64u(keyID(parseCertificate(authority.certificate).publicKey)),
+            authority.certificate,
+          );
           break;
         } catch {}
       }
     }
     requireThat(operators.size >= this.threshold, 'RECOVERY_APPROVAL_THRESHOLD');
+    const checkAuthority = () => {
+      const at = now(),
+        scope = { trustDomainID: this.trustDomainID, purpose: request.purpose };
+      requireThat(
+        equal(
+          keyID(parseCertificate(this.certificate).publicKey),
+          keyID(createPublicKey(this.privateKey)),
+        ),
+        'RECOVERY_RESULT_KEY_BINDING',
+      );
+      requireAuthorities(
+        this.authorityResolver,
+        [...approvalAuthorities.values(), this.certificate].map((certificate) => ({
+          certificate,
+          role: 'RECOVERY_AUTHORITY',
+          scope,
+          stateTime: at,
+          knowledgeTime: at,
+        })),
+      );
+    };
+    checkAuthority();
     const id = b64u(request.requestID),
-      previous = this.journal.reserve('recovery:' + id, hash);
+      operationID = 'recovery:' + b64u(this.trustDomainID) + ':' + id,
+      previous = this.journal.reserve(operationID, hash);
     if (previous) {
       requireThat(previous.status === 'COMPLETED', 'UNKNOWN_EXECUTION');
       return Buffer.from(previous.result);
@@ -291,17 +366,28 @@ export class EncryptionRecoveryService {
     let root;
     try {
       root = await this.loadEncryptionRoot({
-        rootID: request.targetRootID,
-        subjectID: request.subjectID,
+        trustDomainID: Buffer.from(request.trustDomainID),
+        rootID: Buffer.from(request.targetRootID),
+        subjectID: Buffer.from(request.subjectID),
         purpose: request.purpose,
       });
       requireThat(Buffer.isBuffer(root) && root.length === 32, 'RECOVERY_ROOT');
-      const encrypted = encryptCMS(dcbor({ schemaVersion: 1, requestHash: hash, root }), [
-          { publicKey: recipientPublicKey, subjectKeyIdentifier: request.recipientKeyID },
-        ]),
+      requireThat(request.expiresAt > now(), 'RECOVERY_EXPIRED');
+      checkAuthority();
+      assertRecoverySeparation(this.graph, this.attackerRoots, this.signingTargets);
+      const encrypted = encryptCMS(
+          dcbor({
+            schemaVersion: 1,
+            trustDomainID: request.trustDomainID,
+            requestHash: hash,
+            root,
+          }),
+          [{ publicKey: recipientPublicKey, subjectKeyIdentifier: request.recipientKeyID }],
+        ),
         receipt = signCMS(
           {
             content: D('EncryptionRecoveryResult', {
+              trustDomainID: request.trustDomainID,
               requestHash: hash,
               ciphertextHash: sha512(encrypted),
               operatorIDs: [...operators].sort(),
@@ -312,13 +398,17 @@ export class EncryptionRecoveryService {
           this.privateKey,
         ),
         result = dcbor({ encrypted, receipt });
-      this.journal.complete('recovery:' + id, result);
+      this.journal.complete(operationID, result);
       return result;
     } catch (e) {
-      this.journal.uncertain('recovery:' + id);
+      this.journal.uncertain(operationID);
       throw e;
     } finally {
       root?.fill(0);
     }
+  }
+  result(requestID) {
+    requireThat(Buffer.isBuffer(requestID) && requestID.length === 32, 'RECOVERY_REQUEST_ID');
+    return this.journal.result('recovery:' + b64u(this.trustDomainID) + ':' + b64u(requestID));
   }
 }

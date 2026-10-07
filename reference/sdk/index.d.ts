@@ -1,5 +1,20 @@
 import type { KeyObject, X509Certificate } from 'node:crypto';
 export const profiles: readonly ['CMS', 'MDOC'];
+export interface EvidenceLeaf {
+  id: Buffer;
+  type: string;
+  payload: Buffer;
+}
+export interface VerificationPlan {
+  schemaVersion: 2;
+  profile: string;
+  objects: Record<string, Buffer>;
+}
+export interface EvidencePackage {
+  schemaVersion: 2;
+  plan: VerificationPlan;
+  objects: EvidenceLeaf[];
+}
 export interface SignaturePolicy {
   schemaVersion: 1;
   allowedProfiles: string[];
@@ -9,7 +24,7 @@ export interface SignaturePolicy {
   maxActivationLifetime: number;
   requireTrustedTime: boolean;
   documentEvidence?: {
-    profile: 'certconcord-document-evidence-draft-02';
+    profile: 'certconcord-document-evidence-draft-03';
     organizationAuthorization: boolean;
   };
   [field: string]: unknown;
@@ -63,7 +78,7 @@ export interface CommonTrust {
   permitCertificate: Buffer;
   receiptCertificate: Buffer;
   knowledgeTime?: number;
-  raCertificate?: Buffer;
+  raCertificate: Buffer;
   organizationAuthorities?: {
     organizationID: Buffer;
     certificate: Buffer;
@@ -101,7 +116,7 @@ export interface MdocTrust extends CommonTrust {
 }
 export interface VerificationResult {
   overall: 'VALID' | 'INVALID' | 'INDETERMINATE' | 'UNSUPPORTED';
-  coreRevision: 'draft-02';
+  coreRevision: 'draft-03';
   profile?: string;
   reason?: string;
   [dimension: string]: unknown;

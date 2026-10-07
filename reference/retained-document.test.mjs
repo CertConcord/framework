@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
-import { Journal, evidenceObject } from './state.mjs';
+import { Journal } from './state.mjs';
+import { evidenceLeaf, createEvidencePackage } from './evidence-plan.mjs';
 import { runDemo } from './demo.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
 import { createVerifier } from './sdk/index.mjs';
@@ -13,12 +14,8 @@ import { createRetainedAuthorityResolver, manifestPublicationImprint, ArchivePub
 import { verifyPreservedDocument } from './historical-validation.mjs';
 
 function replaceLeaf(bundle, type, payload) {
-  const objects = bundle.objects.filter((o) => o.type !== 'VerificationPlan')
-    .map((o) => o.type === type ? evidenceObject(type, payload) : o);
-  const prior = c.decodeCBOR(bundle.objects.find((o) => o.type === 'VerificationPlan').payload);
-  const plan = evidenceObject('VerificationPlan', c.dcbor({ ...prior,
-    objects: Object.fromEntries(objects.map((o) => [o.type, o.id])) }), objects.map((o) => o.id));
-  return { schemaVersion: 1, root: plan.id, objects: [...objects, plan] };
+  const objects = bundle.objects.map((o) => o.type === type ? evidenceLeaf(type, payload) : o);
+  return createEvidencePackage(bundle.plan.profile, objects);
 }
 
 async function fixture(r, format) {
@@ -63,9 +60,12 @@ async function fixture(r, format) {
   if (format === 'CMS') {
     appoint(r.trust.mtc.caPublicKey, ['ISSUER']);
     appoint(certKey(r.trust.statusCertificate), ['STATUS_AUTHORITY']);
+    for (const member of r.trust.mtc.members) appoint(member.publicKey, ['COSIGNER']);
   } else {
     appoint(r.trust.issuerPublicKey, ['ISSUER', 'STATUS_AUTHORITY']);
     appoint(certKey(r.trust.sealCertificate), ['DOCUMENT_SEAL']);
+    appoint(r.trust.credentialLogTrust.log.publicKey, ['TRANSPARENCY_LOG']);
+    for (const member of r.trust.credentialLogTrust.members) appoint(member.publicKey, ['MIRROR']);
   }
   appoint(initialTSA.publicKey, ['TIMESTAMP_AUTHORITY']);
   appoint(renewalTSA.publicKey, ['TIMESTAMP_AUTHORITY']);

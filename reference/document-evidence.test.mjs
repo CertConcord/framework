@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
-import { evidenceObject, evaluateStatus } from './state.mjs';
+import { evaluateStatus, readControl } from './state.mjs';
+import { evidenceLeaf, createEvidencePackage } from './evidence-plan.mjs';
 import { runDemo } from './demo.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
 import { runDocumentDemo } from './document-demo.mjs';
@@ -16,22 +17,12 @@ import {
 import { parseTSTInfo } from './archive.mjs';
 import { verifyMTC } from './mtc.mjs';
 import { encryptCMS, decryptCMS } from './protection.mjs';
+import { createAuthorityResolver } from './authority-history.mjs';
 
 function replace(bundle, type, payload, planChanges = {}) {
-  const objects = bundle.objects
-    .filter((o) => o.type !== 'VerificationPlan')
-    .map((o) => (o.type === type ? evidenceObject(type, payload) : o));
-  const original = c.decodeCBOR(bundle.objects.find((o) => o.type === 'VerificationPlan').payload);
-  const plan = evidenceObject(
-    'VerificationPlan',
-    c.dcbor({
-      ...original,
-      ...planChanges,
-      objects: Object.fromEntries(objects.map((o) => [o.type, o.id])),
-    }),
-    objects.map((o) => o.id),
-  );
-  return { schemaVersion: 1, root: plan.id, objects: [...objects, plan] };
+  const objects = bundle.objects.map((o) => (o.type === type ? evidenceLeaf(type, payload) : o));
+  const replaced = createEvidencePackage(bundle.plan.profile, objects);
+  return { ...replaced, plan: { ...replaced.plan, ...planChanges } };
 }
 
 test('offline document verification retains standalone MTC trust, time and status requirements', async (t) => {
@@ -82,7 +73,7 @@ test('document evidence binds trusted time and subject admission for CMS and nat
       objects: r.bundle.objects.filter((o) => o.type !== 'DocumentTimestamp'),
     };
     assert.equal(verifier.verify(c.dcbor(missing)).overall, 'INDETERMINATE');
-    const plan = c.decodeCBOR(r.bundle.objects.find((o) => o.type === 'VerificationPlan').payload);
+    const plan = r.bundle.plan;
     const downgrade = replace(r.bundle, null, null, { profile: documentPlans[plan.profile] });
     assert.equal(verifier.verify(c.dcbor(downgrade)).overall, 'INVALID');
     const denied = createVerifier({
@@ -320,24 +311,19 @@ test('timestamp accuracy and historical status cannot manufacture an earlier pro
     nextUpdate: 7,
   };
   assert.equal(
-    evaluateStatus(revoked, { stateTime: 5, knowledgeTime: 10, scope: 'CERTIFICATE' }),
+    evaluateStatus(revoked, { stateTime: 5, knowledgeTime: 10, scope: 'CERTIFICATE' }).status,
     'REVOKED',
   );
   assert.equal(
-    evaluateStatus(revoked, { stateTime: 4, knowledgeTime: 10, scope: 'CERTIFICATE' }),
+    evaluateStatus(revoked, { stateTime: 4, knowledgeTime: 10, scope: 'CERTIFICATE' }).status,
     'STALE',
   );
-  assert.throws(
-    () =>
-      evaluateStatus(
-        { ...revoked, effectiveTime: undefined },
-        {
-          stateTime: 5,
-          knowledgeTime: 10,
-          scope: 'CERTIFICATE',
-        },
-      ),
-    /REVOCATION_TIME/,
+  assert.equal(
+    evaluateStatus(
+      { ...revoked, effectiveTime: undefined },
+      { stateTime: 5, knowledgeTime: 10, scope: 'CERTIFICATE' },
+    ).overall,
+    'INVALID',
   );
 });
 
@@ -361,4 +347,163 @@ test('CMS KEM rejects tag substitution without releasing plaintext', () => {
   }
   const wrapped = c.seq(top.children[0].raw, c.der(0xa1, top.children[1].value));
   assert.throws(() => decryptCMS(wrapped, options), /CMS_ENVELOPE_TYPE/);
+});
+
+test('recipient status preserves knowledge time and known authority failures', async (t) => {
+  await runDocumentDemo({
+    onComplete: async (r) => {
+      const { evidence, trust } = r.recipient;
+      const at = c.now(),
+        issuedAt = readControl(
+          evidence.rar,
+          'RegistrationAuthorization',
+          trust.raCertificate,
+        ).issuedAt;
+      const stale = {
+        ...evidence,
+        status: r.statusFor(evidence.certificate, { publishedAt: at - 60, nextUpdate: at - 1 }),
+      };
+      await t.test('stale recipient status alone remains indeterminate', () => {
+        assert.throws(() => admitDocumentRecipient(stale, trust, at), { overall: 'INDETERMINATE' });
+      });
+      for (const role of ['COSIGNER', 'ISSUER'])
+        await t.test(`staleness cannot hide a known compromised ${role}`, () => {
+          const keys =
+            role === 'COSIGNER'
+              ? trust.mtc.members.map((member) => member.publicKey)
+              : [trust.mtc.caPublicKey];
+          const resolve = createAuthorityResolver({
+            trustDomainID: trust.trustDomainID,
+            authorities: keys.map((publicKey) => ({
+              mode: 'RAW_KEY',
+              publicKeyDER: c.spki(publicKey),
+              roles: [role],
+              scopes: [{ trustDomainID: trust.trustDomainID }],
+              knownAt: issuedAt - 60,
+              validFrom: issuedAt - 60,
+              validUntil: at + 3600,
+              status: {
+                scope: 'AUTHORITY',
+                authorityID: c.keyID(publicKey),
+                trustDomainID: trust.trustDomainID,
+                status: 'REVOKED',
+                publishedAt: at,
+                nextUpdate: at + 3600,
+                effectiveTime: at,
+                compromiseStart: issuedAt - 1,
+              },
+            })),
+          });
+          assert.throws(
+            () =>
+              admitDocumentRecipient(
+                stale,
+                {
+                  ...trust,
+                  authorityResolver: (query) =>
+                    query.role === role ? resolve(query) : trust.authorityResolver(query),
+                },
+                at,
+              ),
+            { overall: 'INVALID' },
+          );
+        });
+      const future = {
+        ...evidence,
+        status: r.statusFor(evidence.certificate, { publishedAt: at + 10, nextUpdate: at + 300 }),
+      };
+      await t.test('future publication is unavailable without querying a future authority', () => {
+        const queries = [];
+        assert.throws(
+          () =>
+            admitDocumentRecipient(
+              future,
+              {
+                ...trust,
+                knowledgeTime: at,
+                authorityResolver: (query) => {
+                  queries.push(query);
+                  return trust.authorityResolver(query);
+                },
+              },
+              at,
+            ),
+          { overall: 'INDETERMINATE' },
+        );
+        assert(queries.every((query) => query.stateTime <= query.knowledgeTime));
+      });
+      await t.test(
+        'a statement learned after the operation can establish historical good status',
+        () => {
+          const admitted = admitDocumentRecipient(future, { ...trust, knowledgeTime: at + 20 }, at);
+          assert.deepEqual(admitted.binding.keyID, c.keyID(r.recipient.key.publicKey));
+        },
+      );
+    },
+  });
+});
+
+test('unsupported organization status cannot hide known document authority revocation', async (t) => {
+  await runDocumentDemo({
+    onComplete: async (r) => {
+      const knowledgeTime = r.trust.knowledgeTime;
+      const changed = replace(
+        r.bundle,
+        'OrganizationAuthorizationStatus',
+        r.organizationStatus({
+          critical: ['unknown-critical'],
+          publishedAt: knowledgeTime,
+          nextUpdate: knowledgeTime + 300,
+        }),
+      );
+      assert.equal(
+        createVerifier({ format: 'CMS', trust: r.trust }).verify(c.dcbor(changed)).overall,
+        'UNSUPPORTED',
+      );
+      for (const [role, certificate] of [
+        ['REGISTRATION_AUTHORITY', r.trust.raCertificate],
+        ['ORGANIZATION_AUTHORITY', r.organizationAuthority.certificate],
+        ['TIMESTAMP_AUTHORITY', r.trust.timestamp.certificate],
+      ])
+        await t.test(role, () => {
+          const cert = p.parseCertificate(certificate);
+          const resolve = createAuthorityResolver({
+            trustDomainID: r.trust.trustDomainID,
+            authorities: [
+              {
+                mode: 'CERTIFICATE',
+                certificate,
+                roles: [role],
+                scopes: [{ trustDomainID: r.trust.trustDomainID }],
+                knownAt: cert.notBefore,
+                validFrom: cert.notBefore,
+                validUntil: cert.notAfter,
+                status: {
+                  scope: 'AUTHORITY',
+                  authorityID: c.keyID(cert.publicKey),
+                  trustDomainID: r.trust.trustDomainID,
+                  status: 'REVOKED',
+                  publishedAt: knowledgeTime,
+                  nextUpdate: knowledgeTime + 3600,
+                  effectiveTime: knowledgeTime,
+                  compromiseStart: 0,
+                },
+              },
+            ],
+          });
+          const verifier = createVerifier({
+            format: 'CMS',
+            trust: {
+              ...r.trust,
+              authorityResolver: (query) =>
+                query.role === role ? resolve(query) : r.trust.authorityResolver(query),
+            },
+          });
+          assert.equal(verifier.verify(c.dcbor(r.bundle)).reason, 'AUTHORITY_REVOKED');
+          const combined = verifier.verify(c.dcbor(changed));
+          assert.equal(combined.overall, 'INVALID', combined.reason);
+          assert.equal(combined.reason, 'AUTHORITY_REVOKED');
+        });
+    },
+  });
 });

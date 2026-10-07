@@ -1,14 +1,14 @@
-# CertConcord Conformance Requirements — draft 02
+# CertConcord Conformance Requirements — draft 03
 
-> Candidate binding for CertConcord draft 02. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 02 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
+> Candidate binding for CertConcord draft 03. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 03 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
 
-This document defines how to scope, evaluate and report conformance to the `certconcord-governed-draft-02` composition under [FRAMEWORK draft 02](FRAMEWORK-draft-02.md). It applies the requirements of [COMMON](COMMON-draft-02.md), [DTI](DTI-draft-02.md), [DSCP](DSCP-draft-02.md), [DCP](DCP-draft-02.md), [PRF-KPP](PRF-KPP-draft-02.md) and the enabled [PSCP](PSCP-draft-02.md) profile to the roles and capabilities an implementation provides. Normative terms have the BCP 14 meanings defined in COMMON.
+This document defines how to scope, evaluate and report conformance to the `certconcord-governed-draft-03` composition under [FRAMEWORK draft 03](FRAMEWORK-draft-03.md). It applies the requirements of [COMMON](COMMON-draft-03.md), [DTI](DTI-draft-03.md), [DSCP](DSCP-draft-03.md), [DCP](DCP-draft-03.md), [PRF-KPP](PRF-KPP-draft-03.md) and the enabled [PSCP](PSCP-draft-03.md) profile to the roles and capabilities an implementation provides. Normative terms have the BCP 14 meanings defined in COMMON.
 
 CertConcord permits other governance, issuance, transparency, wallet and protocol bindings. An alternative composition MUST identify its framework edition, normative specification and requirement-to-evidence mapping before claiming evaluated conformance. It MUST NOT claim this composition by removing required RRA or MTC checks. MTC is required only for scopes that select its branch. The profile identifier here describes a conformance unit; it does not change earlier signed-object identifiers or retrospectively expand an assessment.
 
 ## 1. Scope of a conformance statement
 
-A conformance statement MUST identify the evaluated implementation, version, configuration and environment. It MUST name the framework edition, composition profile, implemented roles, credential profiles, enabled adapters and exact upstream revisions. A statement for a single component covers that component's applicable requirements. A statement for a complete `certconcord-governed-draft-02` deployment additionally covers the composition and mandatory services in [DTI section 50](DTI-draft-02.md#50-mandatory-composition-services).
+A conformance statement MUST identify the evaluated implementation, version, configuration and environment. It MUST name the framework edition, composition profile, implemented roles, credential profiles, enabled adapters and exact upstream revisions. A statement for a single component covers that component's applicable requirements. A statement for a complete `certconcord-governed-draft-03` deployment additionally covers the composition and mandatory services in [DTI section 50](DTI-draft-03.md#50-mandatory-composition-services).
 
 The statement MUST record:
 
@@ -57,13 +57,13 @@ PSCP implementations MUST identify the selected extension version, generation ce
 
 The `PREAUTHORIZED_EVIDENCE` profile requires activation to precede the raw-signing request and requires the verifier to check both proofs. It establishes acceptance of authorized evidence; it does not establish that the authenticator itself parsed the RRA permit or that browser code exclusively controls all key use. A deployment claiming a protected execution gate MUST identify and evaluate that additional provider boundary. WebKit's API adapter also requires separately admitted keys and a protected provider integration; a nonextractable handle alone is insufficient.
 
-Hardware assurance MUST be established for the exact proposed key before hardware-profile issuance. The assessment MUST validate the platform evidence, challenge, application/device policy, trust source and applicable status. Local key labels, non-exportable flags and evidence about another key cannot satisfy this requirement. [DCP section 2.2](DCP-draft-02.md#22-key-attestation-admission) defines the platform admission rules.
+Hardware assurance MUST be established for the exact proposed key before hardware-profile issuance. The assessment MUST validate the platform evidence, challenge, application/device policy, trust source and applicable status. Local key labels, non-exportable flags and evidence about another key cannot satisfy this requirement. [DCP section 2.2](DCP-draft-03.md#22-key-attestation-admission) defines the platform admission rules.
 
-Key Assurance Level (KAL) and Signature Activation Level (SAL) MUST remain separate. Fresh user verification and trusted display are evaluated when required by the claimed SAL. A holder proof, platform API or successful biometric prompt MUST NOT be used to assert an unverified higher level. [COMMON section 5](COMMON-draft-02.md#5-independent-assurance-dimensions) defines these levels.
+Key Assurance Level (KAL) and Signature Activation Level (SAL) MUST remain separate. Fresh user verification and trusted display are evaluated when required by the claimed SAL. A holder proof, platform API or successful biometric prompt MUST NOT be used to assert an unverified higher level. [COMMON section 5](COMMON-draft-03.md#5-independent-assurance-dimensions) defines these levels.
 
 ## 4. Verification results
 
-A verifier MUST report cryptographic validity, issuer trust, identity qualification, authorization, time, status, content coverage and evidence closure separately. Its overall result follows [COMMON section 11](COMMON-draft-02.md#11-results-time-and-incidents):
+A verifier MUST report cryptographic validity, issuer trust, identity qualification, authorization, time, status, content coverage and evidence closure separately. Its overall result follows [COMMON section 11](COMMON-draft-03.md#11-results-time-and-incidents):
 
 | Result          | Meaning                                                                       |
 | --------------- | ----------------------------------------------------------------------------- |
@@ -99,11 +99,11 @@ The repository's test modules and commands are described in the [implementation 
 
 ## 6. Changes and continued conformance
 
-[SEP draft 02](SEP-draft-02.md) adds parser isolation, persistence, privacy measurement, supply-chain evidence and external assessment requirements. [ASSURANCE.md](../../docs/assurance.md) identifies the review boundaries and pinned test environments. An assessment statement distinguishes local checks, externally executed suites, independent review and certification, and binds every result to its original artifacts.
+[SEP draft 03](SEP-draft-03.md) adds parser isolation, persistence, privacy measurement, supply-chain evidence and external assessment requirements. [ASSURANCE.md](../../docs/assurance.md) identifies the review boundaries and pinned test environments. An assessment statement distinguishes local checks, externally executed suites, independent review and certification, and binds every result to its original artifacts.
 
 A change to an enabled adapter, authority registry, policy, key boundary or execution path MUST be evaluated against the affected requirements before extending the conformance statement to that configuration. Dependency updates retain explicit versions; trust sources are updated through their governed procedures.
 
-The optional [EBP draft 02](EBP-draft-02.md) class evaluates exact provider admission, immutable asynchronous inputs, explicit policy denial, time rechecks, epoch rollback/forks, persistent unresolved operations and mandatory CMS/mdoc evidence. Its BROKER_ENFORCED result does not establish hardware permit processing, trusted display or support for the proposed platform extensions.
+The optional [EBP draft 03](EBP-draft-03.md) class evaluates exact provider admission, immutable asynchronous inputs, explicit policy denial, time rechecks, epoch rollback/forks, persistent unresolved operations and mandatory CMS/mdoc evidence. Its BROKER_ENFORCED result does not establish hardware permit processing, trusted display or support for the proposed platform extensions.
 
 Profile transitions MUST follow the [migration requirements](../../docs/evolution.md), preserving historical signatures, consumed authorizations, issuance indices and trust-state watermarks. Unresolved failures MUST remain visible in the evaluation record and verification results.
 

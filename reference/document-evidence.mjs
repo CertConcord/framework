@@ -1,14 +1,16 @@
 import { H, sha512, spki, parseDER, equal, requireThat, fields, dcbor } from './core.mjs';
 import { snapshotIssuanceScope, issuanceAuthorityScope } from './enrollment-scope.mjs';
 import { requireAuthorities } from './control-authority.mjs';
+import { AuthorityError } from './authority-history.mjs';
 import { parseCertificate, RRA } from './pki.mjs';
-import { evidenceObject, readControl, evaluateStatus } from './state.mjs';
+import { readControl, evaluateStatus } from './state.mjs';
+import { evidenceLeaf } from './evidence-plan.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
 
-export const DOCUMENT_EVIDENCE_PROFILE = 'certconcord-document-evidence-draft-02';
+export const DOCUMENT_EVIDENCE_PROFILE = 'certconcord-document-evidence-draft-03';
 export const documentPlans = Object.freeze({
-  'certconcord-ecp-cms-attested-draft-02': 'certconcord-ecp-cms-attested-v1',
-  'certconcord-ecp-mdoc-attested-draft-02': 'certconcord-ecp-mdoc-attested-v1',
+  'certconcord-ecp-cms-document-draft-03': 'certconcord-ecp-cms-attested-draft-03',
+  'certconcord-ecp-mdoc-document-draft-03': 'certconcord-ecp-mdoc-attested-draft-03',
 });
 
 export function documentEvidenceTypes(policy, format) {
@@ -26,7 +28,6 @@ export function documentEvidenceTypes(policy, format) {
     'DOCUMENT_ORGANIZATION_REPRESENTATION',
   );
   return [
-    'RegistrationAuthorization',
     ...(policy.documentEvidence.organizationAuthorization
       ? ['OrganizationAuthorization', 'OrganizationAuthorizationStatus']
       : []),
@@ -40,7 +41,6 @@ const mutableTypes = new Set([
   'CredentialStatusList',
   'OrganizationAuthorizationStatus',
   'DocumentTimestamp',
-  'VerificationPlan',
 ]);
 export function documentTimestampImprint(format, objects) {
   const selected = objects.filter((o) => !mutableTypes.has(o.type));
@@ -64,14 +64,14 @@ export function appendDocumentEvidence(objects, { policy, format, evidence }) {
   fields(evidence, types);
   for (const type of types.filter((t) => t !== 'DocumentTimestamp')) {
     requireThat(Buffer.isBuffer(evidence[type]), 'DOCUMENT_EVIDENCE_BINARY');
-    objects.push(evidenceObject(type, evidence[type]));
+    objects.push(evidenceLeaf(type, evidence[type]));
   }
   if (types.includes('DocumentTimestamp')) {
     const source = evidence.DocumentTimestamp;
     const token =
       typeof source === 'function' ? source(documentTimestampImprint(format, objects)) : source;
     requireThat(Buffer.isBuffer(token), 'DOCUMENT_EVIDENCE_BINARY');
-    objects.push(evidenceObject('DocumentTimestamp', token));
+    objects.push(evidenceLeaf('DocumentTimestamp', token));
   }
 }
 
@@ -134,9 +134,9 @@ export function verifyDocumentEvidence(
   },
   trust,
 ) {
-  if (!policy.documentEvidence) return undefined;
   documentEvidenceTypes(policy, format);
   const authorityQueries = [],
+    authorityFailures = [],
     unavailable = [],
     scope = {
       trustDomainID: sim.trustDomainID,
@@ -188,11 +188,15 @@ export function verifyDocumentEvidence(
     stateTime: registration.issuedAt,
     knowledgeTime,
   });
-  const org = policy.documentEvidence.organizationAuthorization;
+  const org = policy.documentEvidence?.organizationAuthorization ?? false;
   requireThat(
     org === (sim.profileID === 'CERTCONCORD-ORG-SEAL-v1'),
     'DOCUMENT_ORGANIZATION_PURPOSE',
   );
+  if (!policy.documentEvidence) {
+    requireAuthorities(trust.authorityResolver, authorityQueries);
+    return { subjectBinding: 'REGISTRATION_AUTHORIZATION' };
+  }
   let authorization, authority;
   if (org) {
     authority = trust.organizationAuthorities?.find((a) => equal(a.organizationID, sim.subjectID));
@@ -301,7 +305,7 @@ export function verifyDocumentEvidence(
         permit.expiresAt > stateTime,
       'DOCUMENT_TIMESTAMP_OPERATION_WINDOW',
     );
-    verifyState(stateTime);
+    verifyState(stateTime, { proofOfExistenceUpperBound: stateTime });
     time = 'TRUSTED_PROOF_OF_EXISTENCE';
   }
   if (org) {
@@ -322,13 +326,17 @@ export function verifyDocumentEvidence(
         stateTime,
         knowledgeTime,
       },
-      {
-        certificate: authority.statusCertificate,
-        role: 'STATUS_AUTHORITY',
-        scope,
-        stateTime: status.publishedAt,
-        knowledgeTime,
-      },
+      ...(status.publishedAt <= knowledgeTime
+        ? [
+            {
+              certificate: authority.statusCertificate,
+              role: 'STATUS_AUTHORITY',
+              scope,
+              stateTime: status.publishedAt,
+              knowledgeTime,
+            },
+          ]
+        : []),
     );
     requireThat(
       equal(status.authorizationID, authorization.authorizationID) &&
@@ -341,11 +349,14 @@ export function verifyDocumentEvidence(
       knowledgeTime,
       scope: 'ORGANIZATION_AUTHORIZATION',
     });
-    if (['STALE', 'UNKNOWN', 'NOT_YET_KNOWN'].includes(result))
-      unavailable.push('DOCUMENT_ORGANIZATION_STATUS_' + result);
-    else requireThat(result === 'GOOD', 'DOCUMENT_ORGANIZATION_STATUS_' + result);
+    if (result.overall === 'INDETERMINATE')
+      unavailable.push('DOCUMENT_ORGANIZATION_' + result.reason);
+    else if (result.overall !== 'VALID')
+      authorityFailures.push(
+        new AuthorityError({ ...result, reason: 'DOCUMENT_ORGANIZATION_' + result.reason }),
+      );
   }
-  requireAuthorities(trust.authorityResolver, authorityQueries, unavailable);
+  requireAuthorities(trust.authorityResolver, authorityQueries, unavailable, authorityFailures);
   return {
     time,
     stateTime,

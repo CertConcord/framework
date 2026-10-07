@@ -7,7 +7,7 @@ import { pathToFileURL } from 'node:url';
 import { runDemo } from '../demo.mjs';
 import { runFoundationDemo } from '../foundation-demo.mjs';
 import { runDocumentDemo } from '../document-demo.mjs';
-import { dcbor } from '../core.mjs';
+import { dcbor, decodeCBOR } from '../core.mjs';
 const cwd = resolve('.runtime/sdk-consumer');
 const sdkPackage = JSON.parse(await readFile('sdk/package.json'));
 assert.equal(sdkPackage.private, true);
@@ -47,10 +47,21 @@ for (const [format, executionBinding, trustedTime = false] of [
       ? await runDemo({ executionBinding, trustedTime })
       : await runFoundationDemo({ executionBinding, trustedTime });
   const verifier = sdk.createVerifier({ format, trust: r.trust });
-  assert.equal(verifier.verify(dcbor(r.bundle)).overall, 'VALID');
-  const changed = dcbor(r.bundle);
-  changed[changed.length - 1] ^= 1;
-  assert.equal(verifier.verify(changed).overall, 'INVALID');
+  const verified = verifier.verify(dcbor(r.bundle));
+  assert.equal(verified.overall, 'VALID');
+  assert.equal(verified.coreRevision, 'draft-03');
+  for (const suffix of ['attested-v1', 'passkey-v1', 'execution-draft-02', 'attested-draft-02']) {
+    const profile = 'certconcord-ecp-' + format.toLowerCase() + '-' + suffix;
+    assert.equal(
+      verifier.verify(dcbor({ ...r.bundle, plan: { ...r.bundle.plan, profile } })).overall,
+      'UNSUPPORTED',
+      profile,
+    );
+  }
+  assert.equal(verifier.verify(dcbor({ ...r.bundle, schemaVersion: 1 })).overall, 'UNSUPPORTED');
+  const changed = decodeCBOR(dcbor(r.bundle));
+  changed.objects.find((object) => object.type === 'Document').payload[0] ^= 1;
+  assert.equal(verifier.verify(dcbor(changed)).overall, 'INVALID');
   assert.equal(verifier.verify(Buffer.from('not evidence')).overall, 'INVALID');
   assert.equal(verifier.verify(dcbor({ ...r.bundle, extra: true })).overall, 'INVALID');
   const wrong = sdk.createVerifier({

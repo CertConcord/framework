@@ -1,14 +1,14 @@
-# CertConcord Document Trust Infrastructure — draft 02
+# CertConcord Document Trust Infrastructure — draft 03
 
-> Candidate binding for CertConcord draft 02. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 02 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
+> Candidate binding for CertConcord draft 03. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 03 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
 
 **CertConcord**
 
-Status: draft 02. Normative language: English. COMMON-draft-02 is an integral normative part of this specification.
+Status: draft 03. Normative language: English. COMMON-draft-03 is an integral normative part of this specification.
 
 ## 1. Scope
 
-DTI defines the infrastructure of the `certconcord-governed-draft-02` composition: governed identity qualification, transparent credential issuance, intentional document signatures, organizational seals, encryption and independent historical validation. [FRAMEWORK draft 02](FRAMEWORK-draft-02.md) defines CertConcord's broader architecture, including successors to current issuance/transparency mechanisms, evolving protocols and wallet ecosystem independence. A better architecture may replace MTC through a breaking upgrade. Holder interfaces and trust relationships are defined independently of EUDI, whose requirements belong to an optional ecosystem mapping. DTI's offline-root/RRA model is one concrete composition, not the definition of the entire framework. Within this composition, any application may request services under the same registration and authorization rules. Application login, local administrator access and document possession do not grant trust authority.
+DTI defines the infrastructure of the `certconcord-governed-draft-03` composition: governed identity qualification, transparent credential issuance, intentional document signatures, organizational seals, encryption and independent historical validation. [FRAMEWORK draft 03](FRAMEWORK-draft-03.md) defines CertConcord's broader architecture, including successors to current issuance/transparency mechanisms, evolving protocols and wallet ecosystem independence. A better architecture may replace MTC through a breaking upgrade. Holder interfaces and trust relationships are defined independently of EUDI, whose requirements belong to an optional ecosystem mapping. DTI's offline-root/RRA model is one concrete composition, not the definition of the entire framework. Within this composition, any application may request services under the same registration and authorization rules. Application login, local administrator access and document possession do not grant trust authority.
 
 The framework develops original specifications and technology alongside standards integration. A separately identified successor may improve or replace a selected mechanism. Its architectural contract closes the relationships between upstream protocols: authority, subject/key/purpose binding, authorization, execution, status and retained evidence. Upstream objects remain governed by their selected standard revision. A CertConcord specialization or original extension MUST identify its additional semantics and compatibility boundary; it MUST NOT claim upstream adoption, conformance or endorsement solely because the framework implements it. The [architecture diagram](../architecture.md) distinguishes governance, identity qualification, holder interfaces, document operations and evidence services.
 
@@ -34,7 +34,7 @@ MTC certificates and personal signer mdocs are two governed credential represent
 
 ### 4.1 Mandatory credential-to-document contract
 
-DCP-draft-02 is the normative native-holder branch of this architecture. A deployment providing that branch MUST implement DCP together with DTI, DSCP and COMMON. WebAuthn activation, MTC certificate operations and PRF-protected storage use their respective contracts below. All branches resolve to the same governed subject, key, purpose and policy; a protocol-specific account MUST NOT introduce independent signing privileges.
+DCP-draft-03 is the normative native-holder branch of this architecture. A deployment providing that branch MUST implement DCP together with DTI, DSCP and COMMON. WebAuthn activation, MTC certificate operations and PRF-protected storage use their respective contracts below. All branches resolve to the same governed subject, key, purpose and policy; a protocol-specific account MUST NOT introduce independent signing privileges.
 
 | Transition                                    | Required authority and binding                                                                                                                          | Rejection condition                                                                                            |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
@@ -122,7 +122,7 @@ SubjectID is a private trust-domain identifier independent of product accounts a
 
 ## 13. Registration authorization
 
-A RAR is an authenticated RA decision over schemaVersion, requestID, subjectID, profileID, policyHash, identityEvidenceHash, spkiHash, csrHash or equivalent enrollment commitment, possessionMode, issuedAt and expiresAt. The CA checks that the RA's issuer/profile/subject scope covers the request. A RAR is consumed for one issuance transaction, with identical retry returning the same stored certificate. A changed key, subject, policy or request under the same requestID is a conflict.
+A RAR is an authenticated schema-2 RA decision over requestID, subjectID, profileID, policyHash, identityEvidenceHash, spkiHash, csrHash or equivalent enrollment commitment, possessionMode, issuedAt, expiresAt and exactly one issuanceScope. As defined in COMMON, that signed scope binds the trust domain, issuer identity, actual issuing key and one representation. The CA resolves the RA's role and scope at issuance under the selected knowledge time, and checks its own role, the decision interval and every request commitment before consumption. A RAR is consumed for one issuance transaction, with an identical successful retry returning the same durable result. Another issuer, domain, representation, key, subject or policy cannot reuse it. An absent scope is not a legacy grant.
 
 ## 14. Proof of possession
 
@@ -257,7 +257,7 @@ Root policies, authority appointments, transitions and incident statements have 
 
 ## 44. Service interfaces
 
-Interfaces declare media types, authentication, authorization, size bounds, expiry, pagination, idempotency and errors. The enrollment adapters preserve CMP/ACME wire semantics while requiring the same RA approvals. DNS control in ACME is not natural-person identity or document signing authority. OpenID endpoints use DCP-draft-02; hardware and remote providers use ACB, regardless of API style.
+Interfaces declare media types, authentication, authorization, size bounds, expiry, pagination, idempotency and errors. The enrollment adapters preserve CMP/ACME wire semantics while requiring the same RA approvals. DNS control in ACME is not natural-person identity or document signing authority. OpenID endpoints use DCP-draft-03; hardware and remote providers use ACB, regardless of API style.
 
 ## 45. Security zones
 
@@ -295,13 +295,13 @@ The path is bootstrap authority → RTM and policy → RA/key qualification → 
 
 The system detects key/subject/profile substitution, replay, rollback, split views under its stated quorum model, unexpected document revisions, cross-origin presentation, recovery escalation and incomplete evidence. It preserves the ability to state uncertainty. Its assurance claims identify their trust assumptions and do not exceed the evidence actually verified.
 
-[SEP draft 02](SEP-draft-02.md) specifies parser isolation, distributed persistence, privacy measurement, supply-chain evidence and independent assessment for implementations of this trust path. It supplements these requirements without changing signed object formats or the applicable historical evidence plan.
+[SEP draft 03](SEP-draft-03.md) specifies parser isolation, distributed persistence, privacy measurement, supply-chain evidence and independent assessment for implementations of this trust path. It supplements these requirements without changing signed object formats or the applicable historical evidence plan.
 
 ## 53. Draft dependency governance
 
-Business semantics, RRA bindings and upstream wire adapters evolve independently or through a coordinated architectural revision under [FRAMEWORK](FRAMEWORK-draft-02.md). Adopted revisions remain version-pinned for reproducibility while later drafts, final standards and original architectures may be evaluated and selected. An incompatible update uses distinct version semantics and an explicit cutover. It MAY retire old adapters and mechanisms without a compatibility bridge. Retained original evidence and OIDs keep their historical interpretation; a successor need not implement their verifier. Live trust decisions MUST NOT automatically follow a moving upstream branch.
+Business semantics, RRA bindings and upstream wire adapters evolve independently or through a coordinated architectural revision under [FRAMEWORK](FRAMEWORK-draft-03.md). Adopted revisions remain version-pinned for reproducibility while later drafts, final standards and original architectures may be evaluated and selected. An incompatible update uses distinct version semantics and an explicit cutover. It MAY retire old adapters and mechanisms without a compatibility bridge. Retained original evidence and OIDs keep their historical interpretation; a successor need not implement their verifier. Live trust decisions MUST NOT automatically follow a moving upstream branch.
 
-CertConcord participants MAY develop independent experiments, draft profiles and specifications, including extensions to existing standards and alternative mechanisms. RRA is a governance role in this composition, not the authority that grants permission to conduct framework research. A protocol draft MUST identify its authoring authority, original contribution, exact wire revision, state machine, threat model, compatibility boundary and executable acceptance criteria. It MUST NOT be presented as an upstream capability solely because it transports or supplements upstream objects. [Execution Binding Profile draft 02](EBP-draft-02.md) applies this process to governed provider/key admission, immutable signing requests, durable single dispatch and mandatory CMS/mdoc execution evidence.
+CertConcord participants MAY develop independent experiments, draft profiles and specifications, including extensions to existing standards and alternative mechanisms. RRA is a governance role in this composition, not the authority that grants permission to conduct framework research. A protocol draft MUST identify its authoring authority, original contribution, exact wire revision, state machine, threat model, compatibility boundary and executable acceptance criteria. It MUST NOT be presented as an upstream capability solely because it transports or supplements upstream objects. [Execution Binding Profile draft 03](EBP-draft-03.md) applies this process to governed provider/key admission, immutable signing requests, durable single dispatch and mandatory CMS/mdoc execution evidence.
 
 ## 54. Uniform policy enforcement
 
@@ -309,7 +309,7 @@ Issuer and application names MUST NOT grant exceptions to the domain's published
 
 ## 55. Passkey-associated credential path
 
-[PSCP-draft-02](PSCP-draft-02.md) adds a personal signing-key admission path to this infrastructure. The parent Passkey's authentication key, associated document key, attestation key and issuer key have separate roles. RA approval binds the independently qualified subject, exact CSR/SPKI and PasskeySigningBinding. CA/MTC issuance verifies that same admitted binding; signer-mdoc issuance carries it in the governed signing namespace and retains DCP transparency, seal and status requirements.
+[PSCP-draft-03](PSCP-draft-03.md) adds a personal signing-key admission path to this infrastructure. The parent Passkey's authentication key, associated document key, attestation key and issuer key have separate roles. RA approval binds the independently qualified subject, exact CSR/SPKI and PasskeySigningBinding. CA/MTC issuance verifies that same admitted binding; signer-mdoc issuance carries it in the governed signing namespace and retains DCP transparency, seal and status requirements.
 
 The path is key generation and attestation → exact CSR possession → independent identity decision and signed RAR → certified binding → frozen document/ACB → fresh verified activation and permit → raw signature plus parent assertion → receipt and semantic evidence verification. A prequalified identity can precede generation; final certification still binds the exact key. Unattended public ARKG derivation creates neither identity authority nor a CA issuance grant.
 

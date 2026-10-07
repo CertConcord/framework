@@ -31,19 +31,15 @@ import {
   issuanceRequestID,
   requireIssuanceAuthority,
 } from './enrollment-scope.mjs';
-import { requireAuthority } from './authority-history.mjs';
+import { requireAuthority, AuthorityError } from './authority-history.mjs';
 import {
   operationAuthorityQueries,
   requireAuthorities,
   collectAuthorityFailure,
 } from './control-authority.mjs';
 import { signCMS, parseCertificate } from './pki.mjs';
-import {
-  readControl,
-  validateActivation,
-  evidenceObject,
-  verifyEvidenceClosure,
-} from './state.mjs';
+import { readControl, validateActivation } from './state.mjs';
+import { evidenceLeaf, createEvidencePackage, verifyEvidencePackage } from './evidence-plan.mjs';
 import { verifyCredentialLog } from './credential-log.mjs';
 import { PASSKEY_SIGN_PROFILE } from './raw-signing.mjs';
 import { verifyPasskeyOperation } from './passkey-credentials.mjs';
@@ -277,7 +273,38 @@ export class PersonalMdocCA extends CredentialIssuer {
         policyHash: binding.policyHash,
       },
       logProof = this.credentialLog.append(entry);
-    verifyCredentialLog(logProof, entry, this.credentialLogTrust);
+    const verifiedLog = verifyCredentialLog(logProof, entry, this.credentialLogTrust),
+      issuedAt = now(),
+      logScope = {
+        trustDomainID: this.issuanceScope.trustDomainID,
+        issuerID: this.issuer,
+        representation: 'MDOC',
+        profileID: offer.claims.profile_id,
+      };
+    requireAuthorities(
+      this.authorityResolver,
+      [
+        {
+          publicKeyDER: verifiedLog.logPublicKeyDER,
+          role: 'TRANSPARENCY_LOG',
+          scope: logScope,
+          stateTime: issuedAt,
+          knowledgeTime: issuedAt,
+        },
+      ],
+      [],
+      [],
+      [
+        {
+          members: verifiedLog.verifiedMirrors,
+          threshold: this.credentialLogTrust.threshold,
+          role: 'MIRROR',
+          scope: logScope,
+          stateTime: issuedAt,
+          knowledgeTime: issuedAt,
+        },
+      ],
+    );
     const seal = signCMS(
       {
         certificate: this.sealCertificate,
@@ -289,7 +316,7 @@ export class PersonalMdocCA extends CredentialIssuer {
           policyHash: binding.policyHash,
           documentKeyID: binding.documentKeyID,
           logProof,
-          issuedAt: now(),
+          issuedAt,
           expiresAt: validUntil,
         }),
       },
@@ -300,7 +327,7 @@ export class PersonalMdocCA extends CredentialIssuer {
       seal,
       bindingID: binding.bindingID,
       status,
-      issuedAt: now(),
+      issuedAt,
       expiresAt: validUntil,
       ...(binding.profileID === PASSKEY_SIGN_PROFILE
         ? { passkeyBindingID: offer.claims.passkey_binding.bindingID }
@@ -429,7 +456,7 @@ function inspectPersonalMdoc(
     );
   }
   validateAdmissionAssessment(claims.key_admission, holderPublicKey, at);
-  verifyCredentialLog(
+  const verifiedLog = verifyCredentialLog(
     s.logProof,
     {
       schemaVersion: 1,
@@ -444,11 +471,11 @@ function inspectPersonalMdoc(
   const status = claims.status?.status_list;
   requireThat(status?.uri === statusURI, 'PERSONAL_MDOC_STATUS');
   const assessment = verifyMdocStatusList(statusToken, {
-    evaluateStatusList: verifyStatusList,
     publicKey: issuerPublicKey,
     uri: statusURI,
     index: status.idx,
     at: knowledgeTime,
+    evaluateStatusList: verifyStatusList,
   });
   requireThat(assessment.overall !== 'INVALID', assessment.reason);
   const authorityQueries = [
@@ -466,18 +493,40 @@ function inspectPersonalMdoc(
       stateTime: s.issuedAt,
       knowledgeTime,
     },
-  ];
-  if (statusToken !== undefined && statusToken !== null)
-    authorityQueries.push({
-      certificate: issuerCertificate,
-      role: 'STATUS_AUTHORITY',
+    {
+      publicKeyDER: verifiedLog.logPublicKeyDER,
+      role: 'TRANSPARENCY_LOG',
       scope,
-      stateTime: parseJSON(decodeJWS(statusToken).payload.toString('utf8')).iat,
+      stateTime: s.issuedAt,
       knowledgeTime,
-    });
+    },
+  ];
+  const authorityQuorums = [
+    {
+      members: verifiedLog.verifiedMirrors,
+      threshold: credentialLogTrust.threshold,
+      role: 'MIRROR',
+      scope,
+      stateTime: s.issuedAt,
+      knowledgeTime,
+    },
+  ];
+  if (statusToken !== undefined && statusToken !== null) {
+    const publishedAt = parseJSON(decodeJWS(statusToken).payload.toString('utf8')).iat;
+    if (publishedAt <= knowledgeTime)
+      authorityQueries.push({
+        certificate: issuerCertificate,
+        role: 'STATUS_AUTHORITY',
+        scope,
+        stateTime: publishedAt,
+        knowledgeTime,
+      });
+  }
   return {
     ...v,
     authorityQueries,
+    authorityQuorums,
+    authorityFailures: assessment.overall === 'UNSUPPORTED' ? [new AuthorityError(assessment)] : [],
     credentialIssuedAt,
     statusAssessment: assessment,
     claims,
@@ -495,8 +544,12 @@ export function verifyPersonalMdoc(credential, trust) {
     trust.authorityResolver,
     result.authorityQueries,
     result.statusAssessment.overall === 'VALID' ? [] : [result.statusAssessment.reason],
+    result.authorityFailures,
+    result.authorityQuorums,
   );
   delete result.authorityQueries;
+  delete result.authorityQuorums;
+  delete result.authorityFailures;
   requireThat(result.statusAssessment.overall === 'VALID', result.statusAssessment.reason);
   return result;
 }
@@ -587,11 +640,11 @@ import {
 const types = [
   'Document',
   'PersonalMdoc',
+  'RegistrationAuthorization',
   'CredentialSeal',
   'CredentialStatusList',
   'SIM',
   'SignaturePolicy',
-  'ActivationContext',
   'OperationPermit',
   'ExecutionReceipt',
   'COSE',
@@ -599,18 +652,21 @@ const types = [
 export function createMdocSignaturePackage({
   document,
   credential,
+  registrationAuthorization,
   seal,
   statusToken,
   sim,
   policy,
-  activation,
   permit,
   receipt,
   signature,
   passkeyEvidence,
   executionEvidence,
   documentEvidence,
+  ...unknown
 }) {
+  requireThat(!Object.hasOwn(unknown, 'activation'), 'ECP_DUPLICATE_ACTIVATION');
+  fields(unknown, []);
   requireThat(
     !!executionRequirement(policy) === !!executionEvidence &&
       !(executionEvidence && passkeyEvidence),
@@ -619,53 +675,40 @@ export function createMdocSignaturePackage({
   const payloads = [
       document,
       credential,
+      registrationAuthorization,
       seal,
       Buffer.from(statusToken),
       dcbor(sim),
       dcbor(policy),
-      dcbor(activation),
       permit,
       receipt,
       signature,
     ],
     objects = [
-      ...types.map((type, i) => evidenceObject(type, payloads[i])),
-      ...(passkeyEvidence ? [evidenceObject('PasskeyRawEvidence', dcbor(passkeyEvidence))] : []),
+      ...types.map((type, i) => evidenceLeaf(type, payloads[i])),
+      ...(passkeyEvidence ? [evidenceLeaf('PasskeyRawEvidence', dcbor(passkeyEvidence))] : []),
       ...(executionEvidence
-        ? [evidenceObject('ExecutionBindingEvidence', dcbor(executionEvidence))]
+        ? [evidenceLeaf('ExecutionBindingEvidence', dcbor(executionEvidence))]
         : []),
     ];
   appendDocumentEvidence(objects, { policy, format: 'MDOC', evidence: documentEvidence });
-  const plan = evidenceObject(
-    'VerificationPlan',
-    dcbor({
-      schemaVersion: 1,
-      profile: selectDocumentPlan(
-        executionEvidence
-          ? 'certconcord-ecp-mdoc-execution-draft-02'
-          : passkeyEvidence
-            ? 'certconcord-ecp-mdoc-passkey-v1'
-            : 'certconcord-ecp-mdoc-attested-v1',
-        policy,
-      ),
-      objects: Object.fromEntries(objects.map((o) => [o.type, o.id])),
-    }),
-    objects.map((o) => o.id),
+  return createEvidencePackage(
+    selectDocumentPlan(
+      executionEvidence
+        ? 'certconcord-ecp-mdoc-execution-draft-03'
+        : passkeyEvidence
+          ? 'certconcord-ecp-mdoc-passkey-draft-03'
+          : 'certconcord-ecp-mdoc-attested-draft-03',
+      policy,
+    ),
+    objects,
   );
-  return { schemaVersion: 1, root: plan.id, objects: [...objects, plan] };
 }
 export function verifyMdocSignaturePackage(bundle, trust) {
-  fields(bundle, ['schemaVersion', 'root', 'objects']);
-  verifyEvidenceClosure(bundle.objects, [bundle.root], {
-    requiredTypes: [...types, 'VerificationPlan'],
-  });
-  const root = bundle.objects.find(
-      (o) => o.type === 'VerificationPlan' && equal(o.id, bundle.root),
-    ),
-    plan = root && decodeCBOR(root.payload);
+  const { plan } = verifyEvidencePackage(bundle);
   const document = Object.hasOwn(documentPlans, plan?.profile);
-  const passkey = plan?.profile === 'certconcord-ecp-mdoc-passkey-v1',
-    execution = plan?.profile === 'certconcord-ecp-mdoc-execution-draft-02',
+  const passkey = plan?.profile === 'certconcord-ecp-mdoc-passkey-draft-03',
+    execution = plan?.profile === 'certconcord-ecp-mdoc-execution-draft-03',
     selectedTypes = [
       ...(execution
         ? [...types, 'ExecutionBindingEvidence']
@@ -675,27 +718,17 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       ...(document ? documentEvidenceTypes(trust.expectedPolicy, 'MDOC') : []),
     ];
   requireThat(
-    bundle.schemaVersion === 1 &&
-      plan?.schemaVersion === 1 &&
-      (execution ||
-        passkey ||
-        plan.profile === 'certconcord-ecp-mdoc-attested-v1' ||
-        documentPlans[plan.profile] === 'certconcord-ecp-mdoc-attested-v1') &&
-      bundle.objects.length === selectedTypes.length + 1,
+    execution ||
+      passkey ||
+      plan.profile === 'certconcord-ecp-mdoc-attested-draft-03' ||
+      documentPlans[plan.profile] === 'certconcord-ecp-mdoc-attested-draft-03',
     'MDOC_ECP_PLAN',
   );
-  fields(plan, ['schemaVersion', 'profile', 'objects']);
-  fields(plan.objects, selectedTypes);
-  const value = {};
-  for (const type of selectedTypes) {
-    const o = bundle.objects.find((o) => o.type === type && equal(o.id, plan.objects[type]));
-    requireThat(o, 'MDOC_ECP_OBJECT');
-    value[type] = o.payload;
-  }
+  const { values: value } = verifyEvidencePackage(bundle, { requiredTypes: selectedTypes });
   const sim = decodeCBOR(value.SIM),
     policy = decodeCBOR(value.SignaturePolicy),
-    activation = decodeCBOR(value.ActivationContext),
     permit = readControl(value.OperationPermit, 'OperationPermit', trust.permitCertificate),
+    activation = permit.activation,
     receipt = readControl(value.ExecutionReceipt, 'ExecutionReceipt', trust.receiptCertificate),
     at = receipt.executedAt,
     knowledgeTime = trust.knowledgeTime ?? now();
@@ -707,8 +740,9 @@ export function verifyMdocSignaturePackage(bundle, trust) {
     'MDOC_ECP_POLICY',
   );
   const authorityQueries = [],
+    authorityQuorums = [],
     authorityFailures = [];
-  const verifyState = (stateTime) => {
+  const verifyState = (stateTime, { proofOfExistenceUpperBound } = {}) => {
     const inspected = inspectPersonalMdoc(value.PersonalMdoc, {
       ...trust,
       seal: value.CredentialSeal,
@@ -731,7 +765,25 @@ export function verifyMdocSignaturePackage(bundle, trust) {
         knowledgeTime,
       ),
     );
+    authorityFailures.push(...inspected.authorityFailures);
+    authorityQuorums.push(
+      ...inspected.authorityQuorums.map((quorum) => ({
+        ...quorum,
+        stateTimes:
+          proofOfExistenceUpperBound === undefined
+            ? [quorum.stateTime]
+            : [quorum.stateTime, proofOfExistenceUpperBound],
+      })),
+    );
+    if (proofOfExistenceUpperBound !== undefined)
+      authorityQueries.push(
+        ...inspected.authorityQueries
+          .filter((query) => query.role === 'TRANSPARENCY_LOG')
+          .map((query) => ({ ...query, stateTime: proofOfExistenceUpperBound })),
+      );
     delete inspected.authorityQueries;
+    delete inspected.authorityQuorums;
+    delete inspected.authorityFailures;
     return inspected;
   };
   const v = verifyState(at);
@@ -794,7 +846,6 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       sim.origin === activation.origin &&
       sim.issuedAt <= at &&
       sim.expiresAt > at &&
-      equal(D('ActivationContext', permit.activation), D('ActivationContext', activation)) &&
       permit.proofMode === policy.activationMode &&
       permit.issuedAt <= at &&
       permit.expiresAt > at &&
@@ -898,8 +949,9 @@ export function verifyMdocSignaturePackage(bundle, trust) {
     authorityQueries,
     v.statusAssessment.overall === 'VALID' ? [] : [v.statusAssessment.reason],
     authorityFailures,
+    authorityQuorums,
   );
-  const missingTime = policy.requireTrustedTime && !documentResult;
+  const missingTime = policy.requireTrustedTime && !policy.documentEvidence;
   requireThat(v.statusAssessment.overall === 'VALID', v.statusAssessment.reason);
   return {
     ...(executionResult ? { execution: executionResult } : {}),

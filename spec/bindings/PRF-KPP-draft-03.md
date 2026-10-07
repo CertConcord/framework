@@ -1,8 +1,8 @@
-# CertConcord WebAuthn PRF Key Protection Profile — draft 02
+# CertConcord WebAuthn PRF Key Protection Profile — draft 03
 
-> Candidate binding for CertConcord draft 02. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 02 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
+> Candidate binding for CertConcord draft 03. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 03 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
 
-Status: draft 02. Normative language: English. COMMON-draft-02 is an integral normative part of this specification.
+Status: draft 03. Normative language: English. COMMON-draft-03 is an integral normative part of this specification.
 
 ## 1. Scope
 
@@ -188,7 +188,7 @@ Verification preserves certificate, container, activation, status, log and archi
 
 ## 39. Mandatory 1.1 profile
 
-An implementation claiming PRF-KPP draft 02 implements real PRF capability detection, credential-specific input routing, AES-256-GCM wrappers, complete metadata binding, purpose separation, verified epoch transitions, vault authentication, private assertion serialization, rollback-aware state and explicit loss/compromise handling. KW, KWP, local exportable signing, capability keys and raw signing are selectable adapters; each enabled adapter implements all of its declared requirements.
+An implementation claiming PRF-KPP draft 03 implements real PRF capability detection, credential-specific input routing, AES-256-GCM wrappers, complete metadata binding, purpose separation, verified epoch transitions, vault authentication, private assertion serialization, rollback-aware state and explicit loss/compromise handling. KW, KWP, local exportable signing, capability keys and raw signing are selectable adapters; each enabled adapter implements all of its declared requirements.
 
 ## 40. Security invariants
 
@@ -204,6 +204,6 @@ DCP key admission and document_key_mode apply before a native holder key is asso
 
 ## Passkey-associated signing credentials
 
-[PSCP-draft-02](PSCP-draft-02.md) defines PASSKEY_KEY and the certificate/credential binding for an independently attested signing key. Its parent authentication key and child signing key are not PRF output or vault roots. PRF-KPP MAY protect private evidence, handles and local metadata, while the signer retains its hardware key and fixed UV policy. A raw-key handle, ARKG ticket or nonextractable browser handle MUST NOT be used as a wrapping key.
+[PSCP-draft-03](PSCP-draft-03.md) defines PASSKEY_KEY and the certificate/credential binding for an independently attested signing key. Its parent authentication key and child signing key are not PRF output or vault roots. PRF-KPP MAY protect private evidence, handles and local metadata, while the signer retains its hardware key and fixed UV policy. A raw-key handle, ARKG ticket or nonextractable browser handle MUST NOT be used as a wrapping key.
 
 PRF synchronization or account recovery does not establish child-key recovery. Loss of a parent or its authenticator follows PSCP revocation and RA re-enrollment; restoring encrypted metadata cannot restore signing authority. The existing independent ML-DSA activation/vault path remains available under its original custody and recovery claims. The algorithms, key identities and assurances of those paths MUST NOT be merged.

@@ -79,15 +79,15 @@ else if (['contribution', 'finalize'].includes(command) && args.length === 3) {
   )
     throw Error('SPECIFICATION_COMPOSITION');
   const required = [framework.document, composition.specification, composition.conformance];
-  if (composition.id === 'certconcord-governed-draft-02') {
+  if (composition.id === 'certconcord-governed-draft-03') {
     if (
-      framework.edition !== 'draft-02' ||
+      framework.edition !== 'draft-03' ||
       framework.document !== 'spec/architecture.md' ||
-      composition.specification !== 'spec/bindings/DTI-draft-02.md' ||
+      composition.specification !== 'spec/bindings/DTI-draft-03.md' ||
       composition.conformance !== 'spec/conformance.md'
     )
       throw Error('SPECIFICATION_COMPOSITION');
-    required.push('spec/bindings/COMMON-draft-02.md');
+    required.push('spec/bindings/COMMON-draft-03.md');
   }
   if (
     !selection.roles.length ||

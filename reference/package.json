@@ -1,6 +1,6 @@
 {
   "name": "@certconcord/reference",
-  "version": "0.2.0-draft.1",
+  "version": "0.3.0-draft.1",
   "private": true,
   "description": "CertConcord working-draft reference implementation",
   "type": "module",

@@ -1,6 +1,7 @@
 import { createPublicKey, createPrivateKey, X509Certificate, randomInt } from 'node:crypto';
 import { deflateSync, inflateSync } from 'node:zlib';
 import { parseJSON } from './json.mjs';
+import { evaluateStatusEvidence } from './status-result.mjs';
 import { assessIdentityStatus, requireFreshIdentityAssessment } from './identity.mjs';
 import {
   identityClaimPaths,
@@ -198,7 +199,10 @@ export class StatusList {
  * @returns {Readonly<{status: 'GOOD'|'REVOKED'|'STALE'|'UNKNOWN',
  * overall: 'VALID'|'INVALID'|'INDETERMINATE', reason?: string}>}
  */
-export function verifyStatusList(token, { publicKey, uri, index, at = now() }) {
+export function verifyStatusList(token, options) {
+  return evaluateStatusEvidence(() => inspectStatusList(token, options), 'STATUS_LIST');
+}
+function inspectStatusList(token, { publicKey, uri, index, at = now() }) {
   requireThat(Number.isSafeInteger(at) && at >= 0, 'STATUS_LIST_TIME');
   if (token === undefined || token === null)
     return Object.freeze({
@@ -212,7 +216,7 @@ export function verifyStatusList(token, { publicKey, uri, index, at = now() }) {
     verifyJWS(token, publicKey, { typ: 'statuslist+jwt' }).payload.toString('utf8'),
   );
   requireThat(
-    c.iss === uri &&
+    c !== null && typeof c === 'object' && !Array.isArray(c) && c.iss === uri &&
       c.sub === uri &&
       Number.isSafeInteger(c.iat) &&
       c.iat >= 0 &&

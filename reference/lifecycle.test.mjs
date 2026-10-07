@@ -72,18 +72,26 @@ test('RA-authorized MTC issuance requires independent durable mirrors; landmark 
       issuerKeyID: c.keyID(ca.publicKey),
       representation: 'MTC',
     },
-    authorityResolver = exampleAuthorityResolver({
-      trustDomainID: issuanceScope.trustDomainID,
-      authorities: [
-        { certificate: ra.certificate, roles: ['REGISTRATION_AUTHORITY'] },
-        { certificate: ca.certificate, roles: ['ISSUER'] },
-      ],
-    }),
     logNumber = 1,
     members = [
       { id: '32473.8', operatorID: 'a', ...c.generate('ml-dsa-87') },
       { id: '32473.9', operatorID: 'b', ...c.generate('ml-dsa-87') },
     ],
+    authorityResolver = exampleAuthorityResolver({
+      trustDomainID: issuanceScope.trustDomainID,
+      authorities: [
+        { certificate: ra.certificate, roles: ['REGISTRATION_AUTHORITY'] },
+        { certificate: ca.certificate, roles: ['ISSUER'] },
+        ...members.map((member) => ({
+          mode: 'RAW_KEY',
+          publicKeyDER: c.spki(member.publicKey),
+          roles: ['COSIGNER'],
+          knownAt: c.now() - 60,
+          validFrom: c.now() - 60,
+          validUntil: c.now() + 86400,
+        })),
+      ],
+    }),
     mirrors = members.map((m) => new Mirror({ journal, id: m.id, privateKey: m.privateKey })),
     raService = new RegistrationAuthority({
       journal,
@@ -306,12 +314,22 @@ test('encryption recovery needs distinct approvals, encrypts only to bound recip
     receipt = control(),
     kem = c.generate('ml-kem-768'),
     root = c.random(),
+    trustDomainID = c.random(),
+    authorityResolver = exampleAuthorityResolver({
+      trustDomainID,
+      authorities: [...authorities, receipt].map((authority) => ({
+        certificate: authority.certificate,
+        roles: ['RECOVERY_AUTHORITY'],
+      })),
+    }),
     graph = {
       nodes: ['admin', 'kra', 'encryption', 'signing'],
       edges: [{ from: ['admin', 'kra'], threshold: 2, to: 'encryption' }],
     },
     service = new EncryptionRecoveryService({
       journal,
+      trustDomainID,
+      authorityResolver,
       approvers: authorities.map((a, i) => ({
         certificate: a.certificate,
         operatorID: 'operator' + i,
@@ -325,6 +343,7 @@ test('encryption recovery needs distinct approvals, encrypts only to bound recip
     }),
     request = {
       schemaVersion: 1,
+      trustDomainID,
       requestID: c.random(),
       targetRootID: c.random(),
       subjectID: c.random(),
