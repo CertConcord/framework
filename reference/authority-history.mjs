@@ -104,11 +104,8 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     try {
       requestedKeyID = keyID(certificate ? parseCertificate(certificate).publicKey : publicFromDER(publicKeyDER));
     } catch { return result('INVALID', 'AUTHORITY_IDENTITY'); }
-    const identities = records.filter((r) => equal(r.keyID, requestedKeyID) &&
-      (r.mode === 'RAW_KEY' || equal(r.certificate, certificate)));
-    if (!identities.length) return result('INDETERMINATE', 'AUTHORITY_MISSING');
-    const known = identities.filter((r) => r.knownAt <= knowledgeTime);
-    if (!known.length) return result('INDETERMINATE', 'AUTHORITY_NOT_YET_KNOWN');
+    const keyRecords = records.filter((r) => equal(r.keyID, requestedKeyID));
+    const knownKeyRecords = keyRecords.filter((r) => r.knownAt <= knowledgeTime);
     const statusCache = new Map();
     const statusFor = (record) => {
       if (statusCache.has(record)) return statusCache.get(record);
@@ -128,8 +125,12 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
       return decision;
     };
     // AUTHORITY revocation concerns the admitted key, across roles and renewals.
-    const revoked = known.map(statusFor).find((decision) => decision.reason === 'AUTHORITY_REVOKED');
+    const revoked = knownKeyRecords.map(statusFor).find((decision) => decision.reason === 'AUTHORITY_REVOKED');
     if (revoked) return revoked;
+    const identities = keyRecords.filter((r) => r.mode === 'RAW_KEY' || equal(r.certificate, certificate));
+    if (!identities.length) return result('INDETERMINATE', 'AUTHORITY_MISSING');
+    const known = identities.filter((r) => r.knownAt <= knowledgeTime);
+    if (!known.length) return result('INDETERMINATE', 'AUTHORITY_NOT_YET_KNOWN');
     const roles = known.filter((r) => r.roles.includes(role));
     if (!roles.length) return result('INVALID', 'AUTHORITY_ROLE');
     const scoped = roles.filter((r) => r.scopes.some((grant) =>

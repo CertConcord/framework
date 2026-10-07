@@ -16,7 +16,7 @@ function fixture() {
       scope: 'AUTHORITY', status: 'GOOD', publishedAt: 1800000000, nextUpdate: 1800003000 } };
   const query = { certificate, role: 'PERMIT_AUTHORITY', scope, stateTime: 1800000010, knowledgeTime: 1800000011 };
   const resolver = (records = [record]) => createAuthorityResolver({ trustDomainID, authorities: records });
-  return { certificate, key, trustDomainID, record, query, resolver };
+  return { certificate, root, key, trustDomainID, record, query, resolver };
 }
 
 test('control authority pins require role, scope, certificate validity and knowledge coverage', () => {
@@ -77,6 +77,16 @@ test('raw key admission has an explicit lifecycle independent of a wrapping cert
   assert.equal(resolve({ ...f.query, stateTime: 1800001500, knowledgeTime: 1800001500 }).overall, 'VALID');
   assert.equal(resolve({ ...f.query, stateTime: 1800002000, knowledgeTime: 1800002000 }).reason, 'AUTHORITY_EXPIRED');
   assert.throws(() => f.resolver([{ ...raw, validUntil: undefined }]), /UNSUPPORTED_TYPE|CONFIGURATION/);
+});
+
+test('known key compromise survives a different certificate wrapping the same key', () => {
+  const f = fixture();
+  const previousCertificate = p.issueCertificate({ publicKey: f.key.publicKey, serial: 2,
+    issuer: p.name('Synthetic governance'), subject: p.name('Earlier authority certificate'),
+    profileID: 'CERTCONCORD-EVIDENCE-SIGN-v1', notBefore: 1799999000, notAfter: 1800000001 }, f.root.privateKey);
+  const incident = { ...f.record, certificate: previousCertificate, roles: ['ISSUER'],
+    status: { ...f.record.status, status: 'REVOKED', effectiveTime: 1800000005 } };
+  assert.equal(f.resolver([f.record, incident])(f.query).reason, 'AUTHORITY_REVOKED');
 });
 
 test('authority configuration is snapshotted and cannot gain roles after selection', () => {
