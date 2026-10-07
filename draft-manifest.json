@@ -1350,8 +1350,8 @@
     },
     {
       "path": "spec/applications.md",
-      "bytes": 2664,
-      "sha256": "eba397cbd6ee623a5e82e7c194ac36d1e6d9580a0206130977f4489e58d652f3"
+      "bytes": 2707,
+      "sha256": "a5ea544a2f17d9f2b283f0330bbd46b12ccd5dafeef7fec34d969c1406e11606"
     },
     {
       "path": "spec/architecture.md",
