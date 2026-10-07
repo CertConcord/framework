@@ -761,7 +761,7 @@ test('mdoc status publication consumes binding revocation and invalidates the is
       const statusToken = x.issuer.publishPasskeyStatus();
       assert.throws(
         () => verifyPersonalMdoc(x.credential, { ...x.credentialTrust, seal: x.seal, statusToken }),
-        /PERSONAL_MDOC_STATUS/,
+        /STATUS_LIST_REVOKED/,
       );
     },
   });

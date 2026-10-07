@@ -357,16 +357,14 @@ export function verifyPersonalMdoc(
     credentialLogTrust,
   );
   const status = claims.status?.status_list;
-  requireThat(
-    status?.uri === statusURI &&
-      verifyStatusList(statusToken, {
-        publicKey: issuerPublicKey,
-        uri: statusURI,
-        index: status.idx,
-        at: knowledgeTime,
-      }) === 'GOOD',
-    'PERSONAL_MDOC_STATUS',
-  );
+  requireThat(status?.uri === statusURI, 'PERSONAL_MDOC_STATUS');
+  const assessment = verifyStatusList(statusToken, {
+    publicKey: issuerPublicKey,
+    uri: statusURI,
+    index: status.idx,
+    at: knowledgeTime,
+  });
+  requireThat(assessment.overall === 'VALID', assessment.reason);
   return {
     ...v,
     claims,

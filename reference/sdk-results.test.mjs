@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { dcbor, decodeCBOR } from './core.mjs';
+import { dcbor, decodeCBOR, now } from './core.mjs';
 import { evidenceObject, readControl } from './state.mjs';
 import { runDemo } from './demo.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
@@ -110,3 +110,20 @@ test('ordinary WebAuthn completes CMS and mdoc document verification without raw
     assert.equal(result.time, 'TRUSTED_PROOF_OF_EXISTENCE');
   }
 });
+
+for (const format of ['CMS', 'MDOC'])
+  test(
+    format + ' reports stale retained status as indeterminate at a later knowledge time',
+    async () => {
+      const options = { activationMode: 'HUMAN_WEBAUTHN', trustedTime: true },
+        r = format === 'CMS' ? await runDemo(options) : await runFoundationDemo(options),
+        bytes = dcbor(r.bundle);
+      assert.equal(createVerifier({ format, trust: r.trust }).verify(bytes).overall, 'VALID');
+      const result = createVerifier({
+        format,
+        trust: { ...r.trust, knowledgeTime: now() + 86400 },
+      }).verify(bytes);
+      assert.equal(result.overall, 'INDETERMINATE');
+      assert.equal(result.reason, format === 'CMS' ? 'ECP_STATUS_STALE' : 'STATUS_LIST_STALE');
+    },
+  );
