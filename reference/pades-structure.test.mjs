@@ -108,7 +108,10 @@ test(
   'document timestamp M is SHOULD NOT and is not a fabricated MUST violation',
   selected,
   async () => {
-    await verify(independentTimestamp(f, b, { extra: '/M (D:20270115080020Z)' }).pdf, 'VALID', 'T');
+    const pdf = independentTimestamp(f, b, { extra: '/M (D:20000101000000Z)' }).pdf;
+    const result = await decision(api, f, pdf, 'T');
+    expectOverall(result, 'VALID');
+    assert.equal(result.stateTime, epoch + 20, 'the PDF M self-claim is not timestamp POE');
   },
 );
 test('a real TSA signature over the wrong PDF imprint is invalid', selected, async () => {
