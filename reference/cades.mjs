@@ -816,7 +816,8 @@ function timestamp(parsed, value, failures, policy, times, archive) {
       );
       check(info.genTime - info.accuracy >= 0, 'CADES_TIMESTAMP_TIME');
       check(
-        info.poeUpperBound <= times.knowledgeTime && info.poeUpperBound <= times.validationTime,
+        info.poeUpperBound <= times.knowledgeTime &&
+          (archive || info.poeUpperBound <= times.validationTime),
         'CADES_TIMESTAMP_NOT_YET_KNOWN',
         'INDETERMINATE',
       );
@@ -1016,6 +1017,8 @@ export function verifyCAdES(
     // Work backwards: the newest timestamp needs fresh current status. An older
     // timestamp may use historical CRLs only after a later trusted index covers
     // its exact token and all positive certificate/status dependencies.
+    // Any uncovered signature/hash/key layer must still be authentic at actual
+    // knowledgeTime, even when the requested signature validation is historical.
     for (let i = archives.length - 1; i >= 0; i--) {
       const item = archives[i],
         next = archives[i + 1],
@@ -1057,7 +1060,7 @@ export function verifyCAdES(
       if (instant(item.validUntil))
         attempt(local, () =>
           check(
-            (next?.info?.poeUpperBound ?? validationTime) < item.validUntil,
+            (next?.info?.poeUpperBound ?? knowledgeTime) < item.validUntil,
             'CADES_PROTECTION_GAP',
           ),
         );
@@ -1120,7 +1123,7 @@ export function verifyCAdES(
       if (instant(item.validUntil))
         attempt(local, () =>
           check(
-            (nextArchive?.info?.poeUpperBound ?? validationTime) < item.validUntil,
+            (nextArchive?.info?.poeUpperBound ?? knowledgeTime) < item.validUntil,
             'CADES_PROTECTION_GAP',
           ),
         );
@@ -1178,7 +1181,8 @@ export function verifyCAdES(
     if (instant(signerDeadline) && signerMaterial?.overall === 'VALID')
       attempt(failures, () =>
         check(
-          stateTime < Math.min(signerDeadline, signerMaterial.validUntil),
+          (trustedTimestamp ? stateTime : knowledgeTime) <
+            Math.min(signerDeadline, signerMaterial.validUntil),
           'CADES_SIGNER_PROTECTION_GAP',
         ),
       );
