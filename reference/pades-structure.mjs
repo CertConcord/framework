@@ -153,15 +153,44 @@ class StrictObjectParser extends PDFObjectParser {
   }
 }
 
-function ignored(raw, start, end) {
+function skipIgnored(raw, start, end = raw.length) {
   let offset = start;
   while (offset < end) {
     if (whitespace(raw[offset])) offset++;
     else if (raw[offset] === 37) {
-      while (offset < end && raw[offset] !== 10 && raw[offset] !== 13) offset++;
-    } else return false;
+      // A reference boundary cannot terminate a comment. Only an actual EOL
+      // or the end of the input does so; offsets into its text are not tokens.
+      while (offset < raw.length && raw[offset] !== 10 && raw[offset] !== 13) offset++;
+      if (offset > end) return -1;
+    } else break;
   }
-  return true;
+  return offset;
+}
+function ignored(raw, start, end) {
+  return skipIgnored(raw, start, end) === end;
+}
+function indirectHeader(raw, start) {
+  let at = start;
+  const integerToken = () => {
+    const begin = at;
+    while (raw[at] >= 48 && raw[at] <= 57) at++;
+    if (at === begin || !delimiter(raw[at])) return undefined;
+    const value = Number(raw.subarray(begin, at).toString('ascii'));
+    return Number.isSafeInteger(value) ? value : undefined;
+  };
+  const separator = () => {
+    const next = skipIgnored(raw, at);
+    if (next === at) return false;
+    at = next;
+    return true;
+  };
+  const id = integerToken();
+  if (id === undefined || !separator()) return undefined;
+  const generation = integerToken();
+  if (generation === undefined || !separator()) return undefined;
+  if (raw.subarray(at, at + 3).toString('ascii') !== 'obj' || !delimiter(raw[at + 3]))
+    return undefined;
+  return { id, generation, bodyOffset: at + 3 };
 }
 function dictionaryView(dict, excluded = []) {
   return dict
@@ -249,11 +278,9 @@ function parseDocument(input) {
   const text = raw.toString('latin1');
   const firstParser = parser(0);
   firstParser.skipWhitespaceAndComments();
-  const firstHeader = /^(\d+)\s+(\d+)\s+obj\b/.exec(
-    text.slice(firstParser.bytes.offset(), firstParser.bytes.offset() + 100),
-  );
+  const firstHeader = indirectHeader(raw, firstParser.bytes.offset());
   if (firstHeader) {
-    firstParser.bytes.moveTo(firstParser.bytes.offset() + firstHeader[0].length);
+    firstParser.bytes.moveTo(firstHeader.bodyOffset);
     const firstObject = firstParser.parseObject();
     if (firstObject instanceof PDFDict && get(firstObject, 'Linearized') !== undefined)
       throw failure('PADES_LINEARIZED_UNSUPPORTED', 'UNSUPPORTED');
@@ -273,10 +300,7 @@ function parseDocument(input) {
     visited.add(xrefOffset);
     check(visited.size <= MAX_REVISIONS, 'PADES_REVISION_LIMIT', 'UNSUPPORTED');
     if (!text.startsWith('xref', xrefOffset)) {
-      check(
-        /^\d+\s+\d+\s+obj\b/.test(text.slice(xrefOffset, xrefOffset + 100)),
-        'PADES_XREF_OFFSET',
-      );
+      check(indirectHeader(raw, xrefOffset), 'PADES_XREF_OFFSET');
       throw failure('PADES_XREF_STREAM_UNSUPPORTED', 'UNSUPPORTED');
     }
     let at = xrefOffset;
@@ -368,14 +392,12 @@ function parseDocument(input) {
           );
         let def = definitions.get(entry.offset);
         if (!def) {
-          const header = /^(\d+) (\d+) obj(?:[\x00\x09\x0a\x0c\x0d\x20]|(?=[/<\[]))/.exec(
-            text.slice(entry.offset, entry.offset + 100),
-          );
+          const header = indirectHeader(raw, entry.offset);
           check(
-            header && Number(header[1]) === entry.id && Number(header[2]) === entry.generation,
+            header && header.id === entry.id && header.generation === entry.generation,
             'PADES_XREF_OBJECT_HEADER',
           );
-          const p = parser(entry.offset + header[0].length),
+          const p = parser(header.bodyOffset),
             object = p.parseObject();
           p.skipWhitespaceAndComments();
           const end = p.bytes.offset();
