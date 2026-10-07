@@ -23,7 +23,7 @@ import { importPublicJWK, decodeJWS } from './jose.mjs';
 import { parseJSON } from './json.mjs';
 import { derToP1363, p1363ToDER } from './ecdsa.mjs';
 import { validateAdmissionAssessment } from './key-attestation.mjs';
-import { issueMdoc, verifyIssuerSigned, MDOC_CONFIG } from './mdoc.mjs';
+import { issueMdoc, verifyIssuerSigned, verifyMdocStatusList, MDOC_CONFIG } from './mdoc.mjs';
 import { CredentialIssuer, verifyX5C, verifyStatusList } from './openid.mjs';
 import { verifyCSR } from './enrollment.mjs';
 import {
@@ -443,7 +443,8 @@ function inspectPersonalMdoc(
   );
   const status = claims.status?.status_list;
   requireThat(status?.uri === statusURI, 'PERSONAL_MDOC_STATUS');
-  const assessment = verifyStatusList(statusToken, {
+  const assessment = verifyMdocStatusList(statusToken, {
+    evaluateStatusList: verifyStatusList,
     publicKey: issuerPublicKey,
     uri: statusURI,
     index: status.idx,

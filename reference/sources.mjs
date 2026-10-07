@@ -4,6 +4,11 @@ import { sha256 } from './core.mjs';
 const arf3 =
   'https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/';
 export const sources = {
+  c2spCheckpoint:
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-checkpoint.md',
+  rfc9360: 'https://www.rfc-editor.org/rfc/rfc9360.txt',
+  wg10WorkingDraft:
+    'https://raw.githubusercontent.com/ISOWG10/ISO-18013/b250e7a64f99e22ceed10d2a5799bed38ee89f85/Working%20Documents/Working%20Draft%20ISO_IEC_18013-5_second-edition_CD_ballot_resolution_v4.pdf',
   mtcDeploymentUseCases:
     'https://www.ietf.org/archive/id/draft-gray-plants-mtc-deploy-use-cases-01.txt',
   cades:
@@ -93,13 +98,13 @@ export const sources = {
   c2spMirror:
     'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-mirror.md',
   c2spWitness:
-    'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-witness.md',
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-witness.md',
   c2spCosignature:
-    'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-cosignature.md',
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-cosignature.md',
   c2spNote:
-    'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/signed-note.md',
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/signed-note.md',
   c2spTiles:
-    'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-tiles.md',
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-tiles.md',
   pkcs11:
     'https://raw.githubusercontent.com/oasis-tcs/pkcs11/6edf334c5b324626c95e82b0cb9737eaaa37a340/published/3-02/pkcs11t.h',
   openssl365:

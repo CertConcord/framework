@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "sha256": {
+    "vectors/prefix.json": "0b54e1010a0a8d1ef47e92140111f97c94c5f6829003688704dee2d2847547bb",
+    "vectors/transport.json": "cfb88d8554f5da27a9433bb363204940d8eab16f4769f1acf42b71cb013951f4"
+  }
+}

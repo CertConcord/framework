@@ -1,12 +1,215 @@
 {
-  "cases":[
-    {"id":"separate-ml-dsa-key","expected":"INDEPENDENT_PQ"},
-    {"id":"same-holder-document-p256","expected":"DEVICE_KEY"},
-    {"id":"separate-associated-p256","expected":"PASSKEY_KEY","limit":"parent association requires the selected application profile"},
-    {"id":"device-key-substitution","expected":"DOCUMENT_DEVICE_KEY_BINDING"},
-    {"id":"same-key-declared-independent","expected":"DOCUMENT_PASSKEY_KEY_BINDING"},
-    {"id":"classical-key-declared-pq","expected":"DOCUMENT_INDEPENDENT_PQ_KEY"},
-    {"id":"presentation-reinterpreted-as-signature","expected":"INVALID","coverage":"document-signature contract"},
-    {"id":"untrusted-identity-issuer-as-signing-anchor","expected":"INVALID","coverage":"issuer-policy contract"}
+  "cases": [
+    {
+      "id": "independent-ml-dsa-65",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "independent-ml-dsa-87",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "explicit-device-document-key",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "explicit-associated-document-key",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "invalid-issuer-signature",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "changed-issuer-item",
+      "overall": "INVALID",
+      "reason": "MDOC_DIGEST",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "duplicate-issuer-item",
+      "overall": "INVALID",
+      "reason": "MDOC_ITEM",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "incomplete-credential",
+      "overall": "INVALID",
+      "reason": "MDOC_INCOMPLETE_ISSUANCE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "changed-document",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "invalid-document-signature",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "legacy-missing-certificate-binding",
+      "overall": "INVALID",
+      "reason": "MDOC_CERTIFICATE_BINDING_REQUIRED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "same-key-certificate-substitution",
+      "overall": "INVALID",
+      "reason": "MDOC_CERTIFICATE_THUMBPRINT",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "protected-x5chain",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "unsupported-mso-digest",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DIGEST_UNSUPPORTED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "invalid-calendar-date",
+      "overall": "INVALID",
+      "reason": "MDOC_TIME",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "unknown-issuer-critical-header",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_CRITICAL_UNSUPPORTED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "unselected-mso-status-location",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_MSO_STATUS_UNSUPPORTED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "purpose-escalation",
+      "overall": "INVALID",
+      "reason": "MDOC_PURPOSE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "profile-substitution",
+      "overall": "INVALID",
+      "reason": "MDOC_PROFILE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "key-identifier-substitution",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_KEY_ID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "mode-downgrade",
+      "overall": "INVALID",
+      "reason": "MDOC_KEY_MODE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "mso-expired-at-state-time",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-stale",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_STATUS_STALE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-revoked",
+      "overall": "INVALID",
+      "reason": "MDOC_STATUS_REVOKED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-missing",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_STATUS_MISSING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-conflicting",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_STATUS_CONFLICTING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-wrong-uri",
+      "overall": "INVALID",
+      "reason": "MDOC_STATUS_INVALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-bad-signature",
+      "overall": "INVALID",
+      "reason": "MDOC_STATUS_INVALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "issuer-not-admitted",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_AUTHORIZATION",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "issuer-authorization-missing",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_ISSUER_AUTHORIZATION_MISSING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-resolver-missing",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_STATUS_MISSING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-method-unimplemented",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_STATUS_UNSUPPORTED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "trailing-cbor-bytes",
+      "overall": "INVALID",
+      "reason": "CBOR_TRAILING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "original-credential-bytes-required",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "unknown-document-critical-header",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "presentation-reinterpreted-as-signature",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/base.json"
+    }
   ]
 }

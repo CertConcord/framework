@@ -2,3 +2,5 @@ CertConcord mdoc Signing Certificates
 Copyright 2026 VeriCommons contributors and CertConcord contributors.
 
 Original requirements and reference semantics were extracted from the CertConcord working draft. Original attribution is retained. Referenced standards and proposals remain the work of their respective authors. No endorsement or standards-body adoption is implied.
+
+The bounded reference CBOR codec and base validation semantics retain the original CertConcord/VeriCommons attribution and Apache-2.0 software license. New synthetic serialized vectors are CC0. ISO catalog metadata and the public WG10 working PDF are referenced under their owners' terms; no ISO normative text or PDF is redistributed. RFC and IETF draft sources retain their original IETF Trust terms. The separately pinned Multipaz implementation references retain their upstream license; no Multipaz source was copied into this change.

@@ -1,4 +1,14 @@
 import { mlDsa87KeyID, subtreeInput } from './vendor/tlog-cosignature-ml-dsa/extension.mjs';
+import {
+  parseCheckpointEnvelope,
+  assertCheckpointLogSignature,
+  encodeSubtreeRequest,
+  parseSubtreeRequest,
+  encodeSubtreeResponse,
+  parseSubtreeResponse as parseMldsa87SubtreeResponse,
+} from './vendor/tlog-cosignature-ml-dsa/transport.mjs';
+export { SUBTREE_WIRE_PROFILE } from './vendor/tlog-cosignature-ml-dsa/transport.mjs';
+export { parseSubtreeRequest };
 import { sign as signCrypto, verify as verifyCrypto, createPublicKey } from 'node:crypto';
 import { gunzipSync } from 'node:zlib';
 import { requireThat, sha256, spki, parseDER, equal, now, b64u, H, D } from './core.mjs';
@@ -9,7 +19,6 @@ import {
   verifyConsistency,
   uint,
   vector,
-  validSubtree,
   cosignedMessage,
   encodeProof,
   inclusionProof,
@@ -36,42 +45,20 @@ function decimal(s) {
 }
 export function checkpointBody(origin, size, root) {
   requireThat(
-    typeof origin === 'string' && /^[\x21-\x7e]{1,255}$/.test(origin) && root.length === 32,
+    typeof origin === 'string' &&
+      /^[\x21-\x2a\x2c-\x7e]{1,255}$/.test(origin) &&
+      root.length === 32,
     'NOTE_ORIGIN',
   );
   return `${origin}\n${BigInt(size)}\n${base64(root)}\n`;
 }
 export function parseCheckpoint(note) {
-  requireThat(
-    typeof note === 'string' && Buffer.byteLength(note) <= 1048576 && !note.includes('\r'),
-    'NOTE_LIMIT',
-  );
-  const cut = note.indexOf('\n\n');
-  requireThat(cut > 0 && note.endsWith('\n'), 'NOTE_STRUCTURE');
-  const body = note.slice(0, cut + 1),
-    lines = body.trimEnd().split('\n');
-  requireThat(lines.length === 3, 'CHECKPOINT_EXTENSIONS_UNSUPPORTED');
-  const size = decimal(lines[1]),
-    root = unbase64(lines[2]);
-  checkpointBody(lines[0], size, root);
-  const signatures = note
-    .slice(cut + 2)
-    .trimEnd()
-    .split('\n')
-    .map((line) => {
-      const m = /^— ([\x21-\x7e]+) ([A-Za-z0-9+/=]+)$/.exec(line);
-      requireThat(m, 'NOTE_SIGNATURE_LINE');
-      const b = unbase64(m[2]);
-      requireThat(b.length > 4, 'NOTE_SIGNATURE');
-      return { name: m[1], keyID: b.subarray(0, 4), signature: b.subarray(4) };
-    });
-  return { origin: lines[0], size, root, body, signatures, note };
+  return parseCheckpointEnvelope(note);
 }
 const rawKey = (k) => parseDER(spki(k)).children[1].value.subarray(1);
 export function noteKeyID(name, key, scheme) {
   requireThat(!name.includes('\n'), 'NOTE_NAME');
-  if (scheme === 'CERTCONCORD-MLDSA87-SUBTREE-v1')
-    return mlDsa87KeyID(name, key);
+  if (scheme === 'CERTCONCORD-MLDSA87-SUBTREE-v1') return mlDsa87KeyID(name, key);
   const byte =
     scheme === 'ed25519-log'
       ? 1
@@ -117,11 +104,21 @@ export function noteSignature(body, signer, { timestamp = now() } = {}) {
   return `— ${signer.name} ${base64(Buffer.concat([noteKeyID(signer.name, pub, scheme), encoded]))}\n`;
 }
 export function verifyNote(note, signer, { maxFutureSkew = 30 } = {}) {
+  const expectedType = signer.scheme.startsWith('ed25519')
+    ? 'ed25519'
+    : signer.scheme === 'mldsa44-cosign'
+      ? 'ml-dsa-44'
+      : 'ml-dsa-87';
+  requireThat(signer.publicKey?.asymmetricKeyType === expectedType, 'NOTE_KEY_SCHEME');
   const cp = parseCheckpoint(note),
     id = noteKeyID(signer.name, signer.publicKey, signer.scheme),
     matches = cp.signatures.filter((s) => s.name === signer.name && equal(s.keyID, id));
   let good = false;
   for (const s of matches) {
+    const signatureLength =
+      expectedType === 'ed25519' ? 64 : expectedType === 'ml-dsa-44' ? 2420 : 4627;
+    if (s.signature.length !== signatureLength + (signer.scheme === 'ed25519-log' ? 0 : 8))
+      continue;
     const timestamp = signer.scheme === 'ed25519-log' ? 0 : s.signature.readBigUInt64BE(0),
       sig = signer.scheme === 'ed25519-log' ? s.signature : s.signature.subarray(8);
     if (
@@ -132,6 +129,25 @@ export function verifyNote(note, signer, { maxFutureSkew = 30 } = {}) {
   }
   requireThat(good, 'NOTE_UNTRUSTED_SIGNATURE');
   return cp;
+}
+export function verifyPublishedCheckpoint(note, log) {
+  assertCheckpointLogSignature(note, {
+    name: log.name,
+    keyID: noteKeyID(log.name, log.publicKey, log.scheme),
+  });
+  return verifyNote(note, log);
+}
+export function checkpointForSubtree(note, signer) {
+  const cp = verifyNote(note, signer),
+    keyID = noteKeyID(signer.name, signer.publicKey, signer.scheme),
+    signature = cp.signatures.find(
+      (value) => value.name === signer.name && equal(value.keyID, keyID),
+    );
+  return (
+    cp.body +
+    '\n' +
+    `— ${signature.name} ${base64(Buffer.concat([signature.keyID, signature.signature]))}\n`
+  );
 }
 export function signedCheckpoint({ origin, entries, signer }) {
   const body = checkpointBody(origin, entries.length, treeHash(entries));
@@ -159,6 +175,7 @@ export class TlogWitness {
   signSubtree({ origin, start, end, root, proof, checkpoint }) {
     requireThat(this.logs.has(origin), 'WITNESS_UNKNOWN_LOG');
     requireThat(!this.signer.scheme.startsWith('ed25519'), 'SUBTREE_SIGNATURE_SCHEME');
+    requireThat(parseCheckpoint(checkpoint).signatures.length === 1, 'SUBTREE_ONE_WITNESS');
     const cp = verifyNote(checkpoint, {
       ...this.signer,
       publicKey: this.signer.publicKey ?? createPublicKey(this.signer.privateKey),
@@ -179,7 +196,7 @@ export class TlogWitness {
       cp = parseCheckpoint(q.note),
       log = this.logs.get(cp.origin);
     requireThat(log, 'WITNESS_UNKNOWN_LOG');
-    verifyNote(q.note, log);
+    verifyPublishedCheckpoint(q.note, log);
     return this.journal.transaction(() => {
       const r = this.journal.get(this.namespace, cp.origin),
         old = r?.value ?? { size: 0, root: treeHash([]) };
@@ -377,6 +394,9 @@ export class TlogMirror {
   checkpoint(origin) {
     const r = this.journal.get('mirror-data', origin);
     requireThat(r?.value.note, 'MIRROR_UNCOMMITTED');
+    requireThat(this.logs.has(origin), 'WITNESS_UNKNOWN_LOG');
+    const checkpoint = verifyPublishedCheckpoint(r.value.note, this.logs.get(origin));
+    requireThat(checkpoint.origin === origin, 'MIRROR_CHECKPOINT_ORIGIN');
     return r.value.note;
   }
   entryBundle(origin, tile, { width = 256 } = {}) {
@@ -418,7 +438,9 @@ export class TlogMirror {
     );
   }
   signSubtree({ origin, start, end, proof, checkpoint }) {
+    requireThat(this.logs.has(origin), 'WITNESS_UNKNOWN_LOG');
     requireThat(!this.signer.scheme.startsWith('ed25519'), 'SUBTREE_SIGNATURE_SCHEME');
+    requireThat(parseCheckpoint(checkpoint).signatures.length === 1, 'SUBTREE_ONE_WITNESS');
     const cp = verifyNote(checkpoint, {
         ...this.signer,
         publicKey: this.signer.publicKey ?? createPublicKey(this.signer.privateKey),
@@ -452,35 +474,41 @@ export function landmarkRelativeCertificate(tbs, { entries, index, start, end })
 }
 
 export function subtreeRequest({ start, end, root, proof, checkpoint }) {
-  requireThat(
-    validSubtree(start, end) && root.length === 32 && proof.length <= 63,
-    'SUBTREE_REQUEST',
-  );
-  return `subtree ${start} ${end}\n${base64(root)}\n${proof.map((p) => base64(p) + '\n').join('')}\n${checkpoint}`;
+  return encodeSubtreeRequest({ start, end, root, proof, checkpoint });
 }
-export function parseSubtreeRequest(text) {
+function rawSubtreeResponse(signature, scheme) {
+  if (scheme === 'CERTCONCORD-MLDSA87-SUBTREE-v1') return encodeSubtreeResponse(signature);
+  requireThat(scheme === 'mldsa44-cosign' && signature.length === 2420, 'SUBTREE_SIGNATURE_SCHEME');
+  return base64(signature) + '\n';
+}
+export function verifySubtreeResponse(text, context, signer) {
   requireThat(
-    typeof text === 'string' && text.length <= 1024 * 1024 && !text.includes('\r'),
-    'SUBTREE_REQUEST',
+    typeof text === 'string' && /^[A-Za-z0-9+/]+={0,2}\n$/.test(text),
+    'SUBTREE_RESPONSE_ENCODING',
   );
-  const cut = text.indexOf('\n\n');
-  requireThat(cut > 0, 'SUBTREE_REQUEST');
-  const lines = text.slice(0, cut).split('\n'),
-    m = /^subtree (0|[1-9][0-9]*) (0|[1-9][0-9]*)$/.exec(lines.shift());
-  requireThat(m, 'SUBTREE_RANGE');
-  const start = decimal(m[1]),
-    end = decimal(m[2]),
-    root = unbase64(lines.shift()),
-    proof = lines.map(unbase64),
-    checkpoint = text.slice(cut + 2);
+  const signature =
+    signer.scheme === 'CERTCONCORD-MLDSA87-SUBTREE-v1'
+      ? parseMldsa87SubtreeResponse(text)
+      : unbase64(text.slice(0, -1));
   requireThat(
-    validSubtree(start, end) &&
-      root.length === 32 &&
-      proof.length <= 63 &&
-      proof.every((p) => p.length === 32),
-    'SUBTREE_REQUEST',
+    (signer.scheme === 'CERTCONCORD-MLDSA87-SUBTREE-v1' &&
+      signer.publicKey.asymmetricKeyType === 'ml-dsa-87' &&
+      signature.length === 4627) ||
+      (signer.scheme === 'mldsa44-cosign' &&
+        signer.publicKey.asymmetricKeyType === 'ml-dsa-44' &&
+        signature.length === 2420),
+    'SUBTREE_SIGNATURE_SCHEME',
   );
-  return { origin: parseCheckpoint(checkpoint).origin, start, end, root, proof, checkpoint };
+  requireThat(
+    verifyCrypto(
+      null,
+      subtreeMessage({ ...context, name: signer.name, timestamp: 0 }),
+      signer.publicKey,
+      signature,
+    ),
+    'SUBTREE_SIGNATURE',
+  );
+  return signature;
 }
 export function createTransparencyHandler(service) {
   return async (req, res) => {
@@ -504,11 +532,10 @@ export function createTransparencyHandler(service) {
           ),
           s = service.signSubtree(q);
         requireThat(equal(s.root, q.root), 'CONSISTENCY_HASH');
-        const pub = service.signer.publicKey ?? createPublicKey(service.signer.privateKey);
         result = {
           status: 200,
           type: 'text/plain',
-          body: `— ${service.signer.name} ${base64(Buffer.concat([noteKeyID(service.signer.name, pub, service.signer.scheme), uint(0, 8), s.signature]))}\n`,
+          body: rawSubtreeResponse(s.signature, service.signer.scheme),
         };
       } else if (req.method === 'GET' && path.endsWith('/checkpoint')) {
         const hash = path.split('/').at(-2),
@@ -527,7 +554,9 @@ export function createTransparencyHandler(service) {
           );
           note = row.value.note + row.value.cosignature;
         }
-        result = { status: 200, type: 'text/plain', body: note };
+        const published = verifyPublishedCheckpoint(note, service.logs.get(origin));
+        requireThat(published.origin === origin, 'CHECKPOINT_ORIGIN');
+        result = { status: 200, type: 'text/plain; charset=utf-8', body: note };
       } else if (req.method === 'GET' && service instanceof TlogMirror && path.includes('/tile/')) {
         const match =
           /^\/([a-f0-9]{64})\/tile\/(entries|[0-5])\/((?:x[0-9]{3}\/)*[0-9]{3})(?:\.p\/(0|[1-9][0-9]*))?$/.exec(
