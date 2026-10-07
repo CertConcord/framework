@@ -90,8 +90,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 9935,
-      "sha256": "3086db400a695276cda6904bd61135cacf80e8251eb2c461ff8d726fd3321f86"
+      "bytes": 10091,
+      "sha256": "3ea788c9a03e1c0777b0000c914e346be1ec62e4ea75d36c0656143d504a0943"
     },
     {
       "path": "SECURITY.md",
@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 28891,
-      "sha256": "2e8c18708fa991f504ecf264b14db8f741b2024a17c1f2ab63f89e8e55caa791"
+      "bytes": 29496,
+      "sha256": "fae11139b762d9fbbd5cbe2f304efad1dee55b699fb23606f4272017753d6f2d"
     },
     {
       "path": "docs/apple-identity.md",
@@ -132,6 +132,11 @@
       "path": "docs/benchmarks.md",
       "bytes": 4918,
       "sha256": "b6c3daccd99d8e7c1adfb64030bba5e47deb25cb936a24950a10cf5c61bf71bc"
+    },
+    {
+      "path": "docs/cades-preservation.md",
+      "bytes": 16265,
+      "sha256": "93794b663821ff8e92b1aa0043a9664939227847064ae18cbf1dd7c40c033f45"
     },
     {
       "path": "docs/components.md",
@@ -160,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 11368,
-      "sha256": "b7324ae28c877092268577247f4c7c81ac43c6e195184a983ea7af7e3c38e30b"
+      "bytes": 11549,
+      "sha256": "3f33ebf93aca6e47ec7f9aa5a44fd2be0a8591686f839bbc62eee09850ded2d4"
     },
     {
       "path": "docs/ecosystem.md",
@@ -240,13 +245,13 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 9859,
-      "sha256": "74df8207c16daaf2ea32a9fe32971355bdc8af8e070e25498352952a6a6028ed"
+      "bytes": 10210,
+      "sha256": "c33de5938638582ce098e0adea79874ffa220460ee66089e5ac28cbad924f42b"
     },
     {
       "path": "reference/README.md",
-      "bytes": 3793,
-      "sha256": "9cfed468ab7f9b4df04593c80936b3097ba628554f75b4260210a9e11f9af45d"
+      "bytes": 3965,
+      "sha256": "c74cf979545ca841e46c1f4ca537eb8b548ccff1b5cfb9cce7352f58130bbf1f"
     },
     {
       "path": "reference/acme.mjs",
@@ -260,8 +265,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 36928,
-      "sha256": "b65e87d105c43de00f76ad150d8cb206b8babe3f216842f44e08628c41ac4868"
+      "bytes": 38328,
+      "sha256": "7916f0b6c0b600fd4c2d3afe6064cec3f4bf6159284cb5c72f59f9e41f6fd07e"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -337,6 +342,51 @@
       "path": "reference/browser.mjs",
       "bytes": 14747,
       "sha256": "6b61ab12db68428cb32a3585e0f75d88a68b4b9a148c98152b4e06834b0a8a75"
+    },
+    {
+      "path": "reference/cades-boundaries.test.mjs",
+      "bytes": 7889,
+      "sha256": "bfa90b55e7196bb50211590d1d41b78d22b0028f7166a523e0ca06cfd9ea9032"
+    },
+    {
+      "path": "reference/cades-fixtures.mjs",
+      "bytes": 17139,
+      "sha256": "6b6383933d821cc05f0279f27eb657bc655a6bdc38193604620588835c39d2de"
+    },
+    {
+      "path": "reference/cades-format.test.mjs",
+      "bytes": 5463,
+      "sha256": "527d5cf42ea950984ea27a3cea658da38670dccf09204394c810e0a4b2b60c78"
+    },
+    {
+      "path": "reference/cades-interop.test.mjs",
+      "bytes": 6038,
+      "sha256": "545a890655abeb8833672aa9885ba4de2ef3ff80eced88410d96319175df6e3e"
+    },
+    {
+      "path": "reference/cades-material.test.mjs",
+      "bytes": 7423,
+      "sha256": "927440b71587c048b1da796de704ef6a6950637657d5a93188c2e94b8277db02"
+    },
+    {
+      "path": "reference/cades-security.test.mjs",
+      "bytes": 25155,
+      "sha256": "673dad7af7c3998aa334d1838c44504c6fc092fd74ddede626d4b0fd2d368619"
+    },
+    {
+      "path": "reference/cades-validation.mjs",
+      "bytes": 18738,
+      "sha256": "1433efe207dfc86bc13a1df521554d3edf4092984e7ceaff1b001146bc44b727"
+    },
+    {
+      "path": "reference/cades.mjs",
+      "bytes": 52288,
+      "sha256": "f158169bc6aaf4fe01aeed8bef63bd67d091a788a16df14d204902c1b458eb4c"
+    },
+    {
+      "path": "reference/cades.test.mjs",
+      "bytes": 7610,
+      "sha256": "a1a74b950d9c7cc72af02fdcf838233c7124d55f49bb360675af36095b6ccef9"
     },
     {
       "path": "reference/certificate-key-usage.test.mjs",
@@ -995,13 +1045,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 34874,
-      "sha256": "058368bd2716f9f8fc093aa560f4643d43f98bb77acc87f382c24c610cb6f22e"
+      "bytes": 35731,
+      "sha256": "e3b21f88b7f60acbfabce119bae8aee205e75d7f529d0902e0947f192669141d"
     },
     {
       "path": "reference/sources.mjs",
-      "bytes": 15067,
-      "sha256": "3988b48ed77687fcfece943a8dfa12aaf857eb8254d10c4c3f8f1ea541638bc3"
+      "bytes": 15303,
+      "sha256": "956c710e861f12798e6205233234c765f4a3232dc89e9dc5479191d9143373e4"
     },
     {
       "path": "reference/state-security.test.mjs",
@@ -1225,13 +1275,13 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 24033,
-      "sha256": "f517fcfeb27c2709adb3cc9650c630477cd289e399bbfc7bcfcb30c19ad9a5c0"
+      "bytes": 26243,
+      "sha256": "410fdc63007cf2962391ca028a68eadc3e69b35ba63bf2e745278e9d842a5377"
     },
     {
       "path": "spec/conformance.md",
-      "bytes": 6079,
-      "sha256": "900fbc7b553e24f701ba96a2ec2f1bb24cdf605aa011421e7f55567b805caef0"
+      "bytes": 6521,
+      "sha256": "9dfae58bdacba3f3f8996db8a109b5676b9c1c06b69f1b0382a7990aa79cb18c"
     },
     {
       "path": "spec/document-baseline.md",

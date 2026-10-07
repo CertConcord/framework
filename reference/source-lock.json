@@ -780,6 +780,27 @@
       "sha256": "86a1e8356096923bb9293b1582e69193eff724d8fabf7cfe94ef97bf104b3426",
       "bytes": 2697049,
       "retrievedAt": "2026-10-07T16:24:32.853Z"
+    },
+    {
+      "id": "cadesERS",
+      "url": "https://www.etsi.org/deliver/etsi_ts/119100_119199/11912203/01.02.01_60/ts_11912203v010201p.pdf",
+      "sha256": "2eefb237051e3f6c330da0cb4090ab2ff65023294b2a8f691c957b2494fa4644",
+      "bytes": 315280,
+      "retrievedAt": "2026-10-07T18:19:30.974Z"
+    },
+    {
+      "id": "cryptoSuites",
+      "url": "https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/02.01.01_60/ts_119312v020101p.pdf",
+      "sha256": "7d8428f6433221fae87525507ec204f39ef31a1d5547338444708a801ed18f72",
+      "bytes": 303240,
+      "retrievedAt": "2026-10-07T18:19:31.126Z"
+    },
+    {
+      "id": "rfc6211",
+      "url": "https://www.rfc-editor.org/rfc/rfc6211.txt",
+      "sha256": "d2c431d3529ce01a8bdea3706e88e39c130896dd8d845cfba3a06664c10e6afe",
+      "bytes": 22646,
+      "retrievedAt": "2026-10-07T18:19:31.291Z"
     }
   ]
 }
