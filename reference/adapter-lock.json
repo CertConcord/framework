@@ -143,7 +143,7 @@
       "name": "Selected CAdES baseline preservation",
       "version": "1.0.0",
       "wireProfile": "EN 319 122-1 V1.3.1; DER single-signer id-data; P-256/SHA-256; B/T/LT/LTA with ATSv3 and ATSHashIndexV3; SHA-256/SHA-512 imprints",
-      "modules": ["cades.mjs", "cades-validation.mjs"],
+      "modules": ["cades.mjs", "cades-validation.mjs", "ades-cms.mjs"],
       "tests": [
         "cades.test.mjs",
         "cades-boundaries.test.mjs",
@@ -180,6 +180,45 @@
       "inputSemantics": "Exact adapter-defined bytes; upstream encodings preserved as specified in ADAPTERS.md",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
       "limits": "COMMON section 2 and adapter-specific bounds in ADAPTERS.md",
+      "downgradeForbidden": true
+    },
+    {
+      "id": "certconcord-pades-preservation-v1",
+      "name": "Selected PAdES baseline preservation",
+      "version": "1.0.0",
+      "wireProfile": "Published EN 319 142-1 V1.2.1; PDF 1.7 classic xref; one detached ES256 approval; B/T/LT/LTA using DSS and document timestamps; SHA-256/SHA-512 imprints",
+      "modules": [
+        "pades.mjs",
+        "ades-cms.mjs",
+        "cades-validation.mjs",
+        "pades-io.mjs",
+        "pades-structure.mjs",
+        "pades-worker.mjs"
+      ],
+      "tests": [
+        "pades-capabilities.test.mjs",
+        "pades-dates.test.mjs",
+        "pades-lexer.test.mjs",
+        "pades-revision-security.test.mjs",
+        "pades-security.test.mjs",
+        "pades-structure.test.mjs",
+        "pades-time-boundaries.test.mjs",
+        "pades.test.mjs"
+      ],
+      "sources": [
+        "pades",
+        "pdf17Authorized",
+        "adesValidation",
+        "cryptoSuites",
+        "rfc5652",
+        "rfc5035",
+        "rfc3161",
+        "rfc5816",
+        "rfc5280"
+      ],
+      "inputSemantics": "Exact signed PDF revision and Contents span; cumulative DSS material at each revision; original object roles and byte prefixes retained; external authority/status policy at actual knowledgeTime",
+      "environment": "Node.js 24.15+; isolated bounded pdf-lib worker; OpenSSL 3.6.5 fixture differentials; pyHanko 0.37.0 independent primitive/path/modification review; no implicit trust or network fallback",
+      "limits": "docs/pades-preservation.md; direct root/full CRL only; no general PDF rendering, object/xref streams, OCSP/VRI, multiple approvals or complete independent PAdES preservation assurance; pyHanko complete LTA procedure has a CMS signature-timestamp constraint",
       "downgradeForbidden": true
     },
     {

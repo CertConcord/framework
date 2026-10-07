@@ -247,7 +247,7 @@
           "name": "retains offline authorization, renewed preservation and later admissibility separately"
         }
       ],
-      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. The separate CAdES adapter adds selected P-256/direct-root/full-CRL ATSv3 preservation. PAdES/JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-CORE-10",
@@ -359,6 +359,18 @@
         {
           "file": "reference/certificate-key-usage.test.mjs",
           "name": "rejects signed malformed KeyUsage extension schemas"
+        },
+        {
+          "file": "reference/pades.test.mjs",
+          "name": "selected PAdES B/T/LT/LTA lifecycle preserves every previous revision and approval CMS byte"
+        },
+        {
+          "file": "reference/pades.test.mjs",
+          "name": "independent PDF and CMS fixture has a real page and OpenSSL-verified detached signature"
+        },
+        {
+          "file": "reference/pades-structure.test.mjs",
+          "name": "a timestamp cannot legitimize an earlier unauthorized page modification"
         }
       ],
       "gap": "Selected container behavior is tested. The custom reference parsers and SDK are not recommended production security boundaries; evaluated production parser integration, semantic equivalence and complete rendering coverage need independent review."
@@ -466,9 +478,21 @@
         {
           "file": "reference/status-results.test.mjs",
           "name": "CRL, OCSP, Status List and experimental status share authenticated result semantics"
+        },
+        {
+          "file": "reference/pades.test.mjs",
+          "name": "timely document timestamp succession preserves expired signer and first TSA certificates"
+        },
+        {
+          "file": "reference/pades-security.test.mjs",
+          "name": "actual knowledgeTime cannot hide later known compromise applying to the first timestamp"
+        },
+        {
+          "file": "reference/pades-security.test.mjs",
+          "name": "current DSS appended after the last timestamp has no retroactive coverage"
         }
       ],
-      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. The separate CAdES adapter adds selected P-256/direct-root/full-CRL ATSv3 preservation. PAdES/JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-DOC-06",

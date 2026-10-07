@@ -801,6 +801,13 @@
       "sha256": "d2c431d3529ce01a8bdea3706e88e39c130896dd8d845cfba3a06664c10e6afe",
       "bytes": 22646,
       "retrievedAt": "2026-10-07T18:19:31.291Z"
+    },
+    {
+      "id": "pdf17Authorized",
+      "url": "https://raw.githubusercontent.com/adobe/dc-acrobat-sdk-docs/b21b8bca628d7e436b5d19e00ae161c0f5e52e4a/docs/standards/pdfstandards/pdf/PDF32000_2008.pdf",
+      "sha256": "9de0ca9e8570d6209e8bd48a355be8eb6ec376acfc3fc3ae97cd8730351417ff",
+      "bytes": 22491828,
+      "retrievedAt": "2026-10-07T19:19:30.3731561Z"
     }
   ]
 }

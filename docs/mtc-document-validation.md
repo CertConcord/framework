@@ -14,7 +14,7 @@ The [preservation contract](document-preservation.md) maps the independent requi
 
 The offline SDK requires caller-provisioned trust and complete original evidence. Missing dependencies or stale required status cannot yield VALID. Historical replay and current admissibility retain distinct state and knowledge times. Archived evidence does not lower live trust watermarks.
 
-PAdES, CAdES and JAdES remain adaptations of the selected ETSI editions. CMS evidence verification and detached ERS are implemented for the declared path. Complete PAdES DSS/document-timestamp renewal, JAdES augmentation and general authenticated archive succession remain gaps; a detached archive does not establish a complete AdES LT/LTA level.
+PAdES, CAdES and JAdES remain adaptations of the selected ETSI editions. CMS evidence verification and detached ERS are implemented for the declared path. The separate selected [CAdES](cades-preservation.md) and [PAdES](pades-preservation.md) adapters implement ATSv3 and PDF DSS/document-timestamp renewal under explicit classical P-256/direct-root profiles. Those selections do not establish MTC/PQC AdES conformance. JAdES augmentation, broader algorithm/path coverage and operational archive assurance remain gaps; detached ERS alone does not establish an AdES LT/LTA level.
 
 ## Evaluation
 

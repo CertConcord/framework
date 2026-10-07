@@ -222,6 +222,13 @@ export function parseDER(input) {
       while (p < stop) children.push(read(stop, depth + 1));
     } else p = stop;
     const value = b.subarray(body, stop);
+    // ASN.1 time text is ASCII. Check the original bytes before any string
+    // conversion, since Buffer's legacy ASCII decoder clears the high bit.
+    if (tag === 23 || tag === 24)
+      requireThat(
+        value.every((byte) => byte < 128),
+        'DER_TIME_CHARACTER',
+      );
     if (tag === 2) {
       requireThat(
         value.length > 0 &&

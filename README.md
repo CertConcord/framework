@@ -30,6 +30,7 @@ EUDI, government mDL and photoID are optional interoperability environments and 
 | [MTC document validation](docs/mtc-document-validation.md) | Standalone certificates, offline evidence, independent monitoring and archival obligations |
 | [Document preservation](docs/document-preservation.md)     | Executable MTC/PQC lifecycle, TSA and hash renewal, historical and current results         |
 | [CAdES preservation](docs/cades-preservation.md)           | Selected standard B/T/LT/LTA path, direct-root CRLs and ATSv3 renewal                      |
+| [PAdES preservation](docs/pades-preservation.md)           | Selected PDF B/T/LT/LTA path, revision-bound DSS and document timestamp renewal            |
 | [mdoc certificates](spec/mdoc-certificates.md)             | Identity admission, native signing credentials and issuer trust separation                 |
 | [Passkey credentials](spec/passkey-credentials.md)         | Authentication, signing extensions and experimental execution bindings                     |
 | [Profiles and maturity](spec/profiles.md)                  | Which candidate bindings and external standards are selected                               |
