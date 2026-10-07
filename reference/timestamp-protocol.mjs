@@ -219,7 +219,7 @@ function statusStrings(node) {
     return text;
   });
 }
-function failureBits(node) {
+function failureBits(node, successfulStatus = false) {
   if (!node) return [];
   const value = node.value,
     unused = value[0];
@@ -232,6 +232,8 @@ function failureBits(node) {
       'TSP_FAILURE_BITS_ENCODING',
     );
   }
+  check(!successfulStatus || value.length === 1, 'TSP_STATUS_FAILURE_CONTRADICTION');
+  check(value.length <= 5, 'TSP_FAILURE_BITS_UNSUPPORTED', 'UNSUPPORTED', 'badRequest');
   const bits = [];
   for (let index = 1; index < value.length; index++)
     for (let bit = 0; bit < 8; bit++)
@@ -268,40 +270,47 @@ export function parseTimestampResponse(responseDER) {
       'TSP_STATUS_ENCODING',
     );
     if (fields[1]) check(fields[1].tag === 0x30, 'TSP_TOKEN_ENCODING');
-    const optional = new Map();
-    let previous = -1;
-    for (const field of info.children.slice(1)) {
-      const rank = [0x30, 3].indexOf(field.tag);
-      check(rank > previous, 'TSP_STATUS_FIELD_ORDER');
-      previous = rank;
-      optional.set(field.tag, field);
-    }
-    const strings = statusStrings(optional.get(0x30)),
-      bits = failureBits(optional.get(3));
-    const statusNode = info.children[0];
-    check(statusNode.value.length <= 4, 'TSP_STATUS_UNSUPPORTED', 'UNSUPPORTED', 'badRequest');
-    let status = 0;
-    for (const value of statusNode.value) status = status * 256 + value;
-    if (statusNode.value[0] & 128) status -= 2 ** (statusNode.value.length * 8);
-    const tokenDER = fields[1] && Buffer.from(fields[1].raw),
-      diagnostics = [];
-    if (status < 0 || status > 5)
-      diagnostics.push(diagnostic('UNSUPPORTED', 'TSP_STATUS_UNSUPPORTED'));
-    if (bits.some((bit) => !Object.values(FAILURE_BITS).includes(bit)))
-      diagnostics.push(diagnostic('UNSUPPORTED', 'TSP_FAILURE_BITS_UNSUPPORTED'));
-    const result = Object.freeze({
+    const tokenDER = fields[1] && Buffer.from(fields[1].raw);
+    const result = {
       raw,
-      status,
-      statusStrings: Object.freeze(strings),
-      failureBits: Object.freeze(bits),
+      statusStrings: Object.freeze([]),
+      failureBits: Object.freeze([]),
       ...(tokenDER ? { tokenDER } : {}),
-      diagnostics: Object.freeze(diagnostics),
-    });
-    if (([0, 1].includes(status) && !tokenDER) || ([2, 3, 4, 5].includes(status) && tokenDER))
-      throw error('TSP_STATUS_TOKEN_BINDING', 'INVALID', 'badDataFormat', result);
-    if ([0, 1].includes(status) && bits.length)
-      throw error('TSP_STATUS_FAILURE_CONTRADICTION', 'INVALID', 'badDataFormat', result);
-    return result;
+      diagnostics: Object.freeze([]),
+    };
+    try {
+      const optional = new Map();
+      let previous = -1;
+      for (const field of info.children.slice(1)) {
+        const rank = [0x30, 3].indexOf(field.tag);
+        check(rank > previous, 'TSP_STATUS_FIELD_ORDER');
+        previous = rank;
+        optional.set(field.tag, field);
+      }
+      const statusNode = info.children[0];
+      check(statusNode.value.length <= 4, 'TSP_STATUS_UNSUPPORTED', 'UNSUPPORTED', 'badRequest');
+      let status = 0;
+      for (const value of statusNode.value) status = status * 256 + value;
+      if (statusNode.value[0] & 128) status -= 2 ** (statusNode.value.length * 8);
+      result.status = status;
+      check(
+        !(([0, 1].includes(status) && !tokenDER) || ([2, 3, 4, 5].includes(status) && tokenDER)),
+        'TSP_STATUS_TOKEN_BINDING',
+      );
+      result.statusStrings = Object.freeze(statusStrings(optional.get(0x30)));
+      result.failureBits = Object.freeze(failureBits(optional.get(3), [0, 1].includes(status)));
+      const diagnostics = [];
+      if (status < 0 || status > 5)
+        diagnostics.push(diagnostic('UNSUPPORTED', 'TSP_STATUS_UNSUPPORTED'));
+      if (result.failureBits.some((bit) => !Object.values(FAILURE_BITS).includes(bit)))
+        diagnostics.push(diagnostic('UNSUPPORTED', 'TSP_FAILURE_BITS_UNSUPPORTED'));
+      result.diagnostics = Object.freeze(diagnostics);
+      return Object.freeze(result);
+    } catch (caught) {
+      if (caught instanceof ProtocolError && !caught.partial)
+        caught.partial = Object.freeze(result);
+      throw caught;
+    }
   });
 }
 
