@@ -546,17 +546,36 @@ function inspectCapabilities(rev, diagnostic) {
 function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
   const found = [],
     fieldsSeen = new Set(),
-    signatureIDs = new Set();
-  function visit(reference, inheritedType, depth = 0) {
+    signatureIDs = new Set(),
+    fieldNames = new Set(),
+    signedNames = new Set();
+  function visit(reference, inheritedType, depth = 0, parentName = '') {
     check(reference instanceof PDFRef, 'PADES_FIELD_INDIRECT');
     const id = refID(reference);
     check(!fieldsSeen.has(id) && depth <= 20, 'PADES_FIELD_CYCLE_OR_DEPTH');
     fieldsSeen.add(id);
     const field = rev.resolve(reference);
     check(field instanceof PDFDict, 'PADES_FIELD');
+    const partialName = get(field, 'T');
+    check(
+      partialName === undefined ||
+        partialName instanceof PDFString ||
+        partialName instanceof PDFHexString,
+      'PADES_FIELD_NAME',
+    );
+    const qualifiedName =
+      partialName === undefined
+        ? parentName
+        : [parentName, partialName.decodeText()].filter(Boolean).join('.');
+    if (partialName !== undefined) {
+      check(!fieldNames.has(qualifiedName), 'PADES_DUPLICATE_FIELD_NAME');
+      fieldNames.add(qualifiedName);
+    }
     const type = name(get(field, 'FT')) ?? inheritedType,
       value = get(field, 'V');
     if (type === 'Sig' && value !== undefined) {
+      check(!signedNames.has(qualifiedName), 'PADES_DUPLICATE_FIELD_NAME');
+      signedNames.add(qualifiedName);
       check(value instanceof PDFRef, 'PADES_SIGNATURE_INDIRECT');
       const signatureID = refID(value),
         signature = rev.resolve(value);
@@ -573,6 +592,9 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
         'PADES_SIGNATURE_TYPE',
       );
       check(get(signature, 'Filter') instanceof PDFName, 'PADES_SIGNATURE_FILTER');
+      // EN 319 142-1 V1.2.1 Table 1 forbids Cert for baseline approval
+      // signatures as well as for document timestamps (clause 5.4.3).
+      check(get(signature, 'Cert') === undefined, 'PADES_SIGNATURE_CERT_FORBIDDEN');
       const selected = kind === 'TIMESTAMP' ? 'ETSI.RFC3161' : 'ETSI.CAdES.detached';
       if (name(get(signature, 'SubFilter')) !== selected) diagnostic('PADES_SUBFILTER_UNSUPPORTED');
       if (kind === 'TIMESTAMP') {
@@ -664,10 +686,11 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
     const kids = rev.resolve(get(field, 'Kids'));
     if (kids !== undefined) {
       check(kids instanceof PDFArray, 'PADES_FIELD_KIDS');
-      kids.asArray().forEach((kid) => visit(kid, type, depth + 1));
+      kids.asArray().forEach((kid) => visit(kid, type, depth + 1, qualifiedName));
     }
   }
   rev.fields.forEach((field) => visit(field));
+  rev.fieldNames = fieldNames;
   check(found.length <= 32, 'PADES_SIGNATURE_LIMIT', 'UNSUPPORTED');
   return found.sort((a, b) => a.signedRevisionLength - b.signedRevisionLength);
 }
@@ -779,14 +802,10 @@ function enforceAppend(prior, current, raw) {
         oldID.get(0).toString() === newID.get(0).toString(),
       'PADES_DOCUMENT_ID_CHANGED',
     );
-  const allowed = new Set([refID(prior.root), refID(current.root)]);
-  for (const rev of [prior, current]) {
-    for (const value of [get(rev.catalog, 'AcroForm'), rev.fieldsValue])
-      if (value instanceof PDFRef) allowed.add(refID(value));
-    for (const id of rev.material.containers) allowed.add(id);
-  }
-  for (const id of current.material.streams)
-    if (!prior.active.has(Number(id.split(' ')[0]))) allowed.add(id);
+  const oldRoles = mutableRoles(prior),
+    newRoles = mutableRoles(current);
+  const immutable = immutableReferences(prior);
+  const allowed = new Set([...newRoles.keys(), ...current.material.streams]);
   for (const key of ['certificates', 'crls'])
     check(
       prior.material[key].every((bytes) =>
@@ -802,7 +821,7 @@ function enforceAppend(prior, current, raw) {
         name(get(field, 'FT')) === 'Sig' &&
         value instanceof PDFRef &&
         field.keys().every((key) => ['FT', 'T', 'V'].includes(key.decodeText())) &&
-        current.signatures.some((s) => s.id === refID(value) && s.kind === 'TIMESTAMP'),
+        current.signatures.some((s) => s.id === refID(value)),
       'PADES_NON_PRESERVATION_FIELD',
     );
     allowed.add(refID(fieldRef));
@@ -833,17 +852,77 @@ function enforceAppend(prior, current, raw) {
     if (!old.used) continue;
     const entry = current.active.get(id);
     check(entry?.used && entry.generation === old.generation, 'PADES_OBJECT_REMOVED');
-    if (entry.offset !== old.offset && !allowed.has(`${id} ${entry.generation} R`))
+    if (
+      entry.offset !== old.offset &&
+      !raw
+        .subarray(entry.def.offset, entry.def.end)
+        .equals(raw.subarray(old.def.offset, old.def.end))
+    ) {
+      const reference = `${id} ${entry.generation} R`;
+      // An object's new role is not authorization to overwrite its old role.
+      // Even a previously mutable container is immutable through any other
+      // retained document path (for example a shared page or annotation array).
       check(
-        raw
-          .subarray(entry.def.offset, entry.def.end)
-          .equals(raw.subarray(old.def.offset, old.def.end)),
+        !immutable.has(reference) &&
+          oldRoles.has(reference) &&
+          [...oldRoles.get(reference)].some((role) => newRoles.get(reference)?.has(role)),
         'PADES_EXISTING_OBJECT_CHANGED',
       );
+    }
   }
   for (const [id, entry] of current.active)
     if (entry.used && !prior.active.get(id)?.used)
       check(allowed.has(`${id} ${entry.generation} R`), 'PADES_UNAPPROVED_OBJECT_ADDED');
+}
+
+function mutableRoles(rev) {
+  const roles = new Map();
+  const add = (value, role) => {
+    if (!(value instanceof PDFRef)) return;
+    const id = refID(value);
+    if (!roles.has(id)) roles.set(id, new Set());
+    roles.get(id).add(role);
+  };
+  add(rev.root, 'CATALOG');
+  add(get(rev.catalog, 'AcroForm'), 'FORM');
+  add(rev.fieldsValue, 'FIELDS');
+  const dssValue = get(rev.catalog, 'DSS'),
+    dss = rev.resolve(dssValue);
+  add(dssValue, 'DSS');
+  if (dss instanceof PDFDict) {
+    add(get(dss, 'Certs'), 'DSS_CERTS');
+    add(get(dss, 'CRLs'), 'DSS_CRLS');
+  }
+  return roles;
+}
+
+function immutableReferences(rev) {
+  const protectedRefs = new Set(),
+    seen = new Set();
+  function visit(value, depth = 0) {
+    check(depth <= 64, 'PADES_REFERENCE_DEPTH', 'UNSUPPORTED');
+    if (!value || seen.has(value)) return;
+    seen.add(value);
+    if (value instanceof PDFRef) {
+      protectedRefs.add(refID(value));
+      visit(rev.resolve(value), depth + 1);
+    } else if (value instanceof PDFArray) value.asArray().forEach((item) => visit(item, depth + 1));
+    else {
+      const dict = value instanceof PDFRawStream ? value.dict : value;
+      if (dict instanceof PDFDict) dict.values().forEach((item) => visit(item, depth + 1));
+    }
+  }
+  for (const [key, value] of rev.catalog.entries())
+    if (!['AcroForm', 'DSS'].includes(key.decodeText())) visit(value);
+  for (const [key, value] of rev.trailer.entries()) if (key.decodeText() !== 'Root') visit(value);
+  for (const [key, value] of rev.form?.entries() ?? [])
+    if (!['Fields', 'SigFlags'].includes(key.decodeText())) visit(value);
+  rev.fields.forEach((value) => visit(value));
+  for (const id of rev.material.streams) {
+    const [objectNumber, generationNumber] = id.split(' ').map(Number);
+    visit(PDFRef.of(objectNumber, generationNumber));
+  }
+  return protectedRefs;
 }
 
 function acceptable(document) {
@@ -960,11 +1039,7 @@ export function preparePAdESContainer(
   }
   const rev = document.revisions.at(-1),
     first = rev.size;
-  for (const fieldRef of rev.fields)
-    check(
-      get(rev.resolve(fieldRef), 'T')?.decodeText?.() !== fieldName,
-      'PADES_DUPLICATE_FIELD_NAME',
-    );
+  check(!rev.fieldNames.has(fieldName), 'PADES_DUPLICATE_FIELD_NAME');
   const placeholder = '0 ' + '0'.repeat(20) + ' ' + '0'.repeat(20) + ' ' + '0'.repeat(20);
   const signatureText = `<< /Type /${kind === 'SIGNATURE' ? 'Sig' : 'DocTimeStamp'} /Filter /Adobe.PPKLite /SubFilter /${kind === 'SIGNATURE' ? 'ETSI.CAdES.detached' : 'ETSI.RFC3161'}${dateEntry} /ByteRange [${placeholder}] /Contents <${'0'.repeat(signatureBytes * 2)}> >>`;
   const formProperties = rev.form
