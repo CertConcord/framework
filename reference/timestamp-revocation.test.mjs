@@ -71,6 +71,16 @@ for (const reason of [0, 3, 4, 5])
 test('material POE without token POE cannot repair absent TSA revocation reason', () => {
   noIndependentPOE(material(revokedTSAStatus(f), { evidenceTime: epoch + 30 }));
 });
+for (const [name, signatureEvidenceTime] of [
+  ['non-finite', Number.NaN],
+  ['after actual knowledge time', epoch + 81],
+  ['before the token state time', epoch + 19],
+])
+  test(`independent token POE ${name} is not an admissible helper time`, () => {
+    const result = material(revokedTSAStatus(f, { reason: 1 }), { signatureEvidenceTime });
+    expectOverall(result, 'INVALID');
+    assert.equal(result.reason, 'CADES_VALIDATION_TIME');
+  });
 for (const offset of [50, 60])
   test(`independent token POE at +${offset} is not before the +50 compromise cutoff`, () => {
     noIndependentPOE(
