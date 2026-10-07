@@ -13,6 +13,10 @@ export const sources = {
     'https://www.ietf.org/archive/id/draft-gray-plants-mtc-deploy-use-cases-01.txt',
   cades:
     'https://www.etsi.org/deliver/etsi_EN/319100_319199/31912201/01.03.01_60/en_31912201v010301p.pdf',
+  cadesERS:
+    'https://www.etsi.org/deliver/etsi_ts/119100_119199/11912203/01.02.01_60/ts_11912203v010201p.pdf',
+  cryptoSuites:
+    'https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/02.01.01_60/ts_119312v020101p.pdf',
   pades:
     'https://www.etsi.org/deliver/etsi_EN/319100_319199/31914201/01.02.01_60/en_31914201v010201p.pdf',
   jades:
@@ -163,7 +167,7 @@ export const sources = {
     [
       5280, 5652, 5869, 3394, 5649, 8949, 9052, 9629, 9881, 9882, 9883, 9935, 9936, 3161, 5816,
       5035, 4998, 6283, 8555, 9901, 9449, 9964, 9180, 6960, 2986, 9810, 7797, 7515, 7516, 7518,
-      7638,
+      7638, 6211,
     ].map((n) => ['rfc' + n, `https://www.rfc-editor.org/rfc/rfc${n}.txt`]),
   ),
 };

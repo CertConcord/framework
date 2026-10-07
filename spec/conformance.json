@@ -247,7 +247,7 @@
           "name": "retains offline authorization, renewed preservation and later admissibility separately"
         }
       ],
-      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Container-specific AdES LT/LTA augmentation, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. The separate CAdES adapter adds selected P-256/direct-root/full-CRL ATSv3 preservation. PAdES/JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-CORE-10",
@@ -337,6 +337,18 @@
       "coverage": "partial",
       "tests": [
         {
+          "file": "reference/cades.test.mjs",
+          "name": "signature timestamp request hashes raw signature octets and excludes the OCTET STRING tag and length"
+        },
+        {
+          "file": "reference/cades-interop.test.mjs",
+          "name": "OpenSSL CMS verification proves original signature remains valid after independently encoded unsigned ATS augmentation"
+        },
+        {
+          "file": "reference/cades-security.test.mjs",
+          "name": "originalCMS guard rejects a different otherwise valid original signature"
+        },
+        {
           "file": "reference/containers.test.mjs",
           "name": "PAdES actual PDF ByteRange, detached CMS and incremental second signature"
         },
@@ -355,6 +367,38 @@
       "id": "CC-DOC-05",
       "coverage": "partial",
       "tests": [
+        {
+          "file": "reference/cades-boundaries.test.mjs",
+          "name": "historical validation cannot authenticate an uncovered timestamp after current TSA key protection ends"
+        },
+        {
+          "file": "reference/cades-boundaries.test.mjs",
+          "name": "historical B validation cannot authenticate an unprotected document signature after current signer key cutoff"
+        },
+        {
+          "file": "reference/cades-material.test.mjs",
+          "name": "negative CRL protected before root cutoff remains authenticated and INVALID"
+        },
+        {
+          "file": "reference/cades-material.test.mjs",
+          "name": "unprotected GOOD after root cutoff cannot be accepted on its claimed publication time"
+        },
+        {
+          "file": "reference/cades.test.mjs",
+          "name": "timely TSA succession preserves expired document and prior TSA certificates"
+        },
+        {
+          "file": "reference/cades.test.mjs",
+          "name": "historical material remains offline and authority queries retain actual knowledge time"
+        },
+        {
+          "file": "reference/cades-security.test.mjs",
+          "name": "accuracy upper bound equal to a protection deadline is too late"
+        },
+        {
+          "file": "reference/cades-security.test.mjs",
+          "name": "old CRL bytes cannot be reused historically without ATS protection"
+        },
         {
           "file": "reference/containers.test.mjs",
           "name": "RFC3161 TSA request/response validates imprint, nonce, policy, EKU and POE interval"
@@ -424,7 +468,7 @@
           "name": "CRL, OCSP, Status List and experimental status share authenticated result semantics"
         }
       ],
-      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Container-specific AdES LT/LTA augmentation, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. The separate CAdES adapter adds selected P-256/direct-root/full-CRL ATSv3 preservation. PAdES/JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-DOC-06",

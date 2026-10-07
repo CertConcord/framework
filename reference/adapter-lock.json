@@ -139,6 +139,37 @@
       "downgradeForbidden": true
     },
     {
+      "id": "certconcord-cades-preservation-v1",
+      "name": "Selected CAdES baseline preservation",
+      "version": "1.0.0",
+      "wireProfile": "EN 319 122-1 V1.3.1; DER single-signer id-data; P-256/SHA-256; B/T/LT/LTA with ATSv3 and ATSHashIndexV3; SHA-256/SHA-512 imprints",
+      "modules": ["cades.mjs", "cades-validation.mjs"],
+      "tests": [
+        "cades.test.mjs",
+        "cades-boundaries.test.mjs",
+        "cades-format.test.mjs",
+        "cades-security.test.mjs",
+        "cades-material.test.mjs",
+        "cades-interop.test.mjs"
+      ],
+      "sources": [
+        "cades",
+        "adesValidation",
+        "cryptoSuites",
+        "cadesERS",
+        "rfc5652",
+        "rfc5035",
+        "rfc3161",
+        "rfc5816",
+        "rfc5280",
+        "rfc6211"
+      ],
+      "inputSemantics": "Bare standard CMS; exact signed core retained; signature-value timestamp and standard archive-index inputs; external role/status policy at unchanged knowledgeTime",
+      "environment": "Node.js 24.15+; OpenSSL 3.6.5 differential fixtures; external admitted roots, role resolver, finite signature/hash/key cutoffs and current status",
+      "limits": "docs/cades-preservation.md; direct root/full CRL only; no OCSP/intermediates/legacy ER attributes or complete ETSI algorithm/process claim; no production or PQ preservation assurance",
+      "downgradeForbidden": true
+    },
+    {
       "id": "certconcord-pdf-v1",
       "name": "PDF / PAdES container",
       "version": "1.0.0",

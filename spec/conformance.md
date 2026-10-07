@@ -8,7 +8,7 @@ An implementation's report MUST identify the source commit, core draft, applicat
 
 The immediate baseline is MTC/PQC for long-term documents: standalone issuance, an authorized signature, a trusted existence bound, retained status and authority inputs, offline verification, and timely preservation renewal across certificate expiry and issuer retirement. TLS deployment, a second complete implementation and an independent security assessment are not current research prerequisites. Those external assurance activities remain stability evidence.
 
-Draft acceptance requires a bounded implementable contract, a runnable lifecycle and positive/negative vectors, including explicit results for missing evidence, late renewal and newly known compromise. The [preservation example](../docs/document-preservation.md) separates historical validation, preserved integrity and current admissibility. It does not claim a complete historical trust resolver or container-level LT/LTA implementation.
+Draft acceptance requires a bounded implementable contract, a runnable lifecycle and positive/negative vectors, including explicit results for missing evidence, late renewal and newly known compromise. The [preservation example](../docs/document-preservation.md) separates historical validation, preserved integrity and current admissibility. Its detached ERS result is distinct from the separate [selected CAdES container profile](../docs/cades-preservation.md).
 
 ## Current evidence and gaps
 
@@ -22,6 +22,7 @@ Draft acceptance requires a bounded implementable contract, a runnable lifecycle
 - Fixed-root watermarks, scoped authority history, dual-quorum retained root transitions, recovery-target validation and atomic wrapper/archive failure traces are covered locally. Emergency root replacement, distributed operation and production parser evaluation remain unresolved assurance obligations; see the [composition review](../docs/composition-review.md).
 - Security/privacy review, published threat-model dispositions, full requirement-to-vector coverage and an external assessment are required before a stability proposal. Existing fuzzing and unit tests do not replace them.
 - RFC 4998 preservation checks original protection, TSA rotation and tree-hash lifetimes with explicit external policy. Complete synthetic CMS/native mdoc flows retain authenticated authority history and custodian succession, and separate preservation, historical authorization and current admissibility. Stale current status remains INDETERMINATE; later known compromise can invalidate current admissibility. These tests do not establish operational archive assurance or an ETSI LT/LTA level.
+- The selected CAdES adapter supplies single-signer DER CMS B/T/LT/LTA validation with ATSv3, P-256 signatures, direct-root paths and full direct CRLs. Its level result requires actual verified dependencies and unbroken protection; standalone ERS does not promote a CMS level. It does not implement all ETSI algorithms or validation constraints, PAdES augmentation, or a complete independent CAdES preservation stack.
 
 ## Stable specification gate
 
