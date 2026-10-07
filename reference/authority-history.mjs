@@ -1,5 +1,5 @@
 import {
-  ProtocolError, requireThat, dcbor, decodeCBOR, equal, keyID, publicFromDER,
+  ProtocolError, requireThat, fields, dcbor, decodeCBOR, equal, keyID, publicFromDER,
 } from './core.mjs';
 import { parseCertificate } from './pki.mjs';
 
@@ -24,8 +24,10 @@ function validScope(scope) {
 }
 
 /** Evaluate an already authenticated status statement; this function does not authenticate it. */
-export function authorityStatus(statement, { stateTime, knowledgeTime }) {
+export function authorityStatus(statement, { authorityID, trustDomainID, stateTime, knowledgeTime }) {
   if (!statement) return result('INDETERMINATE', 'AUTHORITY_STATUS_MISSING');
+  if (!equal(statement.authorityID, authorityID) || !equal(statement.trustDomainID, trustDomainID))
+    return result('INVALID', 'AUTHORITY_STATUS_BINDING');
   if (!instant(stateTime) || !instant(knowledgeTime) || stateTime > knowledgeTime ||
       statement.scope !== 'AUTHORITY' || !time(statement.publishedAt) ||
       !time(statement.nextUpdate) || statement.nextUpdate <= statement.publishedAt)
@@ -58,7 +60,9 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
   const records = authorities.map((input) => {
     const { status, ...fields } = input;
     const record = copy(fields);
+    validateRecordFields(record);
     requireThat(['CERTIFICATE', 'RAW_KEY'].includes(record.mode) &&
+      time(record.knownAt) &&
       time(record.validFrom) && time(record.validUntil) && record.validUntil > record.validFrom &&
       Array.isArray(record.roles) && record.roles.length > 0 &&
       new Set(record.roles).size === record.roles.length &&
@@ -94,37 +98,47 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     const identities = records.filter((r) => equal(r.keyID, requestedKeyID) &&
       (r.mode === 'RAW_KEY' || equal(r.certificate, certificate)));
     if (!identities.length) return result('INDETERMINATE', 'AUTHORITY_MISSING');
-    const roles = identities.filter((r) => r.roles.includes(role));
+    const known = identities.filter((r) => r.knownAt <= knowledgeTime);
+    if (!known.length) return result('INDETERMINATE', 'AUTHORITY_NOT_YET_KNOWN');
+    const roles = known.filter((r) => r.roles.includes(role));
     if (!roles.length) return result('INVALID', 'AUTHORITY_ROLE');
     const scoped = roles.filter((r) => r.scopes.some((grant) =>
       Object.entries(grant).every(([key, value]) => Object.hasOwn(scope, key) && same(value, scope[key]))));
     if (!scoped.length) return result('INVALID', 'AUTHORITY_SCOPE');
-    if (scoped.length !== 1) return result('INDETERMINATE', 'AUTHORITY_CONFLICT');
-    const record = scoped[0];
-    if (stateTime < record.validFrom || (record.parsed && stateTime < record.parsed.notBefore))
+    const active = scoped.filter((r) => stateTime >= r.validFrom && stateTime < r.validUntil &&
+      (!r.parsed || (stateTime >= r.parsed.notBefore && stateTime < r.parsed.notAfter)));
+    if (!active.length && scoped.every((r) => stateTime < Math.max(r.validFrom, r.parsed?.notBefore ?? 0)))
       return result('INVALID', 'AUTHORITY_NOT_YET_VALID');
-    if (stateTime >= record.validUntil || (record.parsed && stateTime >= record.parsed.notAfter))
-      return result('INVALID', 'AUTHORITY_EXPIRED');
-    if (record.algorithmValidUntil !== undefined && stateTime >= record.algorithmValidUntil)
-      return result('INVALID', 'AUTHORITY_ALGORITHM_EXPIRED');
-    let status;
-    try {
-      status = typeof record.status === 'function'
-        ? record.status(copy({ authorityID: requestedKeyID, role, scope, stateTime, knowledgeTime }))
-        : record.status;
-    } catch { return result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE'); }
-    if (status?.then) return result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE');
-    // Typed adapters may report failure, but only a bound statement can establish GOOD.
-    if (status?.overall && status.overall !== 'VALID') {
-      if (!['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(status.overall))
-        return result('INVALID', 'AUTHORITY_STATUS_SCHEMA');
-      return result(status.overall, status.reason ?? 'AUTHORITY_STATUS_UNAVAILABLE');
-    }
-    const outcome = authorityStatus(status, { stateTime, knowledgeTime });
-    return outcome.overall === 'VALID'
-      ? result('VALID', 'AUTHORITY_ADMITTED', { role, mode: record.mode, coverageUntil: outcome.coverageUntil })
-      : outcome;
+    if (!active.length) return result('INVALID', 'AUTHORITY_EXPIRED');
+    const outcomes = active.map((record) => {
+      if (record.algorithmValidUntil !== undefined && stateTime >= record.algorithmValidUntil)
+        return result('INVALID', 'AUTHORITY_ALGORITHM_EXPIRED');
+      let status;
+      try {
+        status = typeof record.status === 'function'
+          ? record.status(copy({ authorityID: requestedKeyID, role, scope, stateTime, knowledgeTime }))
+          : record.status;
+      } catch { return result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE'); }
+      if (status?.then) return result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE');
+      // Typed adapters may report failure, but only a bound statement can establish GOOD.
+      if (status?.overall && status.overall !== 'VALID') {
+        if (!['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(status.overall))
+          return result('INVALID', 'AUTHORITY_STATUS_SCHEMA');
+        return result(status.overall, status.reason ?? 'AUTHORITY_STATUS_UNAVAILABLE');
+      }
+      const outcome = authorityStatus(status, { authorityID: requestedKeyID, trustDomainID: domain, stateTime, knowledgeTime });
+      return outcome.overall === 'VALID'
+        ? result('VALID', 'AUTHORITY_ADMITTED', { role, mode: record.mode, coverageUntil: outcome.coverageUntil })
+        : outcome;
+    });
+    return outcomes.find((outcome) => outcome.overall === 'INVALID') ??
+      (active.length > 1 ? result('INDETERMINATE', 'AUTHORITY_CONFLICT') : outcomes[0]);
   });
+}
+
+function validateRecordFields(record) {
+  fields(record, ['mode', 'knownAt', 'validFrom', 'validUntil', 'roles', 'scopes'],
+    ['certificate', 'publicKeyDER', 'algorithmValidUntil']);
 }
 
 export class AuthorityError extends ProtocolError {
