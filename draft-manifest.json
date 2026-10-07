@@ -220,8 +220,8 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 90966,
-      "sha256": "ae5b2fd36b750e61f0d25967d5b06ab344d6e1ab2dfbcb2864483c8662bb9d4b"
+      "bytes": 90969,
+      "sha256": "09df2661de18c4cea75cbc7f3ea3d75ee60aa13364b2ec46b15ce11b3bf3a25f"
     },
     {
       "path": "package.json",
@@ -750,8 +750,8 @@
     },
     {
       "path": "reference/package.json",
-      "bytes": 1398,
-      "sha256": "913927d49138d8a21cd702b0d647773b5511d886922f9155a94b61939605368b"
+      "bytes": 1399,
+      "sha256": "25a8f2d24138b086ee2431fbc640112d50909b4b6a9c0597631b6c6532cf7f3a"
     },
     {
       "path": "reference/passkey-credentials.mjs",
