@@ -54,7 +54,7 @@ before(() => {
   policy = old.policy({
     trustedRoots: [old.root.der, successor.root.der],
     authorityResolver: (query) =>
-      newerKeys.some((key) => key.equals(query.authorityID))
+      [root, tsa].some((entry) => entry.der.equals(query.certificate))
         ? newResolver(query)
         : oldResolver(query),
     keyDeadlines: {
