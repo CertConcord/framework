@@ -63,13 +63,13 @@
       "downgradeForbidden": true
     },
     {
-      "id": "certconcord-c2sp-mirror-v1",
+      "id": "certconcord-c2sp-mirror-v2",
       "name": "C2SP witness/mirror",
-      "version": "1.0.0",
-      "wireProfile": "Pinned C2SP note/checkpoint, add-checkpoint, add-entries, sign-subtree, monitor and tiles; CertConcord governance and CERTCONCORD-MLDSA87-SUBTREE-v1 extension are separate composition rules",
+      "version": "2.0.0",
+      "wireProfile": "C2SP-20261007-MLDSA87-v2: one admitted witness signature per subtree request; raw padded-base64 ML-DSA response plus LF; cryptographically verified log signature on published checkpoint. CERTCONCORD-MLDSA87-SUBTREE-v1 remains the algorithm key-hint identifier.",
       "modules": ["transparency.mjs"],
-      "tests": ["transparency.test.mjs", "adapters-network.test.mjs"],
-      "sources": ["c2spMirror", "c2spWitness", "c2spCosignature", "c2spNote", "c2spTiles"],
+      "tests": ["transparency.test.mjs", "adapters-network.test.mjs", "component-integration.test.mjs"],
+      "sources": ["c2spMirror", "c2spWitness", "c2spCosignature", "c2spNote", "c2spCheckpoint", "c2spTiles"],
       "inputSemantics": "Exact adapter-defined bytes; upstream encodings preserved as specified in ADAPTERS.md",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
       "limits": "COMMON section 2 and adapter-specific bounds in ADAPTERS.md",

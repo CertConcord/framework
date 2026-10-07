@@ -112,3 +112,11 @@ The client rejects a CSR containing its current account key, and finalization re
 The executable ECP plan trusts an explicitly pinned activation authority's attestation, checks every document/SIM/permit/receipt/certificate/status binding, and reports `ATTESTED_VALID`. The plan requires an explicitly trusted activation attestor; direct hardware-consent evidence uses a separately identified verification plan. Trusted time is a separate assertion. Other evidence graphs are accepted only by their declared semantic plan, never solely because their hashes form a closed graph.
 
 Independent component ownership, immutable pins and integration boundaries are recorded in [components](components.md). The ML-DSA-87 experimental key hint and subtree encoding come from the selected cosignature component; standard ML-DSA-44 identifiers retain their C2SP definition.
+
+The selected mirror adapter is `certconcord-c2sp-mirror-v2` / `C2SP-20261007-MLDSA87-v2`.
+A subtree request carries exactly one selected witness note signature. A successful
+response is the raw ML-DSA-87 signature in padded base64 followed by LF; the old
+signed-note response is rejected. A published checkpoint must also contain a
+cryptographically valid signature from the admitted log. The unchanged
+`CERTCONCORD-MLDSA87-SUBTREE-v1` identifier selects the experimental signature
+algorithm and key hint, not the transport revision.

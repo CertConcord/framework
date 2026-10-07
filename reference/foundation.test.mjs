@@ -45,7 +45,7 @@ test('a governed government issuer directly issues a combined mDL and signer mdo
   assert.equal(trust.docType, 'org.iso.18013.5.1.mDL');
   assert.throws(
     () => verifyMdocSignaturePackage(bundle, { ...trust, docType: 'org.certconcord.signer.1' }),
-    /MDOC_MSO/,
+    { code: 'MDOC_DOCTYPE' },
   );
 });
 
