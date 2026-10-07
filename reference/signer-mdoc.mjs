@@ -19,14 +19,20 @@ import {
   fields,
 } from './core.mjs';
 import { encode, decode, get, coseJWK } from './cose.mjs';
-import { importPublicJWK } from './jose.mjs';
+import { importPublicJWK, decodeJWS } from './jose.mjs';
+import { parseJSON } from './json.mjs';
 import { derToP1363, p1363ToDER } from './ecdsa.mjs';
 import { validateAdmissionAssessment } from './key-attestation.mjs';
 import { issueMdoc, verifyIssuerSigned, MDOC_CONFIG } from './mdoc.mjs';
 import { CredentialIssuer, verifyX5C, verifyStatusList } from './openid.mjs';
 import { verifyCSR } from './enrollment.mjs';
-import { snapshotIssuanceScope, issuanceRequestID, requireIssuanceAuthority } from './enrollment-scope.mjs';
+import {
+  snapshotIssuanceScope,
+  issuanceRequestID,
+  requireIssuanceAuthority,
+} from './enrollment-scope.mjs';
 import { requireAuthority } from './authority-history.mjs';
+import { operationAuthorityQueries, requireAuthorities } from './control-authority.mjs';
 import { signCMS, parseCertificate } from './pki.mjs';
 import {
   readControl,
@@ -43,9 +49,16 @@ export const SIGNER_DOCTYPE = 'org.certconcord.signer.1';
 export const SIGNER_NAMESPACE = SIGNER_DOCTYPE;
 export const DEVICE_SIGN_PROFILE = 'CERTCONCORD-PERSON-DEVICE-SIGN-v1';
 export function documentKeyMode(profileID, publicKey, holderPublicKey) {
-  const mode = profileID === PASSKEY_SIGN_PROFILE ? 'PASSKEY_KEY'
-    : profileID === DEVICE_SIGN_PROFILE ? 'DEVICE_KEY' : 'INDEPENDENT_PQ';
-  requireThat(mode !== 'INDEPENDENT_PQ' || profileID === 'CERTCONCORD-PERSON-SIGN-v1', 'DOCUMENT_INDEPENDENT_PQ_KEY');
+  const mode =
+    profileID === PASSKEY_SIGN_PROFILE
+      ? 'PASSKEY_KEY'
+      : profileID === DEVICE_SIGN_PROFILE
+        ? 'DEVICE_KEY'
+        : 'INDEPENDENT_PQ';
+  requireThat(
+    mode !== 'INDEPENDENT_PQ' || profileID === 'CERTCONCORD-PERSON-SIGN-v1',
+    'DOCUMENT_INDEPENDENT_PQ_KEY',
+  );
   return documentKeyRelation(mode, spki(publicKey), spki(holderPublicKey));
 }
 
@@ -110,7 +123,10 @@ export class PersonalMdocCA extends CredentialIssuer {
       issuanceScope: snapshotIssuanceScope(issuanceScope),
       authorityResolver,
     });
-    requireThat(this.issuanceScope.representation === 'MDOC' && this.issuanceScope.issuerID === this.issuer, 'ISSUANCE_SCOPE');
+    requireThat(
+      this.issuanceScope.representation === 'MDOC' && this.issuanceScope.issuerID === this.issuer,
+      'ISSUANCE_SCOPE',
+    );
   }
   metadata() {
     const m = super.metadata();
@@ -159,7 +175,13 @@ export class PersonalMdocCA extends CredentialIssuer {
     if (keyAdmission) requireThat(equal(keyAdmission.hash, r.keyBindingHash), 'PASSKEY_RA_BINDING');
     return this.journal.transaction(() => {
       const id = issuanceRequestID(r),
-        inputHash = H('MdocIssuanceOffer', { rarHash: sha512(rar), csrHash: sha512(csr), bindingID, preAuthorized, txCode: txCode ?? null }),
+        inputHash = H('MdocIssuanceOffer', {
+          rarHash: sha512(rar),
+          csrHash: sha512(csr),
+          bindingID,
+          preAuthorized,
+          txCode: txCode ?? null,
+        }),
         old = this.journal.get('personal-mdoc-approval', id);
       if (old) {
         requireThat(equal(old.value.inputHash, inputHash), 'ISSUANCE_CONFLICT');
@@ -203,12 +225,27 @@ export class PersonalMdocCA extends CredentialIssuer {
   }
   mint({ offer, holderJWK, status, configurationID }) {
     requireThat(configurationID === MDOC_CONFIG, 'PERSONAL_MDOC_FORMAT');
-    const authorization = this.journal.get('personal-mdoc-rar', b64u(offer.claims.ra_authorization_hash));
+    const authorization = this.journal.get(
+      'personal-mdoc-rar',
+      b64u(offer.claims.ra_authorization_hash),
+    );
     requireThat(authorization, 'PERSONAL_MDOC_RA_AUTHORITY');
-    requireIssuanceAuthority(authorization.value.request, { ...this, issuerCertificate: this.certificate });
-    requireAuthority(this.authorityResolver, { certificate: this.sealCertificate, role: 'DOCUMENT_SEAL',
-      scope: { trustDomainID: this.issuanceScope.trustDomainID, issuerID: this.issuer, representation: 'MDOC', profileID: offer.claims.profile_id },
-      stateTime: now(), knowledgeTime: now() });
+    requireIssuanceAuthority(authorization.value.request, {
+      ...this,
+      issuerCertificate: this.certificate,
+    });
+    requireAuthority(this.authorityResolver, {
+      certificate: this.sealCertificate,
+      role: 'DOCUMENT_SEAL',
+      scope: {
+        trustDomainID: this.issuanceScope.trustDomainID,
+        issuerID: this.issuer,
+        representation: 'MDOC',
+        profileID: offer.claims.profile_id,
+      },
+      stateTime: now(),
+      knowledgeTime: now(),
+    });
     const binding = this.bindings.active(offer.claims.device_binding_id),
       validUntil = Math.min(
         binding.expiresAt,
@@ -294,6 +331,7 @@ function inspectPersonalMdoc(
     issuerCertificate,
     issuerPublicKey,
     issuerRoots,
+    issuanceScope,
     sealCertificate,
     seal,
     trustDomainID,
@@ -351,7 +389,23 @@ function inspectPersonalMdoc(
     'PERSONAL_MDOC_PQ_SEAL',
   );
   const holderPublicKey = importPublicJWK(coseJWK(get(get(v.mso, 'deviceKeyInfo'), 'deviceKey'))),
-    mode = documentKeyMode(claims.profile_id, publicKey, holderPublicKey);
+    mode = documentKeyMode(claims.profile_id, publicKey, holderPublicKey),
+    selectedScope = snapshotIssuanceScope(issuanceScope),
+    credentialIssuedAt = Date.parse(get(get(v.mso, 'validityInfo'), 'signed').value) / 1000,
+    scope = {
+      trustDomainID,
+      profileID: claims.profile_id,
+      issuerID: selectedScope.issuerID,
+      representation: 'MDOC',
+    };
+  requireThat(
+    equal(dcbor(snapshotIssuanceScope(claims.issuance_scope)), dcbor(selectedScope)) &&
+      selectedScope.representation === 'MDOC' &&
+      selectedScope.issuerID === claims.issuer &&
+      equal(selectedScope.trustDomainID, trustDomainID) &&
+      equal(selectedScope.issuerKeyID, keyID(issuerPublicKey)),
+    'ISSUANCE_SCOPE',
+  );
   requireThat(mode === claims.document_key_mode, 'PERSONAL_MDOC_KEY_ADMISSION');
   if (mode === 'PASSKEY_KEY') {
     const binding = claims.passkey_binding;
@@ -392,8 +446,34 @@ function inspectPersonalMdoc(
     at: knowledgeTime,
   });
   requireThat(assessment.overall !== 'INVALID', assessment.reason);
+  const authorityQueries = [
+    {
+      certificate: issuerCertificate,
+      role: 'ISSUER',
+      scope,
+      stateTime: credentialIssuedAt,
+      knowledgeTime,
+    },
+    {
+      certificate: sealCertificate,
+      role: 'DOCUMENT_SEAL',
+      scope,
+      stateTime: s.issuedAt,
+      knowledgeTime,
+    },
+  ];
+  if (statusToken !== undefined && statusToken !== null)
+    authorityQueries.push({
+      certificate: issuerCertificate,
+      role: 'STATUS_AUTHORITY',
+      scope,
+      stateTime: parseJSON(decodeJWS(statusToken).payload.toString('utf8')).iat,
+      knowledgeTime,
+    });
   return {
     ...v,
+    authorityQueries,
+    credentialIssuedAt,
     statusAssessment: assessment,
     claims,
     publicKey,
@@ -406,11 +486,22 @@ function inspectPersonalMdoc(
 
 export function verifyPersonalMdoc(credential, trust) {
   const result = inspectPersonalMdoc(credential, trust);
+  requireAuthorities(
+    trust.authorityResolver,
+    result.authorityQueries,
+    result.statusAssessment.overall === 'VALID' ? [] : [result.statusAssessment.reason],
+  );
+  delete result.authorityQueries;
   requireThat(result.statusAssessment.overall === 'VALID', result.statusAssessment.reason);
   return result;
 }
 
-const headers = ['urn:certconcord:context:1', 'urn:certconcord:sim:1', 'urn:certconcord:policy:1', 'urn:certconcord:credential:1'];
+const headers = [
+  'urn:certconcord:context:1',
+  'urn:certconcord:sim:1',
+  'urn:certconcord:policy:1',
+  'urn:certconcord:credential:1',
+];
 const coseAlgorithm = (key) =>
   ({ 'ml-dsa-65': -49, 'ml-dsa-87': -50, ec: -7 })[key.asymmetricKeyType];
 export function prepareMdocDocument(
@@ -610,8 +701,9 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       at <= knowledgeTime,
     'MDOC_ECP_POLICY',
   );
-  const verifyState = (stateTime) =>
-    inspectPersonalMdoc(value.PersonalMdoc, {
+  const authorityQueries = [];
+  const verifyState = (stateTime) => {
+    const inspected = inspectPersonalMdoc(value.PersonalMdoc, {
       ...trust,
       seal: value.CredentialSeal,
       statusToken: value.CredentialStatusList.toString('utf8'),
@@ -619,6 +711,23 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       at: stateTime,
       knowledgeTime,
     });
+    authorityQueries.push(
+      ...inspected.authorityQueries,
+      ...operationAuthorityQueries(
+        trust,
+        {
+          trustDomainID: trust.trustDomainID,
+          profileID: sim.profileID,
+          issuerID: trust.issuanceScope?.issuerID,
+          representation: 'MDOC',
+        },
+        stateTime,
+        knowledgeTime,
+      ),
+    );
+    delete inspected.authorityQueries;
+    return inspected;
+  };
   const v = verifyState(at);
   requireThat(
     sim.container === 'COSE' &&
@@ -714,6 +823,8 @@ export function verifyMdocSignaturePackage(bundle, trust) {
         seal: value.CredentialSeal,
       },
       {
+        authorityResolver: trust.authorityResolver,
+        knowledgeTime,
         permitCertificate: trust.permitCertificate,
         receiptCertificate: trust.receiptCertificate,
         mdocVerifier: () => v,
@@ -738,6 +849,7 @@ export function verifyMdocSignaturePackage(bundle, trust) {
           evidence: decodeCBOR(value.ExecutionBindingEvidence),
         },
         {
+          authorityResolver: trust.authorityResolver,
           bindingCertificate: trust.executionBindingCertificate,
           permitCertificate: trust.permitCertificate,
           receiptCertificate: trust.receiptCertificate,
@@ -759,9 +871,20 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       receipt,
       knowledgeTime,
       verifyState,
+      credential: v,
     },
     trust,
   );
+  requireAuthorities(
+    trust.authorityResolver,
+    [...authorityQueries, ...(documentResult?.authorityQueries ?? [])],
+    [
+      ...(v.statusAssessment.overall === 'VALID' ? [] : [v.statusAssessment.reason]),
+      ...(documentResult?.unavailable ?? []),
+    ],
+  );
+  if (documentResult) delete documentResult.authorityQueries;
+  if (documentResult) delete documentResult.unavailable;
   const missingTime = policy.requireTrustedTime && !documentResult;
   requireThat(v.statusAssessment.overall === 'VALID', v.statusAssessment.reason);
   return {

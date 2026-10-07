@@ -764,6 +764,8 @@ export function verifyPasskeyOperation(
     mdocVerifier,
     audience,
     at = now(),
+    knowledgeTime = at,
+    authorityResolver,
     status,
   },
 ) {
@@ -838,6 +840,8 @@ export function verifyPasskeyOperation(
       r.executedAt < p.expiresAt,
     'PASSKEY_EXECUTION_RECEIPT',
   );
+  requireOperationAuthorities({ permitCertificate, receiptCertificate, authorityResolver },
+    { trustDomainID: binding.trustDomainID, profileID: PASSKEY_SIGN_PROFILE }, at, knowledgeTime);
   return {
     cryptographicValidity: 'VALID',
     authorization: 'PREAUTHORIZED_EVIDENCE',

@@ -1,4 +1,5 @@
-import { H, sha512, spki, parseDER, equal, requireThat, fields } from './core.mjs';
+import { H, sha512, spki, parseDER, equal, requireThat, fields, dcbor } from './core.mjs';
+import { snapshotIssuanceScope, issuanceAuthorityScope } from './enrollment-scope.mjs';
 import { parseCertificate, RRA } from './pki.mjs';
 import { evidenceObject, readControl, evaluateStatus } from './state.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
@@ -24,7 +25,7 @@ export function documentEvidenceTypes(policy, format) {
     'DOCUMENT_ORGANIZATION_REPRESENTATION',
   );
   return [
-    ...(format === 'CMS' ? ['RegistrationAuthorization'] : []),
+    'RegistrationAuthorization',
     ...(policy.documentEvidence.organizationAuthorization
       ? ['OrganizationAuthorization', 'OrganizationAuthorizationStatus']
       : []),
@@ -83,7 +84,7 @@ export function selectDocumentPlan(base, policy) {
 export function verifyRegistrationBinding(
   raw,
   certificate,
-  { raCertificate, subjectID, profileID, policyHash, at },
+  { raCertificate, subjectID, profileID, policyHash, at, issuanceScope },
 ) {
   requireThat(Buffer.isBuffer(raCertificate), 'DOCUMENT_RA_TRUST_REQUIRED');
   const r = readControl(raw, 'RegistrationAuthorization', raCertificate);
@@ -107,25 +108,90 @@ export function verifyRegistrationBinding(
       r.expiresAt - r.issuedAt <= 300,
     'DOCUMENT_REGISTRATION_BINDING',
   );
+  requireThat(
+    equal(
+      dcbor(snapshotIssuanceScope(r.issuanceScope)),
+      dcbor(snapshotIssuanceScope(issuanceScope)),
+    ),
+    'ISSUANCE_SCOPE',
+  );
   return r;
 }
 
 export function verifyDocumentEvidence(
-  { format, values, sim, policy, activation, permit, receipt, knowledgeTime, verifyState },
+  {
+    format,
+    values,
+    sim,
+    policy,
+    activation,
+    permit,
+    receipt,
+    knowledgeTime,
+    verifyState,
+    credential,
+  },
   trust,
 ) {
   if (!policy.documentEvidence) return undefined;
   documentEvidenceTypes(policy, format);
+  const authorityQueries = [],
+    unavailable = [],
+    scope = {
+      trustDomainID: sim.trustDomainID,
+      profileID: sim.profileID,
+      issuerID: trust.issuanceScope?.issuerID,
+      representation: trust.issuanceScope?.representation,
+    };
+  let registration;
   if (format === 'CMS')
-    verifyRegistrationBinding(values.RegistrationAuthorization, values.Certificate, {
+    registration = verifyRegistrationBinding(values.RegistrationAuthorization, values.Certificate, {
       raCertificate: trust.raCertificate,
+      issuanceScope: trust.issuanceScope,
       subjectID: sim.subjectID,
       profileID: sim.profileID,
       policyHash: sim.policyHash,
       at: receipt.executedAt,
     });
+  else {
+    registration = readControl(
+      values.RegistrationAuthorization,
+      'RegistrationAuthorization',
+      trust.raCertificate,
+    );
+    requireThat(
+      registration.schemaVersion === 1 &&
+        credential &&
+        equal(sha512(values.RegistrationAuthorization), credential.claims.ra_authorization_hash) &&
+        equal(registration.subjectID, sim.subjectID) &&
+        registration.profileID === sim.profileID &&
+        equal(registration.policyHash, sim.policyHash) &&
+        equal(registration.spkiHash, sha512(spki(credential.publicKey))) &&
+        Number.isSafeInteger(registration.issuedAt) &&
+        registration.issuedAt <= credential.credentialIssuedAt &&
+        Number.isSafeInteger(registration.expiresAt) &&
+        registration.expiresAt > registration.issuedAt &&
+        registration.expiresAt > credential.credentialIssuedAt &&
+        registration.expiresAt - registration.issuedAt <= 300 &&
+        equal(
+          dcbor(snapshotIssuanceScope(registration.issuanceScope)),
+          dcbor(snapshotIssuanceScope(trust.issuanceScope)),
+        ),
+      'DOCUMENT_REGISTRATION_BINDING',
+    );
+  }
+  authorityQueries.push({
+    certificate: trust.raCertificate,
+    role: 'REGISTRATION_AUTHORITY',
+    scope: issuanceAuthorityScope(registration),
+    stateTime: registration.issuedAt,
+    knowledgeTime,
+  });
   const org = policy.documentEvidence.organizationAuthorization;
-  requireThat(org === (sim.profileID === 'CERTCONCORD-ORG-SEAL-v1'), 'DOCUMENT_ORGANIZATION_PURPOSE');
+  requireThat(
+    org === (sim.profileID === 'CERTCONCORD-ORG-SEAL-v1'),
+    'DOCUMENT_ORGANIZATION_PURPOSE',
+  );
   let authorization, authority;
   if (org) {
     authority = trust.organizationAuthorities?.find((a) => equal(a.organizationID, sim.subjectID));
@@ -216,6 +282,14 @@ export function verifyDocumentEvidence(
       'DOCUMENT_TIMESTAMP_STATUS_OR_ACCURACY',
     );
     stateTime = timeResult.poeUpperBound;
+    for (const time of [timeResult.genTime - timeResult.accuracy, stateTime])
+      authorityQueries.push({
+        certificate: trust.timestamp.certificate,
+        role: 'TIMESTAMP_AUTHORITY',
+        scope,
+        stateTime: time,
+        knowledgeTime,
+      });
     requireThat(
       receipt.executedAt <= stateTime &&
         sim.issuedAt <= stateTime &&
@@ -239,6 +313,22 @@ export function verifyDocumentEvidence(
       'OrganizationAuthorizationStatus',
       authority.statusCertificate,
     );
+    authorityQueries.push(
+      {
+        certificate: authority.certificate,
+        role: 'ORGANIZATION_AUTHORITY',
+        scope,
+        stateTime,
+        knowledgeTime,
+      },
+      {
+        certificate: authority.statusCertificate,
+        role: 'STATUS_AUTHORITY',
+        scope,
+        stateTime: status.publishedAt,
+        knowledgeTime,
+      },
+    );
     requireThat(
       equal(status.authorizationID, authorization.authorizationID) &&
         equal(status.authorizationHash, sha512(values.OrganizationAuthorization)) &&
@@ -250,9 +340,13 @@ export function verifyDocumentEvidence(
       knowledgeTime,
       scope: 'ORGANIZATION_AUTHORIZATION',
     });
-    requireThat(result === 'GOOD', 'DOCUMENT_ORGANIZATION_STATUS_' + result);
+    if (['STALE', 'UNKNOWN', 'NOT_YET_KNOWN'].includes(result))
+      unavailable.push('DOCUMENT_ORGANIZATION_STATUS_' + result);
+    else requireThat(result === 'GOOD', 'DOCUMENT_ORGANIZATION_STATUS_' + result);
   }
   return {
+    authorityQueries,
+    unavailable,
     time,
     stateTime,
     ...(timeResult

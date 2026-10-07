@@ -342,6 +342,8 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
         key,
         evidence: { certificate: issued, rar: authorization, status: statusFor(issued) },
         trust: {
+          issuanceScope,
+          authorityResolver,
           mtc,
           raCertificate,
           statusCertificate: controlCertificate,

@@ -57,7 +57,7 @@ export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
     );
   if (trust.expectedPolicy.documentEvidence) {
     documentEvidenceTypes(trust.expectedPolicy, format);
-    requireThat(format !== 'CMS' || Buffer.isBuffer(trust.raCertificate), 'SDK_RA_TRUST_REQUIRED');
+    requireThat(Buffer.isBuffer(trust.raCertificate), 'SDK_RA_TRUST_REQUIRED');
     if (trust.expectedPolicy.requireTrustedTime)
       requireThat(
         trust.timestamp?.certificate &&

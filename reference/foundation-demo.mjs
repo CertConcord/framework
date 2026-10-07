@@ -508,6 +508,7 @@ export async function runFoundationDemo({
       approveAuthorization: async () => ({ approved: true, subjectID: c.b64u(subjectID) }),
     });
     const credentialTrust = {
+        raCertificate: ra.certificate,
         issuanceScope,
         authorityResolver,
         issuerCertificate: ca.certificate,
@@ -793,7 +794,7 @@ export async function runFoundationDemo({
         signature,
         passkeyEvidence,
         executionEvidence: result.executionEvidence,
-        ...(timestamp ? { documentEvidence: { DocumentTimestamp: timestamp.issue } } : {}),
+        ...(timestamp ? { documentEvidence: { RegistrationAuthorization: identity.rar, DocumentTimestamp: timestamp.issue } } : {}),
       }),
       trust = {
         ...credentialTrust,
