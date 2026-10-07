@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import { Journal, SigningGateway, activationContext, readControl } from './state.mjs';
@@ -14,6 +17,8 @@ import { exampleAssertion } from './example-authenticator.mjs';
 import { exampleTimestamp } from './example-timestamp.mjs';
 import { DOCUMENT_EVIDENCE_PROFILE } from './document-evidence.mjs';
 import { exampleAuthorityResolver } from './example-authorities.mjs';
+import { runFoundationDemo } from './foundation-demo.mjs';
+import { PersonalMdocCA } from './signer-mdoc.mjs';
 
 const profileID = 'CERTCONCORD-PERSON-SIGN-v1';
 
@@ -565,4 +570,127 @@ test('offline verification rejects a document authorized by an expired permit au
   assert(p.parseCertificate(fixture.permitCertificate).notAfter < fixture.activation.issuedAt);
   assert.equal(result.overall, 'INVALID');
   assert.match(result.reason, /^AUTHORITY_/);
+});
+
+test('MDOC offer retries reuse the durable authorization without allocating another grant', async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'certconcord-mdoc-retry-')),
+    path = join(directory, 'authority.sqlite');
+  try {
+    await runFoundationDemo({
+      activationMode: 'HUMAN_WEBAUTHN',
+      journalFactory: (name) => new Journal(name === 'authority' ? path : ':memory:'),
+      onComplete: async (r) => {
+        const namespaces = ['offers', 'personal-mdoc-approval', 'personal-mdoc-rar'],
+          before = namespaces.map((namespace) => r.journal.list(namespace));
+        assert.deepEqual(c.dcbor(r.issuer.offer(r.enrollment)), c.dcbor(r.offer));
+        assert.deepEqual(
+          namespaces.map((namespace) => r.journal.list(namespace)),
+          before,
+        );
+        const reopened = new Journal(path);
+        try {
+          const restarted = new PersonalMdocCA({
+            ...r.issuer,
+            journal: reopened,
+            docType: r.issuer.mdocDocType,
+          });
+          assert.deepEqual(c.dcbor(restarted.offer(r.enrollment)), c.dcbor(r.offer));
+          assert.deepEqual(
+            namespaces.map((namespace) => reopened.list(namespace)),
+            before,
+          );
+          const body = readControl(r.enrollment.rar, 'RegistrationAuthorization', r.ra.certificate),
+            changed = issueRAR({ ...body, identityEvidenceHash: c.random(64) }, r.ra);
+          assert.throws(() => restarted.offer({ ...r.enrollment, rar: changed }), {
+            code: 'ISSUANCE_CONFLICT',
+          });
+          assert.deepEqual(
+            namespaces.map((namespace) => reopened.list(namespace)),
+            before,
+          );
+        } finally {
+          reopened.close();
+        }
+      },
+    });
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('MDOC offer enforces signed scope and authorization lifetime before durable allocation', async () => {
+  await runFoundationDemo({
+    activationMode: 'HUMAN_WEBAUTHN',
+    onComplete: async (r) => {
+      const body = readControl(r.enrollment.rar, 'RegistrationAuthorization', r.ra.certificate),
+        before = r.journal.list('personal-mdoc-approval'),
+        // Exercise the relying issuer with authenticated invalid content, independently
+        // of the honest RA builder's own field and lifetime checks.
+        offer = (request) =>
+          r.issuer.offer({
+            ...r.enrollment,
+            rar: p.signCMS(
+              {
+                content: c.D('RegistrationAuthorization', request),
+                certificate: r.ra.certificate,
+              },
+              r.ra.privateKey,
+            ),
+          });
+      for (const [field, value] of [
+        ['trustDomainID', c.random()],
+        ['issuerID', 'https://other.example/issuer'],
+        ['issuerKeyID', c.random(64)],
+        ['representation', 'X509'],
+      ])
+        assert.throws(
+          () => offer({ ...body, issuanceScope: { ...body.issuanceScope, [field]: value } }),
+          { code: 'ISSUANCE_SCOPE' },
+          field,
+        );
+      const at = c.now();
+      for (const [issuedAt, expiresAt] of [
+        [at + 60, at + 120],
+        [at - 120, at - 1],
+        [at, at + 301],
+      ])
+        assert.throws(() => offer({ ...body, issuedAt, expiresAt }), {
+          code: 'ISSUANCE_AUTHORIZATION',
+        });
+      const missingScope = { ...body };
+      delete missingScope.issuanceScope;
+      assert.throws(() => offer(missingScope), { code: 'EXPECTED_MAP' });
+      assert.throws(
+        () => offer({ ...body, issuanceScope: { ...body.issuanceScope, issuerAlias: 'other' } }),
+        { code: 'UNKNOWN_FIELD' },
+      );
+      const unauthorized = new PersonalMdocCA({ ...r.issuer, authorityResolver: undefined });
+      assert.throws(() => unauthorized.offer(r.enrollment), {
+        code: 'AUTHORITY_RESOLVER_REQUIRED',
+      });
+      assert.deepEqual(r.journal.list('personal-mdoc-approval'), before);
+    },
+  });
+});
+
+test('offline issuer authority certificate must identify the actual certificate signer', async (t) => {
+  const fixture = await documentFixture(t),
+    { bundle, trust } = fixture.pack(await fixture.execute()),
+    substituted = {
+      ...trust,
+      issuerCertificate: trust.raCertificate,
+      authorityResolver: exampleAuthorityResolver({
+        trustDomainID: trust.trustDomainID,
+        authorities: [
+          { certificate: trust.raCertificate, roles: ['REGISTRATION_AUTHORITY', 'ISSUER'] },
+          { certificate: trust.permitCertificate, roles: ['PERMIT_AUTHORITY'] },
+          { certificate: trust.receiptCertificate, roles: ['RECEIPT_AUTHORITY'] },
+          { certificate: trust.statusCertificate, roles: ['STATUS_AUTHORITY'] },
+          { certificate: trust.timestamp.certificate, roles: ['TIMESTAMP_AUTHORITY'] },
+        ],
+      }),
+    },
+    result = createVerifier({ format: 'CMS', trust: substituted }).verify(c.dcbor(bundle));
+  assert.equal(result.overall, 'INVALID');
+  assert.equal(result.reason, 'ISSUER_KEY_BINDING');
 });
