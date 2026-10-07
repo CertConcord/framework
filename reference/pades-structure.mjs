@@ -225,12 +225,15 @@ function pdfDate(value) {
   const text = value.decodeText();
   // The bounded profile requires seconds and an explicit UTC offset. Truncated
   // PDF dates are valid PDF capabilities, but cannot supply this selected time.
-  const match = /^D:(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(Z|[+-]\d\d'\d\d')$/.exec(text);
-  if (!match) {
-    check(/^D:\d{4}(?:\d\d){0,5}(?:Z|[+-]\d\d(?:'\d\d'?)?)?$/.test(text), 'PADES_SIGNING_TIME');
-    throw failure('PADES_DATE_PRECISION', 'UNSUPPORTED');
-  }
-  const [year, month, day, hour, minute, second] = match.slice(1, 7).map(Number);
+  const match = /^D:(\d{4})(\d\d)?(\d\d)?(\d\d)?(\d\d)?(\d\d)?(Z|[+-]\d\d(?:'\d\d'?)?)?$/.exec(
+    text,
+  );
+  check(match, 'PADES_SIGNING_TIME');
+  const [year, month, day, hour, minute, second] = match
+    .slice(1, 7)
+    .map((value, index) =>
+      value === undefined ? (index === 1 || index === 2 ? 1 : 0) : Number(value),
+    );
   const date = new Date(0);
   date.setUTCFullYear(year, month - 1, day);
   date.setUTCHours(hour, minute, second, 0);
@@ -244,14 +247,20 @@ function pdfDate(value) {
     'PADES_SIGNING_TIME',
   );
   let offset = 0;
-  if (match[7] !== 'Z') {
+  if (match[7] && match[7] !== 'Z') {
     const hours = Number(match[7].slice(1, 3)),
-      minutes = Number(match[7].slice(4, 6));
+      minutes = match[7].length > 3 ? Number(match[7].slice(4, 6)) : 0;
     check(hours <= 23 && minutes <= 59, 'PADES_SIGNING_TIME');
     offset = (hours * 60 + minutes) * 60 * (match[7][0] === '+' ? 1 : -1);
   }
+  check(
+    match[6] !== undefined && (match[7] === 'Z' || /^[+-]\d\d'\d\d'?$/.test(match[7] ?? '')),
+    'PADES_DATE_PRECISION',
+    'UNSUPPORTED',
+  );
   const seconds = date.getTime() / 1000 - offset;
-  check(Number.isSafeInteger(seconds) && seconds >= 0, 'PADES_SIGNING_TIME');
+  check(Number.isSafeInteger(seconds), 'PADES_SIGNING_TIME');
+  check(seconds >= 0, 'PADES_DATE_RANGE_UNSUPPORTED', 'UNSUPPORTED');
   return seconds;
 }
 
