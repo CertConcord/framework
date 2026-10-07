@@ -690,7 +690,7 @@ test('OpenID4VCI -> selective VP -> session redirect -> one-use activation quali
         publicKey: issuerKey.publicKey,
         uri: status.uri,
         index: status.idx,
-      }),
+      }).status,
       'REVOKED',
     );
   } finally {

@@ -261,7 +261,7 @@ export class PersonalMdocCA extends CredentialIssuer {
   }
 }
 
-export function verifyPersonalMdoc(
+function inspectPersonalMdoc(
   credential,
   {
     issuerCertificate,
@@ -357,18 +357,17 @@ export function verifyPersonalMdoc(
     credentialLogTrust,
   );
   const status = claims.status?.status_list;
-  requireThat(
-    status?.uri === statusURI &&
-      verifyStatusList(statusToken, {
-        publicKey: issuerPublicKey,
-        uri: statusURI,
-        index: status.idx,
-        at: knowledgeTime,
-      }) === 'GOOD',
-    'PERSONAL_MDOC_STATUS',
-  );
+  requireThat(status?.uri === statusURI, 'PERSONAL_MDOC_STATUS');
+  const assessment = verifyStatusList(statusToken, {
+    publicKey: issuerPublicKey,
+    uri: statusURI,
+    index: status.idx,
+    at: knowledgeTime,
+  });
+  requireThat(assessment.overall !== 'INVALID', assessment.reason);
   return {
     ...v,
+    statusAssessment: assessment,
     claims,
     publicKey,
     holderPublicKey,
@@ -376,6 +375,12 @@ export function verifyPersonalMdoc(
     credentialID,
     representationHash: sha512(credential),
   };
+}
+
+export function verifyPersonalMdoc(credential, trust) {
+  const result = inspectPersonalMdoc(credential, trust);
+  requireThat(result.statusAssessment.overall === 'VALID', result.statusAssessment.reason);
+  return result;
 }
 
 const headers = ['urn:certconcord:context:1', 'urn:certconcord:sim:1', 'urn:certconcord:policy:1', 'urn:certconcord:credential:1'];
@@ -579,7 +584,7 @@ export function verifyMdocSignaturePackage(bundle, trust) {
     'MDOC_ECP_POLICY',
   );
   const verifyState = (stateTime) =>
-    verifyPersonalMdoc(value.PersonalMdoc, {
+    inspectPersonalMdoc(value.PersonalMdoc, {
       ...trust,
       seal: value.CredentialSeal,
       statusToken: value.CredentialStatusList.toString('utf8'),
@@ -731,6 +736,7 @@ export function verifyMdocSignaturePackage(bundle, trust) {
     trust,
   );
   const missingTime = policy.requireTrustedTime && !documentResult;
+  requireThat(v.statusAssessment.overall === 'VALID', v.statusAssessment.reason);
   return {
     ...(executionResult ? { execution: executionResult } : {}),
     profile: plan.profile,

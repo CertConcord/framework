@@ -170,8 +170,25 @@ export function parseCertificate(raw) {
     equal(alg.raw, t[2].raw) && sig.tag === 3 && sig.value[0] === 0,
     'CERTIFICATE_ALGORITHM',
   );
-  const extensions = new Map();
-  for (const e of t.find((n) => n.tag === 0xa3)?.children[0].children ?? []) {
+  const extensions = new Map(),
+    containers = t.filter((n) => n.tag === 0xa3);
+  requireThat(containers.length <= 1, 'CERTIFICATE_EXTENSIONS');
+  if (containers.length)
+    requireThat(
+      containers[0] === t.at(-1) &&
+        containers[0].children?.length === 1 &&
+        containers[0].children[0].tag === 0x30 &&
+        containers[0].children[0].children?.length > 0,
+      'CERTIFICATE_EXTENSIONS',
+    );
+  for (const e of containers[0]?.children[0].children ?? []) {
+    requireThat(
+      e.tag === 0x30 &&
+        [2, 3].includes(e.children?.length) &&
+        e.children[0].tag === 6 &&
+        e.children.at(-1).tag === 4,
+      'CERTIFICATE_EXTENSION',
+    );
     const id = oidText(e.children[0]);
     requireThat(!extensions.has(id), 'DUPLICATE_EXTENSION');
     const critical = e.children.length === 3;
@@ -215,6 +232,31 @@ export function parseCertificate(raw) {
     representationHash: sha512(raw),
   };
 }
+
+/** RFC 5280 KeyUsage is a DER named BIT STRING with only bits zero through eight. */
+export function validateKeyUsage(extension, expected, code = 'CERTIFICATE_KEY_USAGE') {
+  requireThat(extension, code);
+  const node = parseDER(extension.value),
+    unused = node.value[0],
+    last = node.value.at(-1);
+  requireThat(
+    node.tag === 3 &&
+      (node.value.length === 2 || node.value.length === 3) &&
+      unused <= 7 &&
+      (last & ((1 << unused) - 1)) === 0 &&
+      (last & (1 << unused)) !== 0 &&
+      (node.value.length === 2 || (unused === 7 && last === 128)),
+    code,
+  );
+  // DER omits trailing zero bits of a named BIT STRING. Checking the final set
+  // bit also rejects empty, padded and overlong encodings before profile matching.
+  requireThat(
+    expected === undefined || (node.value.length === 2 && node.value[1] === expected),
+    code,
+  );
+  return node.value.subarray(1);
+}
+
 export function validateCertificate(
   raw,
   issuerKey,
@@ -242,6 +284,7 @@ export function validateCertificate(
     allowCA || equal(c.extensions.get('2.5.29.19')?.value ?? Buffer.alloc(0), seq()),
     'CA_NOT_ALLOWED',
   );
+  if (c.extensions.has('2.5.29.15')) validateKeyUsage(c.extensions.get('2.5.29.15'));
   if (profileID) {
     const p = profiles[profileID];
     requireThat(p, 'UNKNOWN_PROFILE');
@@ -256,10 +299,7 @@ export function validateCertificate(
       equal(c.extensions.get('2.5.29.37')?.value ?? Buffer.alloc(0), seq(oid(p.eku))),
       'CERTIFICATE_EKU',
     );
-    requireThat(
-      parseDER(c.extensions.get('2.5.29.15').value).value[1] === p.ku,
-      'CERTIFICATE_KEY_USAGE',
-    );
+    validateKeyUsage(c.extensions.get('2.5.29.15'), p.ku);
     if (profileID === 'CERTCONCORD-TSA-v1')
       requireThat(c.extensions.get('2.5.29.37').critical, 'TSA_EKU_NOT_CRITICAL');
   }

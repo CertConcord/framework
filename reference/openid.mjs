@@ -194,14 +194,32 @@ export class StatusList {
     );
   }
 }
+/**
+ * @returns {Readonly<{status: 'GOOD'|'REVOKED'|'STALE'|'UNKNOWN',
+ * overall: 'VALID'|'INVALID'|'INDETERMINATE', reason?: string}>}
+ */
 export function verifyStatusList(token, { publicKey, uri, index, at = now() }) {
-  const c = verifyJWT(token, publicKey, { typ: 'statuslist+jwt', at, maxAge: 300 }).claims;
+  requireThat(Number.isSafeInteger(at) && at >= 0, 'STATUS_LIST_TIME');
+  if (token === undefined || token === null)
+    return Object.freeze({
+      status: 'UNKNOWN',
+      overall: 'INDETERMINATE',
+      reason: 'STATUS_LIST_MISSING',
+    });
+  // Status freshness is evidence availability, not authorization-token expiry.
+  // Authenticate and validate the complete status value before classifying it.
+  const c = parseJSON(
+    verifyJWS(token, publicKey, { typ: 'statuslist+jwt' }).payload.toString('utf8'),
+  );
   requireThat(
     c.iss === uri &&
       c.sub === uri &&
+      Number.isSafeInteger(c.iat) &&
+      c.iat >= 0 &&
       Number.isSafeInteger(c.exp) &&
-      c.exp > at &&
+      c.exp > c.iat &&
       c.exp - c.iat <= 300 &&
+      (c.nbf === undefined || (Number.isSafeInteger(c.nbf) && c.nbf >= 0 && c.nbf < c.exp)) &&
       c.status_list?.bits === 1 &&
       Number.isSafeInteger(index) &&
       index >= 0,
@@ -209,7 +227,21 @@ export function verifyStatusList(token, { publicKey, uri, index, at = now() }) {
   );
   const b = inflateSync(unb64u(c.status_list.lst), { maxOutputLength: 1048576 });
   requireThat(index < b.length * 8, 'STATUS_INDEX');
-  return b[index >> 3] & (1 << (index & 7)) ? 'REVOKED' : 'GOOD';
+  if (c.iat > at || (c.nbf !== undefined && c.nbf > at))
+    return Object.freeze({
+      status: 'UNKNOWN',
+      overall: 'INDETERMINATE',
+      reason: 'STATUS_LIST_NOT_YET_KNOWN',
+    });
+  if (b[index >> 3] & (1 << (index & 7)))
+    return Object.freeze({ status: 'REVOKED', overall: 'INVALID', reason: 'STATUS_LIST_REVOKED' });
+  if (c.exp <= at)
+    return Object.freeze({
+      status: 'STALE',
+      overall: 'INDETERMINATE',
+      reason: 'STATUS_LIST_STALE',
+    });
+  return Object.freeze({ status: 'GOOD', overall: 'VALID' });
 }
 
 export class CredentialIssuer {
@@ -981,14 +1013,12 @@ export class PresentationVerifier {
       verifyX5C(decodeJWS(statusToken).header, this.trustRoots, {
         expectedLeaf: issuer.certificate,
       });
-      requireThat(
-        verifyStatusList(statusToken, {
-          publicKey: issuer.publicKey,
-          uri: status.uri,
-          index: status.idx,
-        }) === 'GOOD',
-        'CREDENTIAL_REVOKED',
-      );
+      const assessment = verifyStatusList(statusToken, {
+        publicKey: issuer.publicKey,
+        uri: status.uri,
+        index: status.idx,
+      });
+      requireThat(assessment.overall === 'VALID', assessment.reason);
     }
     const responseCode = b64u(random()),
       result = {
