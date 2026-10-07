@@ -240,8 +240,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 9557,
-      "sha256": "ae10909233e3ad627a293e67a6162e473a9034e8c0251b1e447b2a7de652a30b"
+      "bytes": 9594,
+      "sha256": "024c194dcc5f3693c957ed032bbdff9cb6baadb96870307aa980748bdcccbb06"
     },
     {
       "path": "reference/README.md",
@@ -544,6 +544,11 @@
       "sha256": "a1db7dea3daed2f1d8de9be2192429e13647814af74d54804a50a2112d52c882"
     },
     {
+      "path": "reference/fuzz-parsers.test.mjs",
+      "bytes": 4132,
+      "sha256": "7475937738b9ae765cde78ae9f075b48cf4c4dd756cba63050d9654489f2e0a4"
+    },
+    {
       "path": "reference/fuzz/README.md",
       "bytes": 2760,
       "sha256": "17076043c9623eb3e542eb22697a695d9969225106e511478228fb6c264663e0"
@@ -570,8 +575,8 @@
     },
     {
       "path": "reference/fuzz/parsers.mjs",
-      "bytes": 2584,
-      "sha256": "65a33e32407c4a0465764851f3a94d660cb5ce5cf61b55dd71f7b38166dea252"
+      "bytes": 3725,
+      "sha256": "fabeeafb66ed7d2a46b174559d27f1cd7faeea50b38f237e46baa286a516bdf2"
     },
     {
       "path": "reference/fuzz/replay.mjs",
@@ -585,8 +590,8 @@
     },
     {
       "path": "reference/fuzz/seed.mjs",
-      "bytes": 1757,
-      "sha256": "48f8a18195e3beff3fa5a4a8b2ac129f1c0d0634fc6d846423a52b42407a1454"
+      "bytes": 2250,
+      "sha256": "a0fa38db4a0205426a74d8a59ba0819fa922e825fbd60ee31c9204902e9e11cc"
     },
     {
       "path": "reference/governance.test.mjs",

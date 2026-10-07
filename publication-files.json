@@ -104,6 +104,7 @@
   "reference/foundation-demo.mjs",
   "reference/foundation-security.test.mjs",
   "reference/foundation.test.mjs",
+  "reference/fuzz-parsers.test.mjs",
   "reference/fuzz/containers.mjs",
   "reference/fuzz/differential.mjs",
   "reference/fuzz/documents.mjs",
