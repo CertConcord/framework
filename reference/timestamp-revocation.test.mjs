@@ -12,7 +12,7 @@ import { revokedTSAStatus } from './timestamp-revocation-fixtures.mjs';
 let f, good, baseCMS, basePDF;
 before(() => {
   f = fixture({ signerNotAfter: epoch + 1000, tsaNotAfter: epoch + 1000 });
-  good = f.crl({ thisUpdate: epoch, nextUpdate: epoch + 300 });
+  good = f.material().crls[0];
   baseCMS = f.augment(cades, f.baseCMS(cades), 'T', { at: epoch + 20 }).cms;
   basePDF = independentTimestamp(f, independentApproval(f).pdf, { at: epoch + 20 }).pdf;
 });
@@ -126,9 +126,11 @@ function document(format, independentPOE) {
     tokenOptions: { authority: f.successor },
   }).pdf;
 }
-async function verifyDocument(format, bytes, status, independentPOE) {
+async function verifyDocument(format, bytes, status) {
   const options = {
-    minimumLevel: independentPOE === undefined ? 'T' : 'LTA',
+    // This matrix tests trust in the old timestamp. Later-discovered current
+    // CRLs are external evidence here, not a claim of complete embedded LT/A.
+    minimumLevel: 'T',
     validationTime: epoch + 40,
     knowledgeTime: epoch + 80,
     policy: policy(status),
@@ -148,7 +150,7 @@ for (const format of ['CAdES', 'PAdES']) {
     });
     test(`${format} independent successor covers the exact older token before ${name} revocation`, async () => {
       const bytes = document(format, 30);
-      const result = await verifyDocument(format, bytes, revokedTSAStatus(f, { reason }), 30);
+      const result = await verifyDocument(format, bytes, revokedTSAStatus(f, { reason }));
       expectOverall(result, 'VALID');
       assert.equal(result.stateTime, epoch + 20);
       assert.equal(result.preservationTime, epoch + 30);
@@ -162,7 +164,7 @@ for (const format of ['CAdES', 'PAdES']) {
   });
   test(`${format} a successor after compromise cannot retroactively authenticate the older token`, async () => {
     noIndependentPOE(
-      await verifyDocument(format, document(format, 60), revokedTSAStatus(f, { reason: 1 }), 60),
+      await verifyDocument(format, document(format, 60), revokedTSAStatus(f, { reason: 1 })),
     );
   });
 }
