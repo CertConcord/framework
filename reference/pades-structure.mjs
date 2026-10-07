@@ -11,7 +11,8 @@ import {
   PDFRawStream,
 } from 'pdf-lib';
 import { inflateSync } from 'node:zlib';
-import { ProtocolError, parseDER, random } from './core.mjs';
+import { X509Certificate } from 'node:crypto';
+import { ProtocolError, parseDER, intValue, oidText, random } from './core.mjs';
 
 // pdf-lib supplies the object model and lexical parser. This selected-profile
 // layer does not invoke its recovery scanner: every indirect object is reached
@@ -695,6 +696,103 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
   return found.sort((a, b) => a.signedRevisionLength - b.signedRevisionLength);
 }
 
+// Check every DSS object's declared category, including material that is not
+// used by a selected path. These are schema checks, not trust decisions. CRL
+// authority, signature, extension semantics and freshness remain in the shared
+// material verifier. The CertificateList schema follows RFC 5280 section 5.1.
+function materialSchema(bytes, kind) {
+  const root = parseDER(bytes);
+  if (kind === 'Certs') {
+    try {
+      check(new X509Certificate(bytes).raw.equals(bytes), 'PADES_DSS_CERTIFICATE_STRUCTURE');
+    } catch {
+      throw failure('PADES_DSS_CERTIFICATE_STRUCTURE');
+    }
+    return;
+  }
+  const code = 'PADES_DSS_CRL_STRUCTURE';
+  const sequence = (node, length) => {
+    check(node?.tag === 0x30 && (length === undefined || node.children.length === length), code);
+    return node.children;
+  };
+  const algorithm = (node) => {
+    const fields = sequence(node);
+    check([1, 2].includes(fields.length) && fields[0].tag === 6, code);
+    oidText(fields[0]);
+  };
+  const time = (node) => {
+    check([23, 24].includes(node?.tag), code);
+    let value = node.value.toString('ascii');
+    check(node.tag === 23 ? /^\d{12}Z$/.test(value) : /^\d{14}Z$/.test(value), code);
+    if (node.tag === 23) value = (Number(value.slice(0, 2)) >= 50 ? '19' : '20') + value;
+    const date = new Date(
+      `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:${value.slice(12, 14)}Z`,
+    );
+    check(
+      Number.isFinite(date.getTime()) &&
+        date.toISOString().replace(/[-:T]/g, '').replace('.000Z', 'Z') === value,
+      code,
+    );
+  };
+  const extensions = (node) => {
+    const values = sequence(node),
+      seen = new Set();
+    check(values.length > 0, code);
+    for (const extension of values) {
+      const fields = sequence(extension);
+      check([2, 3].includes(fields.length) && fields[0].tag === 6 && fields.at(-1).tag === 4, code);
+      const id = oidText(fields[0]);
+      check(!seen.has(id), code);
+      seen.add(id);
+      if (fields.length === 3) check(fields[1].raw.equals(Buffer.from('0101ff', 'hex')), code);
+      parseDER(fields.at(-1).value);
+    }
+  };
+  const [tbs, signatureAlgorithm, signature] = sequence(root, 3);
+  algorithm(signatureAlgorithm);
+  check(signature.tag === 3 && signature.value.length > 1 && signature.value[0] === 0, code);
+  const fields = sequence(tbs);
+  let index = 0,
+    version = 0;
+  if (fields[index]?.tag === 2) {
+    check(intValue(fields[index++]) === 1n, code);
+    version = 1;
+  }
+  algorithm(fields[index]);
+  check(fields[index++].raw.equals(signatureAlgorithm.raw), code);
+  const issuer = sequence(fields[index++]);
+  check(issuer.length > 0, code);
+  for (const rdn of issuer) {
+    check(rdn.tag === 0x31 && rdn.children.length > 0, code);
+    for (const attribute of rdn.children) {
+      const [id] = sequence(attribute, 2);
+      check(id.tag === 6, code);
+      oidText(id);
+    }
+  }
+  time(fields[index++]);
+  if ([23, 24].includes(fields[index]?.tag)) time(fields[index++]);
+  if (fields[index]?.tag === 0x30) {
+    const records = sequence(fields[index++]);
+    check(records.length > 0, code);
+    for (const record of records) {
+      const entry = sequence(record);
+      check([2, 3].includes(entry.length) && entry[0].tag === 2 && intValue(entry[0]) > 0n, code);
+      time(entry[1]);
+      if (entry.length === 3) {
+        check(version === 1, code);
+        extensions(entry[2]);
+      }
+    }
+  }
+  if (fields[index]?.tag === 0xa0) {
+    const wrapper = fields[index++];
+    check(version === 1 && wrapper.children.length === 1, code);
+    extensions(wrapper.children[0]);
+  }
+  check(index === fields.length, code);
+}
+
 function dssMaterial(rev, diagnostic) {
   const reference = get(rev.catalog, 'DSS'),
     dss = rev.resolve(reference);
@@ -762,7 +860,7 @@ function dssMaterial(rev, diagnostic) {
       } else check(get(stream.dict, 'DecodeParms') === undefined, 'PADES_DSS_DECODE_PARAMETERS');
       total += bytes.length;
       check(total <= 16 * 1024 * 1024, 'PADES_MATERIAL_LIMIT', 'UNSUPPORTED');
-      parseDER(bytes);
+      materialSchema(bytes, key);
       result[target].push(bytes);
     }
   }
@@ -934,7 +1032,9 @@ function acceptable(document) {
   }
 }
 function catalogText(rev, updates) {
-  const entries = rev.catalog.entries().filter(([key]) => !(key.decodeText() in updates));
+  const entries = rev.catalog
+    .entries()
+    .filter(([key]) => !Object.hasOwn(updates, key.decodeText()));
   return `<< ${entries.map(([key, value]) => `${key} ${value}`).join('\n')}\n${Object.entries(
     updates,
   )
@@ -947,6 +1047,11 @@ function extensionUpdate(rev) {
     : { Extensions: '<< /ADBE << /BaseVersion /1.7 /ExtensionLevel 8 >> >>' };
 }
 function appendObjects(document, objects, size) {
+  check(
+    Number.isSafeInteger(size) && size > 0 && size <= MAX_OBJECTS,
+    'PADES_OBJECT_LIMIT',
+    'UNSUPPORTED',
+  );
   const prior = document.revisions.at(-1),
     chunks = [document.raw, Buffer.from('\n')],
     xref = [];
@@ -1111,7 +1216,7 @@ export function appendPAdESDSS(input, { certificates = [], crls = [] } = {}) {
     for (const inputBytes of provided) {
       check(inputBytes instanceof Uint8Array, 'PADES_DSS_INPUT');
       const bytes = Buffer.from(inputBytes);
-      parseDER(bytes);
+      materialSchema(bytes, key);
       total += bytes.length;
       check(total <= 16 * 1024 * 1024, 'PADES_MATERIAL_LIMIT', 'UNSUPPORTED');
       if (values.some((value) => value.equals(bytes))) continue;
