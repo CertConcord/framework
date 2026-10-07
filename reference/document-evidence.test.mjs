@@ -259,6 +259,7 @@ test('certified encryption closes admission, delivery and recovery with purpose 
         validatePossessionCertificate: r.validatePossessionCertificate,
         identityEvidenceHash: c.random(64),
         kemProof: recipient.kemProof,
+        issuanceScope: trust.issuanceScope,
       };
       await assert.rejects(r.ra.authorize(request), /KEM_POP_INVALID_OR_REPLAY/);
       await assert.rejects(

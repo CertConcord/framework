@@ -21,6 +21,7 @@ import {
 } from './providers.mjs';
 import { readBody, sendJSON } from './transport.mjs';
 import { parseJSON } from './json.mjs';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 
 test('CRL and OCSP bind issuer, serial, nonce, publication interval and revocation', () => {
   const ca = c.generate('ml-dsa-87'),
@@ -115,6 +116,26 @@ test('RA decision and signed RAR bind issuer policy, profile, subject request an
       ca.privateKey,
     ),
     policyHash = c.random(64),
+    issuanceScope = {
+      trustDomainID: c.random(),
+      issuerID: 'https://synthetic.example/ca',
+      issuerKeyID: c.keyID(ca.publicKey),
+      representation: 'X509',
+    },
+    authorityResolver = exampleAuthorityResolver({
+      trustDomainID: issuanceScope.trustDomainID,
+      authorities: [
+        { certificate, roles: ['REGISTRATION_AUTHORITY'] },
+        {
+          mode: 'RAW_KEY',
+          publicKeyDER: c.spki(ca.publicKey),
+          roles: ['ISSUER'],
+          knownAt: c.now() - 60,
+          validFrom: c.now() - 60,
+          validUntil: c.now() + 86400,
+        },
+      ],
+    }),
     csr = e.createCSR({ subject, publicKey: holder.publicKey, privateKey: holder.privateKey });
   try {
     const raService = new e.RegistrationAuthority({
@@ -129,6 +150,7 @@ test('RA decision and signed RAR bind issuer policy, profile, subject request an
         profileID: 'CERTCONCORD-PERSON-SIGN-v1',
         policyHash,
         identityEvidenceHash: c.random(64),
+        issuanceScope,
       }),
       service = new e.AuthorizedIssuer({
         journal,
@@ -137,6 +159,8 @@ test('RA decision and signed RAR bind issuer policy, profile, subject request an
         issuer,
         policyHash,
         allowedProfiles: ['CERTCONCORD-PERSON-SIGN-v1'],
+        issuanceScope,
+        authorityResolver,
       }),
       cert = service.issue({ csr, rar });
     p.validateCertificate(cert, ca.publicKey, { profileID: 'CERTCONCORD-PERSON-SIGN-v1' });
@@ -231,11 +255,17 @@ test('Remote CryptoKey uses real signatures, signed permits and durable idempote
       authority.privateKey,
     ),
     auth = c.b64u(c.random()),
+    trustDomainID = c.random(),
+    authorityResolver = exampleAuthorityResolver({
+      trustDomainID,
+      authorities: [{ certificate, roles: ['PERMIT_AUTHORITY'] }],
+    }),
     provider = new SoftwareProvider(new Map([['document-key', holder]])),
     service = new RemoteCryptoKeyService({
       provider,
       journal,
       permitCertificate: certificate,
+      authorityResolver,
       audience: 'test-gateway',
       authorize: async ({ permit }) => {
         assert.equal(permit.proofMode, 'HUMAN_WEBAUTHN');
@@ -260,7 +290,7 @@ test('Remote CryptoKey uses real signatures, signed permits and durable idempote
       }),
       tbs = Buffer.from('Frozen exact synthetic TBS'),
       a = activationContext({
-        trustDomainID: c.random(),
+        trustDomainID,
         tbs,
         publicKey: holder.publicKey,
         simHash: c.random(64),

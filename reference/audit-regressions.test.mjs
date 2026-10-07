@@ -13,6 +13,7 @@ import { authorizeHumanActivation } from './webauthn.mjs';
 import { exampleAssertion } from './example-authenticator.mjs';
 import { exampleTimestamp } from './example-timestamp.mjs';
 import { DOCUMENT_EVIDENCE_PROFILE } from './document-evidence.mjs';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 
 const profileID = 'CERTCONCORD-PERSON-SIGN-v1';
 
@@ -78,7 +79,7 @@ async function issuanceFixture(t, representation) {
     { certificate: raCertificate, privateKey: raKey.privateKey },
   );
 
-  const makeIssuer = (scope = issuanceScope, key = issuerKey) => {
+  const makeIssuer = (scope = issuanceScope, key = issuerKey, overrides = {}) => {
     const issuerJournal = journal(),
       common = {
         journal: issuerJournal,
@@ -87,6 +88,21 @@ async function issuanceFixture(t, representation) {
         policyHash,
         allowedProfiles: [profileID],
         issuanceScope: scope,
+        authorityResolver: exampleAuthorityResolver({
+          trustDomainID: scope.trustDomainID,
+          authorities: [
+            { certificate: raCertificate, roles: ['REGISTRATION_AUTHORITY'] },
+            {
+              mode: 'RAW_KEY',
+              publicKeyDER: c.spki(key.publicKey),
+              roles: ['ISSUER'],
+              knownAt: c.now() - 60,
+              validFrom: c.now() - 60,
+              validUntil: c.now() + 86400,
+            },
+          ],
+        }),
+        ...overrides,
       };
     if (scope.representation === 'X509') {
       const issuer = new AuthorizedIssuer({ ...common, issuer: p.name(scope.issuerID) });
@@ -124,7 +140,7 @@ async function issuanceFixture(t, representation) {
       journal: issuerJournal,
     };
   };
-  return { issuanceScope, issuerKey, makeIssuer };
+  return { issuanceScope, issuerKey, raCertificate, makeIssuer };
 }
 
 for (const representation of ['X509', 'MTC']) {
@@ -141,7 +157,7 @@ for (const representation of ['X509', 'MTC']) {
       const fixture = await issuanceFixture(t, representation),
         source = fixture.makeIssuer(),
         certificate = await source.issue(),
-        key = ['issuer', 'key'].includes(boundary) ? c.generate('ml-dsa-87') : fixture.issuerKey,
+        key = boundary === 'key' ? c.generate('ml-dsa-87') : fixture.issuerKey,
         destinationScope = {
           ...fixture.issuanceScope,
           ...(boundary === 'issuer' ? { issuerID: '32473.11' } : {}),
@@ -165,6 +181,53 @@ for (const representation of ['X509', 'MTC']) {
       );
     });
   }
+
+  for (const [boundary, reason] of [
+    ['missing resolver', 'AUTHORITY_RESOLVER_REQUIRED'],
+    ['wrong RA role', 'AUTHORITY_ROLE'],
+    ['wrong RA scope', 'AUTHORITY_SCOPE'],
+    ['stale authority status', 'AUTHORITY_STATUS_STALE'],
+  ])
+    test(`${representation} issuance rejects ${boundary} before accepting a signed RAR`, async (t) => {
+      const f = await issuanceFixture(t, representation),
+        at = c.now(),
+        authorityResolver =
+          boundary === 'missing resolver'
+            ? undefined
+            : exampleAuthorityResolver({
+                trustDomainID: f.issuanceScope.trustDomainID,
+                at: boundary === 'stale authority status' ? at - 3600 : at,
+                nextUpdate: boundary === 'stale authority status' ? at - 1 : at + 3600,
+                authorities: [
+                  {
+                    certificate: f.raCertificate,
+                    roles: [
+                      boundary === 'wrong RA role' ? 'PERMIT_AUTHORITY' : 'REGISTRATION_AUTHORITY',
+                    ],
+                    ...(boundary === 'wrong RA scope'
+                      ? {
+                          scopes: [
+                            {
+                              trustDomainID: f.issuanceScope.trustDomainID,
+                              issuerID: '32473.99',
+                            },
+                          ],
+                        }
+                      : {}),
+                  },
+                  {
+                    mode: 'RAW_KEY',
+                    publicKeyDER: c.spki(f.issuerKey.publicKey),
+                    roles: ['ISSUER'],
+                    knownAt: at - 60,
+                    validFrom: at - 60,
+                    validUntil: at + 86400,
+                  },
+                ],
+              }),
+        issuer = f.makeIssuer(f.issuanceScope, f.issuerKey, { authorityResolver });
+      await assert.rejects(async () => issuer.issue(), { code: reason });
+    });
 }
 
 async function documentFixture(t, { expiredPermitAuthority = false } = {}) {
@@ -253,6 +316,21 @@ async function documentFixture(t, { expiredPermitAuthority = false } = {}) {
       rtmHash: c.H('SyntheticRTM', { trustDomainID, policyHash }),
       membershipEpoch: 1,
     },
+    authorities = [
+      { certificate: raCertificate, roles: ['REGISTRATION_AUTHORITY'] },
+      { certificate: permitCertificate, roles: ['PERMIT_AUTHORITY'] },
+      { certificate: receiptCertificate, roles: ['RECEIPT_AUTHORITY'] },
+      { certificate: statusCertificate, roles: ['STATUS_AUTHORITY'] },
+      {
+        mode: 'RAW_KEY',
+        publicKeyDER: c.spki(ca.publicKey),
+        roles: ['ISSUER'],
+        knownAt: at - 60,
+        validFrom: at - 60,
+        validUntil: at + 86400,
+      },
+    ],
+    authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities, at }),
     issuer = new MTCIssuer({
       ...mtc,
       journal,
@@ -262,6 +340,7 @@ async function documentFixture(t, { expiredPermitAuthority = false } = {}) {
       mirrors,
       allowedProfiles: [profileID],
       issuanceScope,
+      authorityResolver,
     }),
     certificate = await issuer.issue({ csr, rar }),
     cert = p.parseCertificate(certificate),
@@ -348,6 +427,7 @@ async function documentFixture(t, { expiredPermitAuthority = false } = {}) {
       receiptKey: receiptKey.privateKey,
       audience: policy.audience,
       backend,
+      authorityResolver,
       authorize: async () => true,
     });
   const pack = (executed) => {
@@ -388,6 +468,14 @@ async function documentFixture(t, { expiredPermitAuthority = false } = {}) {
         trustDomainID,
         raCertificate,
         timestamp: tsa.trust,
+        issuanceScope,
+        authorityResolver: exampleAuthorityResolver({
+          trustDomainID,
+          authorities: [
+            ...authorities,
+            { certificate: tsa.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] },
+          ],
+        }),
       };
     return { bundle, trust };
   };
