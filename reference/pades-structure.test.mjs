@@ -68,6 +68,27 @@ test('approval M cannot be an indirect value', selected, async () => {
       .pdf,
   );
 });
+test(
+  'missing mandatory approval M is incomplete evidence and does not hide bad mathematics',
+  selected,
+  async () => {
+    const pdf = independentApproval(f, { omitM: true }).pdf;
+    await verify(pdf, 'INDETERMINATE');
+    const invalid = replaceCMS(pdf, 0, (raw) => {
+      const signature = Buffer.from(cmsView(raw).signature);
+      signature[signature.length - 1] ^= 1;
+      return rewriteCMS(raw, { signature });
+    });
+    await verify(invalid, 'INVALID');
+  },
+);
+test(
+  'a document timestamp cannot introduce a duplicate fully qualified field name',
+  selected,
+  async () => {
+    await verify(independentTimestamp(f, b, { fieldName: 'Approval' }).pdf, 'INVALID', 'T');
+  },
+);
 test('wrong PDF signature SubFilter is an explicit unsupported capability', selected, async () => {
   await verify(independentApproval(f, { subFilter: 'adbe.pkcs7.detached' }).pdf, 'UNSUPPORTED');
 });

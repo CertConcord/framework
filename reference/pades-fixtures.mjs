@@ -130,7 +130,7 @@ export function signatureContainer(
     kind = 'SIGNATURE',
     signingTime = epoch + 10,
     signatureBytes = 8192,
-    fieldName = kind === 'SIGNATURE' ? 'Approval' : 'Timestamp',
+    fieldName,
     extra = '',
     dictionary,
     transformByteRange,
@@ -143,6 +143,7 @@ export function signatureContainer(
     sig = state.size,
     field = sig + 1,
     form = sig + 2;
+  fieldName ??= kind === 'SIGNATURE' ? 'Approval' : `Timestamp-${sig}`;
   const oldCatalog = state.objects.get(state.root).body;
   const oldFormRef = /\/AcroForm\s+(\d+)\s+\d+\s+R/.exec(oldCatalog);
   const oldFields = oldFormRef
