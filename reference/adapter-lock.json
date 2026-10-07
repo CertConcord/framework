@@ -141,7 +141,7 @@
     {
       "id": "certconcord-cades-preservation-v1",
       "name": "Selected CAdES baseline preservation",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "wireProfile": "EN 319 122-1 V1.3.1; DER single-signer id-data; P-256/SHA-256; B/T/LT/LTA with ATSv3 and ATSHashIndexV3; SHA-256/SHA-512 imprints",
       "modules": ["cades.mjs", "cades-validation.mjs", "ades-cms.mjs"],
       "tests": [
@@ -150,7 +150,8 @@
         "cades-format.test.mjs",
         "cades-security.test.mjs",
         "cades-material.test.mjs",
-        "cades-interop.test.mjs"
+        "cades-interop.test.mjs",
+        "timestamp-revocation.test.mjs"
       ],
       "sources": [
         "cades",
@@ -164,7 +165,7 @@
         "rfc5280",
         "rfc6211"
       ],
-      "inputSemantics": "Bare standard CMS; exact signed core retained; signature-value timestamp and standard archive-index inputs; external role/status policy at unchanged knowledgeTime",
+      "inputSemantics": "Bare standard CMS; exact signed core retained; signature-value timestamp and standard archive-index inputs; external role/status policy at unchanged knowledgeTime; authenticated TSU revocation reasons and independent exact-token proof before key-risk cutoffs",
       "environment": "Node.js 24.15+; OpenSSL 3.6.5 differential fixtures; external admitted roots, role resolver, finite signature/hash/key cutoffs and current status",
       "limits": "docs/cades-preservation.md; direct root/full CRL only; no OCSP/intermediates/legacy ER attributes or complete ETSI algorithm/process claim; no production or PQ preservation assurance",
       "downgradeForbidden": true
@@ -185,7 +186,7 @@
     {
       "id": "certconcord-pades-preservation-v1",
       "name": "Selected PAdES baseline preservation",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "wireProfile": "Published EN 319 142-1 V1.2.1; PDF 1.7 classic xref; one detached ES256 approval; B/T/LT/LTA using DSS and document timestamps; SHA-256/SHA-512 imprints",
       "modules": [
         "pades.mjs",
@@ -203,7 +204,8 @@
         "pades-security.test.mjs",
         "pades-structure.test.mjs",
         "pades-time-boundaries.test.mjs",
-        "pades.test.mjs"
+        "pades.test.mjs",
+        "timestamp-revocation.test.mjs"
       ],
       "sources": [
         "pades",
@@ -216,7 +218,7 @@
         "rfc5816",
         "rfc5280"
       ],
-      "inputSemantics": "Exact signed PDF revision and Contents span; cumulative DSS material at each revision; original object roles and byte prefixes retained; external authority/status policy at actual knowledgeTime",
+      "inputSemantics": "Exact signed PDF revision and Contents span; cumulative DSS material at each revision; original object roles and byte prefixes retained; external authority/status policy at actual knowledgeTime; authenticated TSU revocation reasons and independent exact-token proof before key-risk cutoffs",
       "environment": "Node.js 24.15+; isolated bounded pdf-lib worker; OpenSSL 3.6.5 fixture differentials; pyHanko 0.37.0 independent primitive/path/modification review; no implicit trust or network fallback",
       "limits": "docs/pades-preservation.md; direct root/full CRL only; no general PDF rendering, object/xref streams, OCSP/VRI, multiple approvals or complete independent PAdES preservation assurance; pyHanko complete LTA procedure has a CMS signature-timestamp constraint",
       "downgradeForbidden": true

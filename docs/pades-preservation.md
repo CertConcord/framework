@@ -47,6 +47,8 @@ After approval, only selected preservation changes are permitted: document times
 
 The newest unprotected timestamp must remain authentic at knowledge time. Earlier timestamps may rely on later authenticated coverage of their exact bytes and validation material. Ordinary certificate expiry is distinct from the cryptographic deadline of an already preserved signature. Equality with a protection cutoff fails, and a late renewal cannot repair a lost interval. The full RFC 3161 accuracy interval is evaluated; absent accuracy is indeterminate, never silently zero.
 
+TSU revocation follows the [shared reason-code and independent token-proof rules](cades-preservation.md#authority-status-and-time). The earliest verified successor covering the exact old token supplies its existence bound. A later proof may complete validation-material coverage without changing that earlier token bound; material coverage alone never proves that the token predates a key-risk event.
+
 ## Results and limits
 
 The result contains an overall status, reason, requested level, any established lower level, modification decision and proof diagnostics. Established malformed encoding, invalid mathematics, bad bindings, forbidden changes and authenticated applicable revocation are `INVALID`. Recognized unselected features are `UNSUPPORTED`. Missing mandatory evidence, unavailable policy, stale status and unresolved knowledge are `INDETERMINATE`. Available established invalidity takes precedence over unsupported capability, which takes precedence over uncertainty. Every non-VALID result prevents acceptance.
