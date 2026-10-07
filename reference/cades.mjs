@@ -754,6 +754,9 @@ function parseTimestampInfo(raw) {
   }
   if (fields.some((field) => field.tag === 0xa1))
     throw failure('UNSUPPORTED', 'CADES_TSTINFO_EXTENSIONS_UNSUPPORTED');
+  // Classify a recognized unselected imprint before the older timestamp parser
+  // reports its deliberately narrower SHA-256/SHA-512 constraint as malformed.
+  hashAlgorithm(fields[2].children[0]);
   return parseTSTInfo(raw);
 }
 function timestamp(parsed, value, failures, policy, times, archive) {
