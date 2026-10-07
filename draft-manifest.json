@@ -295,8 +295,8 @@
     },
     {
       "path": "reference/audit-regressions.test.mjs",
-      "bytes": 19767,
-      "sha256": "f7361926d70e5ee5d13a7f40f8e9d36cf28c31cbc0a6cbd3828d813cc1303f28"
+      "bytes": 25038,
+      "sha256": "5ca428a92342b3aacff1e5338d9943282bcb114ddc3207b0b3c0975b6e618690"
     },
     {
       "path": "reference/authority-history.mjs",
@@ -435,8 +435,8 @@
     },
     {
       "path": "reference/document-evidence.test.mjs",
-      "bytes": 13688,
-      "sha256": "ef8b3b2720af4644b4c150fc7000e722a15bd943713b4a0310538a30111527b5"
+      "bytes": 13935,
+      "sha256": "7f49afca5d83d4472bdc8b3a34afe6543b1fc8b01628f5a7c419da6842edea5c"
     },
     {
       "path": "reference/ecdsa.mjs",
