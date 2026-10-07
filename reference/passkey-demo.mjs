@@ -15,6 +15,7 @@ import { examplePasskey } from './example-passkey.mjs';
 import { MTCIssuer } from './issuance.mjs';
 import { Mirror, verifyMTC } from './mtc.mjs';
 import { createSignaturePackage, verifySignaturePackage } from './evidence.mjs';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 
 export async function runPasskeyDemo({
   version = 'previewSign5-2026-09-09',
@@ -65,6 +66,14 @@ export async function runPasskeyDemo({
       receiptControl = control('Synthetic Receipt'),
       statusControl = control('Synthetic Status'),
       authenticator = examplePasskey({ version, algorithm });
+    const issuanceScope = { trustDomainID, issuerID: '32473.10', issuerKeyID: c.keyID(ca.publicKey), representation: mtc ? 'MTC' : 'X509' },
+      authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities: [
+        { certificate: raControl.certificate, roles: ['REGISTRATION_AUTHORITY'] },
+        { certificate: permitControl.certificate, roles: ['PERMIT_AUTHORITY'] },
+        { certificate: receiptControl.certificate, roles: ['RECEIPT_AUTHORITY'] },
+        { certificate: statusControl.certificate, roles: ['STATUS_AUTHORITY'] },
+        { mode: 'RAW_KEY', publicKeyDER: c.spki(ca.publicKey), knownAt: c.now() - 60, validFrom: c.now() - 60, validUntil: c.now() + 86400, roles: ['ISSUER'] },
+      ] });
     const members = mirrorJournals.map((_, i) => ({
       id: '32473.' + (20 + i),
       operatorID: 'synthetic-mirror-' + i,
@@ -137,6 +146,7 @@ export async function runPasskeyDemo({
       }),
     });
     const rar = await ra.authorize({
+      issuanceScope,
       csr: admitted.csr,
       subjectID,
       profileID,
@@ -145,6 +155,8 @@ export async function runPasskeyDemo({
       keyBindingID: request.bindingID,
     });
     const options = {
+      issuanceScope,
+      authorityResolver,
       journal: caJournal,
       raCertificate: raControl.certificate,
       privateKey: ca.privateKey,
@@ -250,6 +262,7 @@ export async function runPasskeyDemo({
       permitKey: permitControl.privateKey,
     });
     const service = new PasskeySigningService({
+      authorityResolver,
       journal,
       registry,
       permitCertificate: permitControl.certificate,
@@ -289,6 +302,7 @@ export async function runPasskeyDemo({
       certificate,
     };
     const trust = {
+      authorityResolver,
       permitCertificate: permitControl.certificate,
       receiptCertificate: receiptControl.certificate,
       certificateVerifier,
@@ -335,6 +349,8 @@ export async function runPasskeyDemo({
       },
     });
     const packageTrust = {
+      issuanceScope,
+      authorityResolver,
       ...(mtc ? { mtc: mtcTrust } : { issuerPublicKey: ca.publicKey }),
       permitCertificate: permitControl.certificate,
       receiptCertificate: receiptControl.certificate,

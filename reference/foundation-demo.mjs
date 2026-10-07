@@ -38,6 +38,7 @@ import {
 
 import { exampleExecutionGateway, exampleExecutionPolicy } from './example-execution.mjs';
 import { exampleTimestamp } from './example-timestamp.mjs';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 import { DOCUMENT_EVIDENCE_PROFILE } from './document-evidence.mjs';
 
 export async function runFoundationDemo({
@@ -281,7 +282,16 @@ export async function runFoundationDemo({
     governmentID = issuerModel === 'direct' ? issuerURL : 'https://government.example',
     govDocType = identityProfile.docType,
     govNamespace = identityProfile.namespace,
-    sessionID = c.b64u(c.random());
+    sessionID = c.b64u(c.random()),
+    issuanceScope = { trustDomainID, issuerID: issuerURL, issuerKeyID: c.keyID(ca.publicKey), representation: 'MDOC' },
+    timestamp = trustedTime ? exampleTimestamp(journal) : undefined,
+    authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities: [
+      { certificate: ra.certificate, roles: ['REGISTRATION_AUTHORITY'] },
+      { certificate: ca.certificate, roles: ['ISSUER', 'STATUS_AUTHORITY'] },
+      { certificate: sealAuthority.certificate, roles: ['DOCUMENT_SEAL'] },
+      { certificate: activationAuthority.certificate, roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'EXECUTION_BINDING_AUTHORITY'] },
+      ...(timestamp ? [{ certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] }] : []),
+    ] });
   try {
     const crl = issueCRL({
         issuer: p.parseCertificate(root).subject,
@@ -313,6 +323,7 @@ export async function runFoundationDemo({
         trustRoots: roots,
       }),
       admission = new IdentityAdmission({
+        issuanceScope,
         journal,
         verifier: identityVerifier,
         trustDomainID,
@@ -446,6 +457,8 @@ export async function runFoundationDemo({
       });
     const clientID = 'https://wallet.example',
       issuer = new PersonalMdocCA({
+        issuanceScope,
+        authorityResolver,
         issuer: issuerURL,
         journal,
         privateKey: ca.privateKey,
@@ -495,6 +508,8 @@ export async function runFoundationDemo({
       approveAuthorization: async () => ({ approved: true, subjectID: c.b64u(subjectID) }),
     });
     const credentialTrust = {
+        issuanceScope,
+        authorityResolver,
         issuerCertificate: ca.certificate,
         issuerPublicKey: ca.publicKey,
         issuerRoots: roots,
@@ -692,6 +707,7 @@ export async function runFoundationDemo({
     }
     let passkeyEvidence;
     const gatewayOptions = {
+        authorityResolver,
         journal,
         permitCertificate: activationAuthority.certificate,
         receiptCertificate: activationAuthority.certificate,
@@ -721,6 +737,7 @@ export async function runFoundationDemo({
       result = passkeyRegistry
         ? await (async () => {
             const service = new PasskeySigningService({
+              authorityResolver,
               journal,
               registry: passkeyRegistry,
               permitCertificate: activationAuthority.certificate,
@@ -763,7 +780,6 @@ export async function runFoundationDemo({
             ...(executionBinding ? { sim } : { keyRef: 'document' }),
           }),
       signature = prepared.finish(result.signature),
-      timestamp = trustedTime ? exampleTimestamp(journal) : undefined,
       bundle = createMdocSignaturePackage({
         document,
         credential,
