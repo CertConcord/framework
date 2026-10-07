@@ -1,10 +1,24 @@
 import { X509Certificate, verify as verifySignature } from 'node:crypto';
-import { parseDER, oidText, intValue, equal, keyID, requireThat } from './core.mjs';
+import {
+  parseDER,
+  oidText,
+  intValue,
+  equal,
+  keyID,
+  sha256,
+  requireThat,
+  ProtocolError,
+} from './core.mjs';
 import { parseCertificate, validateKeyUsage, generalizedTime } from './pki.mjs';
 
 const ES256 = '1.2.840.10045.4.3.2';
 const SHA256 = '2.16.840.1.101.3.4.2.1';
 const TSA_EKU = '1.3.6.1.5.5.7.3.8';
+const EMAIL_EKU = '1.3.6.1.5.5.7.3.4';
+const EMAIL_NAME = '1.2.840.113549.1.9.1';
+const SMTP_UTF8_NAME = '1.3.6.1.5.5.7.8.9';
+const RSA_KEY = '1.2.840.113549.1.1.1';
+const mailPurpose = (purpose) => ['SMIME_SIGNING', 'SMIME_RECIPIENT_ENCRYPTION'].includes(purpose);
 const outcome = (overall, reason, details = {}) => ({ overall, reason, ...details });
 const instant = (value) => Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
 const deadline = (value) => Number.isSafeInteger(value) && value > 0;
@@ -82,8 +96,34 @@ function certificate(raw) {
   return { ...parsed, native };
 }
 
-function certificateProfile(cert) {
+function mailRequire(condition, reason, overall = 'INVALID') {
+  if (!condition) throw Object.assign(new ProtocolError(reason), { overall });
+}
+
+function recipientKey(cert) {
+  mailRequire(
+    cert.publicKey.asymmetricKeyType === 'rsa' &&
+      [3072, 4096].includes(cert.publicKey.asymmetricKeyDetails?.modulusLength),
+    'SMIME_RECIPIENT_KEY_ALGORITHM_UNSUPPORTED',
+    'UNSUPPORTED',
+  );
+  const algorithm = parseDER(cert.spki).children[0];
+  mailRequire(
+    algorithm?.tag === 0x30 &&
+      algorithm.children?.[0]?.tag === 6 &&
+      oidText(algorithm.children[0]) === RSA_KEY,
+    'SMIME_RECIPIENT_KEY_ALGORITHM_UNSUPPORTED',
+    'UNSUPPORTED',
+  );
+  mailRequire(
+    algorithm.children.length === 2 && equal(algorithm.children[1].raw, Buffer.from('0500', 'hex')),
+    'SMIME_RSA_KEY_PARAMETERS',
+  );
+}
+
+function certificateProfile(cert, purpose) {
   const permitted = new Set(['2.5.29.19', '2.5.29.15', '2.5.29.14', '2.5.29.35', '2.5.29.37']);
+  if (mailPurpose(purpose)) permitted.add('2.5.29.17');
   for (const [id, extension] of cert.extensions) {
     requireThat(
       !extension.critical || permitted.has(id),
@@ -94,7 +134,8 @@ function certificateProfile(cert) {
       'CADES_CERTIFICATE_CONSTRAINTS_UNSUPPORTED',
     );
   }
-  p256(cert.publicKey);
+  if (purpose === 'SMIME_RECIPIENT_ENCRYPTION') recipientKey(cert);
+  else p256(cert.publicKey);
   requireThat(
     cert.algorithm === ES256 && parseDER(cert.algorithmRaw).children.length === 1,
     'CADES_CERTIFICATE_ALGORITHM_UNSUPPORTED',
@@ -123,13 +164,14 @@ function authorityKeyBinding(value, issuer) {
   requireThat(expected && equal(parsed.children[0].value, expected), 'CADES_AUTHORITY_KEY_BINDING');
 }
 
-function certificateUsage(cert, purpose) {
+function certificateUsage(cert, purpose, mail = false) {
   const usage = validateKeyUsage(
     cert.extensions.get('2.5.29.15'),
     undefined,
     'CADES_CERTIFICATE_KEY_USAGE',
   );
   const basic = cert.extensions.get('2.5.29.19');
+  if (mail) mailRequire(cert.extensions.get('2.5.29.15')?.critical, 'SMIME_KEY_USAGE_CRITICAL');
   if (purpose === 'ROOT') {
     requireThat(
       cert.native.ca && basic?.critical && (usage[0] & 6) === 6,
@@ -146,9 +188,12 @@ function certificateUsage(cert, purpose) {
     );
     requireThat(!cert.extensions.has('2.5.29.37'), 'CADES_ROOT_EKU_UNSUPPORTED');
   } else {
+    const requiredUsage = purpose === 'SMIME_RECIPIENT_ENCRYPTION' ? 0x20 : 0x80;
     requireThat(
-      !cert.native.ca && (usage[0] & 0x80) !== 0 && (usage[0] & 6) === 0,
-      'CADES_SIGNER_KEY_USAGE',
+      !cert.native.ca && (usage[0] & requiredUsage) !== 0 && (usage[0] & 6) === 0,
+      purpose === 'SMIME_RECIPIENT_ENCRYPTION'
+        ? 'SMIME_RECIPIENT_KEY_USAGE'
+        : 'CADES_SIGNER_KEY_USAGE',
     );
     if (basic) {
       const constraints = parseDER(basic.value);
@@ -168,10 +213,115 @@ function certificateUsage(cert, purpose) {
           oidText(values.children[0]) === TSA_EKU,
         'CADES_TSA_EKU',
       );
+    } else if (mailPurpose(purpose)) {
+      const values = eku && parseDER(eku.value);
+      mailRequire(
+        values?.tag === 0x30 &&
+          values.children?.length > 0 &&
+          values.children.every((value) => value.tag === 6),
+        'SMIME_EMAIL_PROTECTION_REQUIRED',
+      );
+      const identifiers = values.children.map(oidText);
+      mailRequire(identifiers.includes(EMAIL_EKU), 'SMIME_EMAIL_PROTECTION_REQUIRED');
     } else {
       requireThat(!eku, 'CADES_SIGNER_EKU_UNSUPPORTED');
     }
   }
+}
+
+function certificateMailNames(cert) {
+  const extension = cert.extensions.get('2.5.29.17'),
+    rfc822Names = [],
+    otherGeneralNames = [];
+  let legacySubjectEmailPresent = false;
+  const subject = parseDER(cert.subject);
+  mailRequire(subject.tag === 0x30 && subject.children, 'SMIME_CERTIFICATE_NAME_ENCODING');
+  for (const rdn of subject.children) {
+    mailRequire(rdn.tag === 0x31 && rdn.children?.length > 0, 'SMIME_CERTIFICATE_NAME_ENCODING');
+    for (const attribute of rdn.children) {
+      const values = attribute.children;
+      mailRequire(
+        attribute.tag === 0x30 && values?.length === 2 && values[0].tag === 6,
+        'SMIME_CERTIFICATE_NAME_ENCODING',
+      );
+      if (oidText(values[0]) === EMAIL_NAME) {
+        mailRequire(
+          values[1].tag === 0x16 &&
+            values[1].value.length > 0 &&
+            values[1].value.length <= 255 &&
+            values[1].value.every((octet) => octet <= 0x7f),
+          'SMIME_CERTIFICATE_NAME_ENCODING',
+        );
+        legacySubjectEmailPresent = true;
+      }
+    }
+  }
+  if (extension) {
+    const names = parseDER(extension.value);
+    mailRequire(
+      names.tag === 0x30 && names.children?.length > 0,
+      'SMIME_CERTIFICATE_NAME_ENCODING',
+    );
+    for (const name of names.children) {
+      mailRequire(
+        [0xa0, 0x81, 0x82, 0xa3, 0xa4, 0xa5, 0x86, 0x87, 0x88].includes(name.tag),
+        'SMIME_CERTIFICATE_NAME_ENCODING',
+      );
+      if (name.tag === 0x81) {
+        mailRequire(
+          name.value.length > 0 && name.value.every((octet) => octet <= 0x7f),
+          'SMIME_CERTIFICATE_NAME_ENCODING',
+        );
+        rfc822Names.push(
+          Object.freeze({
+            rawDER: Buffer.from(name.raw),
+            valueBytes: Buffer.from(name.value),
+            value: name.value.toString('ascii'),
+          }),
+        );
+      } else {
+        let typeOID = null;
+        if (name.tag === 0xa0) {
+          mailRequire(
+            name.children?.length === 2 &&
+              name.children[0].tag === 6 &&
+              name.children[1].tag === 0xa0 &&
+              name.children[1].children?.length === 1,
+            'SMIME_CERTIFICATE_NAME_ENCODING',
+          );
+          typeOID = oidText(name.children[0]);
+        }
+        otherGeneralNames.push(
+          Object.freeze({ tag: name.tag, rawDER: Buffer.from(name.raw), typeOID }),
+        );
+      }
+    }
+  }
+  return Object.freeze({
+    sanPresent: Boolean(extension),
+    rfc822Names: Object.freeze(rfc822Names),
+    legacySubjectEmailPresent,
+    otherGeneralNames: Object.freeze(otherGeneralNames),
+    preferredSource: rfc822Names.length ? 'SAN_RFC822' : 'NONE',
+  });
+}
+
+function mailNameProfile(cert, names) {
+  mailRequire(
+    !cert.extensions.get('2.5.29.17')?.critical || names.otherGeneralNames.length === 0,
+    'SMIME_CRITICAL_SAN_UNSUPPORTED',
+    'UNSUPPORTED',
+  );
+  mailRequire(
+    !names.otherGeneralNames.some((name) => name.typeOID === SMTP_UTF8_NAME),
+    'SMIME_EMAIL_NAME_UNSUPPORTED',
+    'UNSUPPORTED',
+  );
+  mailRequire(
+    names.rfc822Names.length > 0 || !names.legacySubjectEmailPresent,
+    'SMIME_LEGACY_EMAIL_NAME_UNSUPPORTED',
+    'UNSUPPORTED',
+  );
 }
 
 function authority(policy, cert, role, stateTime, knowledgeTime) {
@@ -335,22 +485,64 @@ function parseCRL(raw, issuer) {
 }
 
 /** Selected direct-root PKI and full-CRL validation; embedded objects are never trust anchors. */
-export function validateCAdESMaterial({
-  certificate: raw,
-  certificates = [],
-  crls = [],
-  knownCRLs = [],
-  purpose,
-  stateTime,
-  knowledgeTime,
-  evidenceTime,
-  signatureEvidenceTime,
-  policy = {},
-}) {
+export function validateCAdESMaterial(input) {
+  return validateMaterial(input);
+}
+
+/** Current-use mail material admission; this does not authenticate a mailbox. */
+export function validateSmimeMaterial(input) {
+  const allowed = new Set([
+    'certificate',
+    'certificates',
+    'crls',
+    'knowledgeTime',
+    'purpose',
+    'policy',
+  ]);
+  const validInput =
+    input !== null &&
+    typeof input === 'object' &&
+    !Array.isArray(input) &&
+    Object.keys(input).every((key) => allowed.has(key));
+  return validateMaterial(
+    {
+      ...input,
+      certificate: Buffer.isBuffer(input?.certificate)
+        ? Buffer.from(input.certificate)
+        : input?.certificate,
+      stateTime: input?.knowledgeTime,
+      knownCRLs: [],
+      evidenceTime: undefined,
+      signatureEvidenceTime: undefined,
+    },
+    { mail: true, validInput },
+  );
+}
+
+function validateMaterial(
+  {
+    certificate: raw,
+    certificates = [],
+    crls = [],
+    knownCRLs = [],
+    purpose,
+    stateTime,
+    knowledgeTime,
+    evidenceTime,
+    signatureEvidenceTime,
+    policy = {},
+  },
+  { mail = false, validInput: validMailInput = true } = {},
+) {
   const checks = [],
     usedCertificates = [],
-    usedCRLs = [];
-  let validUntil, rootValidUntil, leaf, root;
+    usedCRLs = [],
+    ordinaryTimeCheckIndexes = [];
+  let validUntil,
+    rootValidUntil,
+    leaf,
+    root,
+    identity = null;
   const capture = (operation) => {
     try {
       return operation();
@@ -363,6 +555,40 @@ export function validateCAdESMaterial({
     const failure = ['INVALID', 'UNSUPPORTED', 'INDETERMINATE']
       .map((kind) => checks.find((check) => check.overall === kind))
       .find(Boolean);
+    if (mail) {
+      const validity = (cert) =>
+        cert
+          ? Object.freeze({
+              certificateHash: sha256(cert.raw),
+              notBefore: cert.notBefore,
+              notAfter: cert.notAfter,
+              atKnowledgeTime:
+                knowledgeTime < cert.notBefore
+                  ? 'NOT_YET_VALID'
+                  : knowledgeTime >= cert.notAfter
+                    ? 'EXPIRED'
+                    : 'WITHIN',
+            })
+          : null;
+      const knownInvalidCheckIndexes = checks.flatMap((check, index) =>
+        check.overall === 'INVALID' && !ordinaryTimeCheckIndexes.includes(index) ? [index] : [],
+      );
+      return Object.freeze({
+        overall: failure?.overall ?? 'VALID',
+        reason: failure?.reason ?? (failure ? 'SMIME_MATERIAL_INVALID' : 'SMIME_MATERIAL_VALID'),
+        purpose,
+        stateTime,
+        knowledgeTime,
+        validUntil: validUntil ?? null,
+        identity,
+        currentValidity: Object.freeze({ leaf: validity(leaf), root: validity(root) }),
+        usedCertificates: Object.freeze(unique(usedCertificates)),
+        usedCRLs: Object.freeze(unique(usedCRLs)),
+        checks: Object.freeze(checks.map((check) => Object.freeze({ ...check }))),
+        ordinaryTimeCheckIndexes: Object.freeze([...ordinaryTimeCheckIndexes]),
+        knownInvalidCheckIndexes: Object.freeze(knownInvalidCheckIndexes),
+      });
+    }
     return Object.freeze({
       ...(failure ?? outcome('VALID', 'CADES_MATERIAL_VALID')),
       purpose,
@@ -375,8 +601,13 @@ export function validateCAdESMaterial({
     });
   };
   const validInput = capture(() => {
+    if (mail)
+      mailRequire(
+        validMailInput && Number.isSafeInteger(knowledgeTime) && knowledgeTime >= 0,
+        'SMIME_MATERIAL_INPUT_INVALID',
+      );
     requireThat(
-      ['SIGNER', 'TSA'].includes(purpose) &&
+      (mail ? mailPurpose(purpose) : ['SIGNER', 'TSA'].includes(purpose)) &&
         instant(stateTime) &&
         instant(knowledgeTime) &&
         stateTime <= knowledgeTime &&
@@ -408,6 +639,19 @@ export function validateCAdESMaterial({
         policy.scope.representation === 'X509',
       'CADES_AUTHORITY_SCOPE_REQUIRED',
     );
+    if (mail)
+      mailRequire(
+        policy.scope.profileID === 'certconcord-smime-application-v1' &&
+          policy.scope.purpose === purpose &&
+          Object.entries(policy.scope).every(
+            ([key, value]) =>
+              ['trustDomainID', 'profileID', 'issuerID', 'representation', 'purpose'].includes(
+                key,
+              ) &&
+              (key === 'trustDomainID' || (typeof value === 'string' && value.length > 0)),
+          ),
+        'SMIME_AUTHORITY_SCOPE',
+      );
     // Resolver callbacks cannot replace the caller's inputs or protection policy mid-validation.
     certificates = unique(certificates);
     crls = unique(crls);
@@ -430,11 +674,26 @@ export function validateCAdESMaterial({
   leaf = capture(() => certificate(raw));
   if (!leaf) return finish();
   usedCertificates.push(leaf.raw);
-  capture(() => certificateProfile(leaf));
-  capture(() => certificateUsage(leaf, purpose));
+  capture(() => certificateProfile(leaf, purpose));
+  capture(() => certificateUsage(leaf, purpose, mail));
+  if (mail) {
+    const names = capture(() => certificateMailNames(leaf));
+    if (names) {
+      identity = Object.freeze({
+        certificateHash: sha256(leaf.raw),
+        keyID: keyID(leaf.publicKey),
+        publicKeyDER: Buffer.from(leaf.spki),
+        certificateNames: names,
+      });
+      capture(() => mailNameProfile(leaf, names));
+    }
+  }
+  const leafTimeIndex = checks.length;
   capture(() =>
     requireThat(stateTime >= leaf.notBefore && stateTime < leaf.notAfter, 'CADES_CERTIFICATE_TIME'),
   );
+  if (mail && stateTime >= leaf.notAfter && checks.length > leafTimeIndex)
+    ordinaryTimeCheckIndexes.push(leafTimeIndex);
   const anchors = (policy.trustedRoots ?? [])
     .map((raw) => capture(() => certificate(raw)))
     .filter(Boolean);
@@ -460,7 +719,7 @@ export function validateCAdESMaterial({
   root = matches[0];
   usedCertificates.push(root.raw);
   capture(() => certificateProfile(root));
-  capture(() => certificateUsage(root, 'ROOT'));
+  capture(() => certificateUsage(root, 'ROOT', mail));
   capture(() =>
     requireThat(
       equal(root.subject, root.issuer) && root.native.verify(root.publicKey),
@@ -469,10 +728,22 @@ export function validateCAdESMaterial({
   );
   capture(() => requireThat(leaf.native.verify(root.publicKey), 'CADES_CERTIFICATE_SIGNATURE'));
   capture(() => authorityKeyBinding(leaf.extensions.get('2.5.29.35'), root));
+  const rootTimeIndex = checks.length;
   capture(() =>
     requireThat(stateTime >= root.notBefore && stateTime < root.notAfter, 'CADES_ROOT_TIME'),
   );
-  checks.push(authority(policy, root, 'ISSUER', stateTime, knowledgeTime));
+  if (mail && stateTime >= root.notAfter && checks.length > rootTimeIndex)
+    ordinaryTimeCheckIndexes.push(rootTimeIndex);
+  const issuerCheck = authority(policy, root, 'ISSUER', stateTime, knowledgeTime);
+  if (
+    mail &&
+    stateTime >= root.notAfter &&
+    issuerCheck.overall === 'INVALID' &&
+    issuerCheck.reason === 'AUTHORITY_EXPIRED' &&
+    issuerCheck.authorityStateTime === stateTime
+  )
+    ordinaryTimeCheckIndexes.push(checks.length);
+  checks.push(issuerCheck);
   if (purpose === 'TSA')
     checks.push(authority(policy, leaf, 'TIMESTAMP_AUTHORITY', stateTime, knowledgeTime));
   capture(() => {
