@@ -126,7 +126,7 @@ function authority(policy, cert, role, stateTime, knowledgeTime) {
       scope: { ...policy.scope, trustDomainID: Buffer.from(policy.scope.trustDomainID) }, stateTime, knowledgeTime });
     if (!decision || decision.then || !['VALID', 'INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(decision.overall))
       return outcome('INDETERMINATE', 'CADES_AUTHORITY_DECISION_MISSING');
-    return decision;
+    return { ...decision };
   } catch {
     return outcome('INDETERMINATE', 'CADES_AUTHORITY_UNAVAILABLE');
   }
@@ -202,14 +202,14 @@ function parseCRL(raw, issuer) {
     }
     revoked.set(serial, { effectiveTime: Math.min(revokedAt, invalidityDate), reason });
   }
-  return { raw: Buffer.from(raw), number: intValue(numberNode), thisUpdate, nextUpdate, revoked };
+  return { raw: Buffer.from(raw), tbs: Buffer.from(tbs.raw), number: intValue(numberNode), thisUpdate, nextUpdate, revoked };
 }
 
 /** Selected direct-root PKI and full-CRL validation; embedded objects are never trust anchors. */
 export function validateCAdESMaterial({ certificate: raw, certificates = [], crls = [], knownCRLs = [],
   purpose, stateTime, knowledgeTime, evidenceTime, policy = {} }) {
   const checks = [], usedCertificates = [], usedCRLs = [];
-  let validUntil, leaf, root;
+  let validUntil, rootValidUntil, leaf, root;
   const capture = (operation) => {
     try { return operation(); } catch (error) { checks.push(classified(error)); return undefined; }
   };
@@ -272,7 +272,8 @@ export function validateCAdESMaterial({ certificate: raw, certificates = [], crl
   checks.push(authority(policy, root, 'ISSUER', stateTime, knowledgeTime));
   if (purpose === 'TSA') checks.push(authority(policy, leaf, 'TIMESTAMP_AUTHORITY', stateTime, knowledgeTime));
   capture(() => {
-    validUntil = Math.min(protectionDeadline(policy, leaf), protectionDeadline(policy, root));
+    rootValidUntil = protectionDeadline(policy, root);
+    validUntil = Math.min(protectionDeadline(policy, leaf), rootValidUntil);
     requireThat(stateTime < validUntil, 'CADES_KEY_PROTECTION_EXPIRED');
   });
   const positive = unique([...crls, ...(evidenceTime === undefined ? policy.currentMaterial?.crls ?? [] : [])]);
@@ -282,18 +283,27 @@ export function validateCAdESMaterial({ certificate: raw, certificates = [], crl
   let revoked = false;
   const decisions = new Map();
   for (const record of known) {
+    capture(() => requireThat(record.thisUpdate >= root.notBefore && record.thisUpdate < root.notAfter,
+      'CADES_CRL_SIGNER_TIME'));
     const authorityResult = authority(policy, root, 'STATUS_AUTHORITY', record.thisUpdate, knowledgeTime);
-    decisions.set(record, authorityResult);
-    if (authorityResult.overall === 'VALID' &&
-      record.revoked.get(leaf.serial.toString())?.effectiveTime <= stateTime) revoked = true;
+    const covered = evidenceTime !== undefined && record.thisUpdate <= evidenceTime &&
+      crls.some((raw) => equal(raw, record.raw));
+    const authenticationTime = covered ? evidenceTime : knowledgeTime;
+    const authenticity = Number.isFinite(rootValidUntil) && authenticationTime < rootValidUntil
+      ? authorityResult : outcome('INDETERMINATE', 'CADES_CRL_AUTHENTICITY_UNPROVEN');
+    decisions.set(record, authenticity);
+    if (record.revoked.get(leaf.serial.toString())?.effectiveTime <= stateTime) {
+      if (authenticity.overall === 'VALID') revoked = true;
+      else checks.push(authenticity);
+    }
   }
   if (revoked) checks.push(outcome('INVALID', 'CADES_CERTIFICATE_REVOKED'));
   const groups = new Map();
   for (const record of known) {
     const number = record.number.toString();
-    if (groups.has(number) && !equal(groups.get(number), record.raw))
+    if (groups.has(number) && !equal(groups.get(number), record.tbs))
       checks.push(outcome('INDETERMINATE', 'CADES_CRL_CONFLICT'));
-    groups.set(number, record.raw);
+    groups.set(number, record.tbs);
   }
   const freshnessTime = evidenceTime ?? knowledgeTime;
   const eligible = records.filter((record) => positive.some((raw) => equal(raw, record.raw)) &&
