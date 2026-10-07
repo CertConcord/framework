@@ -43,6 +43,8 @@ Removal or replacement of indexed bytes invalidates that proof. Later additions 
 
 ## Authority, status and time
 
+An authenticated TSU revocation with no reason code is different from an explicit reason `0`. Under [RFC 3161 section 4](https://www.rfc-editor.org/rfc/rfc3161.html#section-4), this profile retains the pre-revocation treatment only for explicit reasons `0`, `3`, `4` and `5`. Other reasons, including key compromise, require an independent proof covering the exact old token before the effective revocation cutoff. Without it, an earlier self-claimed timestamp time yields `INDETERMINATE/CADES_TSA_REVOKED_NO_POE`. Past recovery follows the selected EN 319 102-1 proof rules; material coverage alone is insufficient. A timestamp used at or after authenticated effective revocation remains `INVALID`. An unproven late CRL cannot establish a revocation fact. The public APIs derive token proof times from verified archive coverage, never from a caller-supplied historical proof date.
+
 The caller supplies `validationTime`, the actual `knowledgeTime` and this external policy:
 
 | Field                | Meaning                                                                                           |
