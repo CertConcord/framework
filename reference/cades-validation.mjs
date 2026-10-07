@@ -628,11 +628,9 @@ function validateMaterial(
       policy.trustedRoots ?? [],
     ]) {
       if (mail) {
-        mailRequire(
-          Array.isArray(values) && values.every(Buffer.isBuffer),
-          'SMIME_MATERIAL_INPUT_INVALID',
-        );
+        mailRequire(Array.isArray(values), 'SMIME_MATERIAL_INPUT_INVALID');
         mailRequire(values.length <= 32, 'SMIME_MATERIAL_LIMIT_UNSUPPORTED', 'UNSUPPORTED');
+        mailRequire(Array.from(values).every(Buffer.isBuffer), 'SMIME_MATERIAL_INPUT_INVALID');
       } else {
         requireThat(
           Array.isArray(values) && values.length <= 128 && values.every(Buffer.isBuffer),
