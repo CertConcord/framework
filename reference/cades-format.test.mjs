@@ -1,4 +1,5 @@
 import test, { before, after } from 'node:test';
+import assert from 'node:assert/strict';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import { issueOCSP, ocspRequest } from './revocation.mjs';
@@ -137,6 +138,23 @@ for (const kind of [
     expectOverall(decision(api, f, variant(kind, { wrongVersion: true })), 'INVALID');
   });
   test(`available invalid signature outranks recognized ${kind}`, selected, () => {
-    expectOverall(decision(api, f, variant(kind, { badSignature: true })), 'INVALID');
+    const result = decision(api, f, variant(kind, { badSignature: true }));
+    expectOverall(result, 'INVALID');
+    assert.equal(result.reason, 'CADES_SIGNATURE_INVALID');
   });
 }
+
+for (const badSignature of [false, true])
+  test(
+    `mixed issuer/serial and SKI SignerInfo versions retain ${badSignature ? 'bad-signature priority' : 'UNSUPPORTED classification'}`,
+    selected,
+    () => {
+      const ski = variant('SKI SignerIdentifier', { badSignature });
+      const mixed = rewriteCMS(ski, {
+        signers: [cmsView(base).signer.raw, cmsView(ski).signer.raw],
+      });
+      const result = decision(api, f, mixed);
+      expectOverall(result, badSignature ? 'INVALID' : 'UNSUPPORTED');
+      if (badSignature) assert.equal(result.reason, 'CADES_SIGNATURE_INVALID');
+    },
+  );
