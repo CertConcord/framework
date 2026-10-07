@@ -317,7 +317,12 @@ function parseCRL(raw, issuer) {
       invalidityDate = time(value);
       requireThat(invalidityDate <= revokedAt, 'CADES_INVALIDITY_DATE');
     }
-    revoked.set(serial, { effectiveTime: Math.min(revokedAt, invalidityDate), reason });
+    revoked.set(serial, {
+      effectiveTime: Math.min(revokedAt, invalidityDate),
+      revocationTime: revokedAt,
+      reasonPresent: ext.has('2.5.29.21'),
+      reason,
+    });
   }
   return {
     raw: Buffer.from(raw),
@@ -339,6 +344,7 @@ export function validateCAdESMaterial({
   stateTime,
   knowledgeTime,
   evidenceTime,
+  signatureEvidenceTime,
   policy = {},
 }) {
   const checks = [],
@@ -375,7 +381,11 @@ export function validateCAdESMaterial({
         instant(knowledgeTime) &&
         stateTime <= knowledgeTime &&
         (evidenceTime === undefined ||
-          (instant(evidenceTime) && stateTime <= evidenceTime && evidenceTime <= knowledgeTime)),
+          (instant(evidenceTime) && stateTime <= evidenceTime && evidenceTime <= knowledgeTime)) &&
+        (signatureEvidenceTime === undefined ||
+          (instant(signatureEvidenceTime) &&
+            stateTime <= signatureEvidenceTime &&
+            signatureEvidenceTime <= knowledgeTime)),
       'CADES_VALIDATION_TIME',
     );
     for (const values of [
@@ -503,9 +513,22 @@ export function validateCAdESMaterial({
         ? authorityResult
         : outcome('INDETERMINATE', 'CADES_CRL_AUTHENTICITY_UNPROVEN');
     decisions.set(record, authenticity);
-    if (record.revoked.get(leaf.serial.toString())?.effectiveTime <= stateTime) {
-      if (authenticity.overall === 'VALID') revoked = true;
-      else checks.push(authenticity);
+    const entry = record.revoked.get(leaf.serial.toString());
+    if (entry) {
+      const revokedAtUse = entry.effectiveTime <= stateTime;
+      // RFC 3161 section 4 distinguishes an absent reason from explicit 0.
+      // EN 319 102-1 past validation may recover an old token only with a
+      // separate proof of its signature before the key-risk cutoff. Material
+      // evidenceTime and the token's own asserted genTime do not supply it.
+      const unprovenTSA =
+        purpose === 'TSA' &&
+        !(entry.reasonPresent && [0, 3, 4, 5].includes(entry.reason)) &&
+        !(signatureEvidenceTime !== undefined && signatureEvidenceTime < entry.effectiveTime);
+      if (revokedAtUse || unprovenTSA) {
+        if (authenticity.overall !== 'VALID') checks.push(authenticity);
+        else if (revokedAtUse) revoked = true;
+        else checks.push(outcome('INDETERMINATE', 'CADES_TSA_REVOKED_NO_POE'));
+      }
     }
   }
   if (revoked) checks.push(outcome('INVALID', 'CADES_CERTIFICATE_REVOKED'));
