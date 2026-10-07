@@ -191,6 +191,10 @@ function materialFor(
 ) {
   if (!signature?.certificate || !instant(stateTime) || stateTime > times.knowledgeTime)
     return undefined;
+  const signatureEvidenceTime =
+    purpose === 'TSA' && coverages.length
+      ? Math.min(...coverages.map((coverage) => coverage.time))
+      : undefined;
   const evaluate = (covered) => {
     const material = covered ?? current;
     let checked = validateCAdESMaterial({
@@ -202,6 +206,7 @@ function materialFor(
       stateTime,
       knowledgeTime: times.knowledgeTime,
       ...(covered ? { evidenceTime: covered.time } : {}),
+      ...(signatureEvidenceTime !== undefined ? { signatureEvidenceTime } : {}),
       policy: copy(policy),
     });
     if (purpose === 'SIGNER' && noPOE && stateTime === times.validationTime) {
