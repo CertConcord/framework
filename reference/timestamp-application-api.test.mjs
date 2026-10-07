@@ -11,12 +11,12 @@ async function optionalModule(name) {
   }
 }
 
-test('selected timestamp application API is present (new-feature availability gate)', async () => {
+test('selected timestamp protocol and service public exports are available', async () => {
   const protocol = await optionalModule('./timestamp-protocol.mjs');
   const service = await optionalModule('./timestamp-service.mjs');
   assert(
     protocol && service,
-    'Selected timestamp application API is absent at the frozen PAdES base; this is new capability absence, not an existing semantic failure',
+    'The selected timestamp application requires both protocol and service modules',
   );
   for (const name of [
     'encodeTimestampRequest',
