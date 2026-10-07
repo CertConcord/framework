@@ -205,6 +205,45 @@ test('unknown failure bit is retained as an unsupported diagnostic', () => {
     { overall: 'UNSUPPORTED', reason: 'TSP_FAILURE_BITS_UNSUPPORTED' },
   ]);
 });
+
+test('a long canonical failure bitset is bounded before enumerating individual bits', () => {
+  const bitset = Buffer.alloc(4097, 255);
+  bitset[0] = 0;
+  const raw = c.seq(c.seq(c.integer(2), c.der(3, bitset)));
+  let result;
+  try {
+    result = parseTimestampResponse(raw);
+  } catch (error) {
+    assert.equal(error.overall, 'UNSUPPORTED');
+    result = error.partial;
+  }
+  assert(
+    (result?.failureBits?.length ?? 0) <= 32,
+    'unselected bitsets must not allocate unbounded arrays',
+  );
+  if (result?.diagnostics)
+    assert(result.diagnostics.some((item) => item.overall === 'UNSUPPORTED'));
+});
+
+for (const [name, statusInfo] of [
+  ['wide status INTEGER', () => c.seq(c.integer(1n << 40n))],
+  [
+    'long failure BIT STRING',
+    () => c.seq(c.integer(6), c.der(3, Buffer.concat([Buffer.from([0]), Buffer.alloc(4096, 255)]))),
+  ],
+])
+  test(`${name} retains safely extracted token bytes for independent math checks`, () => {
+    const raw = c.seq(statusInfo(), token);
+    let result;
+    try {
+      result = parseTimestampResponse(raw);
+    } catch (error) {
+      assert.equal(error.overall, 'UNSUPPORTED');
+      result = error.partial;
+    }
+    assert.deepEqual(result?.tokenDER, token);
+    assert((result?.failureBits?.length ?? 0) <= 32);
+  });
 test('granted status cannot contradict itself with failure information', () => {
   invalid(
     () => encodeTimestampResponse({ status: 0, tokenDER: token, failureBits: [2] }),
