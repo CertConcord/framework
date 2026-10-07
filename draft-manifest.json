@@ -230,8 +230,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 8821,
-      "sha256": "34c60516e10e2eb7339f4b914b44977a60c05ed48012dd5f8478267f70ec5d0b"
+      "bytes": 8570,
+      "sha256": "f6a6bd66d7c6d0d9c97afe70fdd3cb0503318d5b937d8b31459b5daa385736c1"
     },
     {
       "path": "reference/README.md",
@@ -845,8 +845,8 @@
     },
     {
       "path": "reference/sdk-results.test.mjs",
-      "bytes": 6199,
-      "sha256": "eb58cb449468a0eb802f1fe1f911e5fef097345445969a2837914ff93e62e242"
+      "bytes": 7561,
+      "sha256": "ad392a5bcd74ef3d1eb5b6a5f2afb69d8953cc03a20fdf35fce9060905de5deb"
     },
     {
       "path": "reference/sdk/README.md",
@@ -890,8 +890,8 @@
     },
     {
       "path": "reference/signer-mdoc.mjs",
-      "bytes": 25718,
-      "sha256": "cec5c9d84f71e4e53a53afda4fa08c84f82380bfb03fff8d34e19b028d339e88"
+      "bytes": 26056,
+      "sha256": "6d4dec1c409a007b4a6e32a269c907084b19f998344acac319bee4bdc1fd17b8"
     },
     {
       "path": "reference/source-lock.json",

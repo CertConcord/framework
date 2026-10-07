@@ -127,3 +127,27 @@ for (const format of ['CMS', 'MDOC'])
       assert.equal(result.reason, format === 'CMS' ? 'ECP_STATUS_STALE' : 'STATUS_LIST_STALE');
     },
   );
+
+test('invalid document signatures take precedence over stale status in both representations', async () => {
+  for (const format of ['CMS', 'MDOC']) {
+    const options = { activationMode: 'HUMAN_WEBAUTHN', trustedTime: true };
+    const r = format === 'CMS' ? await runDemo(options) : await runFoundationDemo(options);
+    const type = format === 'CMS' ? 'CMS' : 'COSE';
+    const oldPlan = r.bundle.objects.find((object) => object.type === 'VerificationPlan');
+    const objects = r.bundle.objects.filter((object) => object !== oldPlan).map((object) => {
+      if (object.type !== type) return object;
+      const corrupted = Buffer.from(object.payload);
+      corrupted[corrupted.length - 1] ^= 1;
+      return evidenceObject(type, corrupted);
+    });
+    const plan = evidenceObject('VerificationPlan', dcbor({ ...decodeCBOR(oldPlan.payload),
+      objects: Object.fromEntries(objects.map((object) => [object.type, object.id])) }),
+    objects.map((object) => object.id));
+    const bytes = dcbor({ ...r.bundle, root: plan.id, objects: [...objects, plan] });
+    for (const knowledgeTime of [now(), now() + 86400]) {
+      const result = createVerifier({ format, trust: { ...r.trust, knowledgeTime } }).verify(bytes);
+      assert.equal(result.overall, 'INVALID', format + ': ' + result.reason);
+      assert.match(result.reason, /SIGNATURE/);
+    }
+  }
+});
