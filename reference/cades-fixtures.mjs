@@ -330,7 +330,16 @@ export function fixture({ signerNotAfter = epoch + 120, tsaNotAfter = epoch + 10
   };
   const token = (
     request,
-    { authority = tsa, genTime = epoch + 20, accuracy = 0, imprint, hashOID, policy, nonce } = {},
+    {
+      authority = tsa,
+      genTime = epoch + 20,
+      accuracy = 0,
+      imprint,
+      hashOID,
+      policy,
+      nonce,
+      mutateTSTInfo,
+    } = {},
   ) => {
     const q = requestFields(request),
       serial = tokenSerial++;
@@ -343,7 +352,10 @@ export function fixture({ signerNotAfter = epoch + 120, tsaNotAfter = epoch + 10
       ...(accuracy === null ? [] : [c.seq(c.integer(accuracy))]),
       ...(nonce === null ? [] : [c.integer(nonce ?? q.nonce ?? 1n)]),
     );
-    writeFileSync(file(`info-${serial}.der`), info);
+    writeFileSync(
+      file(`info-${serial}.der`),
+      mutateTSTInfo ? mutateTSTInfo(Buffer.from(info)) : info,
+    );
     run(
       'cms',
       '-sign',
