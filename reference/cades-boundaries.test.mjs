@@ -1,4 +1,5 @@
 import test, { before, after } from 'node:test';
+import { createHash } from 'node:crypto';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import {
@@ -34,6 +35,92 @@ const requestT = () => ({
   nonce: 151n,
 });
 const attachT = (token) => replaceUnsigned(original.b, O.signatureTimestamp, [token]);
+
+test(
+  'historical validation cannot authenticate an uncovered timestamp after current TSA key protection ends',
+  selected,
+  () => {
+    const policy = f.policy();
+    policy.keyDeadlines[c.keyID(f.tsa.publicKey).toString('hex')] = epoch + 50;
+    verify(original.t, 'T', 'VALID', {
+      policy,
+      validationTime: epoch + 40,
+      knowledgeTime: epoch + 40,
+    });
+    verify(original.t, 'T', 'INVALID', {
+      policy,
+      validationTime: epoch + 40,
+      knowledgeTime: epoch + 200,
+    });
+  },
+);
+test(
+  'historical B validation cannot authenticate an unprotected document signature after current signer key cutoff',
+  selected,
+  () => {
+    const policy = f.policy();
+    policy.keyDeadlines[c.keyID(f.signer.publicKey).toString('hex')] = epoch + 50;
+    verify(original.b, 'B', 'VALID', {
+      policy,
+      validationTime: epoch + 40,
+      knowledgeTime: epoch + 40,
+    });
+    verify(original.b, 'B', 'INVALID', {
+      policy,
+      validationTime: epoch + 40,
+      knowledgeTime: epoch + 200,
+    });
+    verify(original.t, 'T', 'VALID', {
+      policy,
+      validationTime: epoch + 40,
+      knowledgeTime: epoch + 200,
+    });
+  },
+);
+test(
+  'a timely later archive may authenticate proof for an earlier validationTime',
+  selected,
+  () => {
+    const policy = f.policy();
+    policy.keyDeadlines[c.keyID(f.tsa.publicKey).toString('hex')] = epoch + 100;
+    const renewed = f.augment(api, original.lta, 'LTA', {
+      at: epoch + 80,
+      authority: f.successor,
+    }).cms;
+    verify(renewed, 'T', 'VALID', {
+      policy,
+      validationTime: epoch + 40,
+      knowledgeTime: epoch + 200,
+    });
+  },
+);
+test(
+  'signature timestamp after the historical validationTime cannot establish earlier existence',
+  selected,
+  () => {
+    verify(original.t, 'T', 'INDETERMINATE', {
+      validationTime: epoch + 19,
+      knowledgeTime: epoch + 200,
+    });
+  },
+);
+
+test('valid ES256 TSA with SHA384 message imprint is recognized but unsupported', selected, () => {
+  const token = f.token(requestT(), {
+    hashOID: '2.16.840.1.101.3.4.2.2',
+    imprint: createHash('sha384').update(cmsView(original.b).signature).digest(),
+  });
+  verify(attachT(token), 'T', 'UNSUPPORTED');
+});
+test('invalid TSA signature outranks an unsupported SHA384 message imprint', selected, () => {
+  const token = f.token(requestT(), {
+    hashOID: '2.16.840.1.101.3.4.2.2',
+    imprint: createHash('sha384').update(cmsView(original.b).signature).digest(),
+  });
+  const signature = Buffer.from(cmsView(token).signature);
+  signature[signature.length - 1] ^= 1;
+  verify(attachT(rewriteCMS(token, { signature })), 'T', 'INVALID');
+});
 
 test('B after ordinary signer expiry without historical proof is INDETERMINATE', selected, () => {
   verify(original.b, 'B', 'INDETERMINATE', {
