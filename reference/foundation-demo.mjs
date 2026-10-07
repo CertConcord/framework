@@ -813,6 +813,11 @@ export async function runFoundationDemo({
       verification = verifyMdocSignaturePackage(bundle, trust);
     if (onComplete)
       await onComplete({
+        bundle,
+        trust,
+        timestamp,
+        enrollment: { csr, rar: identity.rar, bindingID: binding.bindingID },
+        offer,
         journal,
         issuer,
         passkeyRegistry,
