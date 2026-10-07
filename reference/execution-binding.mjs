@@ -1,3 +1,5 @@
+import { requireAuthority } from './authority-history.mjs';
+import { requireOperationAuthorities } from './control-authority.mjs';
 import {
   D,
   H,
@@ -92,6 +94,9 @@ function readBinding(envelope, trust, { active = true, at = now() } = {}) {
   requireThat(Number.isSafeInteger(at) && at >= 0, 'EXECUTION_TIME');
   requireThat(Buffer.isBuffer(envelope) && envelope.length <= 65536, 'EXECUTION_BINDING_LIMIT');
   const binding = shapeBinding(readControl(envelope, 'ExecutionBinding', trust.bindingCertificate));
+  requireAuthority(trust.authorityResolver, { certificate: trust.bindingCertificate,
+    role: 'EXECUTION_BINDING_AUTHORITY', scope: { trustDomainID: trust.trustDomainID },
+    stateTime: at, knowledgeTime: trust.knowledgeTime ?? at });
   const requirement = executionRequirement(trust.policy);
   requireThat(requirement && requirement.providerID === binding.providerID, 'EXECUTION_PROVIDER');
   requireThat(
@@ -128,6 +133,7 @@ function requestBinding({ permit, tbs, sim }, binding, trust, publicKey, at) {
     'expiresAt',
   ]);
   const activation = p.activation;
+  requireOperationAuthorities(trust, { trustDomainID: activation.trustDomainID, profileID: sim.profileID }, at, trust.knowledgeTime ?? at);
   const activationHash = validateActivation(activation, {
     tbs,
     publicKey,
@@ -205,6 +211,7 @@ export class ExecutionBindingGateway {
     policy,
     trustDomainID,
     authorize,
+    authorityResolver,
     clock = now,
   }) {
     requireThat(
@@ -222,6 +229,7 @@ export class ExecutionBindingGateway {
       receiptCertificate: Buffer.from(receiptCertificate),
       policy: copy(policy),
       trustDomainID: Buffer.from(trustDomainID),
+      authorityResolver,
     };
     this.installBinding(binding);
   }

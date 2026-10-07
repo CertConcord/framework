@@ -25,6 +25,8 @@ import { validateAdmissionAssessment } from './key-attestation.mjs';
 import { issueMdoc, verifyIssuerSigned, MDOC_CONFIG } from './mdoc.mjs';
 import { CredentialIssuer, verifyX5C, verifyStatusList } from './openid.mjs';
 import { verifyCSR } from './enrollment.mjs';
+import { snapshotIssuanceScope, issuanceRequestID, requireIssuanceAuthority } from './enrollment-scope.mjs';
+import { requireAuthority } from './authority-history.mjs';
 import { signCMS, parseCertificate } from './pki.mjs';
 import {
   readControl,
@@ -69,6 +71,8 @@ export class PersonalMdocCA extends CredentialIssuer {
     certificateProfile = 'ISO_MDOC',
     additionalNamespaces = () => ({}),
     keyBindings,
+    issuanceScope,
+    authorityResolver,
     ...options
   }) {
     super({
@@ -103,7 +107,10 @@ export class PersonalMdocCA extends CredentialIssuer {
       certificateProfile,
       additionalNamespaces,
       keyBindings,
+      issuanceScope: snapshotIssuanceScope(issuanceScope),
+      authorityResolver,
     });
+    requireThat(this.issuanceScope.representation === 'MDOC' && this.issuanceScope.issuerID === this.issuer, 'ISSUANCE_SCOPE');
   }
   metadata() {
     const m = super.metadata();
@@ -114,9 +121,11 @@ export class PersonalMdocCA extends CredentialIssuer {
     return m;
   }
   offer({ csr, rar, bindingID, preAuthorized = false, txCode }) {
+    ({ csr, rar, bindingID } = decodeCBOR(dcbor({ csr, rar, bindingID })));
     const r = readControl(rar, 'RegistrationAuthorization', this.raCertificate),
       q = verifyCSR(csr),
       b = this.bindings.active(bindingID);
+    requireIssuanceAuthority(r, { ...this, issuerCertificate: this.certificate });
     requireThat(
       !equal(keyID(q.publicKey), keyID(parseCertificate(this.sealCertificate).publicKey)) &&
         !equal(keyID(q.publicKey), keyID(parseCertificate(this.raCertificate).publicKey)),
@@ -126,11 +135,13 @@ export class PersonalMdocCA extends CredentialIssuer {
       r.schemaVersion === 1 &&
         r.audience === this.issuer &&
         r.credentialFormat === 'mso_mdoc' &&
+        equal(r.issuanceScope.trustDomainID, b.trustDomainID) &&
         equal(r.trustDomainID, b.trustDomainID) &&
         equal(r.subjectID, b.subjectID) &&
         equal(r.policyHash, b.policyHash) &&
         equal(r.csrHash, sha512(csr)) &&
         equal(r.spkiHash, sha512(q.spki)) &&
+        r.possessionMode === q.possessionMode &&
         equal(keyID(q.publicKey), b.documentKeyID) &&
         this.allowedProfiles.includes(r.profileID) &&
         (!b.profileID || r.profileID === b.profileID) &&
@@ -147,8 +158,14 @@ export class PersonalMdocCA extends CredentialIssuer {
       mode === 'PASSKEY_KEY' ? this.keyBindings.forIssuance(r.keyBindingID, { ...r, csr }) : null;
     if (keyAdmission) requireThat(equal(keyAdmission.hash, r.keyBindingHash), 'PASSKEY_RA_BINDING');
     return this.journal.transaction(() => {
-      this.journal.put('personal-mdoc-approval', b64u(r.requestID), { rarHash: sha512(rar) });
-      return super.offer({
+      const id = issuanceRequestID(r),
+        inputHash = H('MdocIssuanceOffer', { rarHash: sha512(rar), csrHash: sha512(csr), bindingID, preAuthorized, txCode: txCode ?? null }),
+        old = this.journal.get('personal-mdoc-approval', id);
+      if (old) {
+        requireThat(equal(old.value.inputHash, inputHash), 'ISSUANCE_CONFLICT');
+        return old.value.offer;
+      }
+      const offer = super.offer({
         configurationID: MDOC_CONFIG,
         subjectID: b64u(b.subjectID),
         preAuthorized,
@@ -166,11 +183,15 @@ export class PersonalMdocCA extends CredentialIssuer {
           allowed_purposes: ['DOCUMENT_SIGN'],
           policy_hash: b.policyHash,
           ra_authorization_hash: sha512(rar),
+          issuance_scope: r.issuanceScope,
           ...(keyAdmission
             ? { passkey_binding: keyAdmission.binding, passkey_binding_hash: keyAdmission.hash }
             : {}),
         },
       });
+      this.journal.put('personal-mdoc-approval', id, { inputHash, offer });
+      this.journal.put('personal-mdoc-rar', b64u(sha512(rar)), { request: r });
+      return offer;
     });
   }
   credential(params, ...rest) {
@@ -182,6 +203,12 @@ export class PersonalMdocCA extends CredentialIssuer {
   }
   mint({ offer, holderJWK, status, configurationID }) {
     requireThat(configurationID === MDOC_CONFIG, 'PERSONAL_MDOC_FORMAT');
+    const authorization = this.journal.get('personal-mdoc-rar', b64u(offer.claims.ra_authorization_hash));
+    requireThat(authorization, 'PERSONAL_MDOC_RA_AUTHORITY');
+    requireIssuanceAuthority(authorization.value.request, { ...this, issuerCertificate: this.certificate });
+    requireAuthority(this.authorityResolver, { certificate: this.sealCertificate, role: 'DOCUMENT_SEAL',
+      scope: { trustDomainID: this.issuanceScope.trustDomainID, issuerID: this.issuer, representation: 'MDOC', profileID: offer.claims.profile_id },
+      stateTime: now(), knowledgeTime: now() });
     const binding = this.bindings.active(offer.claims.device_binding_id),
       validUntil = Math.min(
         binding.expiresAt,

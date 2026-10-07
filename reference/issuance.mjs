@@ -1,4 +1,5 @@
-import { H, D, sha512, equal, requireThat, now, b64u, octet, sign } from './core.mjs';
+import { H, D, sha512, equal, requireThat, now, b64u, octet, sign, dcbor, decodeCBOR } from './core.mjs';
+import { snapshotIssuanceScope, issuanceRequestID, requireIssuanceAuthority } from './enrollment-scope.mjs';
 import { verifyCSR } from './enrollment.mjs';
 import { readControl } from './state.mjs';
 import { RRA, OID, extension, certificateFromTBS, parseCertificate } from './pki.mjs';
@@ -23,6 +24,9 @@ export class MTCIssuer {
     maxLogBytes = Number.MAX_SAFE_INTEGER,
     keyBindings,
     validatePossessionCertificate,
+    issuanceScope,
+    authorityResolver,
+    issuerCertificate,
   }) {
     requireThat(mirrors.length >= threshold, 'MTC_MIRRORS');
     Object.assign(this, {
@@ -42,7 +46,11 @@ export class MTCIssuer {
       maxLogBytes,
       keyBindings,
       validatePossessionCertificate,
+      issuanceScope: snapshotIssuanceScope(issuanceScope),
+      authorityResolver,
+      issuerCertificate,
     });
+    requireThat(this.issuanceScope.representation === 'MTC' && this.issuanceScope.issuerID === caID, 'ISSUANCE_SCOPE');
     const origin = this.caID + '.0.' + this.logNumber;
     requireThat(
       !journal.get('mtc-log', origin) || journal.get('log-migration', 'mtc:' + origin),
@@ -54,10 +62,12 @@ export class MTCIssuer {
     });
   }
   async issue({ csr, rar }) {
+    ({ csr, rar } = decodeCBOR(dcbor({ csr, rar })));
     const a = readControl(rar, 'RegistrationAuthorization', this.raCertificate),
       q = verifyCSR(csr, { validatePossessionCertificate: this.validatePossessionCertificate }),
-      id = b64u(a.requestID),
+      id = issuanceRequestID(a),
       origin = this.caID + '.0.' + this.logNumber;
+    requireIssuanceAuthority(a, this);
     requireThat(
       a.schemaVersion === 1 &&
         a.issuedAt <= now() &&
@@ -154,6 +164,7 @@ export class MTCIssuer {
       profileID: issuance.profileID,
     });
     return this.journal.transaction(() => {
+      requireIssuanceAuthority(a, this);
       if (admission) this.keyBindings.forIssuance(a.keyBindingID, { ...a, csr });
       const old = this.journal.get('mtc-issuance', id);
       if (old.value.state === 'CERTIFIED') return old.value.certificate;
