@@ -228,6 +228,31 @@ for (const representation of ['X509', 'MTC']) {
         issuer = f.makeIssuer(f.issuanceScope, f.issuerKey, { authorityResolver });
       await assert.rejects(async () => issuer.issue(), { code: reason });
     });
+
+  test(`${representation} issuer authority certificate must identify the actual signing key`, async (t) => {
+    const f = await issuanceFixture(t, representation),
+      authorityResolver = exampleAuthorityResolver({
+        trustDomainID: f.issuanceScope.trustDomainID,
+        authorities: [
+          {
+            certificate: f.raCertificate,
+            roles: ['REGISTRATION_AUTHORITY', 'ISSUER'],
+          },
+        ],
+      }),
+      issuer = f.makeIssuer(f.issuanceScope, f.issuerKey, {
+        authorityResolver,
+        issuerCertificate: f.raCertificate,
+      });
+    assert.notDeepEqual(
+      c.keyID(p.parseCertificate(f.raCertificate).publicKey),
+      f.issuanceScope.issuerKeyID,
+    );
+    await assert.rejects(
+      async () => issuer.issue(),
+      /ISSUANCE_SCOPE|AUTHORITY_IDENTITY|ISSUER.*BINDING/,
+    );
+  });
 }
 
 async function documentFixture(t, { expiredPermitAuthority = false } = {}) {
