@@ -221,6 +221,7 @@ function parseCMS(raw, content, expectedType = OID.data) {
     certificates = [],
     crls = [],
     unsupported = [];
+  const certificatesPresent = sd[at]?.tag === 0xa0;
   if (contentType !== expectedType)
     unsupported.push(result('UNSUPPORTED', 'CADES_CONTENT_TYPE_UNSUPPORTED'));
   if (sd[at]?.tag === 0xa0) {
@@ -285,6 +286,7 @@ function parseCMS(raw, content, expectedType = OID.data) {
     contentType,
     content,
     certificates,
+    certificatesPresent,
     crls,
     signed,
     unsigned,
@@ -366,7 +368,7 @@ function signingTime(value) {
 
 // Signature mathematics is deliberately evaluated even if a baseline attribute
 // or a validation object is missing. An available bad signature remains INVALID.
-function inspectSignature(parsed, failures, profile = 'CADES') {
+function inspectSignature(parsed, failures, profile = 'CADES', externalCertificates = []) {
   const isTimestamp = profile !== 'CADES';
   if (profile === 'PADES') inspectPAdESAttributes(parsed, failures);
   failures.push(...parsed.unsupported);
@@ -421,7 +423,8 @@ function inspectSignature(parsed, failures, profile = 'CADES') {
   const ess = attempt(failures, () => essBinding(parsed));
   const candidates = [];
   const unselectedIdentifier = parsed.si[1].tag === 0x80;
-  for (const cert of parsed.certificates) {
+  const certificateCandidates = union(parsed.certificates, externalCertificates);
+  for (const cert of certificateCandidates) {
     if (cert[0] !== 0x30) continue;
     const identity = attempt(failures, () => certificateIdentity(cert));
     // SKI identification remains unsupported. An exact ESS-bound certificate
@@ -446,7 +449,7 @@ function inspectSignature(parsed, failures, profile = 'CADES') {
     const replacement =
       !unselectedIdentifier &&
       signatureOID === ECDSA_SHA256 &&
-      parsed.certificates.some((raw) => {
+      certificateCandidates.some((raw) => {
         try {
           const key = new X509Certificate(raw).publicKey;
           return (
@@ -505,6 +508,9 @@ function inspectSignature(parsed, failures, profile = 'CADES') {
     attempt(failures, () => signingTime(one(parsed, SIGNING_TIME)));
   return {
     certificate: selected?.cert,
+    certificateSource: selected
+      ? includes(parsed.certificates, selected.cert) ? 'EMBEDDED' : 'EXTERNAL'
+      : undefined,
     x509: selected?.x509,
     hashOID,
     signatureOID,
@@ -515,7 +521,7 @@ function inspectSignature(parsed, failures, profile = 'CADES') {
 // Multiple signers remain outside this profile. A bounded scan still detects
 // known failures in SignerInfos whose mathematical signature suite is selected;
 // unsupported multiplicity must not conceal an available bad digest/signature.
-function inspectMultipleSigners(raw, content, expectedType, failures, profile = 'CADES') {
+function inspectMultipleSigners(raw, content, expectedType, failures, profile = 'CADES', externalCertificates = []) {
   attempt(failures, () => {
     const root = parseDER(raw),
       sd = root.children[1].children[0].children;
@@ -554,7 +560,7 @@ function inspectMultipleSigners(raw, content, expectedType, failures, profile = 
             ),
           ),
         );
-        inspectSignature(parseCMS(single, content, expectedType), failures, profile);
+        inspectSignature(parseCMS(single, content, expectedType), failures, profile, externalCertificates);
       });
     }
   });
@@ -595,7 +601,7 @@ function inspectPAdESAttributes(parsed, failures) {
 }
 
 /** Internal mathematical inspection. No path, authority or baseline verdict. */
-export function inspectAdESSignature(cms, { content, profile } = {}) {
+export function inspectAdESSignature(cms, { content, profile, externalCertificates = [] } = {}) {
   const failures = [];
   let parsed, signature;
   try {
@@ -606,8 +612,13 @@ export function inspectAdESSignature(cms, { content, profile } = {}) {
     );
     cms = Buffer.from(cms);
     content = content === undefined ? undefined : Buffer.from(content);
+    check(Array.isArray(externalCertificates) && externalCertificates.length <= 128 &&
+      externalCertificates.every(Buffer.isBuffer), 'ADES_EXTERNAL_CERTIFICATES');
+    check(profile === 'RFC3161' || externalCertificates.length === 0,
+      'ADES_EXTERNAL_CERTIFICATES_PROFILE', 'UNSUPPORTED');
+    externalCertificates = copy(externalCertificates);
     parsed = parseCMS(cms, content, profile === 'RFC3161' ? OID.tstInfo : OID.data);
-    signature = inspectSignature(parsed, failures, profile);
+    signature = inspectSignature(parsed, failures, profile, externalCertificates);
   } catch (error) {
     failures.push(record(error));
     if (error.code === 'CADES_MULTIPLE_SIGNERS') {
@@ -617,6 +628,7 @@ export function inspectAdESSignature(cms, { content, profile } = {}) {
         profile === 'RFC3161' ? OID.tstInfo : OID.data,
         failures,
         profile,
+        externalCertificates,
       );
       // EN 319 142-1 4.1(a) requires exactly one SignerInfo. Scan known
       // mathematical failures first so this PDF constraint cannot hide them.
@@ -640,9 +652,13 @@ export function prepareAdESSignature({
   signingTime: time,
   additionalSignedAttributes = [],
   algorithmProfile = 'ES256',
+  includeCertificates = true,
 }) {
-  check(['CADES', 'PADES'].includes(profile), 'ADES_PROFILE_UNSUPPORTED', 'UNSUPPORTED');
+  check(['CADES', 'PADES', 'RFC3161'].includes(profile), 'ADES_PROFILE_UNSUPPORTED', 'UNSUPPORTED');
   check(profile !== 'PADES' || detached, 'PADES_DETACHED_CONTENT_REQUIRED');
+  check(typeof includeCertificates === 'boolean' &&
+    (profile === 'RFC3161' || includeCertificates), 'ADES_CERTIFICATE_EMBEDDING');
+  check(profile !== 'RFC3161' || !detached, 'TSP_EMBEDDED_CONTENT_REQUIRED');
   check(algorithmProfile === 'ES256', 'CADES_SIGNATURE_SUITE_UNSUPPORTED', 'UNSUPPORTED');
   check(
     Buffer.isBuffer(content) && Buffer.isBuffer(certificate) && typeof detached === 'boolean',
@@ -665,8 +681,9 @@ export function prepareAdESSignature({
     .replace(/[-:T]/g, '')
     .replace('.000Z', 'Z');
   const year = Number(encodedTime.slice(0, 4));
+  const contentType = profile === 'RFC3161' ? OID.tstInfo : OID.data;
   const attrs = [
-    attribute(OID.contentType, oid(OID.data)),
+    attribute(OID.contentType, oid(contentType)),
     attribute(OID.messageDigest, octet(digest(OID.sha256, content))),
     attribute(OID.ess, seq(seq(seq(octet(digest(OID.sha256, certificate)))))),
     ...(profile === 'CADES'
@@ -702,16 +719,17 @@ export function prepareAdESSignature({
         der(
           0xa0,
           seq(
-            integer(1),
+            integer(profile === 'RFC3161' ? 3 : 1),
             set(algID(OID.sha256)),
-            seq(oid(OID.data), ...(detached ? [] : [der(0xa0, octet(content))])),
-            der(0xa0, parseDER(set(...certificates)).value),
+            seq(oid(contentType), ...(detached ? [] : [der(0xa0, octet(content))])),
+            ...(includeCertificates ? [der(0xa0, parseDER(set(...certificates)).value)] : []),
             set(si),
           ),
         ),
       );
       const failures = [];
-      inspectSignature(parseCMS(cms, content), failures, profile);
+      inspectSignature(parseCMS(cms, content, contentType), failures, profile,
+        includeCertificates ? [] : [certificate]);
       const checked = outcome(failures);
       if (checked.overall !== 'VALID') throw failure(checked.overall, checked.reason);
       return cms;
@@ -778,8 +796,8 @@ function parseTimestampInfo(raw) {
 }
 
 /** Internal RFC3161 math/schema inspection. The caller must authenticate trust. */
-export function inspectRFC3161Token(token, { request } = {}) {
-  const inspected = inspectAdESSignature(token, { profile: 'RFC3161' });
+export function inspectRFC3161Token(token, { request, externalCertificates = [] } = {}) {
+  const inspected = inspectAdESSignature(token, { profile: 'RFC3161', externalCertificates });
   const failures = [...inspected.failures],
     cms = inspected.parsed,
     signature = inspected.signature;
