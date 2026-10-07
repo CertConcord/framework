@@ -13,6 +13,7 @@ import { validateCAdESMaterial } from './cades-validation.mjs';
 const KINDS = ['INVALID', 'UNSUPPORTED', 'INDETERMINATE'];
 const MICRO = 1000000n;
 const MAX_ACCURACY = 60000000;
+const SIGNING_TIME = '1.2.840.113549.1.9.5';
 const FAILURE_BITS = {
   badAlg: 0,
   badRequest: 2,
@@ -29,6 +30,11 @@ const typed = (overall, reason, details = {}) => ({ overall, reason, ...details 
 function failure(overall, code) {
   const error = new ProtocolError(code);
   error.overall = overall;
+  return error;
+}
+function persistenceError(operationID) {
+  const error = failure('INDETERMINATE', 'TSP_PERSISTENCE_UNAVAILABLE');
+  error.operationID = Buffer.from(operationID);
   return error;
 }
 function check(condition, code, overall = 'INVALID') {
@@ -184,22 +190,28 @@ class ContextReader {
       'TSP_CLOCK_ROLLBACK',
       'INDETERMINATE',
     );
-    if (this.#journal)
-      this.#journal.transaction(() => {
-        const previous = this.#journal.get(this.#namespace, 'context');
-        check(!previous || equal(previous.value.binding, binding), 'TSP_CONTEXT_BINDING');
-        check(
-          !previous || value.knowledgeTime >= previous.value.knowledgeTime,
-          'TSP_CLOCK_ROLLBACK',
-          'INDETERMINATE',
-        );
-        this.#journal.put(
-          this.#namespace,
-          'context',
-          { binding, knowledgeTime: value.knowledgeTime },
-          previous?.revision ?? -1,
-        );
-      });
+    if (this.#journal) {
+      try {
+        this.#journal.transaction(() => {
+          const previous = this.#journal.get(this.#namespace, 'context');
+          check(!previous || equal(previous.value.binding, binding), 'TSP_CONTEXT_BINDING');
+          check(
+            !previous || value.knowledgeTime >= previous.value.knowledgeTime,
+            'TSP_CLOCK_ROLLBACK',
+            'INDETERMINATE',
+          );
+          this.#journal.put(
+            this.#namespace,
+            'context',
+            { binding, knowledgeTime: value.knowledgeTime },
+            previous?.revision ?? -1,
+          );
+        });
+      } catch (error) {
+        if (error.overall) throw error;
+        throw failure('INDETERMINATE', 'TSP_PERSISTENCE_UNAVAILABLE');
+      }
+    }
     this.#binding = binding;
     this.#last = value.knowledgeTime;
     return value;
@@ -278,8 +290,11 @@ function evaluate(requestDER, responseDER, context, prior = []) {
     checks.push(...inspected.failures);
     const parsed = inspected.parsed;
     if (parsed) {
+      // The shared CMS inspector checks optional signed signingTime syntax.
+      // This claimed time is not a timestamp proof and never selects genTime,
+      // authority state, current knowledge or an evidence-protection interval.
       for (const attr of [...parsed.signed, ...parsed.unsigned]) {
-        if (![OID.contentType, OID.messageDigest, OID.ess].includes(attr.id))
+        if (![OID.contentType, OID.messageDigest, OID.ess, SIGNING_TIME].includes(attr.id))
           checks.push(typed('UNSUPPORTED', 'TSP_ATTRIBUTE_UNSUPPORTED'));
       }
       if (request) {
@@ -472,27 +487,38 @@ class Store {
     return `${this.namespace}/${this.key(operationID)}`;
   }
   get(operationID) {
-    return this.journal.get(this.namespace, this.key(operationID));
+    try {
+      return this.journal.get(this.namespace, this.key(operationID));
+    } catch {
+      throw persistenceError(operationID);
+    }
   }
   update(operationID, value, revision) {
     this.journal.put(this.namespace, this.key(operationID), copy(value), revision);
   }
   reserve(operationID, requestDER, metadata = {}) {
-    return this.journal.transaction(() => {
-      this.journal.reserve(this.operation(operationID), hash(requestDER));
-      const current = this.get(operationID);
-      if (current) {
-        check(equal(current.value.requestDER, requestDER), 'IDEMPOTENCY_CONFLICT');
-        return { current, created: false };
-      }
-      this.update(operationID, { ...metadata, phase: 'REQUESTED', requestDER }, -1);
-      return { current: this.get(operationID), created: true };
-    });
+    try {
+      return this.journal.transaction(() => {
+        this.journal.reserve(this.operation(operationID), hash(requestDER));
+        const current = this.get(operationID);
+        if (current) {
+          check(equal(current.value.requestDER, requestDER), 'IDEMPOTENCY_CONFLICT');
+          return { current, created: false };
+        }
+        this.update(operationID, { ...metadata, phase: 'REQUESTED', requestDER }, -1);
+        return { current: this.get(operationID), created: true };
+      });
+    } catch (error) {
+      if (error.code === 'IDEMPOTENCY_CONFLICT') throw error;
+      throw persistenceError(operationID);
+    }
   }
   complete(operationID, responseDER, verification) {
     try {
       return this.journal.transaction(() => {
         const current = this.get(operationID);
+        if (current.value.candidateResponse)
+          check(equal(current.value.candidateResponse, responseDER), 'TSP_RESPONSE_CONFLICT');
         if (current.value.phase === 'COMPLETED') {
           check(equal(current.value.responseDER, responseDER), 'TSP_RESPONSE_CONFLICT');
           return view(current, operationID);
@@ -692,20 +718,24 @@ export class TimestampService {
     return this.#store.complete(operationID, responseDER, verification);
   }
   #pending(operationID, error) {
-    return this.#store.journal.transaction(() => {
-      const current = this.#store.get(operationID);
-      if (current.value.phase !== 'COMPLETED')
-        this.#store.update(
-          operationID,
-          {
-            ...current.value,
-            reason: error.code,
-            verification: persistentVerification(result([record(error)])),
-          },
-          current.revision,
-        );
-      return view(this.#store.get(operationID), operationID);
-    });
+    try {
+      return this.#store.journal.transaction(() => {
+        const current = this.#store.get(operationID);
+        if (current.value.phase !== 'COMPLETED')
+          this.#store.update(
+            operationID,
+            {
+              ...current.value,
+              reason: error.code,
+              verification: persistentVerification(result([record(error)])),
+            },
+            current.revision,
+          );
+        return view(this.#store.get(operationID), operationID);
+      });
+    } catch {
+      throw persistenceError(operationID);
+    }
   }
   async #prepare(operationID) {
     let current = this.#store.get(operationID),
@@ -729,8 +759,15 @@ export class TimestampService {
       );
     let context, reading, prepared;
     try {
+      try {
+        reading = clockReading(await this.#clock());
+      } catch (error) {
+        if (error.overall) throw error;
+        throw failure('INDETERMINATE', 'TSP_CLOCK_UNAVAILABLE');
+      }
+      // Read admission after the asynchronous clock callback. A context read
+      // before that await could miss a withdrawal before signing dispatch.
       context = await this.#context.read();
-      reading = clockReading(await this.#clock());
       const admission = admittedClock(context, reading);
       check(
         admission.policyOID === this.#policyOID &&
@@ -897,6 +934,8 @@ export class TimestampService {
     } catch (error) {
       const latest = this.#store.get(operationID);
       if (latest.value.phase !== 'REQUESTED') return view(latest, operationID);
+      if (error.code === 'TSP_PERSISTENCE_UNAVAILABLE' || !error.overall)
+        throw persistenceError(operationID);
       if (error.code === 'TSP_NOT_YET_OBSERVABLE') return this.#pending(operationID, error);
       return this.#reject(
         operationID,
@@ -1103,22 +1142,33 @@ export class TimestampClient {
     return this.#dispatch(operationID);
   }
   async #dispatch(operationID) {
-    const context = await this.#context.read();
-    const dispatch = this.#store.journal.transaction(() => {
-      const current = this.#store.get(operationID);
-      if (current.value.phase !== 'REQUESTED') return false;
-      this.#store.update(
-        operationID,
-        {
-          ...current.value,
-          phase: 'DISPATCHED',
-          sentKnowledgeTime: context.knowledgeTime,
-          maxResponseDelaySeconds: this.#delay,
-        },
-        current.revision,
-      );
-      return true;
-    });
+    let context;
+    try {
+      context = await this.#context.read();
+    } catch (error) {
+      if (error.code === 'TSP_PERSISTENCE_UNAVAILABLE') throw persistenceError(operationID);
+      throw error;
+    }
+    let dispatch;
+    try {
+      dispatch = this.#store.journal.transaction(() => {
+        const current = this.#store.get(operationID);
+        if (current.value.phase !== 'REQUESTED') return false;
+        this.#store.update(
+          operationID,
+          {
+            ...current.value,
+            phase: 'DISPATCHED',
+            sentKnowledgeTime: context.knowledgeTime,
+            maxResponseDelaySeconds: this.#delay,
+          },
+          current.revision,
+        );
+        return true;
+      });
+    } catch {
+      throw persistenceError(operationID);
+    }
     if (!dispatch) return view(this.#store.get(operationID), operationID);
     let responseDER;
     try {
@@ -1174,7 +1224,32 @@ export class TimestampClient {
     } catch (error) {
       checks.push(record(error));
     }
-    const receipt = reserved.receivedKnowledgeTime ?? context?.knowledgeTime;
+    let receipt = reserved.receivedKnowledgeTime ?? context?.knowledgeTime;
+    if (context) {
+      try {
+        const completed = this.#store.journal.transaction(() => {
+          const current = this.#store.get(operationID);
+          check(equal(current.value.candidateResponse, responseDER), 'TSP_RESPONSE_CONFLICT');
+          if (current.value.phase === 'COMPLETED') return view(current, operationID);
+          if (current.value.receivedKnowledgeTime !== undefined) {
+            receipt = current.value.receivedKnowledgeTime;
+          } else {
+            // Preserve the first trusted receive observation independently of
+            // final completion. A later commit failure must not turn recovery
+            // time into the receive time of these already retained bytes.
+            this.#store.update(
+              operationID,
+              { ...current.value, receivedKnowledgeTime: receipt },
+              current.revision,
+            );
+          }
+        });
+        if (completed) return completed;
+      } catch (error) {
+        if (error.code === 'TSP_RESPONSE_CONFLICT') throw error;
+        return this.#store.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
+      }
+    }
     if (
       receipt !== undefined &&
       receipt - reserved.sentKnowledgeTime > reserved.maxResponseDelaySeconds
@@ -1199,6 +1274,7 @@ export class TimestampClient {
     try {
       return this.#store.journal.transaction(() => {
         const current = this.#store.get(operationID);
+        check(equal(current.value.candidateResponse, responseDER), 'TSP_RESPONSE_CONFLICT');
         if (current.value.phase !== 'COMPLETED')
           this.#store.update(
             operationID,
@@ -1212,7 +1288,8 @@ export class TimestampClient {
           );
         return view(this.#store.get(operationID), operationID);
       });
-    } catch {
+    } catch (error) {
+      if (error.code === 'TSP_RESPONSE_CONFLICT') throw error;
       return this.#store.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
     }
   }
