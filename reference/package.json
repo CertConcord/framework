@@ -39,8 +39,8 @@
   "devDependencies": {
     "@jazzer.js/core": "4.0.0",
     "esbuild": "0.28.2",
-    "jose": "6.1.0",
-    "prettier": "3.6.2"
+    "jose": "6.2.12",
+    "prettier": "3.9.9"
   },
   "license": "Apache-2.0"
 }
