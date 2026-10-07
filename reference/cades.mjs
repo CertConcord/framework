@@ -357,6 +357,7 @@ function materialFor(
       stateTime,
       knowledgeTime: times.knowledgeTime,
       ...(covered ? { evidenceTime: covered.time } : {}),
+      ...(purpose === 'TSA' && coverage ? { signatureEvidenceTime: coverage.time } : {}),
       policy: copy(policy),
     });
     if (purpose === 'SIGNER' && unprovenSignerTime && stateTime === times.validationTime) {

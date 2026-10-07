@@ -238,6 +238,8 @@
   "reference/storage/schema.sql",
   "reference/test-vectors/README.md",
   "reference/test-vectors/arkg-p256.json",
+  "reference/timestamp-revocation-fixtures.mjs",
+  "reference/timestamp-revocation.test.mjs",
   "reference/timestamp.mjs",
   "reference/tpm-simulator-check.mjs",
   "reference/tpm-wire.mjs",

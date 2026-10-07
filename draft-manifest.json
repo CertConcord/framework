@@ -135,8 +135,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 16265,
-      "sha256": "93794b663821ff8e92b1aa0043a9664939227847064ae18cbf1dd7c40c033f45"
+      "bytes": 17148,
+      "sha256": "25a68eddc9904f19ab747ebcd713604b6ba2cf2f7ae1090561449a342873d49d"
     },
     {
       "path": "docs/components.md",
@@ -200,8 +200,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 12189,
-      "sha256": "37fc05432395d58910163a705e7f79f6a1b644c93aca2fa6b4410b02d0d80121"
+      "bytes": 12591,
+      "sha256": "cc0698bc997abb9d93d9f38df7e568957cee3fc7a25bd6ec7dd5af23743c3798"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -250,8 +250,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 10742,
-      "sha256": "8683958590d65610415b6c496e25ad9937c8c8ab7a6fe5ff217eda3985ccdeb4"
+      "bytes": 10836,
+      "sha256": "d7903a608fa01803aa10aee86217bf14b4eaf836cef7ecedfe3d5416aca0337e"
     },
     {
       "path": "reference/README.md",
@@ -270,8 +270,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 40118,
-      "sha256": "900f19dceede28f573909f2669702780ea26110eee0c4714d4a02c60fd6ca3d5"
+      "bytes": 40392,
+      "sha256": "e579dac188ba8cc5005c49668ba414625281943d9677ed95ecf407c223686c92"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -385,13 +385,13 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 18738,
-      "sha256": "1433efe207dfc86bc13a1df521554d3edf4092984e7ceaff1b001146bc44b727"
+      "bytes": 19793,
+      "sha256": "420ccf8bdcad051fd0c1cd2a0b80a369595883ff57ffd826ee436ec31cdb9e69"
     },
     {
       "path": "reference/cades.mjs",
-      "bytes": 29964,
-      "sha256": "4637abcb4cfad1e38a2bbbd7bd9b9a3059a796154977b5dac112393c740d07f5"
+      "bytes": 30054,
+      "sha256": "cd49aca0b03fcce5fe62728dd3d912ca9e2262a72ebe09f1c2a7d697216d4d83"
     },
     {
       "path": "reference/cades.test.mjs",
@@ -950,8 +950,8 @@
     },
     {
       "path": "reference/pades.mjs",
-      "bytes": 26293,
-      "sha256": "d51f1874576c89d3620742d652f77658b690d70da8364f846cff12646bdd4237"
+      "bytes": 26531,
+      "sha256": "bf340cd17558c1f5a227c8d9b3f4c6fcab8b1186e3458b2f075c5873456449fb"
     },
     {
       "path": "reference/pades.test.mjs",
@@ -1197,6 +1197,16 @@
       "path": "reference/test-vectors/arkg-p256.json",
       "bytes": 2645,
       "sha256": "6b77c74c690f7c4eef935be49988290f216115c254e41fc13796eeb97dd909e4"
+    },
+    {
+      "path": "reference/timestamp-revocation-fixtures.mjs",
+      "bytes": 1817,
+      "sha256": "844bae040dfed8cc3d8b43d1f137a8bad1104c9e7f91b5f69fc44024e63f87d0"
+    },
+    {
+      "path": "reference/timestamp-revocation.test.mjs",
+      "bytes": 8983,
+      "sha256": "5b4356f93ff8fb34b0b3f66ae2643298a55bb040b1a4be1c1a01b07a4003adcf"
     },
     {
       "path": "reference/timestamp.mjs",
