@@ -148,6 +148,7 @@
   "reference/openid.mjs",
   "reference/openssl.test.mjs",
   "reference/package.json",
+  "reference/parser-boundaries.test.mjs",
   "reference/passkey-credentials.mjs",
   "reference/passkey-demo.mjs",
   "reference/passkey.test.mjs",

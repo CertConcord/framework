@@ -48,7 +48,10 @@ export function cosePublicKey(cose) {
 export function clientData(raw, { type, challenge, origin }) {
   const json = parseJSON(new TextDecoder('utf-8', { fatal: true }).decode(raw), { maxBytes: 8192 });
   requireThat(
-    json.type === type &&
+    json !== null &&
+      typeof json === 'object' &&
+      !Array.isArray(json) &&
+      json.type === type &&
       json.challenge === b64u(challenge) &&
       json.origin === origin &&
       (!Object.hasOwn(json, 'crossOrigin') || json.crossOrigin === false) &&
