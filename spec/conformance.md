@@ -37,4 +37,4 @@ A stable version can be proposed only after:
 6. Attribution, contribution records, specification scope and actual patent commitments are reported without inventing signatories or grants.
 7. Maintainers deliberately approve an immutable candidate and its supported scope. Local test success does not automatically promote a draft or create a release.
 
-Other application tracks can reach their own milestones while sharing the same core. Incomplete S/MIME or standalone timestamp profiles do not redefine the document baseline, and document completion must not be advertised as those profiles' completion.
+The [standalone timestamp application](../docs/timestamp-application.md) has a selected RFC 3161 request, issuance, verification and durable recovery contract. Its P-256/direct-root/full-CRL profile uses explicit current trust and clock admission. Operational time assurance, assessed custody and a second complete independent implementation remain separate obligations. S/MIME remains an incomplete application profile. These applications share the same core and have their own conformance boundaries.

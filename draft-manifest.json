@@ -90,8 +90,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 10247,
-      "sha256": "c6810135ac07e86de4a65ef605294df2fe2991f0094e69553cd9842032c18df6"
+      "bytes": 10403,
+      "sha256": "7204800ac43dd2bbf2d942f9e8b94ad3a26880ba803ebc5607b5627201fc4d0b"
     },
     {
       "path": "SECURITY.md",
@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 30434,
-      "sha256": "4b34a33bdf4e8837ac9e1301033072771ff9080dfb397cebdc95871c543cc8fc"
+      "bytes": 32542,
+      "sha256": "0bc271fd9ea8f5bcb9f3eb49073db6be8e9059be8484b7f1360b6e770400be2d"
     },
     {
       "path": "docs/apple-identity.md",
@@ -224,6 +224,11 @@
       "sha256": "a795e2c887f9c071797c1ffc1cd9b08818bf25c13882d39fc130e501c5f1b5ea"
     },
     {
+      "path": "docs/timestamp-application.md",
+      "bytes": 15525,
+      "sha256": "aa8122c4498ad1eae8cfcc977adffc1c8b9351d28a5f4e4df407a718f606fe4d"
+    },
+    {
       "path": "docs/upstream-baseline.md",
       "bytes": 28442,
       "sha256": "48c7bc307cdbb7f85a029bace6795c2dea7ab78ac5ab11ef12ed3e112fdb4f27"
@@ -250,13 +255,13 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 10836,
-      "sha256": "d7903a608fa01803aa10aee86217bf14b4eaf836cef7ecedfe3d5416aca0337e"
+      "bytes": 11303,
+      "sha256": "8a939c17681616f4cfae801982ceb36b9fd2a4def159c34f8e33a66499ec777e"
     },
     {
       "path": "reference/README.md",
-      "bytes": 4137,
-      "sha256": "4be177ab2966f4d4dcb58844ca4c3bde6b6864196c499ff3e740b4d9ed4e078b"
+      "bytes": 4369,
+      "sha256": "4d4fcaad094295fa02408598bb0d7d24cdafee6b8566c56555748ed215521da2"
     },
     {
       "path": "reference/acme.mjs",
@@ -270,8 +275,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 40392,
-      "sha256": "e579dac188ba8cc5005c49668ba414625281943d9677ed95ecf407c223686c92"
+      "bytes": 41953,
+      "sha256": "056ad6559d8271a0072e51dc5e18cbb75d7566b0d5afd6a2d8659516342b1924"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -280,8 +285,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 31027,
-      "sha256": "de9b1c4e103640b6c44aefd0bea2c1c21b58c62bb9b76b679a2040d370064604"
+      "bytes": 32505,
+      "sha256": "db968d1494cd3b28f84fa7df1b40ed19147536ba1ec9d38cdb2e378c8e246d22"
     },
     {
       "path": "reference/annex-verifier.mjs",
@@ -1199,6 +1204,41 @@
       "sha256": "6b77c74c690f7c4eef935be49988290f216115c254e41fc13796eeb97dd909e4"
     },
     {
+      "path": "reference/timestamp-application-api.test.mjs",
+      "bytes": 1067,
+      "sha256": "36117559bb85599ea24b5f80f94e94238699831cf8f996ef2f43fbb76422f65d"
+    },
+    {
+      "path": "reference/timestamp-application-fixtures.mjs",
+      "bytes": 5134,
+      "sha256": "ff2f8d248cb87f50d993d5d450d1ef5d0e20ed0e4d12441bdd93c286848cfe3b"
+    },
+    {
+      "path": "reference/timestamp-client.test.mjs",
+      "bytes": 15712,
+      "sha256": "d67c6fda50bcb30ae9c4564d720846468401b58da54d9cce5912ccaa3ec6ce73"
+    },
+    {
+      "path": "reference/timestamp-crash-fixture.mjs",
+      "bytes": 2138,
+      "sha256": "6f33ae4b3aaac9a7a6a09a3c27df54c7e4531fe97c2cdc4b402de4b081660c90"
+    },
+    {
+      "path": "reference/timestamp-durability.test.mjs",
+      "bytes": 5185,
+      "sha256": "564c15b2e99c4e55dacdb5ad4e37f4bbcbd9a0a0ec4f9437ebc578f885c5cb54"
+    },
+    {
+      "path": "reference/timestamp-protocol.mjs",
+      "bytes": 13818,
+      "sha256": "964b8f1f828bf763411c34e6fc73179f51e4068b3869e35d82fe2bb346ec6b70"
+    },
+    {
+      "path": "reference/timestamp-protocol.test.mjs",
+      "bytes": 13386,
+      "sha256": "3dc722d956789b3aea43c05368f46d82f1397a3aaa2973b129047dd2f8635351"
+    },
+    {
       "path": "reference/timestamp-revocation-fixtures.mjs",
       "bytes": 1817,
       "sha256": "844bae040dfed8cc3d8b43d1f137a8bad1104c9e7f91b5f69fc44024e63f87d0"
@@ -1207,6 +1247,21 @@
       "path": "reference/timestamp-revocation.test.mjs",
       "bytes": 8983,
       "sha256": "5b4356f93ff8fb34b0b3f66ae2643298a55bb040b1a4be1c1a01b07a4003adcf"
+    },
+    {
+      "path": "reference/timestamp-service.mjs",
+      "bytes": 48962,
+      "sha256": "fb14fc94bc6ec90a70d75d04560827ecb45cbbdafbd1858409b9d36d58760a81"
+    },
+    {
+      "path": "reference/timestamp-service.test.mjs",
+      "bytes": 21479,
+      "sha256": "a40258b36f2f9938a21311470a2a40a590ec148d5bdab90ff931b39ca1ae97b8"
+    },
+    {
+      "path": "reference/timestamp-verifier.test.mjs",
+      "bytes": 16081,
+      "sha256": "eaa7818f743a0a8ee76e736e3710c5354be61abf12bd1e3c1d478928142000b7"
     },
     {
       "path": "reference/timestamp.mjs",
@@ -1360,13 +1415,13 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 27382,
-      "sha256": "7ecea328199d84ba53e2c7aadc8811faa0dfdcbed627fd1451f2f3e6744932f8"
+      "bytes": 28720,
+      "sha256": "7ff402f30f2cfbf011732168bebc35f421abcdd9b5ddbaecc1ac62fb41c63650"
     },
     {
       "path": "spec/conformance.md",
-      "bytes": 7191,
-      "sha256": "5b1111b653b18f591fb93c7aa96d63ce28f4e0929fcfb4af3efd3f9d99f532b4"
+      "bytes": 7441,
+      "sha256": "f067ae4c25cbc5d655b97e242786a10c1d34cdbd8d723c389433614a1fa8e35f"
     },
     {
       "path": "spec/document-baseline.md",

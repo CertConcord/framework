@@ -471,6 +471,31 @@
       "downgradeForbidden": true
     },
     {
+      "id": "certconcord-timestamp-application-v1",
+      "name": "Standalone RFC 3161 timestamp application",
+      "version": "1.0.0",
+      "wireProfile": "RFC 3161 and RFC 5816 DER requests/responses; single P-256/SHA-256 TSU signer; SHA-256 ESSCertIDv2; SHA-256/SHA-512 imprints; explicit integral microsecond accuracy",
+      "modules": [
+        "timestamp-protocol.mjs",
+        "timestamp-service.mjs",
+        "ades-cms.mjs",
+        "cades-validation.mjs"
+      ],
+      "tests": [
+        "timestamp-application-api.test.mjs",
+        "timestamp-protocol.test.mjs",
+        "timestamp-verifier.test.mjs",
+        "timestamp-service.test.mjs",
+        "timestamp-client.test.mjs",
+        "timestamp-durability.test.mjs"
+      ],
+      "sources": ["rfc3161", "rfc5816", "rfc5652", "rfc5035", "rfc5280", "adesValidation"],
+      "inputSemantics": "Exact standard request and response bytes; externally fixed trust/clock context; actual knowledge time and TIMESTAMP_APPLICATION purpose; immutable durable operation reservations and explicit reconciliation",
+      "environment": "Node.js 24.15+; SQLite or compatible synchronous Journal; explicit admitted signer, clock, root, authority/status policy and finite cryptographic deadlines; OpenSSL 3.6.5 fixture exchange",
+      "limits": "docs/timestamp-application.md; 64 KiB requests, 1 MiB responses, direct-root/full-CRL profile, 60-second maximum uncertainty; no implicit historical proof, production time/custody assurance or automatic network retry",
+      "downgradeForbidden": true
+    },
+    {
       "id": "certconcord-rfc3161-v1",
       "name": "RFC 3161",
       "version": "1.0.0",

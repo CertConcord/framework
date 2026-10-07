@@ -150,12 +150,12 @@ for (const status of [0, 1])
     const response = encodeTimestampResponse({
       status,
       tokenDER: token,
-      statusStrings: ['Accordé', '时间戳'],
+      statusStrings: ['Accord\u00e9', '\u65f6\u95f4\u6233'],
     });
     const parsed = parseTimestampResponse(response);
     assert.equal(parsed.status, status);
     assert.deepEqual(parsed.tokenDER, token);
-    assert.deepEqual(parsed.statusStrings, ['Accordé', '时间戳']);
+    assert.deepEqual(parsed.statusStrings, ['Accord\u00e9', '\u65f6\u95f4\u6233']);
     assert.deepEqual(parsed.failureBits, []);
     assert.deepEqual(parsed.diagnostics, []);
   });
