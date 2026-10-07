@@ -628,7 +628,6 @@ export async function preparePAdESAugmentation(
     initialFailures = [];
   structuralDecisions(inspected, initialFailures);
   const approvals = inspected.signatures.filter((entry) => entry.kind === 'SIGNATURE');
-  check(approvals.length === 1, 'PADES_APPROVAL_COUNT', 'UNSUPPORTED');
   for (const approval of approvals) {
     const checked = inspectAdESSignature(approval.cms, {
       profile: 'PADES',
@@ -636,6 +635,9 @@ export async function preparePAdESAugmentation(
     });
     initialFailures.push(...checked.failures);
   }
+  attempt(initialFailures, () =>
+    check(approvals.length === 1, 'PADES_APPROVAL_COUNT', 'UNSUPPORTED'),
+  );
   const initial = outcome(initialFailures);
   if (initial.overall !== 'VALID') throw failure(initial.overall, initial.reason);
   const certificates = validationMaterial.certificates ?? [],
