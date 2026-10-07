@@ -227,7 +227,9 @@ test(
       signature[signature.length - 1] ^= 1;
       return rewriteCMS(raw, { signature });
     });
-    await verify(corrupt);
+    const result = await decision(api, f, corrupt);
+    expectOverall(result, 'INVALID');
+    assert.equal(result.reason, 'CADES_SIGNATURE_INVALID');
   },
 );
 

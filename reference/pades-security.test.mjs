@@ -367,7 +367,7 @@ test(
   'a timestamp before DSS cannot supply historical POE for that later validation material',
   selected,
   async () => {
-    const after = independentDSS(original.t, f.material());
+    const after = independentDSS(original.t, f.material(f.crl({ nextUpdate: epoch + 25 })));
     const policy = f.policy({
       currentMaterial: f.material(
         f.crl({ number: 2, thisUpdate: epoch + 150, nextUpdate: epoch + 1000 }),
@@ -388,12 +388,17 @@ test(
       at: epoch + 80,
       tokenOptions: { authority: f.successor },
     }).pdf;
-    const policy = f.policy({
-      currentMaterial: f.material(
-        f.crl({ number: 2, thisUpdate: epoch + 150, nextUpdate: epoch + 1000 }),
-      ),
+    const currentCRL = f.crl({ number: 2, thisUpdate: epoch + 150, nextUpdate: epoch + 1000 });
+    const currentDSS = independentDSS(renewed, {
+      certificates: f.material().certificates,
+      crls: [...f.material().crls, currentCRL],
     });
-    await verify(renewed, 'LTA', 'VALID', {
+    const currentProof = independentTimestamp(f, currentDSS, {
+      at: epoch + 160,
+      tokenOptions: { authority: f.successor },
+    }).pdf;
+    const policy = f.policy({ currentMaterial: f.material(currentCRL) });
+    await verify(currentProof, 'LTA', 'VALID', {
       policy,
       validationTime: epoch + 200,
       knowledgeTime: epoch + 200,
