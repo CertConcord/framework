@@ -1,5 +1,5 @@
 import { X509Certificate, createHash, createPublicKey } from 'node:crypto';
-import { ProtocolError, parseDER, intValue, equal, keyID, dcbor } from './core.mjs';
+import { ProtocolError, parseDER, intValue, equal, dcbor } from './core.mjs';
 import { OID } from './pki.mjs';
 import {
   parseTimestampRequest,
@@ -450,9 +450,16 @@ class Store {
   constructor(journal, kind, identity) {
     check(
       journal &&
-        ['get', 'put', 'transaction', 'reserve', 'complete', 'uncertain', 'reconcile'].every(
-          (method) => typeof journal[method] === 'function',
-        ),
+        [
+          'get',
+          'list',
+          'put',
+          'transaction',
+          'reserve',
+          'complete',
+          'uncertain',
+          'reconcile',
+        ].every((method) => typeof journal[method] === 'function'),
       'TSP_JOURNAL_REQUIRED',
     );
     this.journal = journal;
@@ -483,39 +490,66 @@ class Store {
     });
   }
   complete(operationID, responseDER, verification) {
-    return this.journal.transaction(() => {
-      const current = this.get(operationID);
-      if (current.value.phase === 'COMPLETED') {
+    try {
+      return this.journal.transaction(() => {
+        const current = this.get(operationID);
+        if (current.value.phase === 'COMPLETED') {
+          check(equal(current.value.responseDER, responseDER), 'TSP_RESPONSE_CONFLICT');
+          return view(current, operationID);
+        }
+        this.update(
+          operationID,
+          {
+            ...current.value,
+            phase: 'COMPLETED',
+            responseDER,
+            verification: persistentVerification(verification),
+          },
+          current.revision,
+        );
+        this.journal.reconcile(this.operation(operationID), responseDER);
+        return view(this.get(operationID), operationID);
+      });
+    } catch (error) {
+      if (error.code === 'TSP_RESPONSE_CONFLICT') throw error;
+      // A commit can succeed before its acknowledgement fails. Only an exact
+      // durable readback can establish completion after such a failure.
+      let current;
+      try {
+        current = this.get(operationID);
+      } catch {}
+      if (current?.value.phase === 'COMPLETED') {
         check(equal(current.value.responseDER, responseDER), 'TSP_RESPONSE_CONFLICT');
         return view(current, operationID);
       }
-      this.update(
-        operationID,
-        {
-          ...current.value,
-          phase: 'COMPLETED',
-          responseDER,
-          verification: persistentVerification(verification),
-        },
-        current.revision,
-      );
-      this.journal.reconcile(this.operation(operationID), responseDER);
-      return view(this.get(operationID), operationID);
-    });
+      return this.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
+    }
   }
   uncertain(operationID, reason) {
-    return this.journal.transaction(() => {
-      const current = this.get(operationID);
-      if (current?.value.phase !== 'COMPLETED') {
-        this.update(
-          operationID,
-          { ...current.value, phase: 'UNKNOWN_EXECUTION', reason },
-          current.revision,
+    try {
+      return this.journal.transaction(() => {
+        const current = this.get(operationID);
+        if (current && current.value.phase !== 'COMPLETED') {
+          this.update(
+            operationID,
+            { ...current.value, phase: 'UNKNOWN_EXECUTION', reason },
+            current.revision,
+          );
+          this.journal.uncertain(this.operation(operationID));
+        }
+        return (
+          view(this.get(operationID), operationID) ??
+          Object.freeze(copy({ operationID, state: 'UNKNOWN_EXECUTION', reason }))
         );
-        this.journal.uncertain(this.operation(operationID));
-      }
-      return view(this.get(operationID), operationID);
-    });
+      });
+    } catch {
+      let current;
+      try {
+        current = this.get(operationID);
+      } catch {}
+      if (current?.value.phase === 'COMPLETED') return view(current, operationID);
+      return Object.freeze(copy({ operationID, state: 'UNKNOWN_EXECUTION', reason }));
+    }
   }
 }
 
@@ -645,9 +679,15 @@ export class TimestampService {
   }
   #reject(operationID, bit, error) {
     const responseDER = encodeTimestampResponse({ status: 2, failureBits: [bit] });
+    let current;
+    try {
+      current = this.#store.get(operationID);
+    } catch {
+      return this.#store.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
+    }
     const verification = result([record(error)], {
       protocol: { status: 2, statusStrings: [], failureBits: [bit] },
-      requestDER: this.#store.get(operationID).value.requestDER,
+      requestDER: current.value.requestDER,
     });
     return this.#store.complete(operationID, responseDER, verification);
   }
@@ -734,6 +774,35 @@ export class TimestampService {
           upper < BigInt(material.validUntil) * MICRO,
         'CADES_PROTECTION_GAP',
       );
+      const first = Number(lower / MICRO),
+        last = Math.min(Number(upper / MICRO), context.knowledgeTime),
+        rootCertificate = material.usedCertificates.find((raw) => !equal(raw, this.#certificate));
+      for (const stateTime of new Set([first, last])) {
+        const edge = validateCAdESMaterial({
+          certificate: this.#certificate,
+          certificates: this.#certificates,
+          purpose: 'TSA',
+          stateTime,
+          knowledgeTime: context.knowledgeTime,
+          policy: context.policy,
+        });
+        if (edge.overall !== 'VALID') throw failure(edge.overall, edge.reason);
+      }
+      for (let stateTime = first; stateTime <= last; stateTime++) {
+        for (const [certificate, role] of [
+          [this.#certificate, 'TIMESTAMP_AUTHORITY'],
+          [rootCertificate, 'ISSUER'],
+        ]) {
+          const decision = authorityDecision(
+            context.policy,
+            certificate,
+            role,
+            stateTime,
+            context.knowledgeTime,
+          );
+          if (decision.overall !== 'VALID') throw failure(decision.overall, decision.reason);
+        }
+      }
       const created = this.#store.journal.transaction(() => {
         current = this.#store.get(operationID);
         if (current.value.phase !== 'REQUESTED') return false;
@@ -745,8 +814,37 @@ export class TimestampService {
           'TSP_CLOCK_ROLLBACK',
           'INDETERMINATE',
         );
-        const previousSerial = this.#store.journal.get(this.#store.namespace, 'serial'),
-          serial = previousSerial ? BigInt(previousSerial.value.value) + 1n : 1n;
+        const previousSerial = this.#store.journal.get(this.#store.namespace, 'serial');
+        check(
+          !previousSerial ||
+            (typeof previousSerial.value.value === 'string' &&
+              /^[1-9][0-9]{0,48}$/.test(previousSerial.value.value)),
+          'TSP_SERIAL_STATE_INCONSISTENT',
+          'INDETERMINATE',
+        );
+        const previousValue = previousSerial ? BigInt(previousSerial.value.value) : 0n,
+          serial = previousValue + 1n;
+        const existingSerials = new Set();
+        let largestSerial = 0n;
+        for (const { id: operationKey } of this.#store.journal.list(this.#store.namespace)) {
+          if (!/^[a-f0-9]{64}$/.test(operationKey)) continue;
+          const record = this.#store.journal.get(this.#store.namespace, operationKey)?.value;
+          if (record?.serial === undefined) continue;
+          check(
+            typeof record.serial === 'string' && /^[1-9][0-9]{0,48}$/.test(record.serial),
+            'TSP_SERIAL_STATE_INCONSISTENT',
+            'INDETERMINATE',
+          );
+          const used = BigInt(record.serial);
+          check(
+            used > 0n && used < serial && !existingSerials.has(record.serial),
+            'TSP_SERIAL_STATE_INCONSISTENT',
+            'INDETERMINATE',
+          );
+          existingSerials.add(record.serial);
+          if (used > largestSerial) largestSerial = used;
+        }
+        check(largestSerial === previousValue, 'TSP_SERIAL_STATE_INCONSISTENT', 'INDETERMINATE');
         check(serial < 1n << 160n, 'TSP_SERIAL_EXHAUSTED', 'INDETERMINATE');
         const info = encodeTSTInfo({
           policyOID: this.#policyOID,
@@ -862,7 +960,12 @@ export class TimestampService {
     });
   }
   async #release(operationID) {
-    const reserved = copy(this.#store.get(operationID).value);
+    let reserved;
+    try {
+      reserved = copy(this.#store.get(operationID).value);
+    } catch {
+      return this.#store.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
+    }
     if (reserved.phase === 'COMPLETED') return view(reserved, operationID);
     check(reserved.tokenDER, 'TSP_SIGNATURE_REQUIRED', 'INDETERMINATE');
     let context;
@@ -871,6 +974,21 @@ export class TimestampService {
       context = await this.#context.read();
       const admission = admittedClock(context, reserved.clockReading);
       check(admission.policyOID === reserved.policyOID, 'TSP_TIMESTAMP_POLICY');
+      // Publishing a newly issued response is a live service action. Historical
+      // acceptance of an already issued token is handled by the public verifier;
+      // it does not authorize a service whose admission changed while signing.
+      checks.push(
+        copy(
+          validateCAdESMaterial({
+            certificate: reserved.certificate,
+            certificates: reserved.certificates,
+            purpose: 'TSA',
+            stateTime: context.knowledgeTime,
+            knowledgeTime: context.knowledgeTime,
+            policy: context.policy,
+          }),
+        ),
+      );
     } catch (error) {
       checks.push(record(error));
     }
@@ -894,21 +1012,25 @@ export class TimestampService {
         FAILURE_BITS.badRequest,
         failure(verification.overall, verification.reason),
       );
-    return this.#store.journal.transaction(() => {
-      const current = this.#store.get(operationID);
-      if (current.value.phase !== 'COMPLETED')
-        this.#store.update(
-          operationID,
-          {
-            ...current.value,
-            phase: 'SIGNED_PENDING',
-            verification: persistentVerification(verification),
-            reason: verification.reason,
-          },
-          current.revision,
-        );
-      return view(this.#store.get(operationID), operationID);
-    });
+    try {
+      return this.#store.journal.transaction(() => {
+        const current = this.#store.get(operationID);
+        if (current.value.phase !== 'COMPLETED')
+          this.#store.update(
+            operationID,
+            {
+              ...current.value,
+              phase: 'SIGNED_PENDING',
+              verification: persistentVerification(verification),
+              reason: verification.reason,
+            },
+            current.revision,
+          );
+        return view(this.#store.get(operationID), operationID);
+      });
+    } catch {
+      return this.#store.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
+    }
   }
   async reconcile(options) {
     fields(options, ['operationID', 'signature'], ['operationID']);
@@ -931,8 +1053,14 @@ export class TimestampService {
       // may perform the initial preparation; it is not a replay of a signed op.
       return this.#prepare(operationID);
     }
-    if (signature !== undefined) this.#attachSignature(operationID, signature);
-    else if (!current.value.tokenDER) return view(current, operationID);
+    if (signature !== undefined) {
+      try {
+        this.#attachSignature(operationID, signature);
+      } catch (error) {
+        if (error.overall === 'INVALID') throw error;
+        return this.#store.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
+      }
+    } else if (!current.value.tokenDER) return view(current, operationID);
     return this.#release(operationID);
   }
 }
@@ -1008,30 +1136,36 @@ export class TimestampClient {
   }
   async #accept(operationID, responseDER) {
     // Retain bytes before any post-receive context callback can fail or mutate.
-    this.#store.journal.transaction(() => {
-      const current = this.#store.get(operationID);
-      if (current.value.phase === 'COMPLETED') {
-        check(equal(current.value.responseDER, responseDER), 'TSP_RESPONSE_CONFLICT');
-        return;
-      }
-      const changed =
-        current.value.candidateResponse && !equal(current.value.candidateResponse, responseDER);
-      if (changed) {
-        const previous = parseTimestampResponse(current.value.candidateResponse);
-        check(previous.status === 3, 'TSP_RESPONSE_CONFLICT');
-      }
-      this.#store.update(
-        operationID,
-        {
-          ...current.value,
-          phase: 'RECEIVED',
-          candidateResponse: responseDER,
-          receivedKnowledgeTime: changed ? undefined : current.value.receivedKnowledgeTime,
-        },
-        current.revision,
-      );
-    });
-    const reserved = this.#store.get(operationID).value;
+    let reserved;
+    try {
+      this.#store.journal.transaction(() => {
+        const current = this.#store.get(operationID);
+        if (current.value.phase === 'COMPLETED') {
+          check(equal(current.value.responseDER, responseDER), 'TSP_RESPONSE_CONFLICT');
+          return;
+        }
+        const changed =
+          current.value.candidateResponse && !equal(current.value.candidateResponse, responseDER);
+        if (changed) {
+          const previous = parseTimestampResponse(current.value.candidateResponse);
+          check(previous.status === 3, 'TSP_RESPONSE_CONFLICT');
+        }
+        this.#store.update(
+          operationID,
+          {
+            ...current.value,
+            phase: 'RECEIVED',
+            candidateResponse: responseDER,
+            receivedKnowledgeTime: changed ? undefined : current.value.receivedKnowledgeTime,
+          },
+          current.revision,
+        );
+      });
+      reserved = this.#store.get(operationID).value;
+    } catch (error) {
+      if (error.code === 'TSP_RESPONSE_CONFLICT') throw error;
+      return this.#store.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
+    }
     if (reserved.phase === 'COMPLETED') return view(reserved, operationID);
     let context;
     const checks = [];
@@ -1062,21 +1196,25 @@ export class TimestampClient {
         !context ||
         verification.reason === 'TSP_NOT_YET_OBSERVABLE');
     if (!pending) return this.#store.complete(operationID, responseDER, verification);
-    return this.#store.journal.transaction(() => {
-      const current = this.#store.get(operationID);
-      if (current.value.phase !== 'COMPLETED')
-        this.#store.update(
-          operationID,
-          {
-            ...current.value,
-            receivedKnowledgeTime: receipt,
-            verification: persistentVerification(verification),
-            reason: verification.reason,
-          },
-          current.revision,
-        );
-      return view(this.#store.get(operationID), operationID);
-    });
+    try {
+      return this.#store.journal.transaction(() => {
+        const current = this.#store.get(operationID);
+        if (current.value.phase !== 'COMPLETED')
+          this.#store.update(
+            operationID,
+            {
+              ...current.value,
+              receivedKnowledgeTime: receipt,
+              verification: persistentVerification(verification),
+              reason: verification.reason,
+            },
+            current.revision,
+          );
+        return view(this.#store.get(operationID), operationID);
+      });
+    } catch {
+      return this.#store.uncertain(operationID, 'TSP_PERSISTENCE_OUTCOME_UNKNOWN');
+    }
   }
   async reconcile(options) {
     fields(options, ['operationID', 'responseDER'], ['operationID', 'responseDER']);
