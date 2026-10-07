@@ -1,8 +1,17 @@
 import { requireAuthority, AuthorityError } from './authority-history.mjs';
-import { requireThat } from './core.mjs';
 
-export function requireAuthorities(resolver, queries, unavailable = []) {
-  const failures = [];
+export function collectAuthorityFailure(check, failures) {
+  try {
+    return check();
+  } catch (error) {
+    if (!(error instanceof AuthorityError)) throw error;
+    failures.push(error);
+    return undefined;
+  }
+}
+
+export function requireAuthorities(resolver, queries, unavailable = [], priorFailures = []) {
+  const failures = [...priorFailures];
   for (const query of queries) {
     try {
       requireAuthority(resolver, query);
@@ -16,7 +25,8 @@ export function requireAuthorities(resolver, queries, unavailable = []) {
     failures.find((error) => error.overall === 'UNSUPPORTED') ??
     failures[0];
   if (failure?.overall === 'INVALID') throw failure;
-  requireThat(unavailable.length === 0, unavailable[0]);
+  if (unavailable.length)
+    throw new AuthorityError({ overall: 'INDETERMINATE', reason: unavailable[0] });
   if (failure) throw failure;
 }
 

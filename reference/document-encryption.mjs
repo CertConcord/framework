@@ -98,6 +98,11 @@ export function admitDocumentRecipient({ certificate, rar, status }, trust, at =
       equal(selectedScope.issuerKeyID, keyID(issuerKey)),
     'ISSUANCE_SCOPE',
   );
+  if (trust.issuerCertificate)
+    requireThat(
+      equal(keyID(parseCertificate(trust.issuerCertificate).publicKey), keyID(issuerKey)),
+      'ISSUER_KEY_BINDING',
+    );
   requireAuthorities(trust.authorityResolver, [
     {
       certificate: trust.raCertificate,

@@ -32,7 +32,11 @@ import {
   requireIssuanceAuthority,
 } from './enrollment-scope.mjs';
 import { requireAuthority } from './authority-history.mjs';
-import { operationAuthorityQueries, requireAuthorities } from './control-authority.mjs';
+import {
+  operationAuthorityQueries,
+  requireAuthorities,
+  collectAuthorityFailure,
+} from './control-authority.mjs';
 import { signCMS, parseCertificate } from './pki.mjs';
 import {
   readControl,
@@ -701,7 +705,8 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       at <= knowledgeTime,
     'MDOC_ECP_POLICY',
   );
-  const authorityQueries = [];
+  const authorityQueries = [],
+    authorityFailures = [];
   const verifyState = (stateTime) => {
     const inspected = inspectPersonalMdoc(value.PersonalMdoc, {
       ...trust,
@@ -807,84 +812,92 @@ export function verifyMdocSignaturePackage(bundle, trust) {
   requireThat(passkey === (v.documentKeyMode === 'PASSKEY_KEY'), 'MDOC_ECP_PASSKEY_PROFILE');
   if (passkey) {
     const evidence = decodeCBOR(value.PasskeyRawEvidence);
-    verifyPasskeyOperation(
-      {
-        permit: value.OperationPermit,
-        tbs: signed.tbs,
-        signature: signed.signature,
-        assertion: evidence.assertion,
-        receipt: value.ExecutionReceipt,
-        binding: v.claims.passkey_binding,
-        registration: {
-          ...evidence.registration,
-          publicKey: publicFromDER(evidence.registration.publicKeyDER),
-        },
-        credential: value.PersonalMdoc,
-        seal: value.CredentialSeal,
-      },
-      {
-        authorityResolver: trust.authorityResolver,
-        knowledgeTime,
-        permitCertificate: trust.permitCertificate,
-        receiptCertificate: trust.receiptCertificate,
-        mdocVerifier: () => v,
-        audience: policy.audience,
-        at,
-        status: ({ binding }) =>
-          typeof trust.passkeyStatus === 'function' &&
-          trust.passkeyStatus(binding, { at, knowledgeTime }) === true,
-      },
+    collectAuthorityFailure(
+      () =>
+        verifyPasskeyOperation(
+          {
+            permit: value.OperationPermit,
+            tbs: signed.tbs,
+            signature: signed.signature,
+            assertion: evidence.assertion,
+            receipt: value.ExecutionReceipt,
+            binding: v.claims.passkey_binding,
+            registration: {
+              ...evidence.registration,
+              publicKey: publicFromDER(evidence.registration.publicKeyDER),
+            },
+            credential: value.PersonalMdoc,
+            seal: value.CredentialSeal,
+          },
+          {
+            authorityResolver: trust.authorityResolver,
+            knowledgeTime,
+            permitCertificate: trust.permitCertificate,
+            receiptCertificate: trust.receiptCertificate,
+            mdocVerifier: () => v,
+            audience: policy.audience,
+            at,
+            status: ({ binding }) =>
+              typeof trust.passkeyStatus === 'function' &&
+              trust.passkeyStatus(binding, { at, knowledgeTime }) === true,
+          },
+        ),
+      authorityFailures,
     );
   }
   const executionResult = execution
-    ? verifyExecutionEvidence(
-        {
-          policy,
-          sim,
-          permit: value.OperationPermit,
-          tbs: signed.tbs,
-          signature: signed.signature,
-          publicKey: v.publicKey,
-          receipt: value.ExecutionReceipt,
-          evidence: decodeCBOR(value.ExecutionBindingEvidence),
-        },
-        {
-          authorityResolver: trust.authorityResolver,
-          bindingCertificate: trust.executionBindingCertificate,
-          permitCertificate: trust.permitCertificate,
-          receiptCertificate: trust.receiptCertificate,
-          trustDomainID: trust.trustDomainID,
-          at,
-          knowledgeTime,
-          status: trust.executionStatus,
-        },
+    ? collectAuthorityFailure(
+        () =>
+          verifyExecutionEvidence(
+            {
+              policy,
+              sim,
+              permit: value.OperationPermit,
+              tbs: signed.tbs,
+              signature: signed.signature,
+              publicKey: v.publicKey,
+              receipt: value.ExecutionReceipt,
+              evidence: decodeCBOR(value.ExecutionBindingEvidence),
+            },
+            {
+              authorityResolver: trust.authorityResolver,
+              bindingCertificate: trust.executionBindingCertificate,
+              permitCertificate: trust.permitCertificate,
+              receiptCertificate: trust.receiptCertificate,
+              trustDomainID: trust.trustDomainID,
+              at,
+              knowledgeTime,
+              status: trust.executionStatus,
+            },
+          ),
+        authorityFailures,
       )
     : undefined;
-  const documentResult = verifyDocumentEvidence(
-    {
-      format: 'MDOC',
-      values: value,
-      sim,
-      policy,
-      activation,
-      permit,
-      receipt,
-      knowledgeTime,
-      verifyState,
-      credential: v,
-    },
-    trust,
+  const documentResult = collectAuthorityFailure(
+    () =>
+      verifyDocumentEvidence(
+        {
+          format: 'MDOC',
+          values: value,
+          sim,
+          policy,
+          activation,
+          permit,
+          receipt,
+          knowledgeTime,
+          verifyState,
+          credential: v,
+        },
+        trust,
+      ),
+    authorityFailures,
   );
   requireAuthorities(
     trust.authorityResolver,
-    [...authorityQueries, ...(documentResult?.authorityQueries ?? [])],
-    [
-      ...(v.statusAssessment.overall === 'VALID' ? [] : [v.statusAssessment.reason]),
-      ...(documentResult?.unavailable ?? []),
-    ],
+    authorityQueries,
+    v.statusAssessment.overall === 'VALID' ? [] : [v.statusAssessment.reason],
+    authorityFailures,
   );
-  if (documentResult) delete documentResult.authorityQueries;
-  if (documentResult) delete documentResult.unavailable;
   const missingTime = policy.requireTrustedTime && !documentResult;
   requireThat(v.statusAssessment.overall === 'VALID', v.statusAssessment.reason);
   return {

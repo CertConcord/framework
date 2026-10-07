@@ -1,5 +1,6 @@
 import { H, sha512, spki, parseDER, equal, requireThat, fields, dcbor } from './core.mjs';
 import { snapshotIssuanceScope, issuanceAuthorityScope } from './enrollment-scope.mjs';
+import { requireAuthorities } from './control-authority.mjs';
 import { parseCertificate, RRA } from './pki.mjs';
 import { evidenceObject, readControl, evaluateStatus } from './state.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
@@ -344,9 +345,8 @@ export function verifyDocumentEvidence(
       unavailable.push('DOCUMENT_ORGANIZATION_STATUS_' + result);
     else requireThat(result === 'GOOD', 'DOCUMENT_ORGANIZATION_STATUS_' + result);
   }
+  requireAuthorities(trust.authorityResolver, authorityQueries, unavailable);
   return {
-    authorityQueries,
-    unavailable,
     time,
     stateTime,
     ...(timeResult

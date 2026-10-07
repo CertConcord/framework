@@ -12,6 +12,7 @@ import {
   now,
 } from './core.mjs';
 import { requireAuthority } from './authority-history.mjs';
+import { parseCertificate } from './pki.mjs';
 
 export function snapshotIssuanceScope(scope) {
   fields(scope, ['trustDomainID', 'issuerID', 'issuerKeyID', 'representation']);
@@ -54,6 +55,11 @@ export function requireIssuanceAuthority(request, configuration, at = now()) {
   );
   const publicKey = createPublicKey(privateKey);
   requireThat(equal(issuanceScope.issuerKeyID, keyID(publicKey)), 'ISSUANCE_SCOPE');
+  if (issuerCertificate)
+    requireThat(
+      equal(keyID(parseCertificate(issuerCertificate).publicKey), keyID(publicKey)),
+      'ISSUER_KEY_BINDING',
+    );
   requireThat(
     request.schemaVersion === 1 &&
       Buffer.isBuffer(request.requestID) &&
