@@ -23,6 +23,7 @@ import { runFoundationDemo } from './foundation-demo.mjs';
 import { verifySignaturePackage } from './evidence.mjs';
 import { verifyMdocSignaturePackage } from './signer-mdoc.mjs';
 import { createVerifier } from './sdk/index.mjs';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 
 function fixture({ path, algorithm = 'ml-dsa-65' } = {}) {
   if (path) mkdirSync('.runtime', { recursive: true });
@@ -123,6 +124,16 @@ function fixture({ path, algorithm = 'ml-dsa-65' } = {}) {
     keyRef: 'document',
     policy,
     trustDomainID,
+    authorityResolver: exampleAuthorityResolver({
+      trustDomainID,
+      at,
+      authorities: [
+        {
+          certificate,
+          roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'EXECUTION_BINDING_AUTHORITY'],
+        },
+      ],
+    }),
     authorize: async () => true,
     clock: () => time,
   };
@@ -170,6 +181,7 @@ function verifyResult(f, result, status = () => true) {
       trustDomainID: f.trustDomainID,
       at: f.at,
       knowledgeTime: f.at,
+      authorityResolver: f.options.authorityResolver,
       status,
     },
   );
@@ -743,7 +755,9 @@ test('execution evidence closes CMS/MTC and both mdoc key modes with mandatory a
         verify(
           downgraded(
             r.bundle,
-            format === 'CMS' ? 'certconcord-ecp-cms-attested-v1' : 'certconcord-ecp-mdoc-attested-v1',
+            format === 'CMS'
+              ? 'certconcord-ecp-cms-attested-v1'
+              : 'certconcord-ecp-mdoc-attested-v1',
           ),
           r.trust,
         ),

@@ -1,4 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
+import { requireOperationAuthorities } from './control-authority.mjs';
 import {
   D,
   H,
@@ -248,6 +249,7 @@ export class SigningGateway {
     audience,
     backend,
     authorize,
+    authorityResolver,
     clock = now,
   }) {
     requireThat(typeof authorize === 'function', 'AUTHORIZATION_POLICY_REQUIRED');
@@ -259,6 +261,7 @@ export class SigningGateway {
       audience,
       backend,
       authorize,
+      authorityResolver,
       clock,
     });
   }
@@ -281,6 +284,7 @@ export class SigningGateway {
           p.expiresAt - p.issuedAt <= 30,
         'PERMIT_EXPIRED',
       );
+      requireOperationAuthorities(this, { trustDomainID: a.trustDomainID }, at);
     };
     checkTime();
     const capabilities = await this.backend.capabilities(keyRef);

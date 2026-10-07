@@ -10,6 +10,7 @@ import {
   now,
   fields,
   publicFromDER,
+  spki,
 } from './core.mjs';
 import { verifyCMS, parseCertificate, validateCertificate, OID, RRA } from './pki.mjs';
 import { PASSKEY_SIGN_PROFILE } from './raw-signing.mjs';
@@ -22,6 +23,12 @@ import {
   evaluateStatus,
 } from './state.mjs';
 import { verifyMTC } from './mtc.mjs';
+import { snapshotIssuanceScope } from './enrollment-scope.mjs';
+import {
+  operationAuthorityQueries,
+  requireAuthorities,
+  collectAuthorityFailure,
+} from './control-authority.mjs';
 import { executionRequirement, verifyExecutionEvidence } from './execution-binding.mjs';
 import {
   appendDocumentEvidence,
@@ -107,6 +114,9 @@ export function verifySignaturePackage(
   bundle,
   {
     issuerPublicKey,
+    issuerCertificate,
+    issuanceScope,
+    authorityResolver,
     mtc,
     permitCertificate,
     receiptCertificate,
@@ -259,6 +269,36 @@ export function verifySignaturePackage(
       typeof receipt.provider === 'string',
     'ECP_EXECUTION_RECEIPT',
   );
+  const selectedScope = snapshotIssuanceScope(issuanceScope),
+    scope = {
+      trustDomainID,
+      issuerID: selectedScope.issuerID,
+      representation: cert.algorithm === OID.mtc ? 'MTC' : 'X509',
+      profileID: sim.profileID,
+    },
+    issuerKey = cert.algorithm === OID.mtc ? mtc?.caPublicKey : issuerPublicKey,
+    issuedAt = document
+      ? readControl(
+          values.RegistrationAuthorization,
+          'RegistrationAuthorization',
+          documentTrust.raCertificate,
+        ).issuedAt
+      : cert.notBefore,
+    authorityQueries = [],
+    unavailable = [],
+    authorityFailures = [];
+  requireThat(
+    equal(selectedScope.trustDomainID, trustDomainID) &&
+      selectedScope.representation === scope.representation &&
+      issuerKey &&
+      equal(selectedScope.issuerKeyID, keyID(issuerKey)),
+    'ISSUANCE_SCOPE',
+  );
+  if (issuerCertificate)
+    requireThat(
+      equal(keyID(parseCertificate(issuerCertificate).publicKey), keyID(issuerKey)),
+      'ISSUER_KEY_BINDING',
+    );
   const verifyState = (stateTime) => {
     if (cert.algorithm === OID.mtc) {
       requireThat(mtc, 'ECP_MTC_TRUST_REQUIRED');
@@ -279,65 +319,118 @@ export function verifySignaturePackage(
       knowledgeTime,
       scope: 'CERTIFICATE',
     });
-    requireThat(statusResult === 'GOOD', 'ECP_STATUS_' + statusResult);
+    if (['STALE', 'UNKNOWN', 'NOT_YET_KNOWN'].includes(statusResult))
+      unavailable.push('ECP_STATUS_' + statusResult);
+    else requireThat(statusResult === 'GOOD', 'ECP_STATUS_' + statusResult);
+    authorityQueries.push(
+      ...operationAuthorityQueries(
+        { permitCertificate, receiptCertificate },
+        scope,
+        stateTime,
+        knowledgeTime,
+      ),
+      {
+        ...(issuerCertificate
+          ? { certificate: issuerCertificate }
+          : { publicKeyDER: spki(issuerKey) }),
+        role: 'ISSUER',
+        scope,
+        stateTime: issuedAt,
+        knowledgeTime,
+      },
+      {
+        certificate: statusCertificate,
+        role: 'STATUS_AUTHORITY',
+        scope,
+        stateTime: status.publishedAt,
+        knowledgeTime,
+      },
+    );
   };
   verifyState(at);
   if (passkey) {
     const binding = decodeCBOR(values.PasskeySigningBinding),
       raw = decodeCBOR(values.PasskeyRawEvidence);
     requireThat(equal(sim.subjectID, binding.subjectID), 'ECP_PASSKEY_SUBJECT');
-    verifyPasskeyOperation(
-      {
-        permit: values.OperationPermit,
-        tbs: v.tbs,
-        signature: v.signature,
-        assertion: raw.assertion,
-        receipt: values.ExecutionReceipt,
-        binding,
-        registration: {
-          ...raw.registration,
-          publicKey: publicFromDER(raw.registration.publicKeyDER),
-        },
-        certificate: values.Certificate,
-      },
-      {
-        permitCertificate,
-        receiptCertificate,
-        certificateVerifier: () => true,
-        audience: policy.audience,
-        at,
-        status: ({ binding: b }) =>
-          typeof passkeyStatus === 'function' && passkeyStatus(b, { at, knowledgeTime }) === true,
-      },
+    collectAuthorityFailure(
+      () =>
+        verifyPasskeyOperation(
+          {
+            permit: values.OperationPermit,
+            tbs: v.tbs,
+            signature: v.signature,
+            assertion: raw.assertion,
+            receipt: values.ExecutionReceipt,
+            binding,
+            registration: {
+              ...raw.registration,
+              publicKey: publicFromDER(raw.registration.publicKeyDER),
+            },
+            certificate: values.Certificate,
+          },
+          {
+            authorityResolver,
+            knowledgeTime,
+            permitCertificate,
+            receiptCertificate,
+            certificateVerifier: () => true,
+            audience: policy.audience,
+            at,
+            status: ({ binding: b }) =>
+              typeof passkeyStatus === 'function' &&
+              passkeyStatus(b, { at, knowledgeTime }) === true,
+          },
+        ),
+      authorityFailures,
     );
   }
   const executionResult = execution
-    ? verifyExecutionEvidence(
-        {
-          policy,
-          sim,
-          permit: values.OperationPermit,
-          tbs: v.tbs,
-          signature: v.signature,
-          publicKey: cert.publicKey,
-          receipt: values.ExecutionReceipt,
-          evidence: decodeCBOR(values.ExecutionBindingEvidence),
-        },
-        {
-          bindingCertificate: executionBindingCertificate,
-          permitCertificate,
-          receiptCertificate,
-          trustDomainID,
-          at,
-          knowledgeTime,
-          status: executionStatus,
-        },
+    ? collectAuthorityFailure(
+        () =>
+          verifyExecutionEvidence(
+            {
+              policy,
+              sim,
+              permit: values.OperationPermit,
+              tbs: v.tbs,
+              signature: v.signature,
+              publicKey: cert.publicKey,
+              receipt: values.ExecutionReceipt,
+              evidence: decodeCBOR(values.ExecutionBindingEvidence),
+            },
+            {
+              authorityResolver,
+              bindingCertificate: executionBindingCertificate,
+              permitCertificate,
+              receiptCertificate,
+              trustDomainID,
+              at,
+              knowledgeTime,
+              status: executionStatus,
+            },
+          ),
+        authorityFailures,
       )
     : undefined;
-  const documentResult = verifyDocumentEvidence(
-    { format: 'CMS', values, sim, policy, activation, permit, receipt, knowledgeTime, verifyState },
-    documentTrust,
+  const documentResult = collectAuthorityFailure(
+    () =>
+      verifyDocumentEvidence(
+        {
+          format: 'CMS',
+          values,
+          sim,
+          policy,
+          activation,
+          permit,
+          receipt,
+          knowledgeTime,
+          verifyState,
+        },
+        { ...documentTrust, issuanceScope, authorityResolver },
+      ),
+    authorityFailures,
   );
+  requireAuthorities(authorityResolver, authorityQueries, unavailable, authorityFailures);
   const missingTime = policy.requireTrustedTime && !documentResult;
   return {
     ...(executionResult ? { execution: executionResult } : {}),

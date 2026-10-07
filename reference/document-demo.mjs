@@ -18,6 +18,7 @@ import {
 import { answerKEMChallenge, encryptVault, decryptVault, decryptCMS } from './protection.mjs';
 import { EncryptionRecoveryService } from './lifecycle.mjs';
 import { exampleTimestamp } from './example-timestamp.mjs';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 
 export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
   const journal = new Journal(),
@@ -46,6 +47,15 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
     const trustDomainID = c.random(),
       organizationID = c.random(),
       recipientID = c.random();
+    const issuanceScope = { trustDomainID, issuerID: '32473.10', issuerKeyID: c.keyID(ca.publicKey), representation: 'MTC' },
+      timestamp = exampleTimestamp(journal, timestampOptions),
+      authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities: [
+        { certificate: raCertificate, roles: ['REGISTRATION_AUTHORITY'] },
+        { certificate: controlCertificate, roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'STATUS_AUTHORITY'] },
+        { certificate: organizationCertificate, roles: ['ORGANIZATION_AUTHORITY', 'STATUS_AUTHORITY'] },
+        { certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] },
+        { mode: 'RAW_KEY', publicKeyDER: c.spki(ca.publicKey), knownAt: c.now() - 60, validFrom: c.now() - 60, validUntil: c.now() + 86400, roles: ['ISSUER'] },
+      ] });
     const policy = {
       schemaVersion: 1,
       activationMode: 'WORKLOAD',
@@ -98,6 +108,8 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
       }),
     });
     const issuer = new MTCIssuer({
+      issuanceScope,
+      authorityResolver,
       ...mtc,
       journal,
       raCertificate,
@@ -131,6 +143,7 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
       });
     const csr = createCSR({ subject: p.name('Synthetic Organization'), ...sealKey });
     const rar = await ra.authorize({
+      issuanceScope,
       csr,
       subjectID: organizationID,
       profileID: 'CERTCONCORD-ORG-SEAL-v1',
@@ -248,6 +261,7 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
       proofMode: 'WORKLOAD',
     });
     const gateway = new SigningGateway({
+      authorityResolver,
       journal,
       permitCertificate: controlCertificate,
       receiptCertificate: controlCertificate,
@@ -258,7 +272,6 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
         c.equal(candidate.activationEvidenceHash, c.sha512(organizationAuthorization)),
     });
     const execution = await gateway.execute({ permit, tbs: prepared.tbs, keyRef: 'seal' });
-    const timestamp = exampleTimestamp(journal, timestampOptions);
     const bundle = createSignaturePackage({
       document,
       certificate,
@@ -277,6 +290,8 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
       },
     });
     const trust = {
+      issuanceScope,
+      authorityResolver,
       mtc,
       raCertificate,
       permitCertificate: controlCertificate,
@@ -313,6 +328,7 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
         }),
       };
       const authorization = await ra.authorize({
+        issuanceScope,
         csr: request,
         subjectID: recipientID,
         profileID: 'CERTCONCORD-DOC-ENC-v1',
@@ -326,6 +342,8 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
         key,
         evidence: { certificate: issued, rar: authorization, status: statusFor(issued) },
         trust: {
+          issuanceScope,
+          authorityResolver,
           mtc,
           raCertificate,
           statusCertificate: controlCertificate,

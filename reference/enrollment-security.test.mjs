@@ -26,6 +26,12 @@ function fixture(t, options = {}) {
       profileID: 'CERTCONCORD-PERSON-SIGN-v1',
       policyHash: c.random(64),
       identityEvidenceHash: c.random(64),
+      issuanceScope: {
+        trustDomainID: c.random(),
+        issuerID: 'https://synthetic.example/issuer',
+        issuerKeyID: c.keyID(root.publicKey),
+        representation: 'X509',
+      },
     },
     ra = new RegistrationAuthority({
       journal,
@@ -48,6 +54,7 @@ function expectedAuthorization(request) {
     csrHash: c.sha512(request.csr),
     spkiHash: c.sha512(parsed.spki),
     possessionMode: parsed.possessionMode,
+    issuanceScope: c.decodeCBOR(c.dcbor(request.issuanceScope)),
   };
 }
 
@@ -73,6 +80,58 @@ for (const field of ['subjectID', 'policyHash', 'identityEvidenceHash', 'csr'])
     f.request[field].fill(0x41);
     release.resolve();
     assertAuthorization(f.read(await pending), expected);
+  });
+
+for (const source of ['caller', 'approval'])
+  for (const field of ['trustDomainID', 'issuerID', 'issuerKeyID', 'representation'])
+    test(`RA isolates ${source} mutations to issuance scope ${field}`, async (t) => {
+      const entered = Promise.withResolvers(),
+        release = Promise.withResolvers(),
+        mutate = (scope) => {
+          if (Buffer.isBuffer(scope[field])) scope[field].fill(0x53);
+          else scope[field] = field === 'representation' ? 'MTC' : 'https://other.example/issuer';
+        },
+        f = fixture(t, {
+          approve: async (view) => {
+            if (source === 'approval') mutate(view.issuanceScope);
+            entered.resolve();
+            await release.promise;
+            return { approved: true };
+          },
+        }),
+        expected = expectedAuthorization(f.request),
+        pending = f.ra.authorize(f.request);
+      await entered.promise;
+      if (source === 'caller') mutate(f.request.issuanceScope);
+      release.resolve();
+      assertAuthorization(f.read(await pending), expected);
+      if (source === 'approval') assertAuthorization(expectedAuthorization(f.request), expected);
+    });
+
+for (const [description, invalidScope, reason] of [
+  ['missing', () => undefined, 'EXPECTED_MAP'],
+  ['multiple', (scope) => [scope, scope], 'EXPECTED_MAP'],
+  ['missing representation', ({ representation, ...scope }) => scope, 'MISSING_FIELD'],
+  ['unknown field', (scope) => ({ ...scope, issuerAlias: scope.issuerID }), 'UNKNOWN_FIELD'],
+  ['unknown representation', (scope) => ({ ...scope, representation: 'CMS' }), 'ISSUANCE_SCOPE'],
+  ['wrong domain length', (scope) => ({ ...scope, trustDomainID: c.random(31) }), 'ISSUANCE_SCOPE'],
+  [
+    'wrong key identifier length',
+    (scope) => ({ ...scope, issuerKeyID: c.random(32) }),
+    'ISSUANCE_SCOPE',
+  ],
+])
+  test(`RA rejects ${description} issuance scope before approval`, async (t) => {
+    let approvals = 0;
+    const f = fixture(t, {
+      approve: async () => {
+        approvals++;
+        return { approved: true };
+      },
+    });
+    f.request.issuanceScope = invalidScope(f.request.issuanceScope);
+    await assert.rejects(f.ra.authorize(f.request), { code: reason });
+    assert.equal(approvals, 0);
   });
 
 for (const field of ['subjectID', 'policyHash', 'identityEvidenceHash', 'spki', 'possessionMode'])

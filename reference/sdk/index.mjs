@@ -4,6 +4,7 @@ import { verifyMdocSignaturePackage } from '../signer-mdoc.mjs';
 import { executionRequirement } from '../execution-binding.mjs';
 import { verifyEvidenceClosure } from '../state.mjs';
 import { documentPlans, documentEvidenceTypes } from '../document-evidence.mjs';
+import { AuthorityError } from '../authority-history.mjs';
 
 export const profiles = Object.freeze(['CMS', 'MDOC']);
 const plans = Object.freeze({
@@ -56,7 +57,7 @@ export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
     );
   if (trust.expectedPolicy.documentEvidence) {
     documentEvidenceTypes(trust.expectedPolicy, format);
-    requireThat(format !== 'CMS' || Buffer.isBuffer(trust.raCertificate), 'SDK_RA_TRUST_REQUIRED');
+    requireThat(Buffer.isBuffer(trust.raCertificate), 'SDK_RA_TRUST_REQUIRED');
     if (trust.expectedPolicy.requireTrustedTime)
       requireThat(
         trust.timestamp?.certificate &&
@@ -127,7 +128,7 @@ export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
       } catch (error) {
         const reason = error instanceof ProtocolError ? error.code : 'MALFORMED_EVIDENCE';
         return Object.freeze({
-          overall: [
+          overall: error instanceof AuthorityError ? error.overall : [
             'ECP_MISSING_OBJECT',
             'ECP_STATUS_STALE',
             'ECP_STATUS_UNKNOWN',

@@ -14,6 +14,7 @@ import {
   EncryptionRecoveryService,
 } from './lifecycle.mjs';
 import { decryptCMS } from './protection.mjs';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 
 const control = () => {
   const key = c.generate('ml-dsa-87'),
@@ -65,6 +66,19 @@ test('RA-authorized MTC issuance requires independent durable mirrors; landmark 
     subjectID = c.random(),
     profileID = 'CERTCONCORD-PERSON-SIGN-v1',
     caID = '32473.7',
+    issuanceScope = {
+      trustDomainID: c.random(),
+      issuerID: caID,
+      issuerKeyID: c.keyID(ca.publicKey),
+      representation: 'MTC',
+    },
+    authorityResolver = exampleAuthorityResolver({
+      trustDomainID: issuanceScope.trustDomainID,
+      authorities: [
+        { certificate: ra.certificate, roles: ['REGISTRATION_AUTHORITY'] },
+        { certificate: ca.certificate, roles: ['ISSUER'] },
+      ],
+    }),
     logNumber = 1,
     members = [
       { id: '32473.8', operatorID: 'a', ...c.generate('ml-dsa-87') },
@@ -87,6 +101,7 @@ test('RA-authorized MTC issuance requires independent durable mirrors; landmark 
       profileID,
       policyHash,
       identityEvidenceHash: c.random(64),
+      issuanceScope,
     }),
     options = {
       journal,
@@ -106,6 +121,9 @@ test('RA-authorized MTC issuance requires independent durable mirrors; landmark 
         privateKey: ca.privateKey,
         mirrors,
         allowedProfiles: [profileID],
+        issuanceScope,
+        authorityResolver,
+        issuerCertificate: ca.certificate,
       }),
       cert = await issuer.issue({ csr, rar });
     assert(c.equal(cert, await issuer.issue({ csr, rar })));

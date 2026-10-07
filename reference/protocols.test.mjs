@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 test('MTC draft06 independent C.1.4 covering-subtree aggregate vector', () => {
@@ -42,7 +43,10 @@ test('RFC9881 X.509 and RFC9882 CMS encode/verify with OpenSSL certificate parse
   assert(p.nativeCertificate(f.certificate).verify(f.root.publicKey));
   p.validateCertificate(f.certificate, f.root.publicKey);
   const cms = p.signCMS({ content, certificate: f.certificate }, f.key.privateKey);
-  const r = p.verifyCMS(cms, { issuerKey: f.root.publicKey, profileID: 'CERTCONCORD-PERSON-SIGN-v1' });
+  const r = p.verifyCMS(cms, {
+    issuerKey: f.root.publicKey,
+    profileID: 'CERTCONCORD-PERSON-SIGN-v1',
+  });
   assert(c.equal(r.content, content));
   cms[cms.length - 2] ^= 1;
   assert.throws(() => p.verifyCMS(cms), /CMS_SIGNATURE/);
@@ -261,6 +265,12 @@ test('ACB persists single dispatch before signing, replay returns saved result, 
     },
   };
   const args = {
+    authorityResolver: exampleAuthorityResolver({
+      trustDomainID: a.trustDomainID,
+      authorities: [
+        { certificate: f.certificate, roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY'] },
+      ],
+    }),
     permitCertificate: f.certificate,
     receiptCertificate: f.certificate,
     receiptKey: f.key.privateKey,

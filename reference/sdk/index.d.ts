@@ -30,8 +30,35 @@ export interface LogSigner {
   scheme: string;
   operatorID?: string;
 }
+export interface IssuanceScope {
+  trustDomainID: Buffer;
+  issuerID: string;
+  issuerKeyID: Buffer;
+  representation: 'X509' | 'MTC' | 'MDOC';
+}
+export interface AuthorityQuery {
+  certificate?: Buffer;
+  publicKeyDER?: Buffer;
+  role: string;
+  scope: {
+    trustDomainID: Buffer;
+    profileID?: string;
+    issuerID?: string;
+    representation?: 'X509' | 'MTC' | 'MDOC';
+    purpose?: string;
+  };
+  stateTime: number;
+  knowledgeTime: number;
+}
+export interface AuthorityDecision {
+  overall: 'VALID' | 'INVALID' | 'INDETERMINATE' | 'UNSUPPORTED';
+  reason: string;
+  [field: string]: unknown;
+}
 export interface CommonTrust {
   trustDomainID: Buffer;
+  issuanceScope: IssuanceScope;
+  authorityResolver: (query: AuthorityQuery) => AuthorityDecision;
   expectedPolicy: SignaturePolicy;
   permitCertificate: Buffer;
   receiptCertificate: Buffer;
@@ -58,7 +85,7 @@ export interface CommonTrust {
   executionBindingCertificate?: Buffer;
   executionStatus?: (binding: unknown, time: { at: number; knowledgeTime: number }) => boolean;
 }
-export type CMSTrust = CommonTrust & { statusCertificate: Buffer } & (
+export type CMSTrust = CommonTrust & { statusCertificate: Buffer; issuerCertificate?: Buffer } & (
     | { mtc: MTCTrust; issuerPublicKey?: never }
     | { issuerPublicKey: KeyObject; mtc?: never }
   );

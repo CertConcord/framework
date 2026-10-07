@@ -2,6 +2,7 @@ import { H, keyID, generate, random, now, sign } from '../core.mjs';
 import { issueCertificate, name } from '../pki.mjs';
 import { Journal, activationContext, issuePermit, readControl } from '../state.mjs';
 import { exampleExecutionGateway, exampleExecutionPolicy } from '../example-execution.mjs';
+import { exampleAuthorityResolver } from '../example-authorities.mjs';
 
 // Construct a complete cryptographic execution without network or upstream service fixtures.
 export async function executionFixture() {
@@ -30,6 +31,16 @@ export async function executionFixture() {
     };
     const issuedAt = now(),
       trustDomainID = random(),
+      authorityResolver = exampleAuthorityResolver({
+        trustDomainID,
+        authorities: [
+          {
+            certificate,
+            roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'EXECUTION_BINDING_AUTHORITY'],
+          },
+        ],
+        at: issuedAt,
+      }),
       tbs = Buffer.from('Synthetic exact signing input');
     const sim = {
       schemaVersion: 1,
@@ -64,6 +75,7 @@ export async function executionFixture() {
       policy,
       trustDomainID,
       journal,
+      authorityResolver,
       permitCertificate: certificate,
       receiptCertificate: certificate,
       receiptKey: authority.privateKey,
@@ -88,6 +100,7 @@ export async function executionFixture() {
         evidence: result.executionEvidence,
       },
       trust: {
+        authorityResolver,
         bindingCertificate: certificate,
         permitCertificate: certificate,
         receiptCertificate: certificate,
