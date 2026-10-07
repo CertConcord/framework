@@ -5,8 +5,13 @@ import * as c from './core.mjs';
 import * as cades from './cades.mjs';
 import * as pades from './pades.mjs';
 import { validateCAdESMaterial } from './cades-validation.mjs';
-import { epoch, fixture, expectOverall } from './cades-fixtures.mjs';
-import { independentApproval, independentTimestamp, independentDSS } from './pades-fixtures.mjs';
+import { epoch, fixture, expectOverall, cmsView, rewriteCMS } from './cades-fixtures.mjs';
+import {
+  independentApproval,
+  independentTimestamp,
+  independentDSS,
+  replaceCMS,
+} from './pades-fixtures.mjs';
 import { revokedTSAStatus } from './timestamp-revocation-fixtures.mjs';
 
 let f, good, baseCMS, basePDF;
@@ -70,6 +75,15 @@ for (const reason of [0, 3, 4, 5])
 
 test('material POE without token POE cannot repair absent TSA revocation reason', () => {
   noIndependentPOE(material(revokedTSAStatus(f), { evidenceTime: epoch + 30 }));
+});
+test('independent token POE may precede revocation while material POE follows it', () => {
+  expectOverall(
+    material(revokedTSAStatus(f, { reason: 1 }), {
+      signatureEvidenceTime: epoch + 30,
+      evidenceTime: epoch + 60,
+    }),
+    'VALID',
+  );
 });
 for (const [name, signatureEvidenceTime] of [
   ['non-finite', Number.NaN],
@@ -151,6 +165,17 @@ async function verifyDocument(format, bytes, status) {
 }
 
 for (const format of ['CAdES', 'PAdES']) {
+  test(`${format} known bad CMS signature outranks uncertain revoked TSA token proof`, async () => {
+    const badMath = (raw) => {
+      const signature = Buffer.from(cmsView(raw).signature);
+      signature[signature.length - 1] ^= 1;
+      return rewriteCMS(raw, { signature });
+    };
+    const bytes = format === 'CAdES' ? badMath(baseCMS) : replaceCMS(basePDF, 0, badMath);
+    const result = await verifyDocument(format, bytes, revokedTSAStatus(f, { reason: 1 }));
+    expectOverall(result, 'INVALID');
+    assert.equal(result.reason, 'CADES_SIGNATURE_INVALID');
+  });
   for (const reason of [undefined, 1]) {
     const name = reason === undefined ? 'absent' : 'keyCompromise';
     test(`${format} public verification rejects a self-dated token after late-known ${name} TSA revocation`, async () => {
@@ -178,3 +203,18 @@ for (const format of ['CAdES', 'PAdES']) {
     );
   });
 }
+
+test('PAdES keeps the earliest independent token POE when validation material arrives under a later proof', async () => {
+  const tokenProof = independentTimestamp(f, basePDF, {
+    at: epoch + 30,
+    tokenOptions: { authority: f.successor },
+  }).pdf;
+  const materialProof = independentTimestamp(f, independentDSS(tokenProof, f.material(good)), {
+    at: epoch + 60,
+    tokenOptions: { authority: f.successor },
+  }).pdf;
+  const result = await verifyDocument('PAdES', materialProof, revokedTSAStatus(f, { reason: 1 }));
+  expectOverall(result, 'VALID');
+  assert.equal(result.stateTime, epoch + 20);
+  assert.equal(result.preservationTime, epoch + 60);
+});
