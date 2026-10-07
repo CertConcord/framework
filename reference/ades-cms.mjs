@@ -610,7 +610,7 @@ export function inspectAdESSignature(cms, { content, profile } = {}) {
     signature = inspectSignature(parsed, failures, profile);
   } catch (error) {
     failures.push(record(error));
-    if (error.code === 'CADES_MULTIPLE_SIGNERS')
+    if (error.code === 'CADES_MULTIPLE_SIGNERS') {
       inspectMultipleSigners(
         cms,
         content,
@@ -618,6 +618,10 @@ export function inspectAdESSignature(cms, { content, profile } = {}) {
         failures,
         profile,
       );
+      // EN 319 142-1 4.1(a) requires exactly one SignerInfo. Scan known
+      // mathematical failures first so this PDF constraint cannot hide them.
+      if (profile === 'PADES') failures.push(result('INVALID', 'PADES_MULTIPLE_SIGNERS'));
+    }
   }
   return Object.freeze({
     ...outcome(failures),

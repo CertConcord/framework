@@ -186,7 +186,7 @@ function materialFor(
   policy,
   times,
   failures,
-  coverage,
+  coverages = [],
   noPOE = false,
 ) {
   if (!signature?.certificate || !instant(stateTime) || stateTime > times.knowledgeTime)
@@ -229,10 +229,25 @@ function materialFor(
       return result('INDETERMINATE', 'PADES_HISTORICAL_MATERIAL_NOT_COVERED');
     return checked;
   };
-  let checked = attempt(failures, () => evaluate(coverage));
-  if (coverage && checked?.overall === 'INDETERMINATE') {
-    const fresh = attempt(failures, () => evaluate(undefined));
-    if (fresh && fresh.overall !== 'INDETERMINATE') checked = fresh;
+  let checked;
+  // Signature existence and material existence need not share the same proof.
+  // Each candidate is an independently authenticated revision covering this
+  // object's bytes. An unavailable slice may be completed by a later proof.
+  // Retain unsupported dependencies while still looking for an authenticated
+  // known invalidity, which has stronger precedence than capability uncertainty.
+  for (const coverage of [...coverages, undefined]) {
+    const candidate = attempt(failures, () => evaluate(coverage));
+    if (!candidate) continue;
+    checked ??= candidate;
+    if (candidate.overall === 'INVALID') {
+      checked = candidate;
+      break;
+    }
+    if (candidate.overall === 'UNSUPPORTED') checked = candidate;
+    if (candidate.overall === 'VALID' && checked.overall !== 'UNSUPPORTED') {
+      checked = candidate;
+      break;
+    }
   }
   if (checked && checked.overall !== 'VALID') failures.push(checked);
   return checked;
@@ -346,6 +361,11 @@ export async function verifyPAdES(
             : undefined;
       if (!inspected) local.push(result('UNSUPPORTED', 'PADES_SIGNATURE_KIND_UNSUPPORTED'));
       else local.push(...inspected.failures);
+      if (
+        entry.kind === 'TIMESTAMP' &&
+        inspected?.failures.some((decision) => decision.reason === 'CADES_MULTIPLE_SIGNERS')
+      )
+        local.push(result('INVALID', 'PADES_MULTIPLE_SIGNERS'));
       const item = { ...entry, ...inspected, failures: local, content };
       if (entry.kind === 'TIMESTAMP' && item.info) {
         attempt(local, () =>
@@ -437,13 +457,12 @@ export async function verifyPAdES(
     for (let index = timestamps.length - 1; index >= 0; index--) {
       const item = timestamps[index],
         local = [...item.failures];
-      const successor = timestamps.slice(index + 1).find((later) => covers(later, item));
-      const covered = successor
-        ? {
-            ...materialsAt(structure, entries, successor.revisionIndex, successor),
-            time: successor.info.poeUpperBound,
-          }
-        : undefined;
+      const successors = timestamps.slice(index + 1).filter((later) => covers(later, item));
+      const successor = successors[0];
+      const covered = successors.map((proof) => ({
+        ...materialsAt(structure, entries, proof.revisionIndex, proof),
+        time: proof.info.poeUpperBound,
+      }));
       if (item.info && item.signature) {
         const low = materialFor(
           item.signature,
@@ -469,11 +488,13 @@ export async function verifyPAdES(
         item.materials = [low, high];
         materials.push(low, high);
         const deadline = protection(item.signature, policy, local, item.info.hashOID);
-        if (instant(deadline) && high?.overall === 'VALID')
+        const horizons = [deadline, high?.validUntil].filter(instant);
+        // A missing current status does not erase an already known protection
+        // cutoff. Only an authenticated successor may move this endpoint back.
+        if (horizons.length)
           attempt(local, () =>
             check(
-              (successor?.info.poeUpperBound ?? knowledgeTime) <
-                Math.min(deadline, high.validUntil),
+              (successor?.info.poeUpperBound ?? knowledgeTime) < Math.min(...horizons),
               'PADES_PROTECTION_GAP',
             ),
           );
@@ -489,11 +510,13 @@ export async function verifyPAdES(
     );
     const stateTime = trusted?.info.poeUpperBound ?? validationTime;
     const signerCoverage = trusted
-      ? {
-          ...materialsAt(structure, entries, trusted.revisionIndex, trusted),
-          time: trusted.info.poeUpperBound,
-        }
-      : undefined;
+      ? timestamps
+          .filter((proof) => covers(proof, approval))
+          .map((proof) => ({
+            ...materialsAt(structure, entries, proof.revisionIndex, proof),
+            time: proof.info.poeUpperBound,
+          }))
+      : [];
     const signerMaterial = materialFor(
       approval.signature,
       'SIGNER',
@@ -507,11 +530,11 @@ export async function verifyPAdES(
     );
     materials.push(signerMaterial);
     const signerDeadline = protection(approval.signature, policy, failures);
-    if (instant(signerDeadline) && signerMaterial?.overall === 'VALID')
+    const signerHorizons = [signerDeadline, signerMaterial?.validUntil].filter(instant);
+    if (signerHorizons.length)
       attempt(failures, () =>
         check(
-          (trusted ? stateTime : knowledgeTime) <
-            Math.min(signerDeadline, signerMaterial.validUntil),
+          (trusted ? stateTime : knowledgeTime) < Math.min(...signerHorizons),
           'PADES_SIGNER_PROTECTION_GAP',
         ),
       );
