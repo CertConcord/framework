@@ -626,11 +626,20 @@ function validateMaterial(
       policy.currentMaterial?.certificates ?? [],
       policy.currentMaterial?.crls ?? [],
       policy.trustedRoots ?? [],
-    ])
-      requireThat(
-        Array.isArray(values) && values.length <= 128 && values.every(Buffer.isBuffer),
-        'CADES_MATERIAL_LIMIT',
-      );
+    ]) {
+      if (mail) {
+        mailRequire(
+          Array.isArray(values) && values.every(Buffer.isBuffer),
+          'SMIME_MATERIAL_INPUT_INVALID',
+        );
+        mailRequire(values.length <= 32, 'SMIME_MATERIAL_LIMIT_UNSUPPORTED', 'UNSUPPORTED');
+      } else {
+        requireThat(
+          Array.isArray(values) && values.length <= 128 && values.every(Buffer.isBuffer),
+          'CADES_MATERIAL_LIMIT',
+        );
+      }
+    }
     requireThat(
       Buffer.isBuffer(policy.scope?.trustDomainID) &&
         policy.scope.trustDomainID.length === 32 &&
@@ -735,6 +744,10 @@ function validateMaterial(
   if (mail && stateTime >= root.notAfter && checks.length > rootTimeIndex)
     ordinaryTimeCheckIndexes.push(rootTimeIndex);
   const issuerCheck = authority(policy, root, 'ISSUER', stateTime, knowledgeTime);
+  // AUTHORITY_EXPIRED does not distinguish an ended appointment from certificate
+  // expiry. For a received signature without POE either ordinary historical use
+  // is unproven; this index never turns admission into VALID. Other authority,
+  // revocation and explicit protection failures retain their original outcomes.
   if (
     mail &&
     stateTime >= root.notAfter &&
