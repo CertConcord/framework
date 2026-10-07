@@ -1,7 +1,6 @@
 import { X509Certificate, createHash, verify as verifySignature } from 'node:crypto';
 import {
   ProtocolError,
-  requireThat,
   parseDER,
   der,
   seq,
@@ -40,10 +39,23 @@ const LEGACY = new Set([
   '1.2.840.113549.1.9.16.2.48', // archive timestamp v2
   '1.2.840.113549.1.9.16.2.44', // attribute certificate references
   '1.2.840.113549.1.9.16.2.45', // attribute revocation references
-  '1.2.840.113549.1.9.16.2.49', // ERS evidence record
-  '1.2.840.113549.1.9.16.2.50', // XML evidence record
+  '1.2.840.113549.1.9.16.2.49', // internal evidence records
+  '1.2.840.113549.1.9.16.2.50', // external evidence records
   '1.2.840.113549.1.9.16.2.18', // signer attributes
   '0.4.0.19122.1.1', // signer attributes v2 (including certified assertions)
+  '1.2.840.113549.1.9.16.2.4', // content hints
+  '1.2.840.113549.1.9.16.2.7', // content identifier
+  '1.2.840.113549.1.9.16.2.10', // content reference
+  '1.2.840.113549.1.9.16.2.12', // SHA-1 signing certificate
+  '1.2.840.113549.1.9.16.2.15', // signature policy identifier
+  '1.2.840.113549.1.9.16.2.16', // commitment type indication
+  '1.2.840.113549.1.9.16.2.17', // signer location
+  '1.2.840.113549.1.9.16.2.19', // other signing certificate
+  '1.2.840.113549.1.9.16.2.20', // content timestamp
+  '0.4.0.19122.1.2', // claimed SAML assertion
+  '0.4.0.19122.1.3', // signature policy store
+  '0.4.0.1733.2.2', // long-term validation (legacy)
+  '0.4.0.1733.2.5', // legacy ATS hash index
 ]);
 const instant = (n) => Number.isFinite(n) && n >= 0 && n <= Number.MAX_SAFE_INTEGER;
 const digest = (id, input) => {
@@ -199,6 +211,7 @@ function parseCMS(raw, content, expectedType = OID.data) {
     check(crls.length <= 128, 'CADES_CRL_LIMIT');
   }
   check(at === sd.length - 1 && sd[at].tag === 0x31, 'CADES_SIGNER_INFOS');
+  check(sd[at].children.length <= 16, 'CADES_SIGNER_LIMIT');
   check(sd[at].children.length === 1, 'CADES_MULTIPLE_SIGNERS', 'UNSUPPORTED');
   const signer = sd[at].children[0];
   check(
@@ -340,9 +353,10 @@ function inspectSignature(parsed, failures, isTimestamp = false) {
         'CADES_ALGORITHM_PROTECTION_ENCODING',
       );
       check(
-        hashAlgorithm(fields[0]) === hashOID && equal(der(0x30, fields[1].value), parsed.si[4].raw),
+        algorithm(fields[0]) === hashOID && equal(der(0x30, fields[1].value), parsed.si[4].raw),
         'CADES_ALGORITHM_PROTECTION_BINDING',
       );
+      hashAlgorithm(fields[0]);
     });
   const mediaType = one(parsed, MIME_TYPE);
   if (mediaType)
@@ -457,6 +471,38 @@ function inspectSignature(parsed, failures, isTimestamp = false) {
     signatureOID,
     essHash: ess?.hashOID,
   };
+}
+
+// Multiple signers remain outside this profile. A bounded scan still detects
+// known failures in SignerInfos whose mathematical signature suite is selected;
+// unsupported multiplicity must not conceal an available bad digest/signature.
+function inspectMultipleSigners(raw, content, expectedType, failures, isTimestamp = false) {
+  attempt(failures, () => {
+    const root = parseDER(raw),
+      sd = root.children[1].children[0].children;
+    const signers = sd.at(-1).children;
+    check(signers.length <= 16, 'CADES_SIGNER_LIMIT');
+    for (const signer of signers) {
+      const fields = signer.children;
+      if (
+        signer.tag !== 0x30 ||
+        !fields ||
+        fields.length < 6 ||
+        fields.length > 7 ||
+        fields[0].tag !== 2 ||
+        intValue(fields[0]) !== 1n ||
+        fields[1].tag !== 0x30
+      )
+        continue;
+      attempt(failures, () => {
+        const single = seq(
+          root.children[0].raw,
+          der(0xa0, seq(...sd.slice(0, -1).map((n) => n.raw), set(signer.raw))),
+        );
+        inspectSignature(parseCMS(single, content, expectedType), failures, isTimestamp);
+      });
+    }
+  });
 }
 
 function encodeCMS(
@@ -682,15 +728,45 @@ function policyCheck(policy) {
     'INDETERMINATE',
   );
 }
+function parseTimestampInfo(raw) {
+  const root = parseDER(raw),
+    fields = root.children;
+  check(
+    root.tag === 0x30 &&
+      fields?.length >= 5 &&
+      fields[0].tag === 2 &&
+      intValue(fields[0]) === 1n &&
+      fields[1].tag === 6 &&
+      fields[2].tag === 0x30 &&
+      fields[2].children.length === 2 &&
+      fields[2].children[0].tag === 0x30 &&
+      fields[2].children[1].tag === 4 &&
+      fields[3].tag === 2 &&
+      intValue(fields[3]) > 0n &&
+      fields[4].tag === 24,
+    'CADES_TSTINFO_ENCODING',
+  );
+  let previous = -1;
+  for (const field of fields.slice(5)) {
+    const rank = [0x30, 0x01, 0x02, 0xa0, 0xa1].indexOf(field.tag);
+    check(rank > previous, 'CADES_TSTINFO_FIELD_ORDER');
+    previous = rank;
+  }
+  if (fields.some((field) => field.tag === 0xa1))
+    throw failure('UNSUPPORTED', 'CADES_TSTINFO_EXTENSIONS_UNSUPPORTED');
+  return parseTSTInfo(raw);
+}
 function timestamp(parsed, value, failures, policy, times, archive) {
   const local = [];
   const cms = attempt(local, () => parseCMS(value.raw, undefined, OID.tstInfo));
   if (!cms) {
+    if (local.some((f) => f.reason === 'CADES_MULTIPLE_SIGNERS'))
+      inspectMultipleSigners(value.raw, undefined, OID.tstInfo, local, true);
     failures.push(...local);
     return undefined;
   }
   const signature = inspectSignature(cms, local, true);
-  const info = attempt(local, () => parseTSTInfo(cms.content));
+  const info = attempt(local, () => parseTimestampInfo(cms.content));
   let coverage;
   if (info) {
     attempt(local, () => {
@@ -781,21 +857,41 @@ function originalLink(parsed, originalCMS, content, failures) {
     const currentFailures = [],
       current = inspectSignature(parsed, currentFailures);
     check(equal(prior.certificate, current.certificate), 'CADES_ORIGINAL_CERTIFICATE_MISMATCH');
-    // Augmentation cannot delete or reinterpret any pre-existing unsigned value.
+    // AttributeValue instances may be appended to an existing unsigned Attribute
+    // (5.5.2 notes 4 and 5), but every old type/value pair must remain byte exact.
+    const currentValues = unsignedValues(parsed),
+      retained = new Set();
     check(
-      original.unsigned.every((a) => parsed.unsigned.some((b) => equal(a.raw, b.raw))),
+      unsignedValues(original).every((old) => {
+        const position = currentValues.findIndex(
+          (value, i) => !retained.has(i) && equal(old.input, value.input),
+        );
+        if (position < 0) return false;
+        retained.add(position);
+        return true;
+      }),
       'CADES_ORIGINAL_UNSIGNED_ATTRIBUTE_MISMATCH',
     );
     return 'MATCHED';
   });
 }
-function materialFor(signature, purpose, stateTime, parsed, policy, times, failures, coverage) {
+function materialFor(
+  signature,
+  purpose,
+  stateTime,
+  parsed,
+  policy,
+  times,
+  failures,
+  coverage,
+  unprovenSignerTime = false,
+) {
   if (!signature.certificate || !instant(stateTime) || stateTime > times.knowledgeTime)
     return undefined;
   const evaluate = (covered) => {
     const certificates = covered?.certificates ?? parsed.certificates;
     const crls = covered?.crls ?? parsed.crls;
-    const response = validateCAdESMaterial({
+    let response = validateCAdESMaterial({
       certificate: Buffer.from(signature.certificate),
       certificates: copy(certificates),
       crls: copy(crls),
@@ -806,6 +902,23 @@ function materialFor(signature, purpose, stateTime, parsed, policy, times, failu
       ...(covered ? { evidenceTime: covered.time } : {}),
       policy: copy(policy),
     });
+    if (purpose === 'SIGNER' && unprovenSignerTime && stateTime === times.validationTime) {
+      const rootTimeMissing = response.checks.some((item) => item.reason === 'CADES_ROOT_TIME');
+      const checks = response.checks.map((item) =>
+        item.overall === 'INVALID' &&
+        (['CADES_CERTIFICATE_TIME', 'CADES_ROOT_TIME'].includes(item.reason) ||
+          (rootTimeMissing &&
+            item.authorityRole === 'ISSUER' &&
+            item.authorityStateTime === stateTime &&
+            ['AUTHORITY_EXPIRED', 'AUTHORITY_NOT_YET_VALID'].includes(item.reason)))
+          ? result('INDETERMINATE', 'CADES_SIGNER_POE_MISSING')
+          : item,
+      );
+      // Only normal certificate/issuer time availability is reclassified. In
+      // particular, bad signatures, revoked keys and protection cutoffs remain
+      // in the same aggregate and retain their INVALID precedence.
+      response = { ...response, ...outcome(checks), checks };
+    }
     if (
       covered &&
       response.overall === 'VALID' &&
@@ -1039,6 +1152,7 @@ export function verifyCAdES(
       times,
       failures,
       signerCoverage,
+      !candidateTimestamp,
     );
     materials.push(signerMaterial);
     // Every carried signature timestamp must meet baseline timing requirements,
@@ -1119,6 +1233,8 @@ export function verifyCAdES(
     });
   } catch (error) {
     failures.push(record(error));
+    if (error.code === 'CADES_MULTIPLE_SIGNERS')
+      inspectMultipleSigners(cms, content, OID.data, failures);
     const final = outcome(failures);
     return result(final.overall, final.reason, {
       requestedLevel: minimumLevel,
@@ -1175,14 +1291,22 @@ export function prepareCAdESAugmentation(
         check(Buffer.isBuffer(token), 'CADES_TIMESTAMP_MISSING', 'INDETERMINATE');
         token = Buffer.from(token);
         const timestampCMS = parseCMS(token, undefined, OID.tstInfo);
-        const info = parseTSTInfo(timestampCMS.content);
-        check(
-          info.hashOID === request.hashOID &&
-            equal(info.imprint, request.imprint) &&
-            (request.nonce === undefined || info.nonce === request.nonce) &&
-            (!request.policy || info.policy === request.policy),
-          'CADES_TIMESTAMP_REQUEST_BINDING',
-        );
+        const timestampFailures = [];
+        inspectSignature(timestampCMS, timestampFailures, true);
+        const info = attempt(timestampFailures, () => parseTimestampInfo(timestampCMS.content));
+        if (info)
+          attempt(timestampFailures, () =>
+            check(
+              info.hashOID === request.hashOID &&
+                equal(info.imprint, request.imprint) &&
+                (request.nonce === undefined || info.nonce === request.nonce) &&
+                (!request.policy || info.policy === request.policy),
+              'CADES_TIMESTAMP_REQUEST_BINDING',
+            ),
+          );
+        const tokenOutcome = outcome(timestampFailures);
+        if (tokenOutcome.overall !== 'VALID')
+          throw failure(tokenOutcome.overall, tokenOutcome.reason);
         if (index) {
           check(
             !timestampCMS.unsigned.some((a) => a.id === INDEX),
