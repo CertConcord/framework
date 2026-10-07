@@ -61,6 +61,15 @@ test('nonoverlapping appointments resolve at state time and future grants cannot
   assert.equal(f.resolver([f.record, revoked])(f.query).overall, 'INVALID');
 });
 
+test('key compromise survives role changes and subsequent appointments', () => {
+  const f = fixture();
+  const status = { ...f.record.status, status: 'REVOKED', effectiveTime: 1800000005 };
+  for (const earlier of [{ ...f.record, roles: ['ISSUER'], status },
+    { ...f.record, validUntil: 1800000006, status }])
+    assert.equal(f.resolver([f.record, earlier])(f.query).reason, 'AUTHORITY_REVOKED');
+  assert.equal(f.resolver([{ ...f.record, status: { ...f.record.status, critical: ['futureConstraint'] } }])(f.query).overall, 'UNSUPPORTED');
+});
+
 test('raw key admission has an explicit lifecycle independent of a wrapping certificate', () => {
   const f = fixture(), raw = { ...f.record, mode: 'RAW_KEY', publicKeyDER: c.spki(f.key.publicKey) };
   delete raw.certificate;

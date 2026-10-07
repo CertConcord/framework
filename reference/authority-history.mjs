@@ -26,6 +26,10 @@ function validScope(scope) {
 /** Evaluate an already authenticated status statement; this function does not authenticate it. */
 export function authorityStatus(statement, { authorityID, trustDomainID, stateTime, knowledgeTime }) {
   if (!statement) return result('INDETERMINATE', 'AUTHORITY_STATUS_MISSING');
+  try {
+    fields(statement, ['authorityID', 'trustDomainID', 'scope', 'status', 'publishedAt', 'nextUpdate'],
+      ['effectiveTime', 'compromiseStart', 'critical']);
+  } catch { return result('INVALID', 'AUTHORITY_STATUS_SCHEMA'); }
   if (!equal(statement.authorityID, authorityID) || !equal(statement.trustDomainID, trustDomainID))
     return result('INVALID', 'AUTHORITY_STATUS_BINDING');
   if (!instant(stateTime) || !instant(knowledgeTime) || stateTime > knowledgeTime ||
@@ -40,6 +44,11 @@ export function authorityStatus(statement, { authorityID, trustDomainID, stateTi
       return result('INVALID', 'AUTHORITY_STATUS_SCHEMA');
     if (Math.min(statement.effectiveTime, statement.compromiseStart ?? Infinity) <= stateTime)
       return result('INVALID', 'AUTHORITY_REVOKED', { status: 'REVOKED' });
+  }
+  if (statement.critical !== undefined) {
+    if (!Array.isArray(statement.critical) || !statement.critical.every((item) => typeof item === 'string'))
+      return result('INVALID', 'AUTHORITY_STATUS_SCHEMA');
+    if (statement.critical.length) return result('UNSUPPORTED', 'AUTHORITY_STATUS_CRITICAL_UNSUPPORTED');
   }
   if (statement.nextUpdate <= knowledgeTime)
     return result('INDETERMINATE', 'AUTHORITY_STATUS_STALE', { status: 'STALE' });
@@ -100,6 +109,27 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     if (!identities.length) return result('INDETERMINATE', 'AUTHORITY_MISSING');
     const known = identities.filter((r) => r.knownAt <= knowledgeTime);
     if (!known.length) return result('INDETERMINATE', 'AUTHORITY_NOT_YET_KNOWN');
+    const statusCache = new Map();
+    const statusFor = (record) => {
+      if (statusCache.has(record)) return statusCache.get(record);
+      let status, decision;
+      try {
+        status = typeof record.status === 'function'
+          ? record.status(copy({ authorityID: requestedKeyID, role, scope, stateTime, knowledgeTime }))
+          : record.status;
+      } catch { decision = result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE'); }
+      if (!decision && status?.then) decision = result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE');
+      if (!decision && status?.overall && status.overall !== 'VALID')
+        decision = ['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(status.overall)
+          ? result(status.overall, status.reason ?? 'AUTHORITY_STATUS_UNAVAILABLE')
+          : result('INVALID', 'AUTHORITY_STATUS_SCHEMA');
+      decision ??= authorityStatus(status, { authorityID: requestedKeyID, trustDomainID: domain, stateTime, knowledgeTime });
+      statusCache.set(record, decision);
+      return decision;
+    };
+    // AUTHORITY revocation concerns the admitted key, across roles and renewals.
+    const revoked = known.map(statusFor).find((decision) => decision.reason === 'AUTHORITY_REVOKED');
+    if (revoked) return revoked;
     const roles = known.filter((r) => r.roles.includes(role));
     if (!roles.length) return result('INVALID', 'AUTHORITY_ROLE');
     const scoped = roles.filter((r) => r.scopes.some((grant) =>
@@ -113,20 +143,7 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     const outcomes = active.map((record) => {
       if (record.algorithmValidUntil !== undefined && stateTime >= record.algorithmValidUntil)
         return result('INVALID', 'AUTHORITY_ALGORITHM_EXPIRED');
-      let status;
-      try {
-        status = typeof record.status === 'function'
-          ? record.status(copy({ authorityID: requestedKeyID, role, scope, stateTime, knowledgeTime }))
-          : record.status;
-      } catch { return result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE'); }
-      if (status?.then) return result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE');
-      // Typed adapters may report failure, but only a bound statement can establish GOOD.
-      if (status?.overall && status.overall !== 'VALID') {
-        if (!['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(status.overall))
-          return result('INVALID', 'AUTHORITY_STATUS_SCHEMA');
-        return result(status.overall, status.reason ?? 'AUTHORITY_STATUS_UNAVAILABLE');
-      }
-      const outcome = authorityStatus(status, { authorityID: requestedKeyID, trustDomainID: domain, stateTime, knowledgeTime });
+      const outcome = statusFor(record);
       return outcome.overall === 'VALID'
         ? result('VALID', 'AUTHORITY_ADMITTED', { role, mode: record.mode, coverageUntil: outcome.coverageUntil })
         : outcome;
