@@ -4,6 +4,7 @@ import * as c from './core.mjs';
 import { TimestampResponseVerifier } from './timestamp-service.mjs';
 import { encodeTimestampResponse, parseTimestampResponse } from './timestamp-protocol.mjs';
 import { attr } from './cades-fixtures.mjs';
+import { revokedTSAStatus } from './timestamp-revocation-fixtures.mjs';
 import {
   O,
   epoch,
@@ -273,6 +274,28 @@ test('an old claimed generation time cannot outlive a current key protection cut
   );
 });
 
+for (const reason of [undefined, 1, 0, 3])
+  test(`standalone TSU revocation reason ${reason ?? 'absent'} uses current authenticated status without self-POE`, async () => {
+    const requestDER = f.request(),
+      context = f.context({ knowledgeTime: epoch + 80 });
+    context.policy.currentMaterial.crls = [revokedTSAStatus(f, { reason })];
+    const result = await verify(requestDER, f.response(requestDER), context);
+    if (reason === undefined || reason === 1)
+      assertVerdict(result, 'INDETERMINATE', 'CADES_TSA_REVOKED_NO_POE');
+    else assertVerdict(result, 'VALID');
+  });
+
+test('authenticated revocation effective before token generation remains INVALID', async () => {
+  const requestDER = f.request(),
+    context = f.context({ knowledgeTime: epoch + 80 });
+  context.policy.currentMaterial.crls = [revokedTSAStatus(f, { reason: 0, revokedAt: epoch + 10 })];
+  assertVerdict(
+    await verify(requestDER, f.response(requestDER), context),
+    'INVALID',
+    'CADES_CERTIFICATE_REVOKED',
+  );
+});
+
 test('stale CRL information cannot conceal a known token-signature failure', async () => {
   const requestDER = f.request(),
     context = f.context();
@@ -302,6 +325,70 @@ test('unknown signed semantics are explicit unsupported capabilities', async () 
     ),
     'UNSUPPORTED',
     'TSP_ATTRIBUTE_UNSUPPORTED',
+  );
+});
+
+const claimedSigningTime = (at) =>
+  attr(
+    O.signingTime,
+    c.der(
+      23,
+      Buffer.from(
+        new Date(at * 1000).toISOString().replace(/[-:T]/g, '').replace('.000Z', 'Z').slice(2),
+      ),
+    ),
+  );
+
+test('optional signed signingTime is accepted as a non-authoritative claim distinct from genTime', async () => {
+  const requestDER = f.request();
+  for (const at of [epoch + 5, epoch + 90]) {
+    const result = await verify(
+      requestDER,
+      f.response(requestDER, { extraSigned: [claimedSigningTime(at)] }),
+    );
+    assertVerdict(result, 'VALID');
+    assert.equal(result.genTime, epoch + 20);
+    assert.equal(result.knowledgeTime, epoch + 40);
+  }
+});
+
+test('an earlier signed signingTime cannot make a not-yet-observable genTime current', async () => {
+  const requestDER = f.request(),
+    result = await verify(
+      requestDER,
+      f.response(requestDER, { genTime: epoch + 41, extraSigned: [claimedSigningTime(epoch + 5)] }),
+    );
+  assertVerdict(result, 'INDETERMINATE', 'TSP_NOT_YET_OBSERVABLE');
+  assert.equal(result.genTime, epoch + 41);
+  assert.equal(result.knowledgeTime, epoch + 40);
+});
+
+test('an earlier signed signingTime cannot override a currently withdrawn TSU role', async () => {
+  const requestDER = f.request(),
+    context = f.context(),
+    base = f.resolver();
+  context.policy.authorityResolver = (query) =>
+    query.role === 'TIMESTAMP_AUTHORITY'
+      ? { overall: 'INVALID', reason: 'TEST_CURRENT_WITHDRAWAL' }
+      : base(query);
+  assertVerdict(
+    await verify(
+      requestDER,
+      f.response(requestDER, { extraSigned: [claimedSigningTime(epoch + 5)] }),
+      context,
+    ),
+    'INVALID',
+    'TEST_CURRENT_WITHDRAWAL',
+  );
+});
+
+test('optional signed signingTime cannot conceal bad CMS signature math', async () => {
+  const requestDER = f.request(),
+    token = f.token(requestDER, { extraSigned: [claimedSigningTime(epoch + 5)] });
+  assertVerdict(
+    await verify(requestDER, encodeTimestampResponse({ status: 0, tokenDER: badSignature(token) })),
+    'INVALID',
+    'CADES_SIGNATURE_INVALID',
   );
 });
 

@@ -334,3 +334,91 @@ test('completion write failure retains the response and never triggers a replace
   assertVerdict(final.verification, 'VALID');
   assert.equal(h.state.sends, 1);
 });
+
+test('a timely received response keeps its first trusted receipt time across a failed completion and late reconciliation', async (t) => {
+  const requestDER = f.request(),
+    responseDER = f.response(requestDER);
+  const h = harness(t, { send: async () => responseDER }),
+    original = h.journal.reconcile.bind(h.journal);
+  let failOnce = true;
+  h.journal.reconcile = (...args) => {
+    if (failOnce) {
+      failOnce = false;
+      throw Error('simulated completion commit failure');
+    }
+    return original(...args);
+  };
+  const op = operation(18);
+  try {
+    await h.client.request({ operationID: op, requestDER });
+  } catch (error) {
+    assert.equal(error.message, 'simulated completion commit failure');
+  }
+  assert.equal(h.state.sends, 1);
+  h.state.context.knowledgeTime = epoch + 40;
+  const result = await h.client.reconcile({ operationID: op, responseDER });
+  assertVerdict(result.verification, 'VALID');
+  assert.deepEqual(result.responseDER, responseDER);
+  assert.equal(h.state.sends, 1);
+});
+
+test('a delayed waiting-response callback cannot overwrite the receipt time of a newer terminal candidate', async (t) => {
+  const requestDER = f.request(),
+    terminal = f.response(requestDER, { genTime: epoch + 30, accuracyMicros: 500000 });
+  const entered = deferred(),
+    oldWaiter = deferred();
+  const h = harness(t, {
+    send: async () => encodeTimestampResponse({ status: 3 }),
+    readContext: async (state) => {
+      if (state.contexts === 1) return f.context({ knowledgeTime: epoch + 20 });
+      if (state.contexts === 2) {
+        entered.resolve();
+        return oldWaiter.promise;
+      }
+      if (state.contexts === 3) return f.context({ knowledgeTime: epoch + 30 });
+      return f.context({ knowledgeTime: epoch + 41 });
+    },
+  });
+  const op = operation(19),
+    original = h.client.request({ operationID: op, requestDER });
+  await entered.promise;
+  const pending = await h.client.reconcile({ operationID: op, responseDER: terminal });
+  assert.equal(pending.state, 'PENDING');
+  assertVerdict(pending.verification, 'INDETERMINATE', 'TSP_NOT_YET_OBSERVABLE');
+  oldWaiter.resolve(f.context({ knowledgeTime: epoch + 40 }));
+  try {
+    await original;
+  } catch (error) {
+    assert.equal(error.code, 'TSP_RESPONSE_CONFLICT');
+  }
+  const result = await h.client.reconcile({ operationID: op, responseDER: terminal });
+  assertVerdict(result.verification, 'VALID');
+  assert.deepEqual(result.responseDER, terminal);
+  assert.equal(h.state.sends, 1);
+});
+
+test('a pre-dispatch persistence failure is typed unavailable with the original operation ID and no send', async (t) => {
+  const h = harness(t),
+    original = h.journal.put.bind(h.journal),
+    op = operation(20);
+  let failOnce = true;
+  h.journal.put = (...args) => {
+    if (failOnce) {
+      failOnce = false;
+      throw Error('database unavailable');
+    }
+    return original(...args);
+  };
+  await assert.rejects(h.client.request({ operationID: op, requestDER: f.request() }), (error) => {
+    assert.equal(error.code, 'TSP_PERSISTENCE_UNAVAILABLE');
+    assert.equal(error.overall, 'INDETERMINATE');
+    assert.deepEqual(error.operationID, op);
+    return true;
+  });
+  assert.equal(h.state.sends, 0);
+  assertVerdict(
+    (await h.client.request({ operationID: op, requestDER: f.request() })).verification,
+    'VALID',
+  );
+  assert.equal(h.state.sends, 1);
+});

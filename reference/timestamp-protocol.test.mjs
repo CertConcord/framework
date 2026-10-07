@@ -210,19 +210,20 @@ test('a long canonical failure bitset is bounded before enumerating individual b
   const bitset = Buffer.alloc(4097, 255);
   bitset[0] = 0;
   const raw = c.seq(c.seq(c.integer(2), c.der(3, bitset)));
-  let result;
+  let result,
+    rejected = false;
   try {
     result = parseTimestampResponse(raw);
   } catch (error) {
     assert.equal(error.overall, 'UNSUPPORTED');
     result = error.partial;
+    rejected = true;
   }
   assert(
     (result?.failureBits?.length ?? 0) <= 32,
     'unselected bitsets must not allocate unbounded arrays',
   );
-  if (result?.diagnostics)
-    assert(result.diagnostics.some((item) => item.overall === 'UNSUPPORTED'));
+  if (!rejected) assert(result.diagnostics.some((item) => item.overall === 'UNSUPPORTED'));
 });
 
 for (const [name, statusInfo] of [
@@ -250,6 +251,20 @@ test('granted status cannot contradict itself with failure information', () => {
     'TSP_STATUS_FAILURE_CONTRADICTION',
   );
 });
+
+for (const status of [0, 1])
+  test(`successful status ${status} with a nonempty oversized failInfo remains a known contradiction`, () => {
+    const bitset = Buffer.concat([Buffer.from([0]), Buffer.alloc(4096, 255)]);
+    assert.throws(
+      () => parseTimestampResponse(c.seq(c.seq(c.integer(status), c.der(3, bitset)), token)),
+      (error) => {
+        assert.equal(error.overall, 'INVALID');
+        assert.equal(error.code, 'TSP_STATUS_FAILURE_CONTRADICTION');
+        assert.deepEqual(error.partial.tokenDER, token);
+        return true;
+      },
+    );
+  });
 test('response ownership and input byte limits are enforced', () => {
   const encoded = encodeTimestampResponse({ status: 0, tokenDER: token });
   const original = Buffer.from(encoded),

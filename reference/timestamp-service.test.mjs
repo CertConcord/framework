@@ -466,3 +466,116 @@ test('failed final completion cannot escape as success or cause a replacement si
   assertVerdict(result.verification, 'VALID');
   assert.equal(h.state.signs, 1);
 });
+
+test('a known appointment gap inside the timestamp interval prevents signing', async (t) => {
+  const h = harness(t),
+    base = h.state.context.policy.authorityResolver;
+  h.state.reading.accuracyMicros = 2000000;
+  h.state.context.policy.authorityResolver = (query) =>
+    query.role === 'TIMESTAMP_AUTHORITY' && query.stateTime === epoch + 19
+      ? { overall: 'INDETERMINATE', reason: 'TEST_APPOINTMENT_GAP' }
+      : base(query);
+  const result = await h.service.issue({ operationID: operation(21), requestDER: f.request() });
+  assert.notEqual(result.verification.overall, 'VALID');
+  assert.equal(h.state.signs, 0, 'a known unauthorized interval must not reach the signer');
+});
+
+for (const corruption of ['missing', 'rolled back'])
+  test(`${corruption} serial allocator does not reuse a previously reserved serial`, async (t) => {
+    const h = harness(t);
+    assertVerdict(
+      (await h.service.issue({ operationID: operation(22), requestDER: f.request() })).verification,
+      'VALID',
+    );
+    const row = h.journal.db
+      .prepare("SELECT namespace, revision FROM state WHERE id='serial'")
+      .get();
+    if (corruption === 'missing')
+      h.journal.db
+        .prepare("DELETE FROM state WHERE namespace=? AND id='serial'")
+        .run(row.namespace);
+    else h.journal.put(row.namespace, 'serial', { value: '0' }, row.revision);
+    const result = await h.service.issue({
+      operationID: operation(23),
+      requestDER: f.request({ nonce: 43n }),
+    });
+    assert.notEqual(result.verification.overall, 'VALID');
+    assert.equal(h.state.signs, 1);
+  });
+
+test('serial exhaustion is a durable rejection rather than wraparound', async (t) => {
+  const h = harness(t);
+  await h.service.issue({ operationID: operation(24), requestDER: f.request() });
+  const row = h.journal.db.prepare("SELECT namespace, revision FROM state WHERE id='serial'").get();
+  h.journal.put(row.namespace, 'serial', { value: ((1n << 160n) - 1n).toString() }, row.revision);
+  const result = await h.service.issue({
+    operationID: operation(25),
+    requestDER: f.request({ nonce: 43n }),
+  });
+  assert.notEqual(result.verification.overall, 'VALID');
+  assert.equal(h.state.signs, 1);
+});
+
+test('policy withdrawal during the asynchronous clock read is rechecked before signing', async (t) => {
+  const h = harness(t);
+  h.options.clock.read = async () => h.state.reading;
+  const base = h.state.context.policy.authorityResolver;
+  const service = new TimestampService({
+    ...h.options,
+    clock: {
+      read: async () => {
+        h.state.context.policy.authorityResolver = (query) =>
+          query.role === 'TIMESTAMP_AUTHORITY'
+            ? { overall: 'INVALID', reason: 'TEST_WITHDRAWN_DURING_CLOCK' }
+            : base(query);
+        return h.state.reading;
+      },
+    },
+  });
+  const result = await service.issue({ operationID: operation(26), requestDER: f.request() });
+  assert.notEqual(result.verification.overall, 'VALID');
+  assert.equal(h.state.signs, 0);
+});
+
+test('a failing admitted clock callback produces timeNotAvailable without signing', async (t) => {
+  const h = harness(t),
+    service = new TimestampService({
+      ...h.options,
+      clock: {
+        read: async () => {
+          throw Error('offline');
+        },
+      },
+    });
+  const result = await service.issue({ operationID: operation(27), requestDER: f.request() });
+  assert.equal(result.state, 'COMPLETED');
+  assertVerdict(result.verification, 'INDETERMINATE', 'TSP_CLOCK_UNAVAILABLE');
+  assert.deepEqual(parseTimestampResponse(result.responseDER).failureBits, [14]);
+  assert.equal(h.state.signs, 0);
+});
+
+test('a pre-sign persistence failure is typed unavailable with the original operation ID and no external effect', async (t) => {
+  const h = harness(t),
+    original = h.journal.put.bind(h.journal),
+    op = operation(28);
+  let failOnce = true;
+  h.journal.put = (...args) => {
+    if (failOnce) {
+      failOnce = false;
+      throw Error('database unavailable');
+    }
+    return original(...args);
+  };
+  await assert.rejects(h.service.issue({ operationID: op, requestDER: f.request() }), (error) => {
+    assert.equal(error.code, 'TSP_PERSISTENCE_UNAVAILABLE');
+    assert.equal(error.overall, 'INDETERMINATE');
+    assert.deepEqual(error.operationID, op);
+    return true;
+  });
+  assert.equal(h.state.signs + h.state.clocks, 0);
+  assertVerdict(
+    (await h.service.issue({ operationID: op, requestDER: f.request() })).verification,
+    'VALID',
+  );
+  assert.equal(h.state.signs, 1);
+});
