@@ -255,7 +255,8 @@ export function validateCAdESMaterial({ certificate: raw, certificates = [], crl
     const intermediate = !matches.length && [...certificates, ...policy.currentMaterial.certificates]
       .some((raw) => {
         const candidate = capture(() => certificate(raw));
-        return candidate?.native.ca && equal(candidate.subject, leaf.issuer);
+        return candidate?.native.ca && !equal(candidate.subject, candidate.issuer) &&
+          equal(candidate.subject, leaf.issuer);
       });
     checks.push(intermediate ? outcome('UNSUPPORTED', 'CADES_INTERMEDIATE_PATH_UNSUPPORTED') :
       outcome('INDETERMINATE', matches.length ? 'CADES_ROOT_CONFLICT' : 'CADES_ROOT_MISSING'));
