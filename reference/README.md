@@ -16,6 +16,7 @@ Run the root npm commands described in the [project README](../README.md); npm w
 | Document evidence and time                | document-evidence.mjs, document-encryption.mjs, timestamp.mjs; [candidate binding](../spec/bindings/DOCUMENT-draft-03.md)   |
 | Document preservation                     | archive.mjs, archive-demo.mjs; [lifetime and result contract](../docs/document-preservation.md)                             |
 | Selected CAdES preservation               | cades.mjs, cades-validation.mjs; [profile and policy contract](../docs/cades-preservation.md)                               |
+| Selected PAdES preservation               | pades.mjs, pades-io.mjs, ades-cms.mjs; [profile and revision contract](../docs/pades-preservation.md)                       |
 | Independent verification                  | [SDK](sdk/README.md), evidence.mjs, signer-mdoc.mjs                                                                         |
 | Optional infrastructure                   | native/, storage/, interop/, fuzz/, benchmarks/                                                                             |
 | Licensing record validation               | [governance tools](governance/README.md)                                                                                    |
