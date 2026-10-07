@@ -84,7 +84,16 @@ export function fixtureState(pdf) {
 export function appendRevision(
   pdf,
   entries,
-  { trailer = '', root, prev, size, offsetDelta = 0 } = {},
+  {
+    trailer = '',
+    root,
+    prev,
+    size,
+    offsetDelta = 0,
+    objectHeader,
+    objectPrefix,
+    xrefPrefix = '',
+  } = {},
 ) {
   const state = fixtureState(pdf);
   root ??= `${state.root} ${state.rootGeneration} R`;
@@ -92,15 +101,17 @@ export function appendRevision(
   const offsets = [];
   for (const entry of entries) {
     const { number, generation = 0 } = entry;
+    const prefix = bytes(objectPrefix?.(number, generation) ?? '');
+    output = Buffer.concat([output, prefix]);
     offsets.push({ number, generation, offset: output.length });
     output = Buffer.concat([
       output,
-      bytes(`${number} ${generation} obj\n`),
+      bytes((objectHeader?.(number, generation) ?? `${number} ${generation} obj`) + '\n'),
       bytes(entry.body),
       bytes('\nendobj\n'),
     ]);
   }
-  const xref = output.length;
+  const xref = output.length + bytes(xrefPrefix).length;
   size ??= Math.max(state.size, ...entries.map((entry) => entry.number + 1));
   const rows = offsets
     .sort((a, b) => a.number - b.number)
@@ -111,6 +122,7 @@ export function appendRevision(
     .join('');
   return Buffer.concat([
     output,
+    bytes(xrefPrefix),
     bytes(
       `xref\n${rows}trailer\n<< /Size ${size} /Root ${root} /Prev ${prev ?? state.xref}${trailer ? ` ${trailer}` : ''} >>\nstartxref\n${xref}\n%%EOF\n`,
     ),
@@ -134,6 +146,9 @@ export function signatureContainer(
     extra = '',
     dictionary,
     transformByteRange,
+    objectHeader,
+    objectPrefix,
+    xrefPrefix,
     omitM = false,
     subFilter = kind === 'SIGNATURE' ? 'ETSI.CAdES.detached' : 'ETSI.RFC3161',
     type = kind === 'SIGNATURE' ? 'Sig' : 'DocTimeStamp',
@@ -158,15 +173,19 @@ export function signatureContainer(
   const range = '0 ' + Array(3).fill('0'.repeat(20)).join(' ');
   let body = `<< /Type /${type} /Filter /Adobe.PPKLite /SubFilter /${subFilter}${kind === 'SIGNATURE' && !omitM ? ` /M (D:${date(signingTime)})` : ''}${kind === 'TIMESTAMP' ? ' /V 0' : ''} /ByteRange [${range}] /Contents <${'0'.repeat(signatureBytes * 2)}>${extra ? ` ${extra}` : ''} >>`;
   if (dictionary) body = dictionary(body);
-  const output = appendRevision(pdf, [
-    { number: sig, body },
-    {
-      number: field,
-      body: `<< /FT /Sig /T (${fieldName.replace(/[()\\]/g, '_')}) /V ${sig} 0 R >>`,
-    },
-    { number: form, body: `<< /Fields [${oldFields} ${field} 0 R] /SigFlags 3 >>` },
-    { number: state.root, generation: state.rootGeneration, body: catalog },
-  ]);
+  const output = appendRevision(
+    pdf,
+    [
+      { number: sig, body },
+      {
+        number: field,
+        body: `<< /FT /Sig /T (${fieldName.replace(/[()\\]/g, '_')}) /V ${sig} 0 R >>`,
+      },
+      { number: form, body: `<< /Fields [${oldFields} ${field} 0 R] /SigFlags 3 >>` },
+      { number: state.root, generation: state.rootGeneration, body: catalog },
+    ],
+    { objectHeader, objectPrefix, xrefPrefix },
+  );
   const contentsAt = output.indexOf(bytes('/Contents <'), pdf.length) + '/Contents <'.length;
   assert(contentsAt > pdf.length);
   const end = contentsAt + signatureBytes * 2 + 1;

@@ -119,15 +119,19 @@ for (const method of ['DocMDP', 'FieldMDP'])
     }).pdf;
     expectOverall(await decision(api, f, pdf), 'UNSUPPORTED');
   });
-for (const [name, value] of [
-  ['year-only precision', 'D:2027'],
-  ['numeric timezone', "D:20270115040010-04'00'"],
+for (const [name, value, expected] of [
+  ['year-only precision', 'D:2027', 'UNSUPPORTED'],
+  ['numeric timezone', "D:20270115040010-04'00'", 'VALID'],
 ])
-  test(`legal unselected PDF date ${name} is not malformed`, selected, async () => {
+  test(`legal PDF date ${name} retains its selected capability`, selected, async () => {
     const pdf = independentApproval(f, {
       dictionary: (body) => body.replace(/\/M\s*\([^)]*\)/, `/M (${value})`),
     }).pdf;
-    expectOverall(await decision(api, f, pdf), 'UNSUPPORTED');
+    expectOverall(await decision(api, f, pdf), expected);
+    if (expected === 'VALID') {
+      const io = await import('./pades-io.mjs');
+      assert.equal((await io.inspectPAdESContainer(pdf)).signatures[0].signingTime, epoch + 10);
+    }
   });
 
 for (const key of ['certificates', 'crls'])
