@@ -1,6 +1,6 @@
-# Conformance and stability gates — draft 02
+# Conformance and stability gates — draft 03
 
-No stable or complete-framework conformance claim is made by draft 02. The [machine-readable map](conformance.json) records every top-level requirement ID, representative test cases and limitations. It is a coverage index, not a completed independent assessment. Existing detailed [binding criteria](bindings/CONFORMANCE-draft-02.md) remain applicable when a candidate is selected.
+No stable or complete-framework conformance claim is made by draft 03. The [machine-readable map](conformance.json) records every top-level requirement ID, representative test cases and limitations. It is a coverage index, not a completed independent assessment. Existing detailed [binding criteria](bindings/CONFORMANCE-draft-03.md) remain applicable when a candidate is selected.
 
 An implementation's report MUST identify the source commit, core draft, application, selected bindings, algorithms, role, environment and relying-party policy. It MUST distinguish implemented behavior, local automated evidence, independent interoperability, platform assessment and unresolved requirements. A test file name alone does not establish that every requirement in a profile has been tested.
 
@@ -14,14 +14,14 @@ Draft acceptance requires a bounded implementable contract, a runnable lifecycle
 
 - Candidate personal signing flows cover CMS/MTC, native signer mdoc, WebAuthn activation, proposed Passkey signing keys and execution binding. The tests use synthetic identities and software authenticators; deployed hardware capability is a separate claim.
 - The SDK distinguishes invalid, missing and unsupported evidence at its implemented boundaries. Fine-grained reporting and every nested algorithm/capability boundary are not yet fully classified.
-- The [document binding](bindings/DOCUMENT-draft-02.md) specifies and exercises direct organizational authority-to-operation authorization, certified KEM recipient admission, encrypted evidence delivery and two-operator encryption-key recovery. Hierarchical delegation, organizational mdoc and assessed custody remain open.
+- The [document binding](bindings/DOCUMENT-draft-03.md) specifies and exercises direct organizational authority-to-operation authorization, certified KEM recipient admission, encrypted evidence delivery and two-operator encryption-key recovery. Hierarchical delegation, organizational mdoc and assessed custody remain open.
 - CMS and native mdoc attested plans support required RFC 3161 evidence and conservative status evaluation at the proof-of-existence upper bound. Status refresh preserves the original time proof. TSA clock operations, archival status availability and time composition with raw Passkey/execution-binding plans remain separate gaps.
 - Government identity admission and native signer mdoc have separate contracts. A synthetic combined government identity/signing fixture is present; external issuer and independent implementation evaluation remain unrecorded.
 - External primitive/parser checks are useful evidence. A second independently developed implementation of the complete CertConcord document baseline has not been recorded.
 - Ordinary WebAuthn completes the selected CMS and mdoc trusted-time plans without raw-signing or EBP evidence. Those proposals are optional and do not gate the document baseline.
-- Fixed-root watermark, recovery-target validation and atomic wrapper-rewrap failure traces are covered locally. Dynamic root rotation is unsupported; parser evaluation and the remaining reductions in the [composition review](../docs/composition-review.md) are unresolved assurance obligations.
+- Fixed-root watermarks, scoped authority history, dual-quorum retained root transitions, recovery-target validation and atomic wrapper/archive failure traces are covered locally. Emergency root replacement, distributed operation and production parser evaluation remain unresolved assurance obligations; see the [composition review](../docs/composition-review.md).
 - Security/privacy review, published threat-model dispositions, full requirement-to-vector coverage and an external assessment are required before a stability proposal. Existing fuzzing and unit tests do not replace them.
-- RFC 4998 preservation checks original protection, TSA rotation and tree-hash lifetimes with explicit external policy. Synthetic offline evidence survives signer-certificate expiry while stale current status remains INDETERMINATE. Complete historical authority/status resolution and operational archive succession remain draft implementation gaps.
+- RFC 4998 preservation checks original protection, TSA rotation and tree-hash lifetimes with explicit external policy. Complete synthetic CMS/native mdoc flows retain authenticated authority history and custodian succession, and separate preservation, historical authorization and current admissibility. Stale current status remains INDETERMINATE; later known compromise can invalidate current admissibility. These tests do not establish operational archive assurance or an ETSI LT/LTA level.
 
 ## Stable specification gate
 

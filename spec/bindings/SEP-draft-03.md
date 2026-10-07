@@ -1,12 +1,12 @@
-# CertConcord Security Engineering Profile — draft 02
+# CertConcord Security Engineering Profile — draft 03
 
-> Candidate binding for CertConcord draft 02. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 02 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
+> Candidate binding for CertConcord draft 03. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 03 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
 
-Status: draft 02. Normative language: English.
+Status: draft 03. Normative language: English.
 
 ## 1. Scope and relationship to the core
 
-SEP defines implementation, measurement and distribution requirements for services implementing [DTI draft 02](DTI-draft-02.md), [COMMON draft 02](COMMON-draft-02.md), [DSCP draft 02](DSCP-draft-02.md), [DCP draft 02](DCP-draft-02.md), [PRF-KPP draft 02](PRF-KPP-draft-02.md) and [PSCP draft 02](PSCP-draft-02.md). It applies across credential types and ecosystems. It changes no signed object, OID, key mode, upstream wire format or historical verification plan. A SEP deployment MUST declare the software artifact and all enabled adapters.
+SEP defines implementation, measurement and distribution requirements for services implementing [DTI draft 03](DTI-draft-03.md), [COMMON draft 03](COMMON-draft-03.md), [DSCP draft 03](DSCP-draft-03.md), [DCP draft 03](DCP-draft-03.md), [PRF-KPP draft 03](PRF-KPP-draft-03.md) and [PSCP draft 03](PSCP-draft-03.md). It applies across credential types and ecosystems. It changes no signed object, OID, key mode, upstream wire format or historical verification plan. A SEP deployment MUST declare the software artifact and all enabled adapters.
 
 ## 2. Parser and execution boundaries
 

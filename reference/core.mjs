@@ -151,7 +151,7 @@ export function decodeCBOR(input, { maxBytes = 16 * 1024 * 1024, maxItems = 1000
   requireThat(p === b.length && equal(dcbor(result), b), 'NONCANONICAL_CBOR');
   return result;
 }
-export const D = (label, value) => dcbor(['CertConcord', 2, label, value]);
+export const D = (label, value) => dcbor(['CertConcord', 3, label, value]);
 export const H = (label, value) => sha512(D(label, value));
 
 export const der = (tag, value) => {

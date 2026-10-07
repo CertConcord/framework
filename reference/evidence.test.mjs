@@ -22,11 +22,11 @@ test('RA -> native-holder contract -> VCI HTTP -> VP -> document permit -> CMS -
     certificate: data.Certificate,
     sim,
     policy: decodeCBOR(data.SignaturePolicy),
-    activation: decodeCBOR(data.ActivationContext),
     permit: data.OperationPermit,
     receipt: data.ExecutionReceipt,
     status: data.CertificateStatus,
     cms: data.CMS,
+    registrationAuthorization: data.RegistrationAuthorization,
   });
   assert.throws(() => verifySignaturePackage(forged, trust), /SIGNED_BINDING/);
   assert.throws(

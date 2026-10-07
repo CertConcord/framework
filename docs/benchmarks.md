@@ -1,6 +1,6 @@
 # Benchmarks and synthetic privacy experiments
 
-The reproducible measurements support [SEP draft 02](../spec/bindings/SEP-draft-02.md). All identities, identifiers, keys and documents used by the generators are synthetic.
+The reproducible measurements inform [SEP draft 03](../spec/bindings/SEP-draft-03.md). The published performance dataset remains a historical draft-02 run, not a measurement of the new draft-03 evidence layout. All identities, identifiers, keys and documents used by the generators are synthetic.
 
 ## Performance and evidence size
 
@@ -8,7 +8,7 @@ Run `npm run benchmark -- output-directory`. [The published software baseline](.
 
 Compare P-256, ML-DSA-65 and ML-DSA-87 by exact public-key and signature encodings. DER ECDSA signature size can vary between operations. Merkle authentication path bytes exclude certificate fields, the CA signature and mirror cosignatures; total proof/evidence sizes must retain those distinctions. The tree benchmark uses indexed SQLite in memory and does not establish PostgreSQL, HSM or multi-host capacity.
 
-The current draft 02 run includes the selected execution-binding and ordinary modes in one recorded environment. Complete CMS/MTC evidence measures 90,097 bytes without execution binding and 103,880 bytes with it; independent-PQ mdoc evidence measures 76,249 and 90,056 bytes; DEVICE_KEY evidence measures 71,136 and 84,953 bytes. These are observations for the recorded synthetic examples, not universal overhead constants or latency distributions. The run metadata and raw samples identify the actual environment.
+The retained draft-02 run includes the then-selected execution-binding and ordinary modes in one recorded environment. Complete CMS/MTC evidence measured 90,097 bytes without execution binding and 103,880 bytes with it; independent-PQ mdoc evidence measured 76,249 and 90,056 bytes; DEVICE_KEY evidence measured 71,136 and 84,953 bytes. These are historical observations for the recorded synthetic examples, not draft-03 sizes, universal overhead constants or latency distributions. The run metadata and raw samples identify the actual environment.
 
 ## Linkability and status traffic
 

@@ -1,6 +1,6 @@
 # Native key adapters — draft reference
 
-Native adapters expose P-256 key generation, public-key retrieval and ES256 signing. INDEPENDENT_PQ uses this key for holder proof and a separate ML-DSA provider for documents. DEVICE_KEY uses the same approved P-256 key for a distinct document signature. Both profiles require the [DCP admission and authorization rules](../../spec/bindings/DCP-draft-02.md#22-key-attestation-admission).
+Native adapters expose P-256 key generation, public-key retrieval and ES256 signing. INDEPENDENT_PQ uses this key for holder proof and a separate ML-DSA provider for documents. DEVICE_KEY uses the same approved P-256 key for a distinct document signature. Both profiles require the [DCP admission and authorization rules](../../spec/bindings/DCP-draft-03.md#22-key-attestation-admission).
 
 ## Enrollment contract
 

@@ -283,15 +283,44 @@ export async function runFoundationDemo({
     govDocType = identityProfile.docType,
     govNamespace = identityProfile.namespace,
     sessionID = c.b64u(c.random()),
-    issuanceScope = { trustDomainID, issuerID: issuerURL, issuerKeyID: c.keyID(ca.publicKey), representation: 'MDOC' },
+    issuanceScope = {
+      trustDomainID,
+      issuerID: issuerURL,
+      issuerKeyID: c.keyID(ca.publicKey),
+      representation: 'MDOC',
+    },
     timestamp = trustedTime ? exampleTimestamp(journal) : undefined,
-    authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities: [
-      { certificate: ra.certificate, roles: ['REGISTRATION_AUTHORITY'] },
-      { certificate: ca.certificate, roles: ['ISSUER', 'STATUS_AUTHORITY'] },
-      { certificate: sealAuthority.certificate, roles: ['DOCUMENT_SEAL'] },
-      { certificate: activationAuthority.certificate, roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'EXECUTION_BINDING_AUTHORITY'] },
-      ...(timestamp ? [{ certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] }] : []),
-    ] });
+    authorityResolver = exampleAuthorityResolver({
+      trustDomainID,
+      authorities: [
+        { certificate: ra.certificate, roles: ['REGISTRATION_AUTHORITY'] },
+        { certificate: ca.certificate, roles: ['ISSUER', 'STATUS_AUTHORITY'] },
+        { certificate: sealAuthority.certificate, roles: ['DOCUMENT_SEAL'] },
+        {
+          certificate: activationAuthority.certificate,
+          roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'EXECUTION_BINDING_AUTHORITY'],
+        },
+        {
+          mode: 'RAW_KEY',
+          publicKeyDER: c.spki(log.publicKey),
+          knownAt: c.now() - 60,
+          validFrom: c.now() - 60,
+          validUntil: c.now() + 86400,
+          roles: ['TRANSPARENCY_LOG'],
+        },
+        ...members.map((member) => ({
+          mode: 'RAW_KEY',
+          publicKeyDER: c.spki(member.publicKey),
+          knownAt: c.now() - 60,
+          validFrom: c.now() - 60,
+          validUntil: c.now() + 86400,
+          roles: ['MIRROR'],
+        })),
+        ...(timestamp
+          ? [{ certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] }]
+          : []),
+      ],
+    });
   try {
     const crl = issueCRL({
         issuer: p.parseCertificate(root).subject,
@@ -784,17 +813,17 @@ export async function runFoundationDemo({
       bundle = createMdocSignaturePackage({
         document,
         credential,
+        registrationAuthorization: identity.rar,
         seal,
         statusToken: issuer.status.token(),
         sim,
         policy,
-        activation,
         permit,
         receipt: result.receipt,
         signature,
         passkeyEvidence,
         executionEvidence: result.executionEvidence,
-        ...(timestamp ? { documentEvidence: { RegistrationAuthorization: identity.rar, DocumentTimestamp: timestamp.issue } } : {}),
+        ...(timestamp ? { documentEvidence: { DocumentTimestamp: timestamp.issue } } : {}),
       }),
       trust = {
         ...credentialTrust,
@@ -835,7 +864,7 @@ export async function runFoundationDemo({
       trust,
       verification,
       summary: {
-        release: '0.2.0-draft.1',
+        release: '0.3.0-draft.1',
         identitySource: 'SYNTHETIC_IDENTITY_MDOC',
         identityType,
         identityDocType: govDocType,

@@ -1,6 +1,6 @@
-# Native mdoc signing certificates — draft 02
+# Native mdoc signing certificates — draft 03
 
-Developing a native mdoc personal digital-certificate profile is a core CertConcord deliverable. Existing ISO mdoc mechanisms provide a possible representation and presentation foundation; the document-signing semantics require their own explicit specification. The current [DCP candidate](bindings/DCP-draft-02.md) supplies concrete experimental bindings.
+Developing a native mdoc personal digital-certificate profile is a core CertConcord deliverable. Existing ISO mdoc mechanisms provide a possible representation and presentation foundation; the document-signing semantics require their own explicit specification. The current [DCP candidate](bindings/DCP-draft-03.md) supplies concrete experimental bindings.
 
 ## Three independent decisions
 

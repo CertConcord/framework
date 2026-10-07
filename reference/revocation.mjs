@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { statusResult, evaluateStatusEvidence } from './status-result.mjs';
 import {
   seq,
   set,
@@ -87,6 +88,12 @@ export function issueCRL({
   return seq(tbs, alg, bit(sign(tbs, privateKey)));
 }
 export function verifyCRL(
+  raw, options,
+) {
+  if (raw === undefined || raw === null) return statusResult('UNKNOWN', 'CRL_MISSING');
+  return evaluateStatusEvidence(() => inspectCRL(raw, options), 'CRL');
+}
+function inspectCRL(
   raw,
   { issuer, publicKey, at = now(), knowledgeTime = at, serial, minNumber = 0n },
 ) {
@@ -106,10 +113,7 @@ export function verifyCRL(
   );
   const thisUpdate = parseTime(a[3]),
     nextUpdate = parseTime(a[4]);
-  requireThat(
-    thisUpdate <= knowledgeTime && nextUpdate > knowledgeTime && nextUpdate > thisUpdate,
-    'CRL_STALE',
-  );
+  requireThat(nextUpdate > thisUpdate, 'CRL_INTERVAL');
   const extensions = extMap(a.at(-1).children[0]),
     number = intValue(parseDER(extensions.get('2.5.29.20')));
   requireThat(number >= BigInt(minNumber), 'CRL_ROLLBACK');
@@ -129,7 +133,10 @@ export function verifyCRL(
     requireThat(reason !== 8, 'DELTA_CRL_UNSUPPORTED');
     if (s === BigInt(serial) && Math.min(revokedAt, invalidityDate) <= at) result = 'REVOKED';
   }
-  return { status: result, number, thisUpdate, nextUpdate, scope: 'COMPLETE_ISSUER_CRL' };
+  if (thisUpdate > knowledgeTime) result = 'NOT_YET_KNOWN';
+  else if (result !== 'REVOKED' && nextUpdate <= knowledgeTime) result = 'STALE';
+  return statusResult(result, result === 'GOOD' ? undefined : 'CRL_' + result,
+    { number, thisUpdate, nextUpdate, scope: 'COMPLETE_ISSUER_CRL' });
 }
 export function ocspCertID({ issuer, issuerPublicKey, serial }) {
   const rawKey = parseDER(spki(issuerPublicKey)).children[1].value.subarray(1);
@@ -197,7 +204,11 @@ export function issueOCSP(
   const basic = seq(tbs, algID(privateKey.asymmetricKeyType), bit(sign(tbs, privateKey)));
   return seq(der(10, Buffer.from([0])), der(0xa0, seq(oid(basicOID), octet(basic))));
 }
-export function verifyOCSP(raw, { request, issuerPublicKey, at = now() }) {
+export function verifyOCSP(raw, options) {
+  if (raw === undefined || raw === null) return statusResult('UNKNOWN', 'OCSP_MISSING');
+  return evaluateStatusEvidence(() => inspectOCSP(raw, options), 'OCSP');
+}
+function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime = at }) {
   const expected = parseOCSPRequest(request),
     r = parseDER(raw).children;
   requireThat(r.length === 2 && r[0].tag === 10 && r[0].value[0] === 0, 'OCSP_STATUS');
@@ -216,25 +227,24 @@ export function verifyOCSP(raw, { request, issuerPublicKey, at = now() }) {
     a.length === 4 &&
       a[0].tag === 0xa2 &&
       equal(a[0].children[0].value, createHash('sha1').update(rawKey).digest()) &&
-      parseTime(a[1]) <= at &&
       a[2].children.length === 1,
     'OCSP_RESPONDER',
   );
   const s = a[2].children[0].children;
   requireThat(
     s.length === 4 &&
-      equal(s[0].raw, expected.certID) &&
-      parseTime(s[2]) <= at &&
-      parseTime(s[3].children[0]) > at,
-    'OCSP_CONTEXT_OR_STALE',
+      equal(s[0].raw, expected.certID),
+    'OCSP_CONTEXT',
   );
   const nonce = parseDER(extMap(a[3].children[0]).get(nonceOID)).value;
   requireThat(equal(nonce, expected.nonce), 'OCSP_NONCE');
   requireThat([0x80, 0x82, 0xa1].includes(s[1].tag), 'OCSP_CERT_STATUS');
-  return {
-    status: s[1].tag === 0x80 ? 'GOOD' : s[1].tag === 0x82 ? 'UNKNOWN' : 'REVOKED',
-    thisUpdate: parseTime(s[2]),
-    nextUpdate: parseTime(s[3].children[0]),
-    ...(s[1].tag === 0xa1 ? { revokedAt: parseTime(s[1].children[0]) } : {}),
-  };
+  const thisUpdate = parseTime(s[2]), nextUpdate = parseTime(s[3].children[0]),
+    producedAt = parseTime(a[1]), revokedAt = s[1].tag === 0xa1 ? parseTime(s[1].children[0]) : undefined;
+  requireThat(nextUpdate > thisUpdate && producedAt >= thisUpdate, 'OCSP_INTERVAL');
+  let status = s[1].tag === 0x80 ? 'GOOD' : s[1].tag === 0x82 ? 'UNKNOWN' : revokedAt <= at ? 'REVOKED' : 'GOOD';
+  if (producedAt > knowledgeTime || thisUpdate > knowledgeTime) status = 'NOT_YET_KNOWN';
+  else if (status !== 'REVOKED' && nextUpdate <= knowledgeTime) status = 'STALE';
+  return statusResult(status, status === 'GOOD' ? undefined : 'OCSP_' + status,
+    { thisUpdate, nextUpdate, producedAt, ...(revokedAt === undefined ? {} : { revokedAt }) });
 }

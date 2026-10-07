@@ -1,5 +1,6 @@
 import { DatabaseSync } from 'node:sqlite';
 import { requireOperationAuthorities } from './control-authority.mjs';
+import { statusResult, evaluateStatusEvidence } from './status-result.mjs';
 import {
   D,
   H,
@@ -233,7 +234,7 @@ export function readControl(envelope, label, certificate) {
   const r = verifyCMS(envelope, { expectedCertificate: certificate });
   const a = decodeCBOR(r.content);
   requireThat(
-    a.length === 4 && a[0] === 'CertConcord' && a[1] === 2 && a[2] === label,
+    a.length === 4 && a[0] === 'CertConcord' && a[1] === 3 && a[2] === label,
     'CONTROL_DOMAIN',
   );
   return a[3];
@@ -478,75 +479,14 @@ export function quorumProperties(n, q, f) {
   };
 }
 
-export function evidenceObject(type, payload, dependencies = []) {
-  requireThat(
-    typeof type === 'string' &&
-      Buffer.isBuffer(payload) &&
-      dependencies.every((d) => Buffer.isBuffer(d) && d.length === 64) &&
-      new Set(dependencies.map(b64u)).size === dependencies.length,
-    'EVIDENCE_TYPE',
-  );
-  return {
-    id: H('EvidenceObject', [type, 1, payload, dependencies]),
-    type,
-    version: 1,
-    payload,
-    dependencies,
-  };
+export function evaluateStatus(statement, context) {
+  if (statement === undefined || statement === null) return statusResult('UNKNOWN', 'STATUS_MISSING');
+  return evaluateStatusEvidence(() => {
+    const status = classifyStatus(statement, context);
+    return statusResult(status, status === 'GOOD' ? undefined : 'STATUS_' + status);
+  }, 'STATUS');
 }
-export function verifyEvidenceClosure(
-  objects,
-  roots,
-  { requiredTypes = [], maxBytes = 64 * 1024 * 1024, validators = {} } = {},
-) {
-  let size = 0;
-  const map = new Map();
-  for (const o of objects) {
-    size += o.payload.length;
-    requireThat(size <= maxBytes, 'ECP_SIZE');
-    requireThat(
-      o.version === 1 && new Set(o.dependencies.map(b64u)).size === o.dependencies.length,
-      'ECP_SCHEMA',
-    );
-    requireThat(
-      equal(o.id, H('EvidenceObject', [o.type, o.version, o.payload, o.dependencies])),
-      'ECP_HASH',
-    );
-    const id = b64u(o.id);
-    requireThat(!map.has(id), 'ECP_DUPLICATE');
-    map.set(id, o);
-  }
-  const active = new Set(),
-    visited = new Set(),
-    types = new Set();
-  function visit(id) {
-    id = typeof id === 'string' ? id : b64u(id);
-    requireThat(!active.has(id), 'ECP_CYCLE');
-    if (visited.has(id)) return;
-    const o = map.get(id);
-    requireThat(o, 'ECP_MISSING_OBJECT');
-    active.add(id);
-    for (const d of o.dependencies) visit(d);
-    active.delete(id);
-    visited.add(id);
-    types.add(o.type);
-    if (validators[o.type]) validators[o.type](o.payload);
-  }
-  roots.forEach(visit);
-  requireThat(
-    requiredTypes.every((t) => types.has(t)),
-    'ECP_INCOMPLETE_PLAN',
-  );
-  requireThat(visited.size === map.size, 'ECP_UNREACHABLE_OBJECT');
-  return {
-    closure: 'COMPLETE',
-    objects: visited.size,
-    semanticValidation: requiredTypes.every((t) => validators[t])
-      ? 'PLAN_VALIDATED'
-      : 'NOT_EVALUATED',
-  };
-}
-export function evaluateStatus(statement, { stateTime = now(), knowledgeTime = now(), scope }) {
+function classifyStatus(statement, { stateTime = now(), knowledgeTime = now(), scope }) {
   requireThat(
     statement.scope === scope &&
       Number.isFinite(stateTime) &&
@@ -556,8 +496,7 @@ export function evaluateStatus(statement, { stateTime = now(), knowledgeTime = n
       Number.isSafeInteger(statement.publishedAt) &&
       statement.publishedAt >= 0 &&
       Number.isSafeInteger(statement.nextUpdate) &&
-      statement.nextUpdate > statement.publishedAt &&
-      statement.publishedAt <= knowledgeTime,
+      statement.nextUpdate > statement.publishedAt,
     'STATUS_SCOPE_OR_KNOWLEDGE',
   );
   if (statement.status === 'REVOKED')
@@ -568,11 +507,17 @@ export function evaluateStatus(statement, { stateTime = now(), knowledgeTime = n
           (Number.isSafeInteger(statement.compromiseStart) && statement.compromiseStart >= 0)),
       'STATUS_REVOCATION_TIME',
     );
+  if (statement.publishedAt > knowledgeTime) return 'NOT_YET_KNOWN';
   if (
     statement.status === 'REVOKED' &&
     Math.min(statement.effectiveTime, statement.compromiseStart ?? Infinity) <= stateTime
   )
     return 'REVOKED';
+  if (statement.critical !== undefined) {
+    requireThat(Array.isArray(statement.critical) && statement.critical.every((item) => typeof item === 'string'),
+      'STATUS_CRITICAL_SCHEMA');
+    if (statement.critical.length) return 'UNSUPPORTED';
+  }
   if (statement.nextUpdate <= knowledgeTime) return 'STALE';
   return statement.status === 'GOOD' || statement.status === 'REVOKED' ? 'GOOD' : 'UNKNOWN';
 }

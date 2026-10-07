@@ -2,7 +2,6 @@ import {
   dcbor,
   decodeCBOR,
   H,
-  D,
   sha512,
   equal,
   requireThat,
@@ -15,15 +14,11 @@ import {
 import { verifyCMS, parseCertificate, validateCertificate, OID, RRA } from './pki.mjs';
 import { PASSKEY_SIGN_PROFILE } from './raw-signing.mjs';
 import { verifyPasskeyOperation } from './passkey-credentials.mjs';
-import {
-  evidenceObject,
-  verifyEvidenceClosure,
-  readControl,
-  validateActivation,
-  evaluateStatus,
-} from './state.mjs';
+import { readControl, validateActivation, evaluateStatus } from './state.mjs';
+import { evidenceLeaf, createEvidencePackage, verifyEvidencePackage } from './evidence-plan.mjs';
 import { verifyMTC } from './mtc.mjs';
 import { snapshotIssuanceScope } from './enrollment-scope.mjs';
+import { AuthorityError } from './authority-history.mjs';
 import {
   operationAuthorityQueries,
   requireAuthorities,
@@ -41,9 +36,9 @@ import {
 const types = [
   'Document',
   'Certificate',
+  'RegistrationAuthorization',
   'SIM',
   'SignaturePolicy',
-  'ActivationContext',
   'OperationPermit',
   'ExecutionReceipt',
   'CertificateStatus',
@@ -52,9 +47,9 @@ const types = [
 export function createSignaturePackage({
   document,
   certificate,
+  registrationAuthorization,
   sim,
   policy,
-  activation,
   permit,
   receipt,
   status,
@@ -62,7 +57,10 @@ export function createSignaturePackage({
   passkeyEvidence,
   executionEvidence,
   documentEvidence,
+  ...unknown
 }) {
+  requireThat(!Object.hasOwn(unknown, 'activation'), 'ECP_DUPLICATE_ACTIVATION');
+  fields(unknown, []);
   requireThat(
     !!executionRequirement(policy) === !!executionEvidence &&
       !(passkeyEvidence && executionEvidence),
@@ -71,42 +69,36 @@ export function createSignaturePackage({
   const payloads = [
       document,
       certificate,
+      registrationAuthorization,
       dcbor(sim),
       dcbor(policy),
-      dcbor(activation),
       permit,
       receipt,
       status,
       cms,
     ],
-    objects = types.map((type, i) => evidenceObject(type, payloads[i]));
+    objects = types.map((type, i) => evidenceLeaf(type, payloads[i]));
   if (passkeyEvidence) {
     const { binding, ...raw } = passkeyEvidence;
     objects.push(
-      evidenceObject('PasskeySigningBinding', dcbor(binding)),
-      evidenceObject('PasskeyRawEvidence', dcbor(raw)),
+      evidenceLeaf('PasskeySigningBinding', dcbor(binding)),
+      evidenceLeaf('PasskeyRawEvidence', dcbor(raw)),
     );
   }
   if (executionEvidence)
-    objects.push(evidenceObject('ExecutionBindingEvidence', dcbor(executionEvidence)));
+    objects.push(evidenceLeaf('ExecutionBindingEvidence', dcbor(executionEvidence)));
   appendDocumentEvidence(objects, { policy, format: 'CMS', evidence: documentEvidence });
-  const plan = evidenceObject(
-    'VerificationPlan',
-    dcbor({
-      schemaVersion: 1,
-      profile: selectDocumentPlan(
-        executionEvidence
-          ? 'certconcord-ecp-cms-execution-draft-02'
-          : passkeyEvidence
-            ? 'certconcord-ecp-cms-passkey-v1'
-            : 'certconcord-ecp-cms-attested-v1',
-        policy,
-      ),
-      objects: Object.fromEntries(objects.map((o) => [o.type, o.id])),
-    }),
-    objects.map((o) => o.id),
+  return createEvidencePackage(
+    selectDocumentPlan(
+      executionEvidence
+        ? 'certconcord-ecp-cms-execution-draft-03'
+        : passkeyEvidence
+          ? 'certconcord-ecp-cms-passkey-draft-03'
+          : 'certconcord-ecp-cms-attested-draft-03',
+      policy,
+    ),
+    objects,
   );
-  return { schemaVersion: 1, root: plan.id, objects: [...objects, plan] };
 }
 
 // Trust inputs are provided by the relying party, never taken as authority from the package itself.
@@ -130,14 +122,10 @@ export function verifySignaturePackage(
     ...documentTrust
   },
 ) {
-  fields(bundle, ['schemaVersion', 'root', 'objects']);
-  requireThat(bundle.schemaVersion === 1, 'ECP_SCHEMA');
-  const plans = bundle.objects.filter((o) => o.type === 'VerificationPlan');
-  requireThat(plans.length === 1 && equal(plans[0].id, bundle.root), 'ECP_PLAN');
-  const plan = decodeCBOR(plans[0].payload);
+  const { plan } = verifyEvidencePackage(bundle);
   const document = Object.hasOwn(documentPlans, plan.profile);
-  const passkey = plan.profile === 'certconcord-ecp-cms-passkey-v1';
-  const execution = plan.profile === 'certconcord-ecp-cms-execution-draft-02';
+  const passkey = plan.profile === 'certconcord-ecp-cms-passkey-draft-03';
+  const execution = plan.profile === 'certconcord-ecp-cms-execution-draft-03';
   const selectedTypes = [
     ...(execution
       ? [...types, 'ExecutionBindingEvidence']
@@ -146,31 +134,19 @@ export function verifySignaturePackage(
         : types),
     ...(document ? documentEvidenceTypes(expectedPolicy, 'CMS') : []),
   ];
-  verifyEvidenceClosure(bundle.objects, [bundle.root], {
-    requiredTypes: [...selectedTypes, 'VerificationPlan'],
-  });
-  requireThat(bundle.objects.length === selectedTypes.length + 1, 'ECP_PLAN');
-  fields(plan, ['schemaVersion', 'profile', 'objects']);
+  const { values } = verifyEvidencePackage(bundle, { requiredTypes: selectedTypes });
   requireThat(
-    plan.schemaVersion === 1 &&
-      (execution ||
-        passkey ||
-        plan.profile === 'certconcord-ecp-cms-attested-v1' ||
-        documentPlans[plan.profile] === 'certconcord-ecp-cms-attested-v1'),
+    execution ||
+      passkey ||
+      plan.profile === 'certconcord-ecp-cms-attested-draft-03' ||
+      documentPlans[plan.profile] === 'certconcord-ecp-cms-attested-draft-03',
     'ECP_PLAN_PROFILE',
   );
-  fields(plan.objects, selectedTypes);
-  const values = {};
-  for (const type of selectedTypes) {
-    const o = bundle.objects.find((o) => o.type === type && equal(o.id, plan.objects[type]));
-    requireThat(o, 'ECP_PLAN_OBJECT');
-    values[type] = o.payload;
-  }
   const sim = decodeCBOR(values.SIM),
     policy = decodeCBOR(values.SignaturePolicy),
-    activation = decodeCBOR(values.ActivationContext),
     cert = parseCertificate(values.Certificate),
     permit = readControl(values.OperationPermit, 'OperationPermit', permitCertificate),
+    activation = permit.activation,
     receipt = readControl(values.ExecutionReceipt, 'ExecutionReceipt', receiptCertificate),
     status = readControl(values.CertificateStatus, 'CertificateStatus', statusCertificate);
   requireThat(!!executionRequirement(policy) === execution, 'ECP_EXECUTION_DOWNGRADE');
@@ -251,8 +227,7 @@ export function verifySignaturePackage(
     maxLifetime: policy.maxActivationLifetime,
   });
   requireThat(
-    equal(D('ActivationContext', permit.activation), D('ActivationContext', activation)) &&
-      permit.proofMode === policy.activationMode &&
+    permit.proofMode === policy.activationMode &&
       permit.issuedAt <= at &&
       permit.expiresAt > at &&
       permit.expiresAt <= activation.expiresAt &&
@@ -277,14 +252,13 @@ export function verifySignaturePackage(
       profileID: sim.profileID,
     },
     issuerKey = cert.algorithm === OID.mtc ? mtc?.caPublicKey : issuerPublicKey,
-    issuedAt = document
-      ? readControl(
-          values.RegistrationAuthorization,
-          'RegistrationAuthorization',
-          documentTrust.raCertificate,
-        ).issuedAt
-      : cert.notBefore,
+    issuedAt = readControl(
+      values.RegistrationAuthorization,
+      'RegistrationAuthorization',
+      documentTrust.raCertificate,
+    ).issuedAt,
     authorityQueries = [],
+    authorityQuorums = [],
     unavailable = [],
     authorityFailures = [];
   requireThat(
@@ -299,10 +273,26 @@ export function verifySignaturePackage(
       equal(keyID(parseCertificate(issuerCertificate).publicKey), keyID(issuerKey)),
       'ISSUER_KEY_BINDING',
     );
-  const verifyState = (stateTime) => {
+  const verifyState = (stateTime, { proofOfExistenceUpperBound } = {}) => {
     if (cert.algorithm === OID.mtc) {
       requireThat(mtc, 'ECP_MTC_TRUST_REQUIRED');
-      verifyMTC(values.Certificate, { ...mtc, at: stateTime, profileID: sim.profileID });
+      const proof = verifyMTC(values.Certificate, {
+        ...mtc,
+        at: stateTime,
+        profileID: sim.profileID,
+        trustedSubtrees: [],
+      });
+      authorityQuorums.push({
+        members: proof.verifiedCosigners,
+        threshold: mtc.threshold,
+        role: 'COSIGNER',
+        scope,
+        stateTimes:
+          proofOfExistenceUpperBound === undefined
+            ? [issuedAt]
+            : [issuedAt, proofOfExistenceUpperBound],
+        knowledgeTime,
+      });
     } else {
       requireThat(issuerPublicKey, 'ECP_ISSUER_REQUIRED');
       validateCertificate(values.Certificate, issuerPublicKey, {
@@ -319,9 +309,11 @@ export function verifySignaturePackage(
       knowledgeTime,
       scope: 'CERTIFICATE',
     });
-    if (['STALE', 'UNKNOWN', 'NOT_YET_KNOWN'].includes(statusResult))
-      unavailable.push('ECP_STATUS_' + statusResult);
-    else requireThat(statusResult === 'GOOD', 'ECP_STATUS_' + statusResult);
+    if (statusResult.overall === 'INDETERMINATE') unavailable.push('ECP_' + statusResult.reason);
+    else if (statusResult.overall !== 'VALID')
+      authorityFailures.push(
+        new AuthorityError({ ...statusResult, reason: 'ECP_' + statusResult.reason }),
+      );
     authorityQueries.push(
       ...operationAuthorityQueries(
         { permitCertificate, receiptCertificate },
@@ -338,13 +330,17 @@ export function verifySignaturePackage(
         stateTime: issuedAt,
         knowledgeTime,
       },
-      {
-        certificate: statusCertificate,
-        role: 'STATUS_AUTHORITY',
-        scope,
-        stateTime: status.publishedAt,
-        knowledgeTime,
-      },
+      ...(status.publishedAt <= knowledgeTime
+        ? [
+            {
+              certificate: statusCertificate,
+              role: 'STATUS_AUTHORITY',
+              scope,
+              stateTime: status.publishedAt,
+              knowledgeTime,
+            },
+          ]
+        : []),
     );
   };
   verifyState(at);
@@ -430,8 +426,14 @@ export function verifySignaturePackage(
       ),
     authorityFailures,
   );
-  requireAuthorities(authorityResolver, authorityQueries, unavailable, authorityFailures);
-  const missingTime = policy.requireTrustedTime && !documentResult;
+  requireAuthorities(
+    authorityResolver,
+    authorityQueries,
+    unavailable,
+    authorityFailures,
+    authorityQuorums,
+  );
+  const missingTime = policy.requireTrustedTime && !policy.documentEvidence;
   return {
     ...(executionResult ? { execution: executionResult } : {}),
     profile: plan.profile,

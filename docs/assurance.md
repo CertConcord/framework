@@ -1,6 +1,6 @@
 # Security assessment and interoperability
 
-[SEP draft 02](../spec/bindings/SEP-draft-02.md) binds assurance work to the core authority and evidence model. Each result belongs to an exact source revision, role, configuration and environment.
+[SEP draft 03](../spec/bindings/SEP-draft-03.md) binds assurance work to the core authority and evidence model. Each result belongs to an exact source revision, role, configuration and environment.
 
 ## Independent cryptographic review package
 

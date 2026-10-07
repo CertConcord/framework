@@ -24,7 +24,7 @@ import {
   verifyPasskeyOperation,
   publishPasskeyCRL,
 } from './passkey-credentials.mjs';
-import { Journal, issuePermit } from './state.mjs';
+import { Journal, issuePermit, readControl } from './state.mjs';
 import { verifyCRL } from './revocation.mjs';
 import { runPasskeyDemo } from './passkey-demo.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
@@ -115,9 +115,11 @@ test('Passkey example authorization stays inside consent when the clock crosses 
   const result = await runPasskeyDemo({ version: version5, algorithm: -65539 });
   assert.equal(result.packageVerification.overall, 'VALID_UNDER_POLICY');
   const sim = c.decodeCBOR(result.bundle.objects.find((o) => o.type === 'SIM').payload),
-    activation = c.decodeCBOR(
-      result.bundle.objects.find((o) => o.type === 'ActivationContext').payload,
-    );
+    activation = readControl(
+      result.bundle.objects.find((o) => o.type === 'OperationPermit').payload,
+      'OperationPermit',
+      result.packageTrust.permitCertificate,
+    ).activation;
   assert(activation.issuedAt > sim.issuedAt);
   assert(activation.expiresAt <= sim.expiresAt);
 });
@@ -134,7 +136,20 @@ for (const version of ['previewSign-4', version5])
         assert.equal(result.verification.authorization, 'PREAUTHORIZED_EVIDENCE');
         assert.equal(result.verification.quantumResistance, 'CLASSICAL');
         assert.equal(result.packageVerification.overall, 'VALID_UNDER_POLICY');
-        assert.equal(result.packageVerification.profile, 'certconcord-ecp-cms-passkey-v1');
+        assert.equal(result.packageVerification.profile, 'certconcord-ecp-cms-passkey-draft-03');
+        assert.throws(
+          () =>
+            verifySignaturePackage(
+              {
+                ...result.bundle,
+                objects: result.bundle.objects.filter(
+                  (object) => object.type !== 'RegistrationAuthorization',
+                ),
+              },
+              result.packageTrust,
+            ),
+          { code: 'ECP_MISSING_OBJECT' },
+        );
         assert.throws(
           () =>
             verifySignaturePackage(result.bundle, {
@@ -160,11 +175,11 @@ for (const version of ['previewSign-4', version5])
           certificate: result.evidence.certificate,
           sim: result.sim,
           policy: result.policy,
-          activation: c.decodeCBOR(value('ActivationContext')),
           permit: result.evidence.permit,
           receipt: result.evidence.receipt,
           status: value('CertificateStatus'),
           cms: result.cms,
+          registrationAuthorization: result.rar,
         });
         assert.throws(
           () => verifySignaturePackage(downgraded, result.packageTrust),

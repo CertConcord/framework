@@ -1,8 +1,8 @@
-# CertConcord Digital Signature Certificate Profile — draft 02
+# CertConcord Digital Signature Certificate Profile — draft 03
 
-> Candidate binding for CertConcord draft 02. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 02 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
+> Candidate binding for CertConcord draft 03. This is a working draft, not a final standard. Its requirements apply only when this binding is selected. The [draft architecture](../architecture.md) defines framework scope; the [profile catalog](../profiles.md) records applicability. The draft 03 namespace and wire domain identify experimental formats. Object schema numbers describe field layouts and do not indicate a stable edition.
 
-Status: draft 02. Normative language: English. COMMON-draft-02 and DTI-draft-02 apply.
+Status: draft 03. Normative language: English. COMMON-draft-03 and DTI-draft-03 apply.
 
 ## 1. Purpose
 
@@ -28,7 +28,7 @@ Every conforming Sign invocation is authorized through COMMON ACB. The gateway c
 
 ## 6. WebAuthn raw-signing adapter
 
-[PSCP-draft-02](PSCP-draft-02.md) defines the full admission, issuance, authorization, lifecycle and evidence contract. The selected adapters distinguish published previewSign version 4 and the locked previewSign5 snapshot, including their generation ceremonies and error outputs. A raw document signature and the parent's signed extension output are both verified. Message-signing, split/prehash and ARKG-derived key inputs retain distinct semantics. Unsupported capability or version produces an error, with no automatic fallback.
+[PSCP-draft-03](PSCP-draft-03.md) defines the full admission, issuance, authorization, lifecycle and evidence contract. The selected adapters distinguish published previewSign version 4 and the locked previewSign5 snapshot, including their generation ceremonies and error outputs. A raw document signature and the parent's signed extension output are both verified. Message-signing, split/prehash and ARKG-derived key inputs retain distinct semantics. Unsupported capability or version produces an error, with no automatic fallback.
 
 The independent document key is certified under CERTCONCORD-PERSON-PASSKEY-SIGN-v1 after attestation and real CSR possession. The first ordinary WebAuthn operation obtains a permit; a second operation returns the raw signature and its parent assertion. A single get() result cannot retroactively establish prior server authorization. The WebKit getRemoteKey adapter remains distinct from the RRA HTTPS RemoteCryptoKey service and requires its own admitted-key and protected-provider composition under PSCP section 14.
 
@@ -179,4 +179,4 @@ Inputs crossing asynchronous authorization or provider interfaces MUST be retain
 
 ## 36. Governed execution binding
 
-[EBP draft 02](EBP-draft-02.md) is an explicitly selected RRA execution profile. Its signed provider/key admission, monotonic epochs, key-scoped unresolved-operation lock and original-byte request commitment extend the SIM/ACB/permit chain. Its mandatory CMS and mdoc ECP plans preserve normal document signature, issuer and lifecycle validation. BROKER_ENFORCED describes the admitted broker boundary; it does not imply authenticator permit processing or a trusted display. PSCP retains its separate dual-proof plan until an explicit composition is selected.
+[EBP draft 03](EBP-draft-03.md) is an explicitly selected RRA execution profile. Its signed provider/key admission, monotonic epochs, key-scoped unresolved-operation lock and original-byte request commitment extend the SIM/ACB/permit chain. Its mandatory CMS and mdoc ECP plans preserve normal document signature, issuer and lifecycle validation. BROKER_ENFORCED describes the admitted broker boundary; it does not imply authenticator permit processing or a trusted display. PSCP retains its separate dual-proof plan until an explicit composition is selected.

@@ -1,5 +1,5 @@
 {
-  "release": "0.2.0-draft.1",
+  "release": "0.3.0-draft.1",
   "sourceLock": "source-lock.json",
   "adapters": [
     {
@@ -68,8 +68,19 @@
       "version": "2.0.0",
       "wireProfile": "C2SP-20261007-MLDSA87-v2: one admitted witness signature per subtree request; raw padded-base64 ML-DSA response plus LF; cryptographically verified log signature on published checkpoint. CERTCONCORD-MLDSA87-SUBTREE-v1 remains the algorithm key-hint identifier.",
       "modules": ["transparency.mjs"],
-      "tests": ["transparency.test.mjs", "adapters-network.test.mjs", "component-integration.test.mjs"],
-      "sources": ["c2spMirror", "c2spWitness", "c2spCosignature", "c2spNote", "c2spCheckpoint", "c2spTiles"],
+      "tests": [
+        "transparency.test.mjs",
+        "adapters-network.test.mjs",
+        "component-integration.test.mjs"
+      ],
+      "sources": [
+        "c2spMirror",
+        "c2spWitness",
+        "c2spCosignature",
+        "c2spNote",
+        "c2spCheckpoint",
+        "c2spTiles"
+      ],
       "inputSemantics": "Exact adapter-defined bytes; upstream encodings preserved as specified in ADAPTERS.md",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
       "limits": "COMMON section 2 and adapter-specific bounds in ADAPTERS.md",
@@ -405,21 +416,31 @@
       "name": "ERS / XMLERS",
       "version": "1.0.1",
       "wireProfile": "RFC 4998/RFC 6283 single-object renewal. ERS hashes the complete DER ArchiveTimeStampSequence and selects Figure 4 sorted renewal inputs (erratum 7411 remains Reported); earlier unframed/unsorted records are incompatible.",
-      "modules": ["archive.mjs"],
-      "tests": ["containers.test.mjs", "archive-security.test.mjs"],
+      "modules": ["archive.mjs", "retained-authorities.mjs", "historical-validation.mjs"],
+      "tests": [
+        "containers.test.mjs",
+        "archive-security.test.mjs",
+        "retained-authorities.test.mjs",
+        "retained-document.test.mjs"
+      ],
       "sources": ["rfc4998", "rfc6283"],
       "inputSemantics": "Exact original bytes and DER-encoded prior chains; no signed archive wrapper. ERS preservation additionally requires external TSA/status and finite security lifetimes.",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
-      "limits": "Bounded SHA-256/SHA-512 subset. Generic historical trust/status resolution and operational archive succession are unimplemented. XMLERS checks integrity only.",
+      "limits": "Bounded SHA-256/SHA-512 subset; selected retained authority history and atomic archive succession are separate composition services. XMLERS checks integrity only. Distributed operations and container-specific LT/LTA are outside this adapter.",
       "downgradeForbidden": true
     },
     {
-      "id": "certconcord-ecp-v1",
+      "id": "certconcord-ecp-v2",
       "name": "Evidence closure",
-      "version": "1.1.0",
-      "wireProfile": "Hash-bound dependency DAG; certconcord-ecp-cms-attested-v1 and certconcord-ecp-cms-passkey-v1 semantic plans with explicit dual-proof and downgrade checks",
-      "modules": ["state.mjs", "evidence.mjs"],
-      "tests": ["evidence.test.mjs", "passkey.test.mjs"],
+      "version": "2.0.0-draft.1",
+      "wireProfile": "Draft 03 domain; schema-2 single verification plan with exact typed hash-bound leaves; no nested graphs or duplicate activation leaf",
+      "modules": ["evidence-plan.mjs", "evidence.mjs", "signer-mdoc.mjs"],
+      "tests": [
+        "evidence-plan.test.mjs",
+        "evidence.test.mjs",
+        "passkey.test.mjs",
+        "sdk-results.test.mjs"
+      ],
       "sources": ["rfc8949"],
       "inputSemantics": "Exact adapter-defined bytes; upstream encodings preserved as specified in ADAPTERS.md",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
@@ -594,10 +615,10 @@
       "limits": "65535-byte entries; 256-entry pages; configured entry and byte capacity"
     },
     {
-      "id": "certconcord-execution-binding-draft-02",
+      "id": "certconcord-execution-binding-draft-03",
       "name": "RRA Execution Binding Profile",
       "version": "1.0.0-draft.1",
-      "wireProfile": "EBP draft 02; governed CMS admission, immutable message request, signed receipt and mandatory CMS/mdoc evidence plans",
+      "wireProfile": "EBP draft 03; governed CMS admission, immutable message request, signed receipt and mandatory CMS/mdoc evidence plans",
       "inputSemantics": "Exact SIM, original signed permit and message bytes; externally pinned provider, key, control authorities and policy",
       "environment": "Node.js 24.15+; exclusively controlled message-signing backend and shared durable SQLite or PostgreSQL journal",
       "limits": "65536-byte binding, 1 MiB permit, 16 MiB message; 30-second permit and policy-bounded lease up to 86400 seconds",
@@ -607,20 +628,20 @@
       "sources": ["rfc5652", "webauthn", "rawSigningV4", "webKitRemoteKeys"]
     },
     {
-      "id": "certconcord-document-evidence-draft-02",
+      "id": "certconcord-document-evidence-draft-03",
       "name": "Document evidence composition",
       "wireProfile": "Attested CMS/mdoc plans with certified subject binding, scoped organizational authority and RFC 3161 proof-bound status evaluation",
       "modules": ["document-evidence.mjs", "evidence.mjs", "signer-mdoc.mjs", "timestamp.mjs"],
       "tests": ["document-evidence.test.mjs", "sdk-results.test.mjs"],
       "sources": ["mtc", "rfc3161", "rfc5652"],
-      "version": "draft-02",
-      "inputSemantics": "Exact signed and encrypted bytes defined in DOCUMENT-draft-02",
+      "version": "draft-03",
+      "inputSemantics": "Exact signed and encrypted bytes defined in DOCUMENT-draft-03",
       "environment": "Node.js 24.15+; independent CMS KEM exchange requires OpenSSL 3.6+",
       "limits": "Attested plans; documents at most 16 MiB; 100 recipients; direct organizational delegation",
       "downgradeForbidden": true
     },
     {
-      "id": "certconcord-document-encryption-draft-02",
+      "id": "certconcord-document-encryption-draft-03",
       "name": "Certified encrypted document delivery",
       "wireProfile": "RA-attested KEM possession, purpose-bound certificate admission, exact recipient SKI, CMS AuthEnvelopedData and encryption-only recovery",
       "modules": [
@@ -631,8 +652,8 @@
       ],
       "tests": ["document-evidence.test.mjs", "openssl.test.mjs"],
       "sources": ["rfc9629", "rfc9883", "rfc9936", "openssl365"],
-      "version": "draft-02",
-      "inputSemantics": "Exact signed and encrypted bytes defined in DOCUMENT-draft-02",
+      "version": "draft-03",
+      "inputSemantics": "Exact signed and encrypted bytes defined in DOCUMENT-draft-03",
       "environment": "Node.js 24.15+; independent CMS KEM exchange requires OpenSSL 3.6+",
       "limits": "Attested plans; documents at most 16 MiB; 100 recipients; direct organizational delegation",
       "downgradeForbidden": true

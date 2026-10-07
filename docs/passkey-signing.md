@@ -1,6 +1,6 @@
 # Passkey-managed Personal Signing Credentials
 
-CertConcord connects Passkeys to personal document certificates through a common RA, key-admission, issuance and evidence model. [PSCP](../spec/bindings/PSCP-draft-02.md) defines the associated signing-key profile. [DSCP](../spec/bindings/DSCP-draft-02.md) retains activation of independent ML-DSA, native and remote keys; [PRF-KPP](../spec/bindings/PRF-KPP-draft-02.md) retains local key protection and recovery.
+CertConcord connects Passkeys to personal document certificates through a common RA, key-admission, issuance and evidence model. [PSCP](../spec/bindings/PSCP-draft-03.md) defines the associated signing-key profile. [DSCP](../spec/bindings/DSCP-draft-03.md) retains activation of independent ML-DSA, native and remote keys; [PRF-KPP](../spec/bindings/PRF-KPP-draft-03.md) retains local key protection and recovery.
 
 ## Complete flow
 
@@ -61,7 +61,7 @@ The issuer and RA are independent trust roles even when their interfaces share a
 
 After the existing DSCP activation service issues a permit, `PasskeySigningService.begin()` reserves a request. `rawSign()` invokes the selected extension. `complete()` verifies the exact raw signature, signed parent output and current authority, then persists a signed receipt. Its `authorize` callback must evaluate the application-independent signing policy and current credential authority. Identical completed responses are retrievable; unresolved operations cannot be dispatched again.
 
-`verifyPasskeyOperation()` verifies a single certified-key operation with externally supplied trust and status policy. `verifySignaturePackage()` composes it with document, SIM, CMS, certificate status and policy validation under `certconcord-ecp-cms-passkey-v1`. The native mdoc verifier uses `certconcord-ecp-mdoc-passkey-v1`. Both plans require the original raw-evidence object and an external binding-status resolver; an ordinary evidence plan rejects the new profile. Cryptographic validity, activation authority, key custody, algorithm assurance and trusted time remain separate results.
+`verifyPasskeyOperation()` verifies a single certified-key operation with externally supplied trust and status policy. `verifySignaturePackage()` composes it with document, SIM, CMS, certificate status and policy validation under `certconcord-ecp-cms-passkey-draft-03`. The native mdoc verifier uses `certconcord-ecp-mdoc-passkey-draft-03`. Both plans require the original raw-evidence object and an external binding-status resolver; an ordinary evidence plan rejects the new profile. Cryptographic validity, activation authority, key custody, algorithm assurance and trusted time remain separate results.
 
 ## Lifecycle and evidence portability
 

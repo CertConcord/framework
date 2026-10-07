@@ -44,7 +44,7 @@ async function structure(action, input, options) {
   });
 }
 
-export const examplePDF = (text = 'CertConcord draft 02 synthetic document') =>
+export const examplePDF = (text = 'CertConcord draft 03 synthetic document') =>
   structure('examplePDF', text);
 
 export async function preparePDF(input, options = {}) {

@@ -25,4 +25,4 @@ For a native mdoc or Passkey path, the document signature can remain verifiable 
 
 Cryptographic transitions need a new explicit suite or binding, authenticated policy selection, exact old-byte retention and a stated historical-verifier policy. A verifier must not retry a weaker suite after a verification failure. Original suite designs and MTC alternatives require separate analysis and interoperability evidence before promotion.
 
-The [document binding](../spec/bindings/DOCUMENT-draft-02.md) specifies the current composition. [Conformance](../spec/conformance.md) records the remaining independent-implementation, platform and operational gaps.
+The [document binding](../spec/bindings/DOCUMENT-draft-03.md) specifies the current composition. [Conformance](../spec/conformance.md) records the remaining independent-implementation, platform and operational gaps.

@@ -5,13 +5,8 @@ import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import * as e from './enrollment.mjs';
 import * as r from './revocation.mjs';
-import {
-  Journal,
-  activationContext,
-  issuePermit,
-  evidenceObject,
-  verifyEvidenceClosure,
-} from './state.mjs';
+import { Journal, activationContext, issuePermit } from './state.mjs';
+import { evidenceLeaf, createEvidencePackage, verifyEvidencePackage } from './evidence-plan.mjs';
 import { EpochTransition, wrapperHeader, wrapRoot, answerKEMChallenge } from './protection.mjs';
 import {
   SoftwareProvider,
@@ -39,10 +34,8 @@ test('CRL and OCSP bind issuer, serial, nonce, publication interval and revocati
       .status,
     'REVOKED',
   );
-  assert.throws(
-    () => r.verifyCRL(crl, { issuer, publicKey: ca.publicKey, serial, minNumber: 3n }),
-    /ROLLBACK/,
-  );
+  assert.equal(r.verifyCRL(crl, { issuer, publicKey: ca.publicKey, serial, minNumber: 3n }).reason,
+    'CRL_ROLLBACK');
   const q = r.ocspRequest({ issuer, issuerPublicKey: ca.publicKey, serial }),
     response = r.issueOCSP(q.raw, {
       issuer,
@@ -55,14 +48,10 @@ test('CRL and OCSP bind issuer, serial, nonce, publication interval and revocati
     'REVOKED',
   );
   const q2 = r.ocspRequest({ issuer, issuerPublicKey: ca.publicKey, serial });
-  assert.throws(
-    () => r.verifyOCSP(response, { request: q2.raw, issuerPublicKey: ca.publicKey }),
-    /NONCE/,
-  );
-  assert.throws(
-    () => r.verifyOCSP(response, { request: q.raw, issuerPublicKey: ca.publicKey, at: at + 301 }),
-    /STALE/,
-  );
+  assert.equal(r.verifyOCSP(response, { request: q2.raw, issuerPublicKey: ca.publicKey }).reason,
+    'OCSP_NONCE');
+  assert.equal(r.verifyOCSP(response, { request: q.raw, issuerPublicKey: ca.publicKey,
+    at: at + 301 }).overall, 'INVALID');
 });
 test('PKCS10 direct signing proof and RFC9883 signed KEM possession statement', () => {
   const holder = c.generate(),
@@ -201,7 +190,7 @@ test('direct KEM challenge consumes once and rejects another subject', () => {
     journal.close();
   }
 });
-test('epoch commit requires the same root and evidence closure hashes its dependencies', () => {
+test('epoch commit requires the same root and the evidence plan binds its leaf commitments', () => {
   const journal = new Journal(),
     oldPRF = c.random(),
     newPRF = c.random(),
@@ -228,12 +217,16 @@ test('epoch commit requires the same root and evidence closure hashes its depend
       newWrapper: wrapRoot(newPRF, c.random(), h2),
     });
     assert.throws(() => transition.commit('bad', newPRF, oldPRF), /ROOT_CHANGED/);
-    const leaf = evidenceObject('Certificate', Buffer.from('original')),
-      manifest = evidenceObject('Manifest', Buffer.from('plan'), [leaf.id]);
-    assert.equal(verifyEvidenceClosure([leaf, manifest], [manifest.id]).closure, 'COMPLETE');
+    const leaf = evidenceLeaf('Certificate', Buffer.from('original')),
+      bundle = createEvidencePackage('synthetic-plan', [leaf]);
+    assert.equal(verifyEvidencePackage(bundle).closure, 'COMPLETE');
     assert.throws(
-      () => verifyEvidenceClosure([leaf, { ...manifest, dependencies: [] }], [manifest.id]),
-      /HASH/,
+      () =>
+        verifyEvidencePackage({
+          ...bundle,
+          plan: { ...bundle.plan, objects: { Certificate: c.random(64) } },
+        }),
+      { code: 'ECP_PLAN_OBJECT' },
     );
   } finally {
     journal.close();

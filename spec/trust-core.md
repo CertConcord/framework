@@ -1,4 +1,4 @@
-# Shared certificate trust core — draft 02
+# Shared certificate trust core — draft 03
 
 This document defines common draft requirements for every CertConcord application. Requirements are independent of a particular certificate format. Concrete encodings and algorithms come from a selected [binding](profiles.md); the framework-level contract alone is not a wire protocol.
 
@@ -31,4 +31,4 @@ For the current SDK, malformed encoding, altered object commitments and policy r
 
 ## Composition selection
 
-The initial candidate composition is certconcord-governed-draft-02. [COMMON](bindings/COMMON-draft-02.md), [DTI](bindings/DTI-draft-02.md) and the selected domain bindings supply executable details. Alternative mechanisms must satisfy these core duties through their own explicit contracts; they do not inherit RRA, MTC or a particular wallet merely by implementing CertConcord.
+The initial candidate composition is certconcord-governed-draft-03. [COMMON](bindings/COMMON-draft-03.md), [DTI](bindings/DTI-draft-03.md) and the selected domain bindings supply executable details. Alternative mechanisms must satisfy these core duties through their own explicit contracts; they do not inherit RRA, MTC or a particular wallet merely by implementing CertConcord.

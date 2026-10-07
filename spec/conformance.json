@@ -1,5 +1,5 @@
 {
-  "draft": "draft-02",
+  "draft": "draft-03",
   "claim": "coverage-index-not-certification",
   "requirements": [
     {
@@ -13,9 +13,21 @@
         {
           "file": "reference/state-security.test.mjs",
           "name": "trust bootstrap rejects duplicate roots and threshold overrides; restart preserves fork detection"
+        },
+        {
+          "file": "reference/authority-history.test.mjs",
+          "name": "control authority pins require role, scope, certificate validity and knowledge coverage"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "root succession needs both quorums, retained links and explicit algorithm lifetimes"
+        },
+        {
+          "file": "reference/quorum-authorities.test.mjs",
+          "name": "accepts only a quorum of independently authorized signing members"
         }
       ],
-      "gap": "Fixed bootstrap pins and durable watermarks are exercised. Dynamic root rotation, emergency replacement and independent deployment review remain unimplemented or unassessed."
+      "gap": "Fixed pins, durable watermarks and a separate retained-history resolver with dual-quorum root succession are exercised. Emergency replacement, distributed operation and independent deployment assessment remain open."
     },
     {
       "id": "CC-CORE-02",
@@ -32,6 +44,26 @@
         {
           "file": "reference/document-evidence.test.mjs",
           "name": "certified encryption closes admission, delivery and recovery with purpose and replay controls"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "RAR rejects ${boundary} replay at an independent issuer"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "issuer authority certificate must identify the actual signing key"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "MDOC offer enforces signed scope and authorization lifetime before durable allocation"
+        },
+        {
+          "file": "reference/enrollment-security.test.mjs",
+          "name": "RA isolates the possession-certificate policy callback from verified CSR bytes"
+        },
+        {
+          "file": "reference/certificate-key-usage.test.mjs",
+          "name": "rejects signed malformed KeyUsage extension schemas"
         }
       ],
       "gap": "Selected CMS and native mdoc admission paths are covered; external identity and custody assessment remains separate."
@@ -58,6 +90,10 @@
         {
           "file": "reference/foundation-security.test.mjs",
           "name": "native credential log: growth, unavailable mirror, quorum and durable failed allocation"
+        },
+        {
+          "file": "reference/quorum-authorities.test.mjs",
+          "name": "accepts only a quorum of independently authorized signing members"
         }
       ],
       "gap": "Operator independence, privacy and deployment failure assumptions require assessed evidence."
@@ -73,6 +109,10 @@
         {
           "file": "reference/sdk-results.test.mjs",
           "name": "execution plans are declared in CDDL and SDK enforces the selected policy"
+        },
+        {
+          "file": "reference/evidence-plan.test.mjs",
+          "name": "nested verification plans and independent activation leaves are forbidden even with valid commitments"
         }
       ],
       "gap": "Durable execution evidence covers selected providers; all operation/provider combinations are not assessed."
@@ -104,6 +144,22 @@
         {
           "file": "reference/state-security.test.mjs",
           "name": "wrapper verification and commit are atomic across write failure, restart and stale retirement"
+        },
+        {
+          "file": "reference/authority-history.test.mjs",
+          "name": "control authority pins require role, scope, certificate validity and knowledge coverage"
+        },
+        {
+          "file": "reference/status-results.test.mjs",
+          "name": "CRL, OCSP, Status List and experimental status share authenticated result semantics"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "revocation learned during root loading prevents release and leaves an uncertain operation"
+        },
+        {
+          "file": "reference/component-integration.test.mjs",
+          "name": "mdoc status TTL is authenticated and cannot erase invalid or revoked evidence"
         }
       ],
       "gap": "Document recovery and bounded historical status are covered; cross-application operational compromise review remains open."
@@ -115,6 +171,14 @@
         {
           "file": "reference/sdk-results.test.mjs",
           "name": "SDK distinguishes invalid, incomplete and unsupported evidence for CMS and mdoc"
+        },
+        {
+          "file": "reference/status-results.test.mjs",
+          "name": "CRL, OCSP, Status List and experimental status share authenticated result semantics"
+        },
+        {
+          "file": "reference/evidence-plan.test.mjs",
+          "name": "a known invalid leaf takes precedence over a missing plan or unsupported schema"
         }
       ],
       "gap": "Nested unsupported algorithms and complete per-dimension result reporting remain incomplete."
@@ -161,9 +225,29 @@
         {
           "file": "reference/archive-security.test.mjs",
           "name": "preserved GOOD evidence cannot override subsequently known certificate compromise"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "root succession needs both quorums, retained links and explicit algorithm lifetimes"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "publication time and authority admission cannot be supplied by backdated content"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "lost renewal responses reconcile the exact retained timestamp without another TSA execution"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "process termination between archive write and SQLite commit cannot publish half a renewal"
+        },
+        {
+          "file": "reference/retained-document.test.mjs",
+          "name": "retains offline authorization, renewed preservation and later admissibility separately"
         }
       ],
-      "gap": "A bounded RFC 4998 lifecycle covers TSA replacement, hash renewal, explicit lifetimes and historical replay after signer-certificate expiry; stale current status remains INDETERMINATE. Generic historical authority/status resolution, container-specific AdES LT/LTA augmentation and operational archive succession remain draft implementation gaps. Independent implementation and assessment are later stability evidence."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Container-specific AdES LT/LTA augmentation, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-CORE-10",
@@ -194,6 +278,14 @@
         {
           "file": "reference/sdk-results.test.mjs",
           "name": "ordinary WebAuthn completes CMS and mdoc document verification without raw signing or execution proposals"
+        },
+        {
+          "file": "reference/retained-document.test.mjs",
+          "name": "retains offline authorization, renewed preservation and later admissibility separately"
+        },
+        {
+          "file": "reference/evidence-plan.test.mjs",
+          "name": "nested verification plans and independent activation leaves are forbidden even with valid commitments"
         }
       ],
       "gap": "Ordinary WebAuthn completes selected CMS and mdoc document plans without raw-signing or execution proposals. Independent full-profile interoperability remains unrecorded."
@@ -224,6 +316,18 @@
         {
           "file": "reference/openssl.test.mjs",
           "name": "independent OpenSSL and reference exchange ML-KEM AuthEnvelopedData in both directions"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "revocation learned during root loading prevents release and leaves an uncertain operation"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "recovery completion failure stays uncertain after restart and never reloads the root"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "recovery requests and saved results stay isolated across trust domains sharing a journal"
         }
       ],
       "gap": "Certified recipient delivery and two-operator encryption-key recovery are exercised; external recovery services and hardware key import remain unassessed."
@@ -239,6 +343,10 @@
         {
           "file": "reference/security-engineering.test.mjs",
           "name": "CMS rejects relative OIDs and wrong signed-attribute value types even with a valid signature"
+        },
+        {
+          "file": "reference/certificate-key-usage.test.mjs",
+          "name": "rejects signed malformed KeyUsage extension schemas"
         }
       ],
       "gap": "Selected container behavior is tested. The custom reference parsers and SDK are not recommended production security boundaries; evaluated production parser integration, semantic equivalence and complete rendering coverage need independent review."
@@ -290,9 +398,33 @@
         {
           "file": "reference/archive-security.test.mjs",
           "name": "preserved GOOD evidence cannot override subsequently known certificate compromise"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "root succession needs both quorums, retained links and explicit algorithm lifetimes"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "publication time and authority admission cannot be supplied by backdated content"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "lost renewal responses reconcile the exact retained timestamp without another TSA execution"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "process termination between archive write and SQLite commit cannot publish half a renewal"
+        },
+        {
+          "file": "reference/retained-document.test.mjs",
+          "name": "retains offline authorization, renewed preservation and later admissibility separately"
+        },
+        {
+          "file": "reference/status-results.test.mjs",
+          "name": "CRL, OCSP, Status List and experimental status share authenticated result semantics"
         }
       ],
-      "gap": "A bounded RFC 4998 lifecycle covers TSA replacement, hash renewal, explicit lifetimes and historical replay after signer-certificate expiry; stale current status remains INDETERMINATE. Generic historical authority/status resolution, container-specific AdES LT/LTA augmentation and operational archive succession remain draft implementation gaps. Independent implementation and assessment are later stability evidence."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Container-specific AdES LT/LTA augmentation, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-DOC-06",
@@ -311,9 +443,17 @@
         {
           "file": "reference/authority.test.mjs",
           "name": "RA decision and signed RAR bind issuer policy, profile, subject request and one issuance"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "RAR rejects ${boundary} replay at an independent issuer"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "MDOC offer enforces signed scope and authorization lifetime before durable allocation"
         }
       ],
-      "gap": "Add explicit cross-domain substitution vectors for all accepted identity sources."
+      "gap": "Scoped native issuance and cross-domain/issuer replay rejection are exercised. Interoperability with every selected external identity source still needs independent evidence."
     },
     {
       "id": "CC-MDOC-02",
@@ -337,6 +477,14 @@
         {
           "file": "reference/foundation.test.mjs",
           "name": "DeviceKey and independent ML-DSA profiles preserve distinct key and algorithm semantics"
+        },
+        {
+          "file": "reference/component-integration.test.mjs",
+          "name": "locked component snapshots retain the exact reviewed bytes"
+        },
+        {
+          "file": "reference/component-integration.test.mjs",
+          "name": "mdoc status TTL is authenticated and cannot erase invalid or revoked evidence"
         }
       ],
       "gap": "Native certificate semantics need full external parser/issuer interoperability vectors."

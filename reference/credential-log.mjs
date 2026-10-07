@@ -1,4 +1,4 @@
-import { H, D, b64u, dcbor, equal, requireThat, keyID } from './core.mjs';
+import { H, D, b64u, dcbor, equal, requireThat, keyID, spki } from './core.mjs';
 import { evaluateInclusion, leafHash } from './mtc.mjs';
 import { witnessRequest, verifyNote } from './transparency.mjs';
 import { IndexedMerkleLog } from './storage/merkle.mjs';
@@ -87,7 +87,8 @@ export function verifyCredentialLog(proof, expectedEntry, { log, members, thresh
     'CREDENTIAL_LOG_INCLUSION',
   );
   const operators = new Set(),
-    keys = new Set();
+    keys = new Set(),
+    verifiedMirrors = [];
   for (const receipt of proof.receipts) {
     const member = members.find((m) => m.operatorID === receipt.operatorID);
     if (!member) continue;
@@ -103,7 +104,13 @@ export function verifyCredentialLog(proof, expectedEntry, { log, members, thresh
     );
     keys.add(id);
     operators.add(member.operatorID);
+    verifiedMirrors.push({ operatorID: member.operatorID, publicKeyDER: spki(member.publicKey) });
   }
   requireThat(operators.size >= threshold, 'CREDENTIAL_LOG_QUORUM');
-  return { status: 'VALID', operatorCount: operators.size };
+  return {
+    status: 'VALID',
+    operatorCount: operators.size,
+    logPublicKeyDER: spki(log.publicKey),
+    verifiedMirrors,
+  };
 }
