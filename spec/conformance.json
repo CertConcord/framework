@@ -251,9 +251,34 @@
     },
     {
       "id": "CC-CORE-10",
-      "coverage": "planned",
-      "tests": [],
-      "gap": "S/MIME and standalone timestamp application profiles have not yet been specified completely."
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/timestamp-verifier.test.mjs",
+          "name": "nonce-free standalone proof is valid without claiming a nonce binding"
+        },
+        {
+          "file": "reference/timestamp-verifier.test.mjs",
+          "name": "unsupported response status retains bad-signature INVALID precedence"
+        },
+        {
+          "file": "reference/timestamp-service.test.mjs",
+          "name": "unknown signer outcome never repeats signing and reconciles the original signature"
+        },
+        {
+          "file": "reference/timestamp-service.test.mjs",
+          "name": "a known appointment gap inside the timestamp interval prevents signing"
+        },
+        {
+          "file": "reference/timestamp-client.test.mjs",
+          "name": "lost transport result is not replayed and only an exact bound response reconciles"
+        },
+        {
+          "file": "reference/timestamp-client.test.mjs",
+          "name": "a timely received response keeps its first trusted receipt time across a failed completion and late reconciliation"
+        }
+      ],
+      "gap": "The standalone RFC 3161 application selects P-256, direct-root/full-CRL trust, current scoped authority and explicit clock admission, with durable issuance/client recovery. Operational time assurance, assessed key custody and a complete independent application implementation remain open. The S/MIME application contract remains incomplete."
     },
     {
       "id": "CC-DOC-01",
