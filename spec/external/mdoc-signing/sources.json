@@ -1,5 +1,5 @@
 {
-  "reviewDate": "2026-10-05",
+  "reviewDate": "2026-10-07",
   "sources": [
     {
       "id": "rfc9052",
@@ -31,6 +31,42 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9964.txt",
       "sha256": "8c42035b948301b197d431de8b3f40019bdaa3bb40150dc523306923948f34cf",
       "bytes": 180564
+    },
+    {
+      "id": "rfc9360",
+      "url": "https://www.rfc-editor.org/rfc/rfc9360.txt",
+      "sha256": "3dbe546adf08e309b429c8e71b2ee8384292fb8767338d3eb17d1c4e5adefc23",
+      "bytes": 29077,
+      "license": "IETF Trust"
+    },
+    {
+      "id": "statusList",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-oauth-status-list-21.txt",
+      "sha256": "21e4867a01f73cee2ebc1408d150c87f77898c3d1549ebc25c80fa352221f846",
+      "bytes": 159913,
+      "license": "IETF Trust"
+    },
+    {
+      "id": "wg10WorkingDraft",
+      "url": "https://raw.githubusercontent.com/ISOWG10/ISO-18013/b250e7a64f99e22ceed10d2a5799bed38ee89f85/Working%20Documents/Working%20Draft%20ISO_IEC_18013-5_second-edition_CD_ballot_resolution_v4.pdf",
+      "sha256": "86a1e8356096923bb9293b1582e69193eff724d8fabf7cfe94ef97bf104b3426",
+      "bytes": 2697049,
+      "license": "ISO copyright; reference only"
     }
-  ]
+  ],
+  "reviewScope": [
+    "ISO catalog metadata",
+    "public WG10 certificate binding and revocation sections",
+    "RFC 9360 x5t",
+    "status-list-21 selected JWT binding"
+  ],
+  "publishedBaseline": {
+    "status": "published; DIS successor under development",
+    "id": "ISO/IEC 18013-5:2021",
+    "catalogVerifiedOn": "2026-10-07",
+    "fullNormativeTextReviewed": false,
+    "url": "https://www.iso.org/standard/69084.html",
+    "edition": 1,
+    "publicationDate": "2021-09"
+  }
 }

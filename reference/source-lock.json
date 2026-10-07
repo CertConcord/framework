@@ -46,28 +46,31 @@
     },
     {
       "id": "c2spWitness",
-      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-witness.md",
-      "sha256": "3c87eb314d7d54d35ef7d18ac91bf57abd6c5676cbe1765becb328097ed25f86",
-      "bytes": 14613
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-witness.md",
+      "sha256": "7cdf67fb841181a072e6cad0d7da3e861457679d33f9db2b3e83e3e96e12a484",
+      "bytes": 14353,
+      "retrievedAt": "2026-10-07T16:24:32.837Z"
     },
     {
       "id": "c2spCosignature",
-      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-cosignature.md",
-      "sha256": "d5fc06ef7c1eb77b869148e52784074190db8b5209b5551fb91bfce329b805bd",
-      "bytes": 9427,
-      "retrievedAt": "2026-10-06T01:50:24.341Z"
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-cosignature.md",
+      "sha256": "f9549ff0ac74b09dc75a2e425b19ae9bb675dbff3113314121a33a04aff9aeef",
+      "bytes": 10665,
+      "retrievedAt": "2026-10-07T16:24:32.839Z"
     },
     {
       "id": "c2spNote",
-      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/signed-note.md",
-      "sha256": "870f329f0c71b81b9b739baa85f09dab287cd6a29b99177333a53209d65450e1",
-      "bytes": 7610
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/signed-note.md",
+      "sha256": "03e2703bb9f97a5c76a1d9a92af6e6b7b7441c3c67c15a87f16ed29a160a2782",
+      "bytes": 7609,
+      "retrievedAt": "2026-10-07T16:24:32.840Z"
     },
     {
       "id": "c2spTiles",
-      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-tiles.md",
-      "sha256": "1287c9da80964fbfeff80e34e071b83d8fcee3a917082905bd8ebf405d2250a2",
-      "bytes": 12259
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-tiles.md",
+      "sha256": "5bb3fd974559b56f4f5d35ed55a8c89ae6bd5185c026fa2320b66f3d15204e86",
+      "bytes": 12426,
+      "retrievedAt": "2026-10-07T16:24:32.840Z"
     },
     {
       "id": "pkcs11",
@@ -756,6 +759,27 @@
       "sha256": "29dbb506f935217584974956056f377a3f7aac67d77dc20a29664dd3568657e4",
       "bytes": 91617,
       "retrievedAt": "2026-10-06T02:08:51.190Z"
+    },
+    {
+      "id": "c2spCheckpoint",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-checkpoint.md",
+      "sha256": "82b023046a998e08545f2cc2fa75668135ae78ee0a4badb86a1da019f6335f40",
+      "bytes": 5938,
+      "retrievedAt": "2026-10-07T16:24:32.840Z"
+    },
+    {
+      "id": "rfc9360",
+      "url": "https://www.rfc-editor.org/rfc/rfc9360.txt",
+      "sha256": "3dbe546adf08e309b429c8e71b2ee8384292fb8767338d3eb17d1c4e5adefc23",
+      "bytes": 29077,
+      "retrievedAt": "2026-10-07T16:24:32.841Z"
+    },
+    {
+      "id": "wg10WorkingDraft",
+      "url": "https://raw.githubusercontent.com/ISOWG10/ISO-18013/b250e7a64f99e22ceed10d2a5799bed38ee89f85/Working%20Documents/Working%20Draft%20ISO_IEC_18013-5_second-edition_CD_ballot_resolution_v4.pdf",
+      "sha256": "86a1e8356096923bb9293b1582e69193eff724d8fabf7cfe94ef97bf104b3426",
+      "bytes": 2697049,
+      "retrievedAt": "2026-10-07T16:24:32.853Z"
     }
   ]
 }

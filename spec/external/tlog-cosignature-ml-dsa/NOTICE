@@ -2,3 +2,5 @@ CertConcord ML-DSA-87 Transparency Cosignatures
 Copyright 2026 VeriCommons contributors and CertConcord contributors.
 
 Original requirements and reference semantics were extracted from the CertConcord working draft. Original attribution is retained. Referenced standards and proposals remain the work of their respective authors. No endorsement or standards-body adoption is implied.
+
+The C2SP specifications referenced by this draft are licensed by their authors under CC BY 4.0 (https://c2sp.org/). This repository contains original profile text and code, not copies of those specifications or upstream code. The reviewed editor revision is recorded in sources.json. Original synthetic vectors remain CC0.

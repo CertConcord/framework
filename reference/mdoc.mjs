@@ -1,10 +1,13 @@
+import {
+  issueIssuerSigned,
+  verifyIssuerSigned as verifyBaseIssuerSigned,
+} from './vendor/mdoc-signing/base.mjs';
 import { validateMdocCertificate } from './mdoc-pki.mjs';
 import { createPublicKey, webcrypto } from 'node:crypto';
 import { CipherSuite, DhkemP256HkdfSha256, HkdfSha256, Aes128Gcm } from '@hpke/core';
 import {
   encode,
   decode,
-  Tag,
   embedded,
   unembed,
   get,
@@ -14,25 +17,13 @@ import {
   verify1,
   prepareSign1,
 } from './cose.mjs';
-import { random, sha256, now, requireThat, equal, b64u, unb64u, generate, spki } from './core.mjs';
-import { publicJWK, thumbprint } from './jose.mjs';
+import { random, sha256, now, requireThat, equal, b64u, unb64u, generate } from './core.mjs';
+import { publicJWK, thumbprint, decodeJWS } from './jose.mjs';
+import { parseJSON } from './json.mjs';
 
 export const DOCTYPE = 'org.certconcord.rra.1';
 export const NAMESPACE = 'org.certconcord.rra.1';
 export const MDOC_CONFIG = 'certconcord_mdoc';
-const stamp = (t) => new Tag(0, new Date(t * 1000).toISOString().replace('.000Z', 'Z'));
-const time = (v) => {
-  requireThat(
-    v instanceof Tag &&
-      v.tag === 0 &&
-      typeof v.value === 'string' &&
-      /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(v.value),
-    'MDOC_TIME',
-  );
-  const n = Date.parse(v.value) / 1000;
-  requireThat(Number.isSafeInteger(n), 'MDOC_TIME');
-  return n;
-};
 export function issueMdoc({
   claims,
   holderJWK,
@@ -42,63 +33,39 @@ export function issueMdoc({
   namespace = NAMESPACE,
   additionalNamespaces = {},
   certificateProfile = 'ISO_MDOC',
-  validFrom = now(),
-  validUntil = validFrom + 86400,
+  validFrom,
+  validUntil,
 }) {
-  requireThat(validUntil > validFrom && validUntil - validFrom <= 86400 * 30, 'MDOC_VALIDITY');
-  const ds = validateMdocCertificate(certificate, { certificateProfile }),
-    deviceKey = coseKey(holderJWK);
-  requireThat(equal(spki(ds.publicKey), spki(createPublicKey(privateKey))), 'MDOC_ISSUER_KEY');
+  const signed = now(),
+    beginsAt = validFrom ?? signed,
+    ds = validateMdocCertificate(certificate, { certificateProfile, at: signed }),
+    expiresAt = Math.min(validUntil ?? beginsAt + 86400, ds.notAfter);
   requireThat(
-    !equal(spki(ds.publicKey), spki(createPublicKey({ key: holderJWK, format: 'jwk' }))),
-    'MDOC_KEY_ROLE_COLLISION',
+    signed <= beginsAt && expiresAt > beginsAt && expiresAt - beginsAt <= 86400 * 30,
+    'MDOC_VALIDITY',
   );
   requireThat(!Object.hasOwn(additionalNamespaces, namespace), 'MDOC_NAMESPACE_COLLISION');
-  const nameSpaces = new Map(),
-    valueDigests = new Map();
-  for (const [ns, nsClaims] of Object.entries({ ...additionalNamespaces, [namespace]: claims })) {
-    requireThat(typeof ns === 'string' && ns.length > 0, 'MDOC_NAMESPACE');
-    const items = [],
-      digests = new Map();
-    let id = 0;
-    for (const [key, value] of Object.entries(nsClaims)) {
-      requireThat(typeof key === 'string' && key.length > 0, 'MDOC_ELEMENT');
-      const item = embedded({
-        digestID: id,
-        random: random(32),
-        elementIdentifier: key,
-        elementValue: value,
-      });
-      items.push(item);
-      digests.set(id++, sha256(encode(item)));
-    }
-    nameSpaces.set(ns, items);
-    valueDigests.set(ns, digests);
-  }
-  const mso = {
-    version: '1.0',
-    digestAlgorithm: 'SHA-256',
-    valueDigests,
-    deviceKeyInfo: { deviceKey },
+  return issueIssuerSigned({
+    namespaces: { ...additionalNamespaces, [namespace]: claims },
+    holderJWK,
+    certificate,
+    privateKey,
     docType,
-    validityInfo: {
-      signed: stamp(now()),
-      validFrom: stamp(validFrom),
-      validUntil: stamp(validUntil),
-    },
-  };
-  return encode({
-    nameSpaces,
-    issuerAuth: sign1(encode(embedded(mso)), privateKey, { certificate }),
+    signed,
+    validFrom: beginsAt,
+    validUntil: expiresAt,
   });
 }
 export function issuerCertificate(credential) {
   const is = Buffer.isBuffer(credential) ? decode(credential) : credential,
-    c = get(is, 'issuerAuth'),
-    a = c instanceof Tag ? c.value : c;
-  requireThat(Array.isArray(a), 'MDOC_ISSUER_AUTH');
-  const cert = get(a[1], 33);
-  return Array.isArray(cert) ? cert[0] : cert;
+    auth = get(is, 'issuerAuth');
+  requireThat(
+    Array.isArray(auth) && Buffer.isBuffer(auth[0]) && auth[1] instanceof Map,
+    'MDOC_ISSUER_AUTH',
+  );
+  const chain = decode(auth[0]).get(33) ?? auth[1].get(33);
+  requireThat(chain, 'MDOC_ISSUER_PIN');
+  return Array.isArray(chain) ? chain[0] : chain;
 }
 export function verifyIssuerSigned(
   credential,
@@ -111,62 +78,63 @@ export function verifyIssuerSigned(
     allowPartial = true,
   } = {},
 ) {
-  const ds = validateMdocCertificate(certificate, { at, certificateProfile });
-  requireThat(equal(spki(ds.publicKey), spki(issuerKey)), 'MDOC_ISSUER_KEY');
-  const is = Buffer.isBuffer(credential) ? decode(credential) : credential;
-  requireThat(equal(issuerCertificate(is), certificate), 'MDOC_ISSUER_PIN');
-  const auth = verify1(get(is, 'issuerAuth'), issuerKey),
-    mso = unembed(decode(auth.payload));
-  requireThat(
-    get(mso, 'version') === '1.0' &&
-      get(mso, 'digestAlgorithm') === 'SHA-256' &&
-      get(mso, 'docType') === docType,
-    'MDOC_MSO',
-  );
-  const validity = get(mso, 'validityInfo');
-  requireThat(
-    time(get(validity, 'signed')) <= at &&
-      time(get(validity, 'signed')) <= time(get(validity, 'validUntil')) &&
-      time(get(validity, 'validFrom')) < time(get(validity, 'validUntil')) &&
-      time(get(validity, 'validFrom')) <= at &&
-      time(get(validity, 'validUntil')) > at,
-    'MDOC_EXPIRED',
-  );
-  const claims = new Map(),
-    digests = get(mso, 'valueDigests');
-  for (const [ns, items] of get(is, 'nameSpaces')) {
-    requireThat(Array.isArray(items) && digests.has(ns), 'MDOC_NAMESPACE');
-    const values = new Map(),
-      ids = new Set();
-    for (const item of items) {
-      const data = unembed(item),
-        id = get(data, 'digestID'),
-        name = get(data, 'elementIdentifier'),
-        salt = get(data, 'random');
-      requireThat(
-        Number.isSafeInteger(id) &&
-          id >= 0 &&
-          typeof name === 'string' &&
-          !ids.has(id) &&
-          !values.has(name) &&
-          Buffer.isBuffer(salt) &&
-          salt.length >= 16,
-        'MDOC_ITEM',
-      );
-      requireThat(equal(get(digests, ns).get(id), sha256(encode(item))), 'MDOC_DIGEST');
-      ids.add(id);
-      values.set(name, get(data, 'elementValue'));
-    }
-    if (!allowPartial) requireThat(ids.size === get(digests, ns).size, 'MDOC_INCOMPLETE_ISSUANCE');
-    claims.set(ns, values);
+  validateMdocCertificate(certificate, { at, certificateProfile });
+  return verifyBaseIssuerSigned(credential, { issuerKey, certificate, docType, at, allowPartial });
+}
+// The application supplies its status verifier explicitly to avoid a dependency
+// cycle with OpenID. It must authenticate the token and validate the URI/index
+// before returning an assessment; this adapter adds the selected mdoc TTL rule.
+export function verifyMdocStatusList(
+  token,
+  { publicKey, uri, index, at = now(), evaluateStatusList },
+) {
+  requireThat(typeof evaluateStatusList === 'function', 'MDOC_STATUS_VERIFIER_REQUIRED');
+  try {
+    requireThat(
+      publicKey?.asymmetricKeyType === 'ec' &&
+        publicKey.asymmetricKeyDetails.namedCurve === 'prime256v1',
+      'MDOC_STATUS_KEY',
+    );
+    const assessment = evaluateStatusList(token, { publicKey, uri, index, at });
+    requireThat(
+      assessment &&
+        {
+          GOOD: 'VALID',
+          REVOKED: 'INVALID',
+          INVALID: 'INVALID',
+          STALE: 'INDETERMINATE',
+          UNKNOWN: 'INDETERMINATE',
+          MISSING: 'INDETERMINATE',
+          UNSUPPORTED: 'UNSUPPORTED',
+        }[assessment.status] === assessment.overall,
+      'MDOC_STATUS_RESULT',
+    );
+    if (token === undefined || token === null) return assessment;
+    const { header, payload } = decodeJWS(token),
+      claims = parseJSON(payload.toString('utf8'));
+    requireThat(
+      header.alg === 'ES256' &&
+        header.typ === 'statuslist+jwt' &&
+        Number.isSafeInteger(claims.ttl) &&
+        claims.ttl > 0 &&
+        claims.ttl <= 300 &&
+        Number.isSafeInteger(claims.iat + claims.ttl),
+      'MDOC_STATUS_TTL',
+    );
+    if (assessment.status === 'GOOD' && claims.iat + claims.ttl <= at)
+      return Object.freeze({
+        status: 'STALE',
+        overall: 'INDETERMINATE',
+        reason: 'MDOC_STATUS_TTL_EXPIRED',
+      });
+    return assessment;
+  } catch (error) {
+    return Object.freeze({
+      status: 'INVALID',
+      overall: 'INVALID',
+      reason: error.code ?? 'MDOC_STATUS_INVALID',
+    });
   }
-  const holderJWK = coseJWK(get(get(mso, 'deviceKeyInfo'), 'deviceKey'));
-  requireThat(
-    !equal(spki(ds.publicKey), spki(createPublicKey({ key: holderJWK, format: 'jwk' }))),
-    'MDOC_KEY_ROLE_COLLISION',
-  );
-  if (!allowPartial) requireThat(claims.size === digests.size, 'MDOC_INCOMPLETE_ISSUANCE');
-  return { mso, claims, holderJWK, issuerSigned: is };
 }
 export function openidTranscript({ clientID, nonce, responseURI, origin, encryptionJWK }) {
   requireThat(typeof nonce === 'string' && nonce.length >= 16, 'MDOC_NONCE');
