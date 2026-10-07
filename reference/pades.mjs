@@ -488,7 +488,9 @@ export async function verifyPAdES(
         item.materials = [low, high];
         materials.push(low, high);
         const deadline = protection(item.signature, policy, local, item.info.hashOID);
-        const horizons = [deadline, high?.validUntil].filter(instant);
+        const horizons = [deadline, high?.overall === 'VALID' ? high.validUntil : undefined].filter(
+          instant,
+        );
         // A missing current status does not erase an already known protection
         // cutoff. Only an authenticated successor may move this endpoint back.
         if (horizons.length)
@@ -530,7 +532,10 @@ export async function verifyPAdES(
     );
     materials.push(signerMaterial);
     const signerDeadline = protection(approval.signature, policy, failures);
-    const signerHorizons = [signerDeadline, signerMaterial?.validUntil].filter(instant);
+    const signerHorizons = [
+      signerDeadline,
+      signerMaterial?.overall === 'VALID' ? signerMaterial.validUntil : undefined,
+    ].filter(instant);
     if (signerHorizons.length)
       attempt(failures, () =>
         check(
