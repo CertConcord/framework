@@ -429,7 +429,11 @@ export function fixture({ signerNotAfter = epoch + 120, tsaNotAfter = epoch + 10
       prepared.requestDER
         ? token(prepared.requestDER, { authority, genTime: at, ...tokenOptions })
         : undefined,
-      { validationTime: at, knowledgeTime: at, policy: selectedPolicy },
+      {
+        validationTime: at + (tokenOptions.accuracy ?? 0),
+        knowledgeTime: at + (tokenOptions.accuracy ?? 0),
+        policy: selectedPolicy,
+      },
     );
     return { cms: result, prepared };
   };
@@ -496,5 +500,15 @@ export function decision(api, f, cms, minimumLevel = 'B', changes = {}) {
   });
 }
 export function expectOverall(result, overall) {
-  assert.equal(result?.overall, overall, JSON.stringify(result));
+  assert.equal(
+    result?.overall,
+    overall,
+    JSON.stringify({
+      overall: result?.overall,
+      reason: result?.reason,
+      requestedLevel: result?.requestedLevel,
+      verifiedLevel: result?.verifiedLevel,
+      checks: result?.checks?.map(({ overall, reason }) => ({ overall, reason })),
+    }),
+  );
 }

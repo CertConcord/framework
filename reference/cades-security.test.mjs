@@ -301,9 +301,9 @@ test(
   () => {
     const resolver = f.authorities({
       states: {
-        tsa: ({ authorityID, trustDomainID, knowledgeTime }) => ({
+        tsa: ({ authorityID, scope, knowledgeTime }) => ({
           authorityID,
-          trustDomainID,
+          trustDomainID: scope.trustDomainID,
           scope: 'AUTHORITY',
           status: knowledgeTime < epoch + 35 ? 'GOOD' : 'REVOKED',
           publishedAt: knowledgeTime < epoch + 35 ? epoch : epoch + 35,
@@ -383,7 +383,7 @@ for (const corruption of ['whole CMS', 'field order', 'content raw bytes', 'sign
     verify(replaceUnsigned(original.lt, O.archiveTimestamp, [token]), 'LTA', 'INVALID');
   });
 test(
-  'ATS index cannot omit a preexisting CRL even with a correct signature on the reduced index',
+  'authentic reduced ATS index leaves LTA incomplete without invalidating lower levels',
   selected,
   () => {
     const parts = c.parseDER(independentIndex(original.lt)).children.map((n) => n.raw);
@@ -398,7 +398,9 @@ test(
       O.index,
       [index],
     );
-    verify(replaceUnsigned(original.lt, O.archiveTimestamp, [token]), 'LTA', 'INVALID');
+    const cms = replaceUnsigned(original.lt, O.archiveTimestamp, [token]);
+    verify(cms, 'LTA', 'INDETERMINATE');
+    verify(cms, 'LT', 'VALID');
   },
 );
 test(
@@ -522,3 +524,188 @@ test('trailing or truncated DER is a typed INVALID result', selected, () => {
   verify(Buffer.concat([original.b, Buffer.from([0])]), 'B', 'INVALID');
   verify(original.b.subarray(0, original.b.length - 1), 'B', 'INVALID');
 });
+
+for (const oid of ['1.2.840.113549.1.9.16.2.49', '1.2.840.113549.1.9.16.2.50'])
+  test(`independent ERS attribute ${oid} cannot substitute for ATSv3`, selected, () => {
+    verify(
+      rewriteCMS(original.lt, {
+        unsigned: [...cmsView(original.lt).unsigned.map((n) => n.raw), attr(oid, c.seq())],
+      }),
+      'LTA',
+      'UNSUPPORTED',
+    );
+  });
+
+for (const variant of ['correct', 'wrong digest', 'wrong signature algorithm', 'MAC choice'])
+  test(`cms-algorithm-protection signed attribute: ${variant}`, selected, () => {
+    const algorithm = (oid) => c.seq(c.oid(oid));
+    const value = c.seq(
+      algorithm(variant === 'wrong digest' ? O.sha512 : O.sha256),
+      c.der(
+        variant === 'MAC choice' ? 0xa2 : 0xa1,
+        c.parseDER(
+          algorithm(variant === 'wrong signature algorithm' ? '1.2.840.10045.4.3.3' : O.es256),
+        ).value,
+      ),
+    );
+    const cms = resign(
+      original.b,
+      [...signedAttributes(), attr('1.2.840.113549.1.9.52', value)],
+      f.signer.privateKey,
+    );
+    verify(cms, 'B', variant === 'correct' ? 'VALID' : 'INVALID');
+  });
+test('RFC5652 signing-time in 1950–2049 must use UTCTime', selected, () => {
+  const cms = resign(
+    original.b,
+    signedAttributes().map((a) =>
+      attrOID(a) === O.signingTime ? attr(O.signingTime, p.generalizedTime(epoch + 10)) : a,
+    ),
+    f.signer.privateKey,
+  );
+  verify(cms, 'B', 'INVALID');
+});
+test(
+  'B includes every certificate actually used, including the explicitly trusted root',
+  selected,
+  () => {
+    verify(rewriteCMS(original.b, { certificates: [f.signer.der] }), 'B', 'INDETERMINATE');
+  },
+);
+test(
+  'ATS index sequence is a multiset; received order and exact index DER determine the imprint',
+  selected,
+  () => {
+    const parts = c.parseDER(independentIndex(original.lt)).children;
+    const index = c.seq(
+      parts[0].raw,
+      ...parts.slice(1).map((list) => c.seq(...list.children.map((n) => n.raw).reverse())),
+    );
+    assert.notDeepEqual(index, independentIndex(original.lt));
+    const imprint = independentArchiveImprint(original.lt, f.content, index);
+    const token = replaceUnsigned(
+      f.token(
+        { hashOID: O.sha256, imprint, policy: O.policy, nonce: 78n },
+        { genTime: epoch + 30 },
+      ),
+      O.index,
+      [index],
+    );
+    verify(replaceUnsigned(original.lt, O.archiveTimestamp, [token]), 'LTA', 'VALID');
+  },
+);
+test(
+  'material appended after latest ATS preserves lower level but requires LTA renewal',
+  selected,
+  () => {
+    const extra = f.crl({ number: 2, thisUpdate: epoch + 35, nextUpdate: epoch + 1000 });
+    const cms = rewriteCMS(original.lta, {
+      crls: [...cmsView(original.lta).crls.map((n) => n.raw), extra],
+    });
+    verify(cms, 'LT', 'VALID');
+    verify(cms, 'LTA', 'INDETERMINATE');
+  },
+);
+test(
+  'second signature timestamp appended after ATS becomes covered by a subsequent ATS',
+  selected,
+  () => {
+    const second = f.token(requestT(), { authority: f.successor, genTime: epoch + 50 });
+    const appended = rewriteCMS(original.lta, {
+      unsigned: [
+        ...cmsView(original.lta).unsigned.map((n) => n.raw),
+        attr(O.signatureTimestamp, second),
+      ],
+    });
+    const renewed = f.augment(api, appended, 'LTA', { at: epoch + 60, authority: f.successor }).cms;
+    verify(renewed, 'LTA', 'VALID', { validationTime: epoch + 70, knowledgeTime: epoch + 70 });
+  },
+);
+test(
+  'prepare exposes owned timestamp-request bytes without changing pending verification expectations',
+  selected,
+  () => {
+    const prepared = api.prepareCAdESAugmentation(original.b, {
+      content: f.content,
+      targetLevel: 'T',
+      policy: f.policy(),
+      validationTime: epoch + 20,
+      knowledgeTime: epoch + 20,
+      timestampRequestOptions: { hashOID: O.sha256, policy: O.policy, nonce: 79n },
+    });
+    const request = Buffer.from(prepared.requestDER),
+      token = f.token(request);
+    prepared.requestDER.fill(0);
+    prepared.imprint.fill(0);
+    const cms = prepared.finish(token, { validationTime: epoch + 20, knowledgeTime: epoch + 20 });
+    verify(cms, 'T', 'VALID');
+  },
+);
+test(
+  'finish rechecks actual time and new protection policy after timestamp acquisition',
+  selected,
+  () => {
+    const prepare = () =>
+      api.prepareCAdESAugmentation(original.b, {
+        content: f.content,
+        targetLevel: 'T',
+        policy: f.policy(),
+        validationTime: epoch + 20,
+        knowledgeTime: epoch + 20,
+        timestampRequestOptions: { hashOID: O.sha256, policy: O.policy, nonce: 80n },
+      });
+    const good = prepare();
+    verify(
+      good.finish(f.token(good.requestDER), {
+        validationTime: epoch + 20,
+        knowledgeTime: epoch + 20,
+      }),
+      'T',
+      'VALID',
+    );
+    const pending = prepare(),
+      token = f.token(pending.requestDER),
+      policy = f.policy();
+    policy.keyDeadlines[c.keyID(f.tsa.publicKey).toString('hex')] = epoch + 50;
+    assert.throws(() =>
+      pending.finish(token, { validationTime: epoch + 60, knowledgeTime: epoch + 60, policy }),
+    );
+  },
+);
+test(
+  'finish cannot rely on prepare-time authority after current knowledge withdraws it',
+  selected,
+  () => {
+    const prepared = api.prepareCAdESAugmentation(original.b, {
+      content: f.content,
+      targetLevel: 'T',
+      policy: f.policy(),
+      validationTime: epoch + 20,
+      knowledgeTime: epoch + 20,
+      timestampRequestOptions: { hashOID: O.sha256, policy: O.policy, nonce: 81n },
+    });
+    const policy = f.policy({
+      authorityResolver: f.authorities({
+        states: {
+          tsa: {
+            authorityID: c.keyID(f.tsa.publicKey),
+            trustDomainID: f.domain,
+            scope: 'AUTHORITY',
+            status: 'REVOKED',
+            publishedAt: epoch + 35,
+            nextUpdate: epoch + 1000,
+            effectiveTime: epoch + 35,
+            compromiseStart: epoch + 15,
+          },
+        },
+      }),
+    });
+    assert.throws(() =>
+      prepared.finish(f.token(prepared.requestDER), {
+        validationTime: epoch + 40,
+        knowledgeTime: epoch + 40,
+        policy,
+      }),
+    );
+  },
+);
