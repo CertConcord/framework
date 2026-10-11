@@ -14,6 +14,7 @@ import {
 test('organization fixture retains valid original grant, registration, status and credential bindings', () => {
   const f = createOrganizationFixture();
   try {
+    assert.equal(f.policy.requireTrustedTime, false);
     p.validateCertificate(f.keys.seal.certificate, f.keys.issuer.publicKey, {
       at: f.at,
       profileID: SEAL_PROFILE,

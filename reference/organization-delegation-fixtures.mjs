@@ -4,7 +4,11 @@ import * as p from './pki.mjs';
 import { Journal, activationContext, readControl } from './state.mjs';
 import { createCSR, verifyCSR } from './enrollment.mjs';
 import { exampleAuthorityResolver } from './example-authorities.mjs';
-import { EXECUTION_BINDING_PROFILE, issueExecutionBinding } from './execution-binding.mjs';
+import {
+  EXECUTION_BINDING_PROFILE,
+  ExecutionBindingGateway,
+  issueExecutionBinding,
+} from './execution-binding.mjs';
 import { evidenceLeaf } from './evidence-plan.mjs';
 
 export const ORGANIZATION_PROFILE = 'certconcord-organization-delegation-v1';
@@ -142,6 +146,7 @@ function material({ at, pathLength, people }) {
       rpID: 'organization.example',
       audience: 'organization-seal',
       maxActivationLifetime: 120,
+      requireTrustedTime: false,
       executionBinding: {
         profile: EXECUTION_BINDING_PROFILE,
         providerID: 'organization-fixture-backend',
@@ -792,5 +797,105 @@ export function createOrganizationFixture({
     close() {
       journal.close();
     },
+  };
+}
+
+// This fixture isolates the gateway's typed admission contract. The pure organization
+// evaluator and application must independently prove the complete organizational closure.
+export function createOrganizationGatewayFixture(options = {}) {
+  const f = createOrganizationFixture(options);
+  const guards = [
+    {
+      namespace: 'organization-delegation-operation',
+      id: c.b64u(
+        c.H('OrganizationOperation', {
+          profile: ORGANIZATION_PROFILE,
+          trustDomainID: f.trustDomainID,
+          organizationID: f.organizationID,
+          operationID: f.operationID,
+        }),
+      ),
+    },
+    {
+      namespace: 'organization-delegation-current',
+      id: c.b64u(c.H('OrganizationCurrentState', { trustDomainID: f.trustDomainID })),
+    },
+  ];
+  for (const guard of guards) {
+    if (!f.journal.get(guard.namespace, guard.id)) f.journal.put(guard.namespace, guard.id, {});
+  }
+  const views = [];
+  const readGuard = f.journal.get.bind(f.journal);
+  const goodDecision = (view) => ({
+    overall: 'VALID',
+    reason: 'ORG_GATEWAY_FIXTURE_ADMITTED',
+    checks: [{ check: 'fixture current admission', overall: 'VALID' }],
+    binding: {
+      stage: view.stage,
+      operationID: Buffer.from(view.operationID),
+      requestHash: Buffer.from(view.requestHash),
+      bindingHash: Buffer.from(view.bindingHash),
+      permitHash: Buffer.from(view.permitHash),
+      keyID: Buffer.from(view.keyID),
+      signatureHash: view.signatureHash === null ? null : Buffer.from(view.signatureHash),
+      knowledgeTime: f.context.knowledgeTime,
+    },
+    journalGuards: guards.map((guard) => ({
+      ...guard,
+      revision: readGuard(guard.namespace, guard.id)?.revision ?? 0,
+    })),
+  });
+  const currentAdmission = (view) => {
+    views.push(copy(view));
+    const decision = goodDecision(view);
+    return f.hooks.admission ? f.hooks.admission(view, decision) : decision;
+  };
+  let authorizeCalls = 0;
+  const gatewayOptions = {
+    journal: f.journal,
+    binding: f.binding,
+    bindingCertificate: f.keys.binding.certificate,
+    permitCertificate: f.keys.permit.certificate,
+    receiptCertificate: f.keys.receipt.certificate,
+    receiptKey: f.keys.receipt.privateKey,
+    backend: f.backend,
+    keyRef: 'organization-seal',
+    policy: f.policy,
+    trustDomainID: f.trustDomainID,
+    authorityResolver: f.authorityResolver,
+    clock: () => f.context.knowledgeTime,
+    authorize: async (view) => {
+      authorizeCalls++;
+      return f.hooks.authorize ? f.hooks.authorize(view, authorizeCalls) : true;
+    },
+    currentAdmission,
+  };
+  const input = {
+    permit: signOrganizationControl(
+      'OperationPermit',
+      {
+        schemaVersion: 1,
+        activation: f.activation,
+        activationEvidenceHash: c.H('OrganizationGatewayFixtureControl', {
+          operationID: f.operationID,
+        }),
+        proofMode: 'WORKLOAD',
+        issuedAt: f.at,
+        expiresAt: f.at + 30,
+      },
+      f.keys.permit,
+    ),
+    tbs: Buffer.from(f.prepared.tbs),
+    sim: copy(f.sim),
+  };
+  return {
+    ...f,
+    guards,
+    views,
+    goodDecision,
+    currentAdmission,
+    gatewayOptions,
+    input,
+    gateway: () => new ExecutionBindingGateway(gatewayOptions),
   };
 }
