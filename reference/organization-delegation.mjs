@@ -3,6 +3,7 @@ import {
   ALG,
   D,
   H,
+  ProtocolError,
   b64u,
   dcbor,
   decodeCBOR,
@@ -606,6 +607,7 @@ export class OrganizationDelegationApplication {
       }),
     };
     this.#configuration = H('OrganizationApplicationBinding', {
+      contextHash: this.#context.configurationHash,
       trustDomainID: context.trustDomainID,
       organizationID: context.organizationID,
       identityNamespace: context.identityNamespace,
@@ -1299,7 +1301,13 @@ export class OrganizationDelegationApplication {
         bundle,
       });
     } catch (error) {
-      putFailure(current, error, 'execution');
+      putFailure(
+        current,
+        error,
+        'execution',
+        'ORG_EXECUTION_UNAVAILABLE',
+        error instanceof ProtocolError ? 'INVALID' : 'INDETERMINATE',
+      );
       let state;
       try {
         // Global gateway rows are not an operation lookup API across application scopes.
@@ -1369,15 +1377,19 @@ function retainedLeaves(current, bundle) {
   try {
     checked = verifyEvidencePackage(bundle);
   } catch (error) {
-    if (error?.code === 'ECP_UNSUPPORTED_SCHEMA') throw orgError(error.code, 'UNSUPPORTED');
-    if (error?.code !== 'ECP_MISSING_OBJECT') throw error;
-    // This error is raised after the bounded leaf shapes and commitments have been checked.
-    putFailure(current, orgError('ECP_MISSING_OBJECT', 'INDETERMINATE'), 'evidence-closure');
+    if (error?.code === 'ECP_UNSUPPORTED_SCHEMA' && bundle.schemaVersion === 1)
+      throw orgError(error.code, 'UNSUPPORTED');
+    if (!['ECP_MISSING_OBJECT', 'ECP_UNSUPPORTED_SCHEMA'].includes(error?.code)) throw error;
+    // These failures follow the bounded flat leaf shapes and commitment checks.
+    if (error.code === 'ECP_MISSING_OBJECT')
+      putFailure(current, orgError('ECP_MISSING_OBJECT', 'INDETERMINATE'), 'evidence-closure');
     checked = {
       plan: bundle.plan ?? null,
       values: Object.fromEntries(bundle.objects.map((leaf) => [leaf.type, leaf.payload])),
     };
   }
+  if (bundle.schemaVersion !== 2 || (checked.plan && checked.plan.schemaVersion !== 2))
+    putFailure(current, orgError('ECP_UNSUPPORTED_SCHEMA', 'UNSUPPORTED'), 'evidence-schema');
   if (checked.plan && checked.plan.profile !== ORGANIZATION_PLAN)
     putFailure(current, orgError('ORG_PLAN_DOWNGRADE'), 'evidence-plan');
   if (Object.keys(checked.values).some((type) => !TYPES.includes(type)))

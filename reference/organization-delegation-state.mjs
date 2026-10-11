@@ -207,6 +207,9 @@ export class OrganizationContext {
   get initial() {
     return this.#copy(this.#initial);
   }
+  get configurationHash() {
+    return Buffer.from(this.#pin);
+  }
   #copy(context) {
     const { authorityResolver, ...data } = context;
     return { ...snapshot(data), authorityResolver };
@@ -683,7 +686,7 @@ export class OrganizationState {
         const id = executionIndex(observation),
           previous = this.journal.get(PREFIX + 'execution', id)?.value?.observations ?? [];
         const merged = this.#mergeHeads(previous, observation),
-          revoked = previous.find((entry) => entry.status === 'REVOKED');
+          revoked = [...previous, observation].find((entry) => entry.status === 'REVOKED');
         if (revoked && !merged.some((entry) => equal(entry.semanticHash, revoked.semanticHash)))
           merged.push(revoked);
         this.#put(PREFIX + 'execution', id, { observations: merged });
