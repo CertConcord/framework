@@ -346,9 +346,33 @@
         {
           "file": "reference/document-evidence.test.mjs",
           "name": "organization evidence rejects authority substitution, wrong grants and revocation at the proof bound"
+        },
+        {
+          "file": "reference/organization-delegation-application.test.mjs",
+          "name": "organization application produces one real signature and independently verifies original flat evidence"
+        },
+        {
+          "file": "reference/organization-delegation-evidence.test.mjs",
+          "name": "organization path cannot reduce the inherited minimum number of people"
+        },
+        {
+          "file": "reference/organization-delegation-evidence.test.mjs",
+          "name": "organization known off-path registration compromise follows its key into a new registration"
+        },
+        {
+          "file": "reference/organization-delegation-durability.test.mjs",
+          "name": "organization actual process death after signing reconciles exact bytes without another private action"
+        },
+        {
+          "file": "reference/organization-delegation-durability.test.mjs",
+          "name": "organization retains the earliest effective revocation through later heads and an actual restart"
+        },
+        {
+          "file": "reference/organization-delegation-durability.test.mjs",
+          "name": "organization final application admission withholds an already committed gateway result"
         }
       ],
-      "gap": "Direct authority-to-operation seals are specified and exercised; hierarchical delegation, organizational mdoc and assessed custody remain open."
+      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. Organizational mdoc, arbitrary graphs, historical delegation proof, independently assessed identity/custody and a second complete implementation remain open."
     },
     {
       "id": "CC-DOC-03",

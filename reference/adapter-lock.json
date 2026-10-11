@@ -769,14 +769,18 @@
     {
       "id": "certconcord-execution-binding-draft-03",
       "name": "RRA Execution Binding Profile",
-      "version": "1.0.0-draft.1",
-      "wireProfile": "EBP draft 03; governed CMS admission, immutable message request, signed receipt and mandatory CMS/mdoc evidence plans",
+      "version": "1.1.0-draft.1",
+      "wireProfile": "EBP draft 03; governed CMS admission, immutable message request, signed receipt and mandatory CMS/mdoc evidence plans; selected organization policy adds fixed current-admission gates without changing wire fields",
       "inputSemantics": "Exact SIM, original signed permit and message bytes; externally pinned provider, key, control authorities and policy",
       "environment": "Node.js 24.15+; exclusively controlled message-signing backend and shared durable SQLite or PostgreSQL journal",
       "limits": "65536-byte binding, 1 MiB permit, 16 MiB message; 30-second permit and policy-bounded lease up to 86400 seconds",
       "downgradeForbidden": true,
       "modules": ["execution-binding.mjs", "evidence.mjs", "signer-mdoc.mjs"],
-      "tests": ["execution-binding.test.mjs", "storage/postgres.test.mjs"],
+      "tests": [
+        "execution-binding.test.mjs",
+        "storage/postgres.test.mjs",
+        "organization-delegation-callbacks.test.mjs"
+      ],
       "sources": ["rfc5652", "webauthn", "rawSigningV4", "webKitRemoteKeys"]
     },
     {
@@ -809,6 +813,33 @@
       "environment": "Node.js 24.15+; independent CMS KEM exchange requires OpenSSL 3.6+",
       "limits": "Attested plans; documents at most 16 MiB; 100 recipients; direct organizational delegation",
       "downgradeForbidden": true
+    },
+    {
+      "id": "certconcord-organization-delegation-v1",
+      "name": "Current organization delegation and approvals",
+      "version": "1.0.0-draft.1",
+      "wireProfile": "Selected CMS organization-seal application; one attenuating grant path, exact independent WebAuthn roster, schema-2 final authorization and flat original-evidence plan",
+      "inputSemantics": "Original grant, registration, assertion and status bytes; constructor-bound organization, policy, workload, authorities and actual current knowledge time; no plan downgrade",
+      "environment": "Node.js 24.15+; one shared durable SQLite journal; local synchronous control keys and a governed document-signing backend",
+      "limits": "CURRENT_STATE_ONLY; WORKLOAD and X509 CMS; 8 grants, 16 people, 64 status statements; 120-second activation/request and 30-second authorization/permit; no historical delegation proof",
+      "downgradeForbidden": true,
+      "modules": [
+        "organization-delegation.mjs",
+        "organization-delegation-state.mjs",
+        "organization-delegation-evidence.mjs",
+        "execution-binding.mjs",
+        "evidence.mjs",
+        "document-evidence.mjs"
+      ],
+      "tests": [
+        "organization-delegation-api.test.mjs",
+        "organization-delegation-fixtures.test.mjs",
+        "organization-delegation-evidence.test.mjs",
+        "organization-delegation-application.test.mjs",
+        "organization-delegation-callbacks.test.mjs",
+        "organization-delegation-durability.test.mjs"
+      ],
+      "sources": ["rfc5652", "rfc5035", "rfc5280", "webauthn"]
     }
   ]
 }

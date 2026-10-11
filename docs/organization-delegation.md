@@ -94,6 +94,8 @@ Status material can be refreshed without rewriting the immutable path and approv
 
 The constructor takes `{journal, readContext, authorization, permit, status, execution}`. Each of `authorization`, `permit` and `status` contains its exact `certificate` and local synchronous `privateKey`. `execution` contains `{binding, bindingCertificate, receiptCertificate, receiptKey, backend, keyRef}` for the existing governed message-signing backend. The gateway is private and created only after complete current admission. A caller cannot supply a prebuilt gateway or install a replacement binding through this application.
 
+This selection uses one shared synchronous SQLite `Journal` for the application and its private gateway. The existing PostgreSQL adapter is outside this selection's current storage support. SQLite commit and revision checks do not establish protection against malicious replacement of the database.
+
 | Method               | Input                                                                                 | Positive result scope                                                                   |
 | -------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `prepare`            | `{operationID, document, sim, delegationPath, approverRegistrations}`                 | `PREPARED`, `PREPARATION_ONLY`; exact request, activation and person challenges         |
