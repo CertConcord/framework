@@ -315,7 +315,6 @@ export function createSmimeCMS({
             '-nointern',
             '-certfile',
             cert,
-            '-verify_retcode',
             '-no-CAfile',
             '-no-CApath',
             '-no-CAstore',
