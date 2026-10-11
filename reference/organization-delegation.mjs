@@ -7,13 +7,28 @@ import {
   b64u,
   dcbor,
   decodeCBOR,
+  der,
   equal,
+  integer,
+  intValue,
   keyID,
+  oidText,
+  parseDER,
   random,
+  seq,
   sha512,
   verify,
 } from './core.mjs';
-import { parseCertificate, prepareCMS, signCMS, validateCertificate, verifyCMS } from './pki.mjs';
+import {
+  OID,
+  RRA,
+  algID,
+  parseCertificate,
+  prepareCMS,
+  signCMS,
+  validateCertificate,
+  verifyCMS,
+} from './pki.mjs';
 import { activationContext, readControl, evaluateStatus, validateActivation } from './state.mjs';
 import * as execution from './execution-binding.mjs';
 import { createSignaturePackage } from './evidence.mjs';
@@ -146,7 +161,7 @@ function authority(
   authorityScope,
   stateTime = context.knowledgeTime,
 ) {
-  const result = decision(
+  let result = decision(
     context.authorityResolver({
       certificate,
       role,
@@ -155,6 +170,17 @@ function authority(
       knowledgeTime: context.knowledgeTime,
     }),
   );
+  if (result.overall === 'VALID' && Object.hasOwn(result, 'coverageUntil')) {
+    if (!instant(result.coverageUntil))
+      result = { overall: 'INDETERMINATE', reason: 'ORG_AUTHORITY_DECISION' };
+    else if (context.knowledgeTime >= result.coverageUntil)
+      result = { overall: 'INDETERMINATE', reason: 'ORG_AUTHORITY_COVERAGE' };
+    else
+      run.authorityCoverageUntil = Math.min(
+        run.authorityCoverageUntil ?? result.coverageUntil,
+        result.coverageUntil,
+      );
+  }
   run.checks.push({ check: role, overall: result.overall, reason: result.reason });
   return result;
 }
@@ -186,7 +212,7 @@ function admitControl(run, context, raw, purpose, objectType) {
     certificateProtection(context, raw),
   );
   if (entry) authority(run, context, raw, ROLES[purpose], scope(context, purpose));
-  return until;
+  return until === undefined ? undefined : Math.min(until, run.authorityCoverageUntil ?? Infinity);
 }
 function signatureContext(context) {
   return {
@@ -412,7 +438,10 @@ function credentialChecks(run, context, document, sim, retainedStatus) {
     authority(run, context, trust.statusCertificate, 'STATUS_AUTHORITY', credentialScope);
   }
   authority(run, context, trust.certificate, 'DOCUMENT_SEAL', scope(context, 'ORGANIZATION_SEAL'));
-  return { certificate, validUntil: cutoffs.length ? Math.min(...cutoffs) : K };
+  return {
+    certificate,
+    validUntil: cutoffs.length ? Math.min(...cutoffs, run.authorityCoverageUntil ?? Infinity) : K,
+  };
 }
 function controlKey(input, context, purpose, type) {
   record(input, ['certificate', 'privateKey']);
@@ -1400,6 +1429,73 @@ function retainedLeaves(current, bundle) {
   return checked;
 }
 
+// Check only available signature mathematics when the detached document is absent.
+// This mirrors verifyCMS's selected structure and suites; it returns no content or trust facts.
+function checkRetainedCMSMath(raw, expectedCertificate) {
+  const root = parseDER(raw);
+  insist(
+    root.tag === 0x30 &&
+      root.children?.length === 2 &&
+      oidText(root.children[0]) === OID.signed &&
+      root.children[1].tag === 0xa0 &&
+      root.children[1].children?.length === 1 &&
+      root.children[1].children[0].tag === 0x30,
+    'CMS_CONTENT_TYPE',
+  );
+  const sd = root.children[1].children[0].children;
+  insist(
+    sd?.length === 5 &&
+      intValue(sd[0]) === 1n &&
+      sd[1].tag === 0x31 &&
+      sd[1].children?.length === 1 &&
+      sd[2].tag === 0x30 &&
+      [1, 2].includes(sd[2].children?.length) &&
+      oidText(sd[2].children[0]) === OID.data &&
+      sd[3].tag === 0xa0 &&
+      sd[3].children?.length === 1 &&
+      sd[3].children[0].tag === 0x30 &&
+      sd[4].tag === 0x31 &&
+      sd[4].children?.length === 1 &&
+      sd[4].children[0].tag === 0x30,
+    'CMS_SIGNER_STRUCTURE',
+  );
+  if (sd[2].children[1])
+    insist(
+      sd[2].children[1].tag === 0xa0 &&
+        sd[2].children[1].children?.length === 1 &&
+        sd[2].children[1].children[0].tag === 4,
+      'CMS_ENCAP_STRUCTURE',
+    );
+  insist(equal(sd[3].children[0].raw, expectedCertificate), 'CERTIFICATE_REPRESENTATION');
+  const cert = parseCertificate(expectedCertificate),
+    algorithm = cert.publicKey.asymmetricKeyType;
+  if (algorithm === 'ec')
+    insist(
+      cert.publicKey.asymmetricKeyDetails.namedCurve === 'prime256v1' &&
+        cert.extensions.get(RRA['id-pe-certconcordPasskeyBinding'])?.critical,
+      'CMS_ALGORITHM',
+    );
+  else insist(['ml-dsa-65', 'ml-dsa-87'].includes(algorithm), 'CMS_ALGORITHM');
+  const digest = algID(algorithm === 'ec' ? OID.sha256 : OID.sha512),
+    si = sd[4].children[0].children;
+  insist(
+    equal(sd[1].children[0].raw, digest) &&
+      si &&
+      [6, 7].includes(si.length) &&
+      intValue(si[0]) === 1n &&
+      equal(si[1].raw, seq(cert.issuer, integer(cert.serial))) &&
+      equal(si[2].raw, digest) &&
+      si[3].tag === 0xa0 &&
+      equal(si[4].raw, algID(algorithm)) &&
+      si[5].tag === 4 &&
+      (!si[6] || si[6].tag === 0xa1),
+    'CMS_SIGNER_ID_OR_ALGORITHM',
+  );
+  const tbs = der(0x31, si[3].value);
+  parseDER(tbs);
+  insist(verify(tbs, si[5].value, cert.publicKey), 'CMS_SIGNATURE');
+}
+
 /** Independently validate retained raw evidence against constructor-bound current trust. */
 export class OrganizationDelegationVerifier {
   #context;
@@ -1450,6 +1546,10 @@ export class OrganizationDelegationVerifier {
           'ORG_CERTIFICATE_BINDING',
         ),
       );
+      if (values.CMS && !values.Document)
+        addCheck(current.checks, 'available-document-mathematics', () =>
+          checkRetainedCMSMath(values.CMS, pins.credentialTrust.certificate),
+        );
       const signed =
         values.CMS &&
         values.Document &&
