@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 export const LIMITS = Object.freeze({
   input: 32 * 1024 * 1024,
   content: 16 * 1024 * 1024,
+  cms: 16 * 1024 * 1024,
   decoded: 16 * 1024 * 1024,
   parts: 128,
   depth: 16,

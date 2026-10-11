@@ -471,7 +471,8 @@ async function packageCMS({ cms, kind, format, outerHeaders }) {
       .map((record) => {
         check(
           typeof record?.name === 'string' &&
-            /^[a-z0-9-]+$/.test(record.name) &&
+            /^[\x21-\x39\x3b-\x7e]+$/.test(record.name) &&
+            record.name === record.name.toLowerCase() &&
             !entityHeader(record.name),
           'SMIME_OUTER_HEADER',
         );

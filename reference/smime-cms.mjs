@@ -28,7 +28,7 @@ function certificateList(values = []) {
     'UNSUPPORTED',
   );
   let total = 0;
-  return values.map((value) => {
+  return Array.from(values, (value) => {
     const raw = bytes(value, LIMITS.content);
     total += raw.length;
     check(total <= LIMITS.input, 'SMIME_SIZE_LIMIT', 'UNSUPPORTED');
@@ -88,7 +88,7 @@ export function createSmimeCMS({
       } else {
         encoded = bytes(input, 65536);
         check(
-          encoded.toString('ascii').startsWith('-----BEGIN PRIVATE KEY-----'),
+          /^-{5}BEGIN PRIVATE KEY-{5}(?:\r?\n)/.test(encoded.toString('latin1')),
           'SMIME_PKCS8_KEY_REQUIRED',
         );
         keys.set(name, createPrivateKey({ key: encoded, format: 'pem', type: 'pkcs8' }));

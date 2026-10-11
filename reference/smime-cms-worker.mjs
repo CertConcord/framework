@@ -207,7 +207,7 @@ function inspect(input) {
     recipientMatches: [],
   };
   attempt(result.checks, () => {
-    const cms = bytes(input.cms),
+    const cms = bytes(input.cms, LIMITS.cms),
       certificates = input.recipientCertificates ?? [];
     check(
       Array.isArray(certificates) && certificates.length <= LIMITS.recipients,
