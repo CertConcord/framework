@@ -1,4 +1,5 @@
 import { ProtocolError, dcbor, equal, integer, keyID, seq, sha256 } from './core.mjs';
+import { types } from 'node:util';
 import { parseCertificate } from './pki.mjs';
 import { validateSmimeMaterial } from './cades-validation.mjs';
 
@@ -75,6 +76,17 @@ function byteList(value, maximum = 32) {
 }
 function label(value) {
   check(typeof value === 'string' && value.length > 0 && value.length <= 1024, 'SMIME_KEY_REF');
+  return value;
+}
+
+// A rejected native Promise is still an unavailable synchronous dependency.
+// Observe its rejection without awaiting it or invoking an arbitrary thenable.
+function synchronous(value, code) {
+  if (types.isPromise(value)) {
+    Promise.prototype.then.call(value, undefined, () => {});
+    throw failure(code, 'INDETERMINATE');
+  }
+  check(!value?.then, code, 'INDETERMINATE');
   return value;
 }
 
@@ -295,8 +307,8 @@ export class SmimeApplication {
   #readContext() {
     let value;
     try {
-      const raw = this.#read();
-      check(raw && !raw.then, 'SMIME_CONTEXT_UNAVAILABLE', 'INDETERMINATE');
+      const raw = synchronous(this.#read(), 'SMIME_CONTEXT_UNAVAILABLE');
+      check(raw, 'SMIME_CONTEXT_UNAVAILABLE', 'INDETERMINATE');
       value = contextShape(raw);
     } catch (error) {
       if (error?.overall) throw error;
@@ -323,8 +335,10 @@ export class SmimeApplication {
     check(value.length <= 1024, 'SMIME_MAILBOX_LIMIT', 'UNSUPPORTED');
     let normalized;
     try {
-      normalized = this.#backend.normalizeMailbox({ mailbox: value });
-      check(!normalized?.then, 'SMIME_BACKEND_UNAVAILABLE', 'INDETERMINATE');
+      normalized = synchronous(
+        this.#backend.normalizeMailbox({ mailbox: value }),
+        'SMIME_BACKEND_UNAVAILABLE',
+      );
       normalized = snapshot(normalized);
     } catch (error) {
       if (error?.overall) throw error;
@@ -383,10 +397,10 @@ export class SmimeApplication {
     };
     let decision;
     try {
-      const raw = this.#mailboxResolver(
-        snapshot({ ...expected, stateTime: knowledgeTime, knowledgeTime }),
+      const raw = synchronous(
+        this.#mailboxResolver(snapshot({ ...expected, stateTime: knowledgeTime, knowledgeTime })),
+        'SMIME_MAILBOX_DECISION_MISSING',
       );
-      check(!raw?.then, 'SMIME_MAILBOX_DECISION_MISSING', 'INDETERMINATE');
       decision = snapshot(raw);
     } catch (error) {
       if (error?.overall) throw error;
@@ -490,7 +504,12 @@ export class SmimeApplication {
           crls: credential.crls.map((raw) => Buffer.from(raw)),
           purpose: credential.purpose,
           knowledgeTime: context.knowledgeTime,
-          policy: { ...context.policy, scope: scopeFor(context.policy.scope, credential.purpose) },
+          policy: {
+            ...context.policy,
+            scope: scopeFor(context.policy.scope, credential.purpose),
+            authorityResolver: (query) =>
+              synchronous(this.#authority(query), 'SMIME_AUTHORITY_UNAVAILABLE'),
+          },
         }),
       );
       if (!material) continue;
