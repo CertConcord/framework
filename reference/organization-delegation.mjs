@@ -111,12 +111,22 @@ function absorb(run, result, name) {
   run.checks.push({ check: name, overall: result.overall, reason: result.reason });
   return result;
 }
-function selectControl(context, purpose, certificate) {
+function selectControl(context, purpose, certificate, objectType) {
+  if (purpose === 'ORGANIZATION_DELEGATION_STATUS')
+    insist(typeof objectType === 'string', 'ORG_CONTROL_OBJECT_TYPE');
   const matches = context.controlTrust.filter(
-    (entry) => entry.purpose === purpose && (!certificate || equal(entry.certificate, certificate)),
+    (entry) =>
+      entry.purpose === purpose &&
+      (!certificate || equal(entry.certificate, certificate)) &&
+      (objectType === undefined || entry.objectTypes.includes(objectType)),
   );
-  insist(matches.length === 1, 'ORG_CONTROL_TRUST_REQUIRED', 'INDETERMINATE');
-  return matches[0];
+  insist(
+    matches.length > 0 &&
+      matches.every((entry) => equal(entry.certificate, matches[0].certificate)),
+    'ORG_CONTROL_TRUST_REQUIRED',
+    'INDETERMINATE',
+  );
+  return { ...matches[0], objectTypes: objectType === undefined ? [] : [objectType] };
 }
 function scope(context, purpose) {
   return {
@@ -167,8 +177,10 @@ function certificateProtection(context, raw) {
     deadline(context, 'hashDeadlines', SHA512),
   );
 }
-function admitControl(run, context, raw, purpose) {
-  const entry = addCheck(run.checks, 'control-trust', () => selectControl(context, purpose, raw));
+function admitControl(run, context, raw, purpose, objectType) {
+  const entry = addCheck(run.checks, 'control-trust', () =>
+    selectControl(context, purpose, raw, objectType),
+  );
   const until = addCheck(run.checks, 'control-protection', () =>
     certificateProtection(context, raw),
   );
@@ -403,7 +415,7 @@ function controlKey(input, context, purpose, type) {
       equal(keyID(createPublicKey(key)), keyID(parseCertificate(certificate).publicKey)),
     'ORG_CONTROL_KEY_BINDING',
   );
-  const trust = selectControl(context, purpose, certificate);
+  const trust = selectControl(context, purpose, certificate, type);
   if (type) insist(trust.objectTypes.includes(type), 'ORG_CONTROL_TRUST');
   return { certificate, privateKey: key };
 }
@@ -931,7 +943,13 @@ export class OrganizationDelegationApplication {
         ['permit', 'ORGANIZATION_DELEGATION_PERMIT'],
         ['status', 'ORGANIZATION_DELEGATION_STATUS'],
       ]) {
-        const bound = admitControl(current, context, this.#keys[name].certificate, purpose);
+        const bound = admitControl(
+          current,
+          context,
+          this.#keys[name].certificate,
+          purpose,
+          name === 'status' ? 'FINAL_AUTHORIZATION' : undefined,
+        );
         if (bound !== undefined) bounds.push(bound);
       }
       admitControl(
@@ -1252,7 +1270,8 @@ export class OrganizationDelegationApplication {
       putFailure(current, error, 'execution');
       let state;
       try {
-        if (current.operationID) state = this.#journal.result(b64u(current.operationID));
+        // Global gateway rows are not an operation lookup API across application scopes.
+        if (operation) state = this.#journal.result(b64u(current.operationID));
       } catch (readError) {
         putFailure(current, readError, 'execution-result');
         current.effectMayHaveOccurred ||= !!operation;
