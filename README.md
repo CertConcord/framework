@@ -16,7 +16,7 @@ CertConcord develops certificate structures and trust protocols around **MTC-bas
 
 ## Application scope
 
-**Document trust processing** is the first complete specification baseline under development: personal signatures, organizational signatures and seals, document encryption, status and revocation, independent verification, and the time and historical evidence these operations require. S/MIME and standalone trusted timestamp services advance as separate application tracks built on the **same certificate trust core**.
+**Document trust processing** is the first complete specification baseline under development: personal signatures, organizational signatures and seals, document encryption, status and revocation, independent verification, and the time and historical evidence these operations require. S/MIME, standalone trusted timestamp services and bounded organizational delegation advance as separate application tracks built on the **same certificate trust core**.
 
 EUDI, government mDL and photoID are optional interoperability environments and identity sources. An RA can validate an accepted identity credential before a CA issues a signing certificate. Identity-source acceptance and signing-issuer trust remain separate policy decisions. The framework supports independent issuers, wallets and verifiers.
 
@@ -33,6 +33,7 @@ EUDI, government mDL and photoID are optional interoperability environments and 
 | [PAdES preservation](docs/pades-preservation.md)           | Selected PDF B/T/LT/LTA path, revision-bound DSS and document timestamp renewal            |
 | [Timestamp application](docs/timestamp-application.md)     | Standard RFC 3161 issuance, client requests, current trust decisions and durable recovery  |
 | [S/MIME application](docs/smime-application.md)            | Complete MIME signing and encryption with current mailbox, key and purpose admission       |
+| [Organization delegation](docs/organization-delegation.md) | Bounded grant paths, independent WebAuthn approvals and current execution admission        |
 | [mdoc certificates](spec/mdoc-certificates.md)             | Identity admission, native signing credentials and issuer trust separation                 |
 | [Passkey credentials](spec/passkey-credentials.md)         | Authentication, signing extensions and experimental execution bindings                     |
 | [Profiles and maturity](spec/profiles.md)                  | Which candidate bindings and external standards are selected                               |

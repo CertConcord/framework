@@ -40,7 +40,7 @@ The binding is deterministic RRA CBOR inside CMS `D("ExecutionBinding", binding)
 
 | Field                     | Meaning                                                                  |
 | ------------------------- | ------------------------------------------------------------------------ |
-| schemaVersion, profile    | `1`, `certconcord-execution-binding-draft-03`                                    |
+| schemaVersion, profile    | `1`, `certconcord-execution-binding-draft-03`                            |
 | trustDomainID             | Governing 32-byte domain                                                 |
 | providerID                | Selected provider identity                                               |
 | epoch                     | Positive integer, monotonically increasing per provider and document key |
@@ -101,6 +101,25 @@ Before dispatch the broker MUST:
 
 The existing DSCP authorizer remains responsible for the certified subject/key/purpose relationship, exact container/SIM relationship and verified user authorization. EBP cannot turn a signed permit from an unauthorized service into authority. Implementations MUST configure the activation pin and authorization callback from governed policy.
 
+### 5.1 Selected organization-delegation admission
+
+The [organization-delegation application](../../docs/organization-delegation.md) retains this wire profile and selects additional current-admission semantics through the signed `SignaturePolicy.organizationDelegation` field. The exact selector requires a constructor-fixed synchronous `currentAdmission` dependency. A missing, malformed or unknown selector cannot fall back to legacy authorization. Existing policies without this field retain the preceding contract.
+
+For this selection, the application MUST authenticate the complete current organization closure before creating its private gateway. Binding construction, installation and structural checks retain the original signature, tuple, lease, epoch and terminal-state requirements. Organization control authority is resolved through the application's exact purpose-specific scope; domain-only legacy authority queries cannot substitute for it.
+
+After the last asynchronous authorization step and immediately before reserving a dispatch, the gateway MUST obtain a synchronous `DISPATCH` decision. After candidate-signature verification and the last asynchronous completion authorization, it MUST obtain a synchronous `COMPLETE` decision before returning an existing completed result or committing a new receipt. The detached callback view contains `stage`, `keyRef`, the original parsed `binding`, `permit` and `sim`, and independently derived `requestHash`, `bindingHash`, `permitHash`, `keyID`, `operationID` and `signatureHash`. Here `requestHash` is the section 4 `IntentExecutionRequest` hash; it is not the application's approval-request hash. `signatureHash` is null at dispatch and SHA-512 of the exact candidate at completion.
+
+A positive decision MUST bind all of those derived commitments and actual current `knowledgeTime`, and include exactly two existing-row revision guards in this order:
+
+| Namespace                           | Row ID                                                                                                                                     |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `organization-delegation-operation` | Base64url of `H('OrganizationOperation', {profile: 'certconcord-organization-delegation-v1', trustDomainID, organizationID, operationID})` |
+| `organization-delegation-current`   | Base64url of `H('OrganizationCurrentState', {trustDomainID})`                                                                              |
+
+The gateway independently derives both row IDs from its frozen inputs and checks exact nonnegative revisions in the same journal transaction as the action. That transaction MUST invoke no external authority, status, clock or authorization callback. Missing rows, arbitrary namespaces, duplicate guards and changed revisions deny the action. The application must evaluate fresh state after a conflicting revision; it cannot attach a newer revision to an earlier decision. A guard does not lock an external authority or prove its completeness.
+
+Only plain bounded own-data decisions are accepted. Promise, thenable, accessor-shaped or incomplete positive results cannot authorize. A typed negative decision retains its outcome even if its optional reason is absent. The application MUST perform one further synchronous current-admission check after awaiting the gateway and before storing or releasing a new CMS/package. A later denial preserves definitely completed execution and withholds output; package persistence failure also preserves completion. Neither event authorizes another backend invocation.
+
 ## 6. Persistent execution state
 
 The operation identifier is the ActivationContext's random OperationID. Reservation atomically stores its request commitment, exact inputs, original binding, dispatch time and a lock for the document KeyID. A different request under the same OperationID is an idempotency conflict. Repeating a still-authorized completed request returns the original signature, receipt and binding evidence. After authorization expiry, the governed result-retrieval interface can return the original result without performing a new execution or changing its recorded authority. Result access has its own caller authentication and disclosure policy. DISPATCHED or UNKNOWN_EXECUTION never triggers a second key call.
@@ -127,6 +146,8 @@ The ordinary signed ExecutionReceipt retains OperationID, activationHash, permit
 Unknown receipt fields fail this revision. The receipt key must match the binding. Dispatch is no earlier than permit issuance or binding issuance and no later than execution. Both dispatch and execution must occur within the binding lifetime; execution must also occur within the SIM, activation and permit lifetimes. A binding admitted after the declared dispatch cannot retroactively authorize that dispatch.
 
 The additional evidence object is `ExecutionBindingEvidence`, encoded as `{binding: bstr}`. The mandatory plans are `certconcord-ecp-cms-execution-draft-03` and `certconcord-ecp-mdoc-execution-draft-03`. They include every object required by their existing CMS or mdoc plans plus this object. Removing it, selecting the legacy plan, or adding EBP evidence to a policy that does not select EBP is rejected.
+
+The explicit organization-delegation selection instead requires `certconcord-ecp-cms-organization-delegation-v1`, which retains `ExecutionBindingEvidence` and adds its original delegation, approval, authorization and status closure. The older plans cannot carry that policy selector. The dedicated verifier combines original execution mathematics with actual-current-time organization admission and authenticated latest-binding state. A mathematics-only helper result, an earlier receipt or an old ACTIVE binding cannot establish current permission.
 
 The verifier receives `executionBindingCertificate` and synchronous `executionStatus(binding, {at, knowledgeTime})` from its governed configuration. The latter must affirm the applicable historical/current provider admission at the declared execution and knowledge times. A self-supplied GOOD flag in a package is not accepted. The verifier checks the whole original binding, permit, exact TBS, document signature, request commitment and receipt in addition to normal CA/MTC/mdoc, policy, status and evidence checks.
 

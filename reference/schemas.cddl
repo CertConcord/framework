@@ -118,7 +118,8 @@ verification-plan = {
   profile: "certconcord-ecp-mdoc-attested-draft-03" / "certconcord-ecp-cms-attested-draft-03" /
     "certconcord-ecp-mdoc-passkey-draft-03" / "certconcord-ecp-cms-passkey-draft-03" /
     "certconcord-ecp-cms-execution-draft-03" / "certconcord-ecp-mdoc-execution-draft-03" /
-    "certconcord-ecp-cms-document-draft-03" / "certconcord-ecp-mdoc-document-draft-03",
+    "certconcord-ecp-cms-document-draft-03" / "certconcord-ecp-mdoc-document-draft-03" /
+    "certconcord-ecp-cms-organization-delegation-v1",
   objects: {1*128 tstr => hash64}
 }
 ; Types and IDs are unique. Every leaf is referenced exactly once by its matching
@@ -178,6 +179,111 @@ organization-authorization-status = {
   scope: "ORGANIZATION_AUTHORIZATION", status: "GOOD" / "REVOKED" / "UNKNOWN",
   publishedAt: time, nextUpdate: time, ? effectiveTime: time, ? compromiseStart: time
 }
+; Selected current-state organization delegation. Deterministic ordering,
+; exact original envelopes, attenuation, deadlines and authority scope are
+; semantic requirements of docs/organization-delegation.md.
+organization-delegation-profile = "certconcord-organization-delegation-v1"
+organization-delegation-selection = {
+  profile: organization-delegation-profile, mode: "CURRENT_STATE_ONLY",
+  identityNamespace: tstr, minimumApprovers: 2..16
+}
+organization-certificate-tuple = {
+  keyID: hash64, certificateID: hash64, certificateRepresentationHash: hash64
+}
+organization-delegation-entitlement = {
+  purpose: "ORGANIZATION_SEAL", container: "CMS", adapterID: "certconcord-cms-v1",
+  operatorType: "WORKLOAD", allowedOperatorIDs: [1*32 id32],
+  sealKeys: [1*32 organization-certificate-tuple], policyHashes: [1*32 hash64],
+  audiences: [1*32 tstr], origins: [1*32 tstr], rpIDs: [1*32 tstr],
+  eligiblePersonIDs: [2*32 id32], minimumApprovers: 2..16
+}
+organization-delegation-grant = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  trustDomainID: id32, organizationID: id32, identityNamespace: tstr,
+  grantID: id32, parentGrantHash: hash64 / null, issuerKeyID: hash64,
+  delegateAuthority: organization-certificate-tuple,
+  entitlement: organization-delegation-entitlement, remainingDelegations: 0..7,
+  issuedAt: time, knownAt: time, validFrom: time, validUntil: time
+}
+organization-delegation-path-member = {
+  cms: bstr .size (1..131072), issuerCertificate: bstr .size (1..65536),
+  delegateCertificate: bstr .size (1..65536)
+}
+organization-delegation-path = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  grants: [1*8 organization-delegation-path-member]
+}
+organization-approver-registration = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  trustDomainID: id32, organizationID: id32, identityNamespace: tstr,
+  registrationID: id32, personID: id32, credentialID: bstr .size (1..1024),
+  publicKeyDER: bstr .size (1..2048), keyID: hash64,
+  purpose: "ORGANIZATION_OPERATION_APPROVAL", rpID: tstr, origins: [1*8 tstr],
+  backupEligible: bool, counter: 0..4294967295,
+  issuedAt: time, knownAt: time, validFrom: time, validUntil: time
+}
+organization-approval-roster-member = {
+  personID: id32, registrationHash: hash64, credentialIDHash: hash64,
+  credentialKeyID: hash64, nonce: id32, origin: tstr
+}
+organization-approval-policy = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  identityNamespace: tstr, minimumApprovers: 2..16,
+  eligiblePersonIDs: [2*32 id32], rpID: tstr, allowedOrigins: [+ tstr]
+}
+organization-approval-request = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  trustDomainID: id32, organizationID: id32, identityNamespace: tstr,
+  operationID: id32, authorizationID: id32, activationHash: hash64,
+  simHash: hash64, policyHash: hash64, pathLeafID: hash64,
+  approvalPolicyHash: hash64, operator: {type: "WORKLOAD", id: id32},
+  roster: [2*16 organization-approval-roster-member], issuedAt: time, expiresAt: time
+}
+organization-approval-challenge = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  requestHash: hash64, personID: id32, credentialIDHash: hash64
+}
+organization-approval-assertion = {
+  credentialID: bstr .size (1..1024), clientDataJSON: bstr .size (1..8192),
+  authenticatorData: bstr .size (1..65536), signature: bstr .size (1..128)
+}
+organization-approval-member = {
+  personID: id32, registrationCMS: bstr .size (1..65536),
+  registrationIssuerCertificate: bstr .size (1..65536),
+  assertion: organization-approval-assertion
+}
+organization-approval-set = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  request: organization-approval-request, approvals: [2*16 organization-approval-member]
+}
+delegated-organization-authorization = {
+  schemaVersion: 2, profile: organization-delegation-profile,
+  authorizationID: id32, trustDomainID: id32, organizationID: id32,
+  identityNamespace: tstr, actorID: id32, actorType: "WORKLOAD",
+  keyID: hash64, certificateID: hash64, certificateRepresentationHash: hash64,
+  purpose: "ORGANIZATION_SEAL", activationHash: hash64, policyHash: hash64,
+  requestHash: hash64, approvalPolicyHash: hash64,
+  delegationPathLeafID: hash64, approvalSetLeafID: hash64,
+  issuedAt: time, expiresAt: time
+}
+organization-delegation-object-type = "GRANT" / "APPROVER_REGISTRATION" / "FINAL_AUTHORIZATION"
+organization-delegation-status = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  trustDomainID: id32, organizationID: id32, scope: "ORGANIZATION_DELEGATION",
+  objectType: organization-delegation-object-type, objectID: id32,
+  objectHash: hash64, subjectKeyID: hash64, epoch: 1..9007199254740991,
+  status: "GOOD" / "REVOKED" / "UNKNOWN", publishedAt: time, nextUpdate: time,
+  ? effectiveTime: time, ? compromiseStart: time, ? critical: [* tstr]
+}
+organization-delegation-status-member = {
+  cms: bstr .size (1..131072), issuerCertificate: bstr .size (1..65536)
+}
+organization-delegation-status-collection = {
+  schemaVersion: 1, profile: organization-delegation-profile,
+  statements: [1*64 organization-delegation-status-member]
+}
+
+
 document-delivery-header = (
   schemaVersion: 1, profile: "certconcord-document-encryption-draft-03",
   suite: "ML-KEM-HKDF-SHA256-AES256KW-AES256GCM", trustDomainID: id32, deliveryID: id32
