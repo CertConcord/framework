@@ -11,13 +11,23 @@ before(() => {
 });
 after(() => material?.close());
 
-for (const dependency of ['current context', 'mailbox decision']) {
+for (const dependency of [
+  'current context',
+  'mailbox decision',
+  'authority decision',
+  'mailbox normalization',
+]) {
   test(`S/MIME rejected Promise from synchronous ${dependency} stays typed without unhandled rejection`, async () => {
     const f = applicationFixture(material);
+    if (dependency === 'authority decision')
+      f.policy.authorityResolver = () => Promise.reject(new Error('authority unavailable'));
+    if (dependency === 'mailbox normalization')
+      f.backend.normalizeMailbox = () => Promise.reject(new Error('normalization unavailable'));
     const app = new SmimeApplication({ readContext: f.readContext, backend: f.backend });
     if (dependency === 'current context')
       f.state.contextOverride = () => Promise.reject(new Error('configuration unavailable'));
-    else f.state.mailboxDecision = () => Promise.reject(new Error('binding unavailable'));
+    else if (dependency === 'mailbox decision')
+      f.state.mailboxDecision = () => Promise.reject(new Error('binding unavailable'));
     const result = expectOverall(await app.protectSmimeMessage(f.protectInput()), 'INDETERMINATE');
     assert.equal(result.effectMayHaveOccurred, false);
     assert.equal(f.count('sign'), 0);

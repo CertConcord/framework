@@ -70,8 +70,6 @@ export function ordinaryCMS(f, { content, leaf = f.signer, ess = true } = {}) {
     leaf.pemFile,
     '-inkey',
     leaf.keyFile,
-    '-certfile',
-    f.root.pemFile,
     '-outform',
     'DER',
     '-out',

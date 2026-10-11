@@ -27,6 +27,8 @@ let alternateRecipient;
 let expiredSigner;
 let futureSigner;
 let unnamedSigner;
+let expiredRoot;
+let expiredRootSigner;
 before(() => {
   material = smimeMaterialFixture();
   alternateSigner = material.certificate('Alternate sender');
@@ -41,6 +43,13 @@ before(() => {
   });
   futureSigner = material.certificate('Future sender', { key: material.signer, notBefore: at + 1 });
   unnamedSigner = material.certificate('Unnamed sender', { key: material.signer, emails: [] });
+  expiredRoot = material.certificate('Expired mail root', {
+    issuer: null,
+    ca: true,
+    key: material.root,
+    notAfter: at - 1,
+  });
+  expiredRootSigner = material.certificate('Sender under expired root', { issuer: expiredRoot });
 });
 after(() => material?.close());
 
@@ -596,6 +605,45 @@ test('S/MIME known incoming revocation stays INVALID even with expired validity'
   expectOverall(await f.app.processSmimeMessage(f.processInput()), 'INVALID');
   assert.equal(f.count('inspectVerifiedMime'), 0);
 });
+
+function expiredRootFixture() {
+  const f = applicationFixture(material);
+  f.state.signer = expiredRootSigner;
+  f.policy.trustedRoots = [Buffer.from(expiredRoot.der)];
+  f.policy.authorityResolver = material.authorities({ authority: expiredRoot });
+  f.policy.currentMaterial = {
+    certificates: [Buffer.from(expiredRoot.der)],
+    crls: [material.crl({ issuer: expiredRoot })],
+  };
+  f.app = new SmimeApplication({ readContext: f.readContext, backend: f.backend });
+  return f;
+}
+
+test('S/MIME incoming ordinary root expiration alone is uncertainty without historical proof', async () => {
+  const f = expiredRootFixture();
+  expectOverall(await f.app.processSmimeMessage(f.processInput()), 'INDETERMINATE');
+  noPrivateAction(f);
+  assert.equal(f.count('inspectVerifiedMime'), 0);
+});
+for (const cause of ['root key cutoff', 'hash cutoff', 'bad signature']) {
+  test(`S/MIME ordinary expired root cannot downgrade known ${cause}`, async () => {
+    const f = expiredRootFixture();
+    if (cause === 'root key cutoff')
+      f.policy.keyDeadlines[c.keyID(expiredRoot.publicKey).toString('hex')] = at;
+    if (cause === 'hash cutoff') f.policy.hashDeadlines[O.sha256] = at;
+    if (cause === 'bad signature')
+      f.hooks.after.inspectCMS = (result) => {
+        Object.assign(result, {
+          overall: 'INVALID',
+          reason: 'SMIME_SIGNATURE_INVALID',
+          checks: [{ overall: 'INVALID', reason: 'SMIME_SIGNATURE_INVALID' }],
+        });
+      };
+    expectOverall(await f.app.processSmimeMessage(f.processInput()), 'INVALID');
+    noPrivateAction(f);
+    assert.equal(f.count('inspectVerifiedMime'), 0);
+  });
+}
 test('S/MIME safely available bad math dominates missing current validation material', async () => {
   const f = fixture();
   f.policy.currentMaterial.crls = [];
