@@ -722,11 +722,19 @@ export class OrganizationDelegationApplication {
           'IDEMPOTENCY_CONFLICT',
         );
         const operation = prior.value;
-        this.#evaluate(current, context, operation, evaluateOrganizationRequest, {
+        const checked = this.#evaluate(current, context, operation, evaluateOrganizationRequest, {
           approverRegistrations: operation.registrations,
           rosterNonces: operation.rosterNonces,
         });
         requireChecks(current.checks);
+        const { expiresAt: refreshedUntil, ...refreshedRequest } = checked.result.facts.request;
+        const { expiresAt, ...savedRequest } = operation.request;
+        insist(
+          equal(dcbor(refreshedRequest), dcbor(savedRequest)) &&
+            savedRequest.issuedAt <= context.knowledgeTime &&
+            context.knowledgeTime < expiresAt,
+          'ORG_REQUEST_BINDING_OR_EXPIRY',
+        );
         return finish(current, this.#preparedResult(operation));
       }
       const certificate = sealBindings(context, frozen.document, frozen.sim);
@@ -1000,6 +1008,13 @@ export class OrganizationDelegationApplication {
         this.#state.guard(checked.currentGuard);
         this.#state.guard(this.#operationGuard(operation.operationID, row));
         insist(!operation.serverNonceConsumed, 'ORG_NONCE_REPLAY');
+        this.#state.requireImmutableTarget({
+          trustDomainID: context.trustDomainID,
+          organizationID: context.organizationID,
+          objectType: 'FINAL_AUTHORIZATION',
+          objectID: authorization.authorizationID,
+          semanticHash: H('OrganizationAuthorization', authorization),
+        });
         operation.authorization = controlEnvelope(
           'OrganizationAuthorization',
           authorization,
@@ -1059,7 +1074,16 @@ export class OrganizationDelegationApplication {
             targetObservations: [target],
             statusObservations: [
               {
-                ...body,
+                trustDomainID: body.trustDomainID,
+                organizationID: body.organizationID,
+                objectType: body.objectType,
+                objectID: body.objectID,
+                objectHash: body.objectHash,
+                subjectKeyID: body.subjectKeyID,
+                epoch: body.epoch,
+                status: body.status,
+                publishedAt: body.publishedAt,
+                nextUpdate: body.nextUpdate,
                 semanticHash: H('OrganizationDelegationStatus', body),
                 rawHash: sha512(operation.authorizationStatus),
                 effectiveTime: null,

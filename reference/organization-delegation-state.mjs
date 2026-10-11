@@ -421,6 +421,13 @@ export class OrganizationState {
   operation(context, operation) {
     return this.journal.get(OPERATION_NAMESPACE, operationID(context, operation));
   }
+  requireImmutableTarget(target) {
+    const prior = this.journal.get(PREFIX + 'target-id', objectIndex(target))?.value?.targets ?? [];
+    insist(
+      prior.every((entry) => equal(entry.semanticHash, target.semanticHash)),
+      'ORG_IMMUTABLE_OBJECT_CONFLICT',
+    );
+  }
   counterID(context, member) {
     return index('OrganizationApprovalCounter', {
       trustDomainID: this.domain,
