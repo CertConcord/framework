@@ -862,8 +862,17 @@ class OrganizationGateway {
           Array.isArray(decision.checks) && decision.checks.length <= 256,
           'ORG_CURRENT_ADMISSION_SCHEMA',
         );
-        for (const check of decision.checks)
-          requireThat(check?.overall === 'VALID', 'ORG_CURRENT_ADMISSION_SCHEMA');
+        for (const check of decision.checks) {
+          fields(check, ['check', 'overall'], ['reason']);
+          requireThat(
+            check.overall === 'VALID' &&
+              typeof check.check === 'string' &&
+              check.check.length > 0 &&
+              (!Object.hasOwn(check, 'reason') ||
+                (typeof check.reason === 'string' && check.reason.length > 0)),
+            'ORG_CURRENT_ADMISSION_SCHEMA',
+          );
+        }
       }
     } catch {
       throw admissionError('ORG_CURRENT_ADMISSION_SCHEMA');
@@ -962,7 +971,7 @@ class OrganizationGateway {
       });
       return null;
     });
-    if (prior) return prior;
+    if (prior) return this.finish(id, prior.signature, publicKey);
     try {
       const result = await this.#sign({
         keyRef: this.#keyRef,
