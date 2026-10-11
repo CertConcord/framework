@@ -220,8 +220,8 @@
     },
     {
       "path": "docs/smime-application.md",
-      "bytes": 12721,
-      "sha256": "b9d5b99e3fcd7166a54953f6553606243bf6fddb3b8c295993f8d3b88cd0337f"
+      "bytes": 13892,
+      "sha256": "b4888b5032fa1bff03969c9f24f08b9a4fad6eb7b0968fbfe233f0502149ff77"
     },
     {
       "path": "docs/storage.md",
@@ -260,8 +260,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 11960,
-      "sha256": "87fa7aef2d199f0c65512ca9f25bbc35185ed9844f8db685745e995e4eaf2609"
+      "bytes": 12009,
+      "sha256": "db3618ac75b757acea28fd3024e0eeb7c642160fda534b0c3a07b59ecd1ee1a3"
     },
     {
       "path": "reference/README.md",
@@ -280,8 +280,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 44263,
-      "sha256": "bbf59e14709ada6ae60ac633bc8936ab4f3d729a431d7e9810241f634c0a46c7"
+      "bytes": 44355,
+      "sha256": "f04c7e1447b6c6ab8649b303d4acefc7588177d82445e6020b50bd07c4ed4b74"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1135,8 +1135,8 @@
     },
     {
       "path": "reference/smime-address.mjs",
-      "bytes": 4387,
-      "sha256": "f1dc1a612218905176e6348671ded9b342fbeefba02140a07a036e0b43a969bb"
+      "bytes": 4823,
+      "sha256": "f908be33f026c89b6c5249c16b8806d4f17b791dc60b08f3879a3c54eaf1fc7d"
     },
     {
       "path": "reference/smime-application-fixtures.mjs",
@@ -1145,8 +1145,13 @@
     },
     {
       "path": "reference/smime-application.test.mjs",
-      "bytes": 29565,
-      "sha256": "84ae99af51dd9df240acbd2f067d33d3f081536efb32ffc46c3878946fb3a678"
+      "bytes": 30475,
+      "sha256": "f0ae4c2400f7bf311a6eafdee7d06f40f750112985c5b156518c5256d1450324"
+    },
+    {
+      "path": "reference/smime-backend-boundaries.test.mjs",
+      "bytes": 7925,
+      "sha256": "3f81a25da782c4afb87ed95a50b1466b1da7f470388b45aaefd65379defd16b7"
     },
     {
       "path": "reference/smime-backend.mjs",
@@ -1155,13 +1160,13 @@
     },
     {
       "path": "reference/smime-backend.test.mjs",
-      "bytes": 21887,
-      "sha256": "19fda1fdac27a40bde15055636f67ef2beb61cc73ef2163778f5c343227c451a"
+      "bytes": 21907,
+      "sha256": "b3b7bae1387167cefa666ea1b3c29c91169e7647060d0464604b10d8c771a69c"
     },
     {
       "path": "reference/smime-callbacks.test.mjs",
-      "bytes": 2371,
-      "sha256": "ab5dcc16b1d689f59e47d48de6bdff74dd2d014576285313b73b35d71db679ac"
+      "bytes": 3201,
+      "sha256": "eae5122b258a9635283b0f2432545117aea33a3d2da252f21bfa9588b34f98b3"
     },
     {
       "path": "reference/smime-cms-worker.mjs",
@@ -1170,8 +1175,8 @@
     },
     {
       "path": "reference/smime-cms.mjs",
-      "bytes": 15211,
-      "sha256": "52d844f280f19395aecfe86e1122bcbae5da9617c38c215c4e1465874bd9118b"
+      "bytes": 15945,
+      "sha256": "aad1e3bb501d08da1e1090590ec0cb7e9215bf6777cd1071142eb274d5faa066"
     },
     {
       "path": "reference/smime-material-api.test.mjs",
@@ -1190,13 +1195,13 @@
     },
     {
       "path": "reference/smime-message-fixtures.mjs",
-      "bytes": 5113,
-      "sha256": "484cd017739a7942ab45b6b25926644c0d8e055b33a1814b3c651c3d7d7850df"
+      "bytes": 5477,
+      "sha256": "49aaf12e6d6a095295ef174b7c6653cc614a97f848c2e0f5fc291b508213ba14"
     },
     {
       "path": "reference/smime-mime-worker.mjs",
-      "bytes": 20248,
-      "sha256": "44b552fe306171c8f789132e77e49e36ad32e3fdfb16f35e3ea17aa9966ab27d"
+      "bytes": 20848,
+      "sha256": "13cfeb4b4b6527666b4cde547dfc3dbfd962c9e6fbf9b7f1e747dd6949ad55c6"
     },
     {
       "path": "reference/smime-mime.mjs",
@@ -1205,13 +1210,13 @@
     },
     {
       "path": "reference/smime.mjs",
-      "bytes": 38695,
-      "sha256": "5499f06621ab054d7e3d280211a12ef2568e97fb71858739bea08244b7fc2f56"
+      "bytes": 38993,
+      "sha256": "8afb4b41e2ba1bf5ebfc1d0d21937703c6665d89261ddae6a2f2a89f779bd6f7"
     },
     {
       "path": "reference/smime.test.mjs",
-      "bytes": 10154,
-      "sha256": "b049fef5099f8cb96d2ecc1d6c8cd79d32795692e4ebce3456598ef1c9160ef1"
+      "bytes": 11643,
+      "sha256": "cd97f19d3eab7482affd1c51e9207071405966933a3d83326296bd1e4a1058f7"
     },
     {
       "path": "reference/source-lock.json",

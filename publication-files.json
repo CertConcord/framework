@@ -229,6 +229,7 @@
   "reference/smime-application-fixtures.mjs",
   "reference/smime-application.test.mjs",
   "reference/smime-backend.mjs",
+  "reference/smime-backend-boundaries.test.mjs",
   "reference/smime-backend.test.mjs",
   "reference/smime-callbacks.test.mjs",
   "reference/smime-cms-worker.mjs",

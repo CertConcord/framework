@@ -51,6 +51,8 @@ Both methods also support `SIGNED`. `requiredProtection` selects the exact mode.
 
 `createSmimeBackend` selects explicit absolute OpenSSL executable and configuration paths and an optional provider module path. The selected executable is OpenSSL 3.6.5. Its constructor copies the own string entries of `keyMap`, importing private Node `KeyObject` values or unencrypted PKCS8 PEM buffers. Each `keyRef` names one of those fixed entries. Signing and decryption bind the actual private-key snapshot to the admitted certificate's exact SPKI; an earlier key description cannot authorize a later replacement. The backend invokes the executable with argument arrays and no shell, uses private temporary files, and removes them after each operation. It supplies no system trust-root or network-discovery fallback.
 
+The selected private-file backend requires POSIX directory/file permission semantics, with a private directory mode of 0700 and exclusive file mode of 0600. Native Windows signing and decryption return UNSUPPORTED until a dedicated ACL implementation is selected. MIME processing and public cryptographic inspection are separate capabilities. Linux/WSL validation does not establish native Windows private-operation support.
+
 The synchronous trusted `readContext()` returns `{knowledgeTime, policy}`. Knowledge time is the actual integral observation time. The policy supplies explicit roots, scoped authority and mailbox resolvers, current material, and finite algorithm/hash/key deadlines. The scope contains a 32-byte `trustDomainID`, `issuerID`, `representation: 'X509'`, `profileID: 'certconcord-smime-application-v1'` and `purpose: 'SMIME_APPLICATION'`. The application derives `SMIME_SIGNING` or `SMIME_RECIPIENT_ENCRYPTION` for each decision.
 
 Construction requires an available valid initial context and fixes its namespace, root bytes, and authority/mailbox resolver function identities. An unavailable initial context throws a typed INDETERMINATE error. Subsequent calls can observe updated decisions through those same resolver functions, along with updated material and deadlines. Replacing a resolver requires a new application instance. Temporary context unavailability after construction prevents acceptance without suppressing independently available cryptographic failures.
@@ -69,11 +71,15 @@ Receipt first admits the local recipient before private decryption. It authentic
 
 Results retain separate cryptographic, material, authority, mailbox and MIME checks. Known INVALID takes precedence over UNSUPPORTED, then INDETERMINATE. Safely available bad cryptography is not hidden by missing policy evidence. The application does not invoke an unauthorized private key merely to inspect otherwise unavailable inner content.
 
+Public inspection also checks common nonselected RSA PKCS#1 signatures with SHA-256 or SHA-512 when OpenSSL can verify their exact bytes. Valid mathematics leaves those signature suites UNSUPPORTED; an established mathematical failure is INVALID. This does not authorize RSA signing or broaden the selected P-256 signature profile.
+
 ## MIME bytes and outer headers
 
 The selected MIME subset includes UTF-8/US-ASCII text, multipart/mixed, multipart/alternative and declared-type binary attachments. The mature MIME tree writer finishes outbound text normalization and CRLF framing before signing. Binary attachment bytes remain unchanged after transfer decoding. `canonicalMimeHash` is SHA-256 of the exact SignedData eContent MIME entity, not of a display rendering or the SignedData wrapper. Receipt verifies those original bytes before parsing or decoding them.
 
 Complete header occurrence lists are checked before convenience parser fields. Ambiguous From/Sender and duplicate security-sensitive content fields or parameters are rejected. Missing Content-Type uses the standard text/plain; charset=us-ascii default; a filename cannot silently change it to another media type. Attachment filenames are inert labels. HTML is returned as bytes without rendering, sanitization, script execution or resource fetching.
+
+An incoming inner MIME entity may contain one `MIME-Version: 1.0` field as inert version metadata. It does not establish an author or become an outer header. Duplicate or unsupported versions and actual outer identity headers remain nonaccepting. The inner writer adds no MIME-Version, Date or Message-ID, and receipt never removes such bytes from signed content before verification.
 
 From, Sender, Subject, To, Cc, Date, Message-ID and trace headers remain UNPROTECTED. Exactly one From mailbox must match the expected author and admitted signing credential; Sender is absent or names that same mailbox. This separate comparison does not sign the literal outer header bytes. A Subject edit can leave the protected body valid.
 
@@ -85,7 +91,7 @@ This is a local byte transformation. Each explicit invocation performs each sele
 
 The trusted context provider owns authenticated state history and rollback protection across process restarts. The application rejects decreasing observation time within an instance and never substitutes cached GOOD decisions for unavailable current evidence.
 
-Inputs are bounded to 32 MiB, with 16 MiB finalized MIME and aggregate decoded-content limits, 128 MIME parts, depth 16, and 128 headers/64 KiB of header bytes per entity. Each complete CMS DER object also has a 16 MiB limit. These are separate ceilings: MIME transfer encoding and CMS wrapper overhead can put a message over one limit even when its original content is below another. Certificate and CRL collections are bounded to 32 each. MIME parsing and CMS execution require the selected bounded backend. MIME metadata cannot cause file or network retrieval.
+Inputs are bounded to 32 MiB, with 16 MiB finalized MIME and aggregate decoded-content limits, 128 MIME parts, depth 16 with the root at depth one, and 128 headers/64 KiB of header bytes per entity. Each complete CMS DER object also has a 16 MiB limit. These are separate ceilings: MIME transfer encoding and CMS wrapper overhead can put a message over one limit even when its original content is below another. Certificate and CRL collections are bounded to 32 each. MIME parsing and CMS execution require the selected bounded backend. MIME metadata cannot cause file or network retrieval.
 
 The MIME worker has a 10-second deadline, a 128 MiB old-generation heap limit and a 16 MiB young-generation heap limit. OpenSSL operations have a 10-second deadline, 64 KiB of captured diagnostic output and 32 MiB of output. MIME serialization consumes a bounded output stream. These engineering limits do not establish protection against every native or parser resource failure.
 

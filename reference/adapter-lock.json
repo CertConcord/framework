@@ -493,6 +493,7 @@
         "smime-application.test.mjs",
         "smime-callbacks.test.mjs",
         "smime-backend.test.mjs",
+        "smime-backend-boundaries.test.mjs",
         "smime.test.mjs"
       ],
       "sources": [
@@ -520,7 +521,7 @@
         "saferBuffer212"
       ],
       "inputSemantics": "Complete immutable RFC5322 message bytes; exact finalized SignedData MIME content; explicit sender and recipients; constructor-fixed synchronous context, roots and resolver identities; current certificate/key/mailbox/purpose admission before private use and release",
-      "environment": "Node.js 24.15+; explicit OpenSSL 3.6.5 executable/configuration and fixed local key map; mailsplit 5.4.20 and Nodemailer 10.0.16; direct-root/full-CRL trust and finite cryptographic deadlines",
+      "environment": "Node.js 24.15+; explicit OpenSSL 3.6.5 executable/configuration and fixed local key map; POSIX private-file isolation for sign/decrypt; mailsplit 5.4.20 and Nodemailer 10.0.16; direct-root/full-CRL trust and finite cryptographic deadlines",
       "limits": "docs/smime-application.md; 32 MiB input, separate 16 MiB complete CMS DER and canonical/decoded MIME ceilings, 128 nodes, depth16, 128 headers/64 KiB per entity, 32 certificates/CRLs/recipients, two security layers; 10-second workers and OpenSSL operations; no SMTP, historical preservation, durable replay service or full S/MIME receiving claim",
       "downgradeForbidden": true
     },
