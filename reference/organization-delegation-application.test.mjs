@@ -13,6 +13,7 @@ import {
   copy,
   createOrganizationFixture,
   ORGANIZATION_PLAN,
+  SEAL_PROFILE,
 } from './organization-delegation-fixtures.mjs';
 
 const accepted = (result, status) => {
@@ -490,7 +491,7 @@ for (const offset of [1, 0]) {
       f.hooks.authority = (query) => {
         if (
           query.role !== 'REGISTRATION_AUTHORITY' ||
-          query.scope.profileID !== 'ORG-SEAL' ||
+          query.scope.profileID !== SEAL_PROFILE ||
           query.stateTime >= query.knowledgeTime
         )
           return undefined;
@@ -512,3 +513,37 @@ for (const offset of [1, 0]) {
     }
   });
 }
+
+test('organization missing document cannot conceal available CMS signature mathematics', async () => {
+  const f = createOrganizationFixture(),
+    independent = verifier(f);
+  try {
+    const app = new OrganizationDelegationApplication(f.applicationOptions);
+    authorize(f, app);
+    const completed = accepted(await app.execute({ operationID: f.operationID }));
+    const original = c.decodeCBOR(completed.bundle);
+    const objects = original.objects.filter((value) => value.type !== 'Document');
+    rejected(
+      independent.value.verify({
+        bundle: c.dcbor(createEvidencePackage(ORGANIZATION_PLAN, objects)),
+      }),
+      'INDETERMINATE',
+    );
+    const damaged = objects.map((value) => {
+      if (value.type !== 'CMS') return value;
+      const payload = Buffer.from(value.payload);
+      payload[payload.length - 1] ^= 1;
+      return evidenceLeaf(value.type, payload);
+    });
+    rejected(
+      independent.value.verify({
+        bundle: c.dcbor(createEvidencePackage(ORGANIZATION_PLAN, damaged)),
+      }),
+      'INVALID',
+    );
+    assert.equal(f.calls.sign, 1);
+  } finally {
+    independent.journal.close();
+    f.close();
+  }
+});
