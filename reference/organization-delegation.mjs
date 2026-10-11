@@ -296,7 +296,9 @@ function credentialChecks(run, context, document, sim, retainedStatus) {
   const trust = context.credentialTrust,
     K = context.knowledgeTime;
   const certificate = addCheck(run.checks, 'document-binding', () =>
-    sealBindings(context, document, sim),
+    document !== null && sim !== null
+      ? sealBindings(context, document, sim)
+      : parseCertificate(trust.certificate),
   );
   const issuer = addCheck(run.checks, 'credential-issuer', () =>
     parseCertificate(trust.issuerCertificate),
@@ -1362,6 +1364,30 @@ function extractControl(raw, label, context, purpose) {
   return { cms: raw, issuerCertificate: cert, body: readControl(raw, label, cert) };
 }
 
+function retainedLeaves(current, bundle) {
+  let checked;
+  try {
+    checked = verifyEvidencePackage(bundle);
+  } catch (error) {
+    if (error?.code === 'ECP_UNSUPPORTED_SCHEMA') throw orgError(error.code, 'UNSUPPORTED');
+    if (error?.code !== 'ECP_MISSING_OBJECT') throw error;
+    // This error is raised after the bounded leaf shapes and commitments have been checked.
+    putFailure(current, orgError('ECP_MISSING_OBJECT', 'INDETERMINATE'), 'evidence-closure');
+    checked = {
+      plan: bundle.plan ?? null,
+      values: Object.fromEntries(bundle.objects.map((leaf) => [leaf.type, leaf.payload])),
+    };
+  }
+  if (checked.plan && checked.plan.profile !== ORGANIZATION_PLAN)
+    putFailure(current, orgError('ORG_PLAN_DOWNGRADE'), 'evidence-plan');
+  if (Object.keys(checked.values).some((type) => !TYPES.includes(type)))
+    putFailure(current, orgError('ECP_PLAN'), 'evidence-plan');
+  for (const type of TYPES)
+    if (!Object.hasOwn(checked.values, type))
+      putFailure(current, orgError('ECP_MISSING_OBJECT', 'INDETERMINATE'), 'missing:' + type);
+  return checked;
+}
+
 /** Independently validate retained raw evidence against constructor-bound current trust. */
 export class OrganizationDelegationVerifier {
   #context;
@@ -1382,10 +1408,13 @@ export class OrganizationDelegationVerifier {
       record(input, ['bundle']);
       const raw = binary(input.bundle, 1, 64 * 1024 * 1024),
         bundle = canonical(raw, 64 * 1024 * 1024);
-      const { plan, values } = verifyEvidencePackage(bundle, { requiredTypes: TYPES });
-      insist(plan.profile === ORGANIZATION_PLAN, 'ORG_PLAN_DOWNGRADE');
-      const sim = decodeCBOR(values.SIM),
-        policy = decodeCBOR(values.SignaturePolicy);
+      const { values } = retainedLeaves(current, bundle);
+      const sim = values.SIM
+          ? addCheck(current.checks, 'signing-intent', () => decodeCBOR(values.SIM))
+          : null,
+        policy = values.SignaturePolicy
+          ? addCheck(current.checks, 'signature-policy', () => decodeCBOR(values.SignaturePolicy))
+          : null;
       let context;
       try {
         context = this.#context.read();
@@ -1394,52 +1423,68 @@ export class OrganizationDelegationVerifier {
         putFailure(current, error, 'current-context');
       }
       const pins = context ?? this.#initial;
-      addCheck(current.checks, 'retained-policy', () =>
-        insist(equal(dcbor(policy), dcbor(pins.policy)), 'ORG_POLICY_BINDING'),
-      );
+      if (policy)
+        addCheck(current.checks, 'retained-policy', () =>
+          insist(equal(dcbor(policy), dcbor(pins.policy)), 'ORG_POLICY_BINDING'),
+        );
       addCheck(current.checks, 'retained-credential', () =>
         insist(
-          equal(values.Certificate, pins.credentialTrust.certificate) &&
-            equal(values.RegistrationAuthorization, pins.credentialTrust.registrationAuthorization),
+          (!values.Certificate || equal(values.Certificate, pins.credentialTrust.certificate)) &&
+            (!values.RegistrationAuthorization ||
+              equal(
+                values.RegistrationAuthorization,
+                pins.credentialTrust.registrationAuthorization,
+              )),
           'ORG_CERTIFICATE_BINDING',
         ),
       );
-      const signed = addCheck(current.checks, 'document-mathematics', () =>
-        verifyCMS(values.CMS, {
-          content: values.Document,
-          expectedCertificate: pins.credentialTrust.certificate,
-          context: signatureContext(pins),
-          simHash: H('SIM', sim),
-          policyHash: H('SignaturePolicy', policy),
-        }),
-      );
-      const authorization = addCheck(current.checks, 'authorization-mathematics', () =>
-        extractControl(
-          values.OrganizationAuthorization,
-          'OrganizationAuthorization',
-          pins,
-          'ORGANIZATION_FINAL_AUTHORIZATION',
-        ),
-      );
-      const permit = addCheck(current.checks, 'permit-mathematics', () =>
-        extractControl(
-          values.OperationPermit,
-          'OperationPermit',
-          pins,
-          'ORGANIZATION_DELEGATION_PERMIT',
-        ),
-      );
-      const receipt = addCheck(current.checks, 'receipt-mathematics', () =>
-        extractControl(
-          values.ExecutionReceipt,
-          'ExecutionReceipt',
-          pins,
-          'ORGANIZATION_DELEGATION_RECEIPT',
-        ),
-      );
-      const executionEvidence = addCheck(current.checks, 'execution-evidence', () =>
-        decodeCBOR(values.ExecutionBindingEvidence),
-      );
+      const signed =
+        values.CMS &&
+        values.Document &&
+        addCheck(current.checks, 'document-mathematics', () =>
+          verifyCMS(values.CMS, {
+            content: values.Document,
+            expectedCertificate: pins.credentialTrust.certificate,
+            context: signatureContext(pins),
+            ...(sim ? { simHash: H('SIM', sim) } : {}),
+            ...(policy ? { policyHash: H('SignaturePolicy', policy) } : {}),
+          }),
+        );
+      const authorization =
+        values.OrganizationAuthorization &&
+        addCheck(current.checks, 'authorization-mathematics', () =>
+          extractControl(
+            values.OrganizationAuthorization,
+            'OrganizationAuthorization',
+            pins,
+            'ORGANIZATION_FINAL_AUTHORIZATION',
+          ),
+        );
+      const permit =
+        values.OperationPermit &&
+        addCheck(current.checks, 'permit-mathematics', () =>
+          extractControl(
+            values.OperationPermit,
+            'OperationPermit',
+            pins,
+            'ORGANIZATION_DELEGATION_PERMIT',
+          ),
+        );
+      const receipt =
+        values.ExecutionReceipt &&
+        addCheck(current.checks, 'receipt-mathematics', () =>
+          extractControl(
+            values.ExecutionReceipt,
+            'ExecutionReceipt',
+            pins,
+            'ORGANIZATION_DELEGATION_RECEIPT',
+          ),
+        );
+      const executionEvidence =
+        values.ExecutionBindingEvidence &&
+        addCheck(current.checks, 'execution-evidence', () =>
+          decodeCBOR(values.ExecutionBindingEvidence),
+        );
       const binding =
         executionEvidence &&
         addCheck(current.checks, 'binding-mathematics', () =>
@@ -1452,7 +1497,7 @@ export class OrganizationDelegationVerifier {
         );
       if (permit) current.operationID = permit.body.activation?.operationID ?? null;
       let mathematical;
-      if (context && signed && permit && receipt && binding)
+      if (context && policy && sim && signed && permit && receipt && binding)
         mathematical = addCheck(current.checks, 'execution-mathematics', () =>
           execution.verifyOrganizationExecutionEvidence(
             {
@@ -1475,37 +1520,47 @@ export class OrganizationDelegationVerifier {
             },
           ),
         );
-      if (!context) return finish(current, {}, { mode: 'CURRENT_STATE_ONLY' });
-      credentialChecks(current, context, values.Document, sim, values.CertificateStatus);
-      insist(
-        permit && authorization && receipt && binding && signed,
-        'ORG_REQUIRED_CONTROL_UNAVAILABLE',
-        'INDETERMINATE',
-      );
+      if (context)
+        credentialChecks(
+          current,
+          context,
+          values.Document ?? null,
+          sim ?? null,
+          values.CertificateStatus,
+        );
       const closure = {
-        delegationPath: values.OrganizationDelegationPath,
-        approvalSet: values.OrganizationApprovalSet,
-        statusCollection: values.OrganizationDelegationStatus,
-        authorization: member(authorization.cms, authorization.issuerCertificate),
-        binding: member(binding.cms, binding.issuerCertificate),
+        delegationPath: values.OrganizationDelegationPath ?? null,
+        approvalSet: values.OrganizationApprovalSet ?? null,
+        statusCollection: values.OrganizationDelegationStatus ?? null,
+        authorization: authorization
+          ? member(authorization.cms, authorization.issuerCertificate)
+          : null,
+        binding: binding ? member(binding.cms, binding.issuerCertificate) : null,
       };
-      const projection = this.#state.load(context, closure);
+      const projection = context ? this.#state.load(context, closure) : null;
       const evaluated = absorb(
         current,
         verifyOrganizationEvidence({
-          context,
-          state: projection.state,
-          sim,
-          activation: permit.body.activation,
-          tbs: signed.tbs,
+          context: context ?? { ...pins, knowledgeTime: null },
+          state: projection?.state ?? {
+            knowledgeTime: null,
+            targets: [],
+            heads: [],
+            terminalObservations: [],
+            keyIncidents: [],
+            executions: [],
+          },
+          sim: sim ?? null,
+          activation: permit?.body.activation ?? null,
+          tbs: signed?.tbs ?? null,
           ...closure,
-          permit: member(permit.cms, permit.issuerCertificate),
-          receiptCertificate: receipt.issuerCertificate,
+          permit: permit ? member(permit.cms, permit.issuerCertificate) : null,
+          receiptCertificate: receipt?.issuerCertificate ?? null,
           counterBaselines: { kind: 'RETAINED_REGISTRATION' },
         }),
         'organization-evidence',
       );
-      this.#state.merge(context, projection, evaluated);
+      if (context) this.#state.merge(context, projection, evaluated);
       requireChecks(current.checks);
       return finish(current, {
         mode: 'CURRENT_STATE_ONLY',
