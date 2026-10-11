@@ -64,7 +64,7 @@ for (const action of ['execute', 'reconcile']) {
         action === 'execute'
           ? gateway.execute(f.input)
           : gateway.reconcile({ operationID: f.operationID, signature: result.signature }),
-        { overall: 'INVALID', reason: 'ORG_REVOKED' },
+        { overall: 'INVALID', code: 'ORG_REVOKED' },
       );
       assert.equal(f.calls.sign, 1);
       assert.equal(stored(f).status, 'COMPLETED');
@@ -101,7 +101,7 @@ for (const stage of [
         };
       await assert.rejects(f.gateway().execute(f.input), {
         overall: 'INVALID',
-        reason: 'ORG_REVOKED',
+        code: 'ORG_REVOKED',
       });
       const dispatched = ['private signature', 'complete authorize'].includes(stage);
       assert.equal(f.calls.sign, dispatched ? 1 : 0);
@@ -282,7 +282,7 @@ test('organization gateway does not attach a newer guard revision to an earlier 
       f.journal.put(guard.namespace, guard.id, { changed: true }, guard.revision);
       return good;
     };
-    await assert.rejects(f.gateway().execute(f.input), { reason: 'ORG_CURRENT_ADMISSION_CHANGED' });
+    await assert.rejects(f.gateway().execute(f.input), { code: 'ORG_CURRENT_ADMISSION_CHANGED' });
     assert.equal(f.calls.sign, 0);
     assert.equal(stored(f), undefined);
   } finally {
