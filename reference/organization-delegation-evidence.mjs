@@ -372,8 +372,10 @@ class Evaluation {
         fail('ORG_AUTHORITY_UNAVAILABLE', 'INDETERMINATE');
       }
       const result = resolverResult(value);
-      if (result.coverageUntil !== undefined)
+      if (result.coverageUntil !== undefined) {
+        need(this.K < result.coverageUntil, 'ORG_AUTHORITY_COVERAGE', 'INDETERMINATE');
         this.validUntil = Math.min(this.validUntil, result.coverageUntil);
+      }
       this.admissions.set(k, { value: result });
       return result;
     } catch (error) {
@@ -1078,11 +1080,11 @@ function statuses(e, retained) {
             'ORG_STATUS_CONFLICT',
           );
       for (const row of rows)
-        if (
-          row.status === 'REVOKED' &&
-          Math.min(row.effectiveTime ?? Infinity, row.compromiseStart ?? Infinity) <= e.K
-        )
-          fail('ORG_STATUS_REVOKED');
+        if (row.status === 'REVOKED') {
+          const cutoff = Math.min(row.effectiveTime ?? Infinity, row.compromiseStart ?? Infinity);
+          need(e.K < cutoff, 'ORG_STATUS_REVOKED');
+          e.validUntil = Math.min(e.validUntil, cutoff);
+        }
       const presented = authenticated.filter(({ observation: s }) => sameTarget(s, target));
       const prior = e.state.heads.filter((s) => sameTarget(s, target) && s.observedAt <= e.K);
       if (presented.length && prior.length)
@@ -1892,13 +1894,37 @@ function preflight(e, mode) {
       member?.assertion,
       'assertion-math:' + i,
     );
-  if (mode === 'evidence')
+  if (mode === 'evidence') {
     for (const [name, label] of [
       ['authorization', 'OrganizationAuthorization'],
       ['permit', 'OperationPermit'],
       ['binding', 'ExecutionBinding'],
     ])
       e.attempt(name + '-math', () => e.control(e.input[name], label));
+    e.attempt('authorization-raw-bindings', () => {
+      const body = e.control(e.input.authorization, 'OrganizationAuthorization');
+      need(body.schemaVersion === 2 && body.profile === PROFILE, 'ORG_AUTHORIZATION_VERSION');
+      // Original-byte commitments remain independently testable when the roster is incomplete.
+      for (const [parsed, field, type, payload] of [
+        [e.path, 'delegationPathLeafID', 'OrganizationDelegationPath', e.input.delegationPath],
+        [e.approvalCollection, 'approvalSetLeafID', 'OrganizationApprovalSet', e.input.approvalSet],
+      ])
+        if (parsed) {
+          hash(body[field]);
+          need(
+            equal(body[field], H('EvidenceLeaf', { type, payload })),
+            'ORG_AUTHORIZATION_BINDING',
+          );
+        }
+      if (e.approvalCollection) {
+        hash(body.requestHash);
+        need(
+          equal(body.requestHash, H('OrganizationApprovalRequest', e.approvalCollection.request)),
+          'ORG_AUTHORIZATION_BINDING',
+        );
+      }
+    });
+  }
   if (e.context.executionCurrent?.binding)
     e.attempt('current-binding-math', () => {
       sized(e.context.executionCurrent.binding, 65536, 'ORG_EXECUTION_BINDING');
