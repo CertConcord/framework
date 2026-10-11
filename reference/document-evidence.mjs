@@ -6,6 +6,42 @@ import { parseCertificate, RRA } from './pki.mjs';
 import { readControl, evaluateStatus } from './state.mjs';
 import { evidenceLeaf } from './evidence-plan.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
+import {
+  ORGANIZATION_PROFILE,
+  ORGANIZATION_PLAN,
+  orgError,
+} from './organization-delegation-state.mjs';
+
+export function organizationEvidenceTypes(policy, format = 'CMS') {
+  if (!Object.hasOwn(policy, 'organizationDelegation')) return [];
+  const selected = policy.organizationDelegation;
+  fields(selected, ['profile', 'mode', 'identityNamespace', 'minimumApprovers']);
+  if (selected.profile !== ORGANIZATION_PROFILE || selected.mode !== 'CURRENT_STATE_ONLY')
+    throw orgError('ORG_PROFILE_UNSUPPORTED', 'UNSUPPORTED');
+  if (format !== 'CMS') throw orgError('ORG_REPRESENTATION_UNSUPPORTED', 'UNSUPPORTED');
+  requireThat(
+    !Object.hasOwn(policy, 'documentEvidence') &&
+      policy.requireTrustedTime === false &&
+      policy.activationMode === 'WORKLOAD' &&
+      policy.executionBinding &&
+      policy.allowedProfiles?.includes('CERTCONCORD-ORG-SEAL-v1') &&
+      Number.isSafeInteger(policy.maxActivationLifetime) &&
+      policy.maxActivationLifetime > 0 &&
+      policy.maxActivationLifetime <= 120 &&
+      Number.isSafeInteger(selected.minimumApprovers) &&
+      selected.minimumApprovers >= 2 &&
+      selected.minimumApprovers <= 16 &&
+      typeof selected.identityNamespace === 'string' &&
+      /^[\x21-\x7e]{1,128}$/.test(selected.identityNamespace),
+    'ORG_POLICY',
+  );
+  return [
+    'OrganizationAuthorization',
+    'OrganizationDelegationPath',
+    'OrganizationApprovalSet',
+    'OrganizationDelegationStatus',
+  ];
+}
 
 export const DOCUMENT_EVIDENCE_PROFILE = 'certconcord-document-evidence-draft-03';
 export const documentPlans = Object.freeze({
@@ -14,6 +50,7 @@ export const documentPlans = Object.freeze({
 });
 
 export function documentEvidenceTypes(policy, format) {
+  organizationEvidenceTypes(policy, format);
   if (!policy.documentEvidence) return [];
   fields(policy.documentEvidence, ['profile', 'organizationAuthorization']);
   requireThat(
@@ -58,6 +95,7 @@ export function documentTimestampImprint(format, objects) {
 }
 
 export function appendDocumentEvidence(objects, { policy, format, evidence }) {
+  organizationEvidenceTypes(policy, format);
   requireThat(!!policy.documentEvidence === !!evidence, 'DOCUMENT_EVIDENCE_REQUIRED');
   if (!evidence) return;
   const types = documentEvidenceTypes(policy, format);
@@ -76,6 +114,11 @@ export function appendDocumentEvidence(objects, { policy, format, evidence }) {
 }
 
 export function selectDocumentPlan(base, policy) {
+  if (Object.hasOwn(policy, 'organizationDelegation')) {
+    organizationEvidenceTypes(policy, 'CMS');
+    requireThat(base === ORGANIZATION_PLAN, 'ORG_PLAN_DOWNGRADE');
+    return base;
+  }
   if (!policy.documentEvidence) return base;
   const selected = Object.entries(documentPlans).find(([, value]) => value === base);
   requireThat(selected, 'DOCUMENT_EVIDENCE_PLAN');
@@ -134,6 +177,10 @@ export function verifyDocumentEvidence(
   },
   trust,
 ) {
+  if (Object.hasOwn(policy, 'organizationDelegation')) {
+    organizationEvidenceTypes(policy, format);
+    throw orgError('ORG_CURRENT_VERIFIER_REQUIRED', 'UNSUPPORTED');
+  }
   documentEvidenceTypes(policy, format);
   const authorityQueries = [],
     authorityFailures = [],

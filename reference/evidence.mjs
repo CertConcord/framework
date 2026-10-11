@@ -31,7 +31,9 @@ import {
   documentPlans,
   documentEvidenceTypes,
   verifyDocumentEvidence,
+  organizationEvidenceTypes,
 } from './document-evidence.mjs';
+import { ORGANIZATION_PLAN, orgError } from './organization-delegation-state.mjs';
 
 const types = [
   'Document',
@@ -57,10 +59,13 @@ export function createSignaturePackage({
   passkeyEvidence,
   executionEvidence,
   documentEvidence,
+  organizationEvidence,
   ...unknown
 }) {
   requireThat(!Object.hasOwn(unknown, 'activation'), 'ECP_DUPLICATE_ACTIVATION');
   fields(unknown, []);
+  const organizationTypes = organizationEvidenceTypes(policy, 'CMS');
+  requireThat(!!organizationTypes.length === !!organizationEvidence, 'ORG_EVIDENCE_REQUIRED');
   requireThat(
     !!executionRequirement(policy) === !!executionEvidence &&
       !(passkeyEvidence && executionEvidence),
@@ -87,6 +92,13 @@ export function createSignaturePackage({
   }
   if (executionEvidence)
     objects.push(evidenceLeaf('ExecutionBindingEvidence', dcbor(executionEvidence)));
+  if (organizationTypes.length) {
+    requireThat(executionEvidence && !passkeyEvidence && !documentEvidence, 'ORG_PLAN_DOWNGRADE');
+    fields(organizationEvidence, organizationTypes);
+    for (const type of organizationTypes)
+      objects.push(evidenceLeaf(type, organizationEvidence[type]));
+    return createEvidencePackage(ORGANIZATION_PLAN, objects);
+  }
   appendDocumentEvidence(objects, { policy, format: 'CMS', evidence: documentEvidence });
   return createEvidencePackage(
     selectDocumentPlan(
@@ -122,7 +134,14 @@ export function verifySignaturePackage(
     ...documentTrust
   },
 ) {
-  const { plan } = verifyEvidencePackage(bundle);
+  const { plan, values: preliminaryValues } = verifyEvidencePackage(bundle);
+  if (plan.profile === ORGANIZATION_PLAN)
+    throw orgError('ORG_CURRENT_VERIFIER_REQUIRED', 'UNSUPPORTED');
+  if (
+    preliminaryValues.SignaturePolicy &&
+    Object.hasOwn(decodeCBOR(preliminaryValues.SignaturePolicy), 'organizationDelegation')
+  )
+    throw orgError('ORG_PLAN_DOWNGRADE');
   const document = Object.hasOwn(documentPlans, plan.profile);
   const passkey = plan.profile === 'certconcord-ecp-cms-passkey-draft-03';
   const execution = plan.profile === 'certconcord-ecp-cms-execution-draft-03';
