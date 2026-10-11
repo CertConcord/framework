@@ -168,7 +168,13 @@ function envelopeHeaders(records, format) {
   check(['MESSAGE', 'ENTITY'].includes(format), 'SMIME_MIME_FORMAT');
   const outerHeaders = records.filter((record) => !entityHeader(record.name));
   if (format === 'ENTITY') {
-    check(outerHeaders.length === 0, 'SMIME_ENTITY_OUTER_HEADERS');
+    // RFC 2045 permits MIME-Version in an entity. The header parser has
+    // already checked uniqueness and the selected value; it carries no
+    // author or routing claim and the entity writer need not insert it.
+    check(
+      outerHeaders.every((record) => record.name === 'mime-version'),
+      'SMIME_ENTITY_OUTER_HEADERS',
+    );
     return { outerHeaders: [], headerClaims: { fromMailbox: null, senderMailbox: null } };
   }
   const from = field(records, 'from'),
