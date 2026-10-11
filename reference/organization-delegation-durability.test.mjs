@@ -347,3 +347,40 @@ for (const boundary of ['capabilities', 'after signature']) {
     }
   });
 }
+
+for (const field of ['issuerID', 'controlTrust', 'credentialTrust']) {
+  test(`organization changed immutable ${field} cannot retrieve an existing operation after restart`, () => {
+    const dir = mkdtempSync(join(tmpdir(), 'org-config-restart-'));
+    const database = join(dir, 'journal.sqlite');
+    let f = createOrganizationFixture({ path: database });
+    try {
+      let app = new OrganizationDelegationApplication(f.applicationOptions);
+      valid(app.prepare(f.prepareInput()));
+      const snapshot = f.snapshot();
+      f.close();
+      f = null;
+      f = createOrganizationFixture({ snapshot, path: database });
+      if (field === 'issuerID') {
+        f.context.issuerID = 'replacement-issuer';
+        f.context.controlTrust.forEach((entry) => {
+          entry.issuerID = f.context.issuerID;
+        });
+      } else if (field === 'controlTrust') {
+        const entry = f.context.controlTrust.find(
+          (value) => value.purpose === 'ORGANIZATION_DELEGATION_STATUS',
+        );
+        entry.objectTypes = ['GRANT', 'FINAL_AUTHORIZATION'];
+      } else {
+        f.context.credentialTrust.statusCertificate = f.keys.registrar.certificate;
+      }
+      app = new OrganizationDelegationApplication(f.applicationOptions);
+      assert.throws(() => app.getOperationResult({ operationID: f.operationID }), {
+        code: 'ORG_OPERATION_BINDING',
+      });
+      assert.equal(f.calls.sign, 0);
+    } finally {
+      f?.close();
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+}

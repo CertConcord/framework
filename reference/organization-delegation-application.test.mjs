@@ -474,7 +474,8 @@ test('organization current knowledge cannot roll back after an admitted operatio
     const app = new OrganizationDelegationApplication(f.applicationOptions);
     accepted(app.prepare(f.prepareInput()));
     f.advance(-1);
-    rejected(app.prepare(f.prepareInput()), 'INVALID');
+    const result = rejected(app.prepare(f.prepareInput()), 'INDETERMINATE');
+    assert.equal(result.reason, 'ORG_CLOCK_ROLLBACK');
     assert.equal(f.calls.sign, 0);
   } finally {
     f.close();

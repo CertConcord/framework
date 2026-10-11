@@ -820,3 +820,17 @@ test('organization request lifetime ends before an already authenticated future 
     f.close();
   }
 });
+
+test('organization incomplete quorum cannot conceal the final authorization binding to different raw approval bytes', () => {
+  const f = createOrganizationFixture();
+  try {
+    const input = evidenceInput(f);
+    verdict(verifyOrganizationEvidence(input), 'VALID');
+    const approvals = copy(c.decodeCBOR(input.approvalSet));
+    approvals.approvals.pop();
+    input.approvalSet = c.dcbor(approvals);
+    verdict(verifyOrganizationEvidence(input), 'INVALID');
+  } finally {
+    f.close();
+  }
+});
