@@ -649,13 +649,17 @@ export class OrganizationState {
           row.terminals.push(status);
           row.terminals.sort(
             (a, b) =>
-              (a.compromiseStart ?? a.effectiveTime ?? a.publishedAt) -
-              (b.compromiseStart ?? b.effectiveTime ?? b.publishedAt),
+              Math.min(a.compromiseStart ?? Infinity, a.effectiveTime ?? a.publishedAt) -
+              Math.min(b.compromiseStart ?? Infinity, b.effectiveTime ?? b.publishedAt),
           );
           row.terminals = row.terminals.slice(0, 2);
         }
         this.#put(PREFIX + 'status', id, row);
-        if (status.compromiseStart !== null && status.compromiseStart !== undefined) {
+        if (
+          status.status === 'REVOKED' &&
+          status.compromiseStart !== null &&
+          status.compromiseStart !== undefined
+        ) {
           const incidentID = keyIndex(this.domain, status.subjectKeyID),
             prior = this.journal.get(PREFIX + 'key-incident', incidentID)?.value;
           if (!prior || status.compromiseStart < prior.compromiseStart)
