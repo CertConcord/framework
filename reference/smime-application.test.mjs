@@ -798,3 +798,28 @@ test('S/MIME rejects a MIME result beyond the canonical entity byte bound', asyn
   expectOverall(await f.app.protectSmimeMessage(f.protectInput()), 'UNSUPPORTED');
   noPrivateAction(f);
 });
+
+for (const depth of [16, 17]) {
+  test(`S/MIME decoded result enforces depth ${depth} with root at one before content release`, async () => {
+    const f = fixture();
+    f.hooks.after.inspectVerifiedMime = (result) => {
+      const leaf = result.tree[0];
+      result.tree = Array.from({ length: depth }, (_, index) => ({
+        ...copy(leaf),
+        path: Array(index).fill(0),
+        mediaType: index === depth - 1 ? 'text/plain' : 'multipart/mixed',
+        children: index === depth - 1 ? 0 : 1,
+      }));
+      result.parts[0].path = Array(depth - 1).fill(0);
+    };
+    const result = expectOverall(
+      await f.app.processSmimeMessage(f.processInput()),
+      depth === 16 ? 'VALID' : 'UNSUPPORTED',
+    );
+    if (depth === 16) {
+      assert.deepEqual(result.content.mime, entity);
+      assert.deepEqual(result.content.parts[0].path, Array(15).fill(0));
+    }
+    noPrivateAction(f);
+  });
+}
