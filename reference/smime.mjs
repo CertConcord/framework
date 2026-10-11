@@ -1044,7 +1044,7 @@ export class SmimeApplication {
               Buffer.isBuffer(part.bytes),
             'SMIME_MIME_RESULT',
           );
-          check(part.path.length <= 16, 'SMIME_DEPTH_LIMIT', 'UNSUPPORTED');
+          check(part.path.length <= 15, 'SMIME_DEPTH_LIMIT', 'UNSUPPORTED');
           check(
             ['charset', 'disposition', 'filename', 'contentID'].every(
               (name) => part[name] === null || typeof part[name] === 'string',
