@@ -131,11 +131,14 @@ function errorCheck(error, fallback = 'SMIME_VALIDATION_FAILED', overall = 'INVA
   };
 }
 function add(run, value, stage) {
-  check(
-    value && OUTCOMES.includes(value.overall) && typeof value.reason === 'string',
-    'SMIME_RESULT_SHAPE',
-  );
-  run.checks.push({ overall: value.overall, reason: value.reason, stage });
+  check(value && OUTCOMES.includes(value.overall), 'SMIME_RESULT_SHAPE');
+  const complete = typeof value.reason === 'string' && value.reason.length > 0;
+  // Missing decision metadata cannot establish acceptance or erase a known failure.
+  run.checks.push({
+    overall: !complete && value.overall === 'VALID' ? 'INDETERMINATE' : value.overall,
+    reason: complete ? value.reason : 'SMIME_DECISION_INCOMPLETE',
+    stage,
+  });
 }
 function collect(run, stage, operation) {
   try {
@@ -709,7 +712,10 @@ export class SmimeApplication {
   #catch(run, error, credentials, mode) {
     if (error !== STOP) {
       add(run, errorCheck(error), 'operation');
-      if (run.started) this.#refresh(run, credentials, mode, 'failure-context');
+      if (run.started)
+        collect(run, 'failure-context', () =>
+          this.#refresh(run, credentials, mode, 'failure-context'),
+        );
     }
     return result(run);
   }
