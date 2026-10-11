@@ -53,9 +53,9 @@ export const outerHeaders = () => [
 ];
 export const normalization = () => ({
   textParts: 1,
-  lineEndingsChanged: false,
-  charsetsChanged: false,
-  transferEncodingsChanged: true,
+  lineEndingsChanged: 0,
+  charsetsChanged: 0,
+  transferEncodingsChanged: 1,
   originalMessageHash: c.sha256(ordinaryMessage),
 });
 
