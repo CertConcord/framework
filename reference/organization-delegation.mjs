@@ -389,7 +389,13 @@ function credentialChecks(run, context, document, sim, retainedStatus) {
         scope: 'CERTIFICATE',
       });
       if (required || evaluated.overall !== 'INDETERMINATE')
-        run.checks.push({ check: 'credential-status', ...decision(evaluated) });
+        run.checks.push({
+          check: 'credential-status',
+          ...decision({
+            ...evaluated,
+            reason: evaluated.reason ?? 'CERTIFICATE_STATUS_' + evaluated.status,
+          }),
+        });
       if (status.publishedAt <= K)
         authority(
           run,
