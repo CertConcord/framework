@@ -481,3 +481,34 @@ test('organization current knowledge cannot roll back after an admitted operatio
     f.close();
   }
 });
+
+for (const offset of [1, 0]) {
+  test(`organization historical registration authority coverage ${offset ? 'continues beyond' : 'ends at'} actual knowledge time`, () => {
+    const f = createOrganizationFixture();
+    let historicalQueries = 0;
+    try {
+      f.hooks.authority = (query) => {
+        if (
+          query.role !== 'REGISTRATION_AUTHORITY' ||
+          query.scope.profileID !== 'ORG-SEAL' ||
+          query.stateTime >= query.knowledgeTime
+        )
+          return undefined;
+        historicalQueries++;
+        return {
+          overall: 'VALID',
+          reason: 'AUTHORITY_VALID',
+          coverageUntil: query.knowledgeTime + offset,
+        };
+      };
+      const app = new OrganizationDelegationApplication(f.applicationOptions);
+      const result = app.prepare(f.prepareInput());
+      assert(historicalQueries > 0, 'The fixture must exercise the historical RAR query');
+      if (offset) accepted(result, 'PREPARED');
+      else rejected(result, 'INDETERMINATE');
+      assert.equal(f.calls.sign, 0);
+    } finally {
+      f.close();
+    }
+  });
+}
