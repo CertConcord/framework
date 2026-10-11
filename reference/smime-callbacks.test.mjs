@@ -66,7 +66,7 @@ for (const overall of ['VALID', 'INVALID']) {
     await assert.doesNotReject(async () => {
       result = await app.protectSmimeMessage(f.protectInput());
     });
-    assert(['INVALID', 'UNSUPPORTED', 'INDETERMINATE'].includes(result.overall));
+    expectOverall(result, overall === 'INVALID' ? 'INVALID' : 'INDETERMINATE');
     assert.equal(Object.hasOwn(result, 'message'), false);
     assert.equal(Object.hasOwn(result, 'content'), false);
     assert.equal(result.effectMayHaveOccurred, false);

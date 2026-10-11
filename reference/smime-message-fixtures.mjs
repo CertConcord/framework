@@ -48,9 +48,13 @@ export function opaqueCarrier(cms, { kind = 'signed-data', extraHeaders = [], ou
 
 // The comparison producer uses the normal public OpenSSL CMS command. It is an
 // independent invocation and byte source, not a second trust implementation.
-export function ordinaryCMS(f, { content, leaf = f.signer, ess = true, hash = 'sha256' } = {}) {
+function ordinarySignedOutput(
+  f,
+  { content, leaf = f.signer, ess = true, hash = 'sha256' } = {},
+  format = 'DER',
+) {
   const input = f.file('ordinary-cms-content.bin');
-  const output = f.file('ordinary-cms.der');
+  const output = f.file(format === 'DER' ? 'ordinary-cms.der' : 'ordinary-signed-entity.mime');
   writeFileSync(
     input,
     content ?? Buffer.from('Content-Type: text/plain\r\n\r\nOrdinary body.\r\n'),
@@ -71,11 +75,19 @@ export function ordinaryCMS(f, { content, leaf = f.signer, ess = true, hash = 's
     '-inkey',
     leaf.keyFile,
     '-outform',
-    'DER',
+    format,
     '-out',
     output,
   );
   return readFileSync(output);
+}
+
+export function ordinaryCMS(f, options) {
+  return ordinarySignedOutput(f, options, 'DER');
+}
+
+export function ordinarySignedEntity(f, options) {
+  return ordinarySignedOutput(f, options, 'SMIME');
 }
 
 export function replaceSignature(cms) {

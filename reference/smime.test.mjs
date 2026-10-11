@@ -16,6 +16,7 @@ import {
   binaryAttachment,
   replaceEnvelopeTag,
   replaceSignature,
+  ordinarySignedEntity,
 } from './smime-message-fixtures.mjs';
 
 let material;
@@ -286,4 +287,41 @@ test('S/MIME real completed signature is not encrypted or released after current
   assert.equal(observed.counts.sign, 1);
   assert.equal(observed.counts.encrypt ?? 0, 0);
   noOutput(result);
+});
+
+test('S/MIME actual receiver decrypts an unchanged ordinary OpenSSL signed MIME entity', async () => {
+  const f = fixture();
+  const content = Buffer.from(
+    'Content-Type: text/plain; charset=us-ascii\r\n\r\nOrdinary CLI body.\r\n',
+  );
+  const inner = ordinarySignedEntity(material, { content });
+  assert.match(inner.toString('ascii'), /^MIME-Version:\s*1\.0\r?$/m);
+  const encrypted = await backend.encrypt({
+    content: inner,
+    certificates: [material.recipient.der],
+  });
+  const decrypted = await backend.decrypt({
+    cms: encrypted.cms,
+    certificate: material.recipient.der,
+    keyRef: 'recipient',
+    expectedPublicKeyDER: c.spki(material.recipient.publicKey),
+  });
+  assert.deepEqual(decrypted.content, inner);
+  const outerHeaders = [
+    { name: 'from', value: 'alice@example.test', raw: Buffer.from('From: alice@example.test\r\n') },
+  ];
+  const { message } = await backend.packageCMS({
+    cms: encrypted.cms,
+    kind: 'AUTH_ENVELOPED_DATA',
+    format: 'MESSAGE',
+    outerHeaders,
+  });
+  const result = expectOverall(
+    await f.app.processSmimeMessage(f.process(message, 'SIGNED_AND_ENCRYPTED')),
+    'VALID',
+  );
+  assert.deepEqual(result.content.mime, content);
+  assert.deepEqual(result.canonicalMimeHash, c.sha256(content));
+  assert.deepEqual(result.authenticatedAuthor, identity(material.signer, 'alice@example.test'));
+  assert.deepEqual(result.matchedRecipient, identity(material.recipient, 'bob@example.test'));
 });

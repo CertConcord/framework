@@ -4,7 +4,7 @@ import { createSmimeBackend } from './smime-backend.mjs';
 import { smimeMaterialFixture } from './smime-material-fixtures.mjs';
 import * as c from './core.mjs';
 import { entity } from './smime-application-fixtures.mjs';
-import { ordinaryCMS, replaceSignature } from './smime-message-fixtures.mjs';
+import { ordinaryCMS, ordinarySignedEntity, replaceSignature } from './smime-message-fixtures.mjs';
 
 let f;
 let backend;
@@ -165,5 +165,42 @@ for (const hash of ['sha256', 'sha512']) {
     const result = await backend.inspectCMS({ cms });
     assert.equal(result.overall, 'INVALID', JSON.stringify(result.checks));
     assert(result.checks.some((check) => check.overall === 'INVALID'));
+  });
+}
+
+test('S/MIME entity accepts the original OpenSSL MIME version without installing outer claims', async () => {
+  const message = ordinarySignedEntity(f, { content: entity });
+  assert.match(message.toString('ascii'), /^MIME-Version:\s*1\.0\r?$/m);
+  const original = Buffer.from(message);
+  const parsed = await backend.parseProtectedMessage({ message, format: 'ENTITY' });
+  assert.deepEqual(message, original, 'The original OpenSSL bytes are not normalized in place');
+  assert.deepEqual(parsed.outerHeaders, []);
+  assert.deepEqual(parsed.headerClaims, { fromMailbox: null, senderMailbox: null });
+  const facts = await backend.inspectCMS({ cms: parsed.cms });
+  assert.equal(facts.overall, 'VALID');
+  assert.deepEqual(facts.content, entity);
+});
+
+for (const variant of ['duplicate version', 'unsupported version', 'outer From', 'outer Subject']) {
+  test(`S/MIME entity rejects ${variant} beside an otherwise valid OpenSSL signed carrier`, async () => {
+    const original = ordinarySignedEntity(f, { content: entity });
+    const text = original.toString('ascii');
+    const version = text.match(/^MIME-Version:[^\r\n]*(\r?\n)/m);
+    assert(version, 'The ordinary CLI emits its own MIME-Version field');
+    const eol = version[1];
+    const changed = Buffer.from(
+      variant === 'duplicate version'
+        ? version[0] + text
+        : variant === 'unsupported version'
+          ? text.replace(/^MIME-Version:[^\r\n]*/m, 'MIME-Version: 2.0')
+          : `${variant === 'outer From' ? 'From: alice@example.test' : 'Subject: Unprotected'}${eol}${text}`,
+    );
+    await assert.rejects(
+      () => backend.parseProtectedMessage({ message: changed, format: 'ENTITY' }),
+      (error) => {
+        assert.equal(error.overall, variant === 'unsupported version' ? 'UNSUPPORTED' : 'INVALID');
+        return true;
+      },
+    );
   });
 }
