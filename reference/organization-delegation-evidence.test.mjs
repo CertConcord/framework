@@ -67,7 +67,7 @@ const stateFrom = (result) => ({
   terminalObservations: copy(result.statusObservations.filter((v) => v.status === 'REVOKED')),
   executions: copy(result.executionObservations),
   keyIncidents: result.statusObservations
-    .filter((v) => v.compromiseStart !== null)
+    .filter((v) => v.status === 'REVOKED' && v.compromiseStart !== null)
     .map((v) => ({
       trustDomainID: v.trustDomainID,
       keyID: v.subjectKeyID,
