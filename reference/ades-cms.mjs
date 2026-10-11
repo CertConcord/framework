@@ -148,15 +148,20 @@ function attributes(node, signed) {
   });
 }
 
-function signerIdentifierVersion(signer) {
+function signerIdentifierVersion(signer, optionalAttributes = false) {
   check(
-    signer?.tag === 0x30 && signer.children.length >= 6 && signer.children.length <= 7,
+    signer?.tag === 0x30 &&
+      signer.children.length >= (optionalAttributes ? 5 : 6) &&
+      signer.children.length <= 7,
     'CADES_SIGNER_INFO',
   );
   const si = signer.children,
-    version = intValue(si[0]);
+    version = intValue(si[0]),
+    signatureAt = optionalAttributes && si[3]?.tag !== 0xa0 ? 4 : 5;
   check(
-    si[5].tag === 4 &&
+    si.length >= signatureAt + 1 &&
+      si.length <= signatureAt + 2 &&
+      si[signatureAt].tag === 4 &&
       ((version === 1n &&
         si[1].tag === 0x30 &&
         si[1].children.length === 2 &&
@@ -166,10 +171,10 @@ function signerIdentifierVersion(signer) {
   );
   return version;
 }
-function signedDataVersion(certificates, crls, signers, contentType) {
+function signedDataVersion(certificates, crls, signers, contentType, optionalAttributes = false) {
   // RFC 5652 section 5.1 derives the container version from every raw Choice
   // and SignerInfo, including recognized choices outside the selected profile.
-  const versions = signers.map(signerIdentifierVersion);
+  const versions = signers.map((signer) => signerIdentifierVersion(signer, optionalAttributes));
   if (certificates.some((raw) => raw[0] === 0xa3) || crls.some((raw) => raw[0] === 0xa1)) return 5n;
   if (certificates.some((raw) => raw[0] === 0xa2)) return 4n;
   if (
@@ -181,7 +186,7 @@ function signedDataVersion(certificates, crls, signers, contentType) {
   return 1n;
 }
 
-function parseCMS(raw, content, expectedType = OID.data) {
+function parseCMS(raw, content, expectedType = OID.data, profile = 'CADES') {
   check(Buffer.isBuffer(raw), 'CADES_CMS_REQUIRED');
   const root = parseDER(raw);
   check(
@@ -247,11 +252,17 @@ function parseCMS(raw, content, expectedType = OID.data) {
   check(at === sd.length - 1 && sd[at].tag === 0x31, 'CADES_SIGNER_INFOS');
   check(sd[at].children.length <= 16, 'CADES_SIGNER_LIMIT');
   check(
-    version === signedDataVersion(certificates, crls, sd[at].children, contentType),
+    version ===
+      signedDataVersion(certificates, crls, sd[at].children, contentType, profile === 'SMIME'),
     'CADES_SIGNED_DATA_VERSION',
   );
   check(sd[at].children.length === 1, 'CADES_MULTIPLE_SIGNERS', 'UNSUPPORTED');
-  const si = sd[at].children[0].children;
+  const originalSI = sd[at].children[0].children,
+    hasSignedAttributes = originalSI[3]?.tag === 0xa0,
+    si =
+      profile === 'SMIME' && !hasSignedAttributes
+        ? [...originalSI.slice(0, 3), undefined, ...originalSI.slice(3)]
+        : originalSI;
   if (si[1].tag === 0x80)
     unsupported.push(result('UNSUPPORTED', 'CADES_SIGNER_IDENTIFIER_UNSUPPORTED'));
   const signed = attributes(si[3], true),
@@ -291,8 +302,9 @@ function parseCMS(raw, content, expectedType = OID.data) {
     signed,
     unsigned,
     unsupported,
-    core: si.slice(0, 6).map((n) => n.raw),
-    tbs: der(0x31, si[3].value),
+    hasSignedAttributes,
+    core: originalSI.slice(0, hasSignedAttributes ? 6 : 5).map((n) => n.raw),
+    tbs: profile === 'SMIME' && !hasSignedAttributes ? content : der(0x31, si[3].value),
   };
 }
 function one(parsed, id) {
@@ -371,6 +383,7 @@ function signingTime(value) {
 function inspectSignature(parsed, failures, profile = 'CADES', externalCertificates = []) {
   const isTimestamp = profile !== 'CADES';
   if (profile === 'PADES') inspectPAdESAttributes(parsed, failures);
+  if (profile === 'SMIME') inspectSmimeAttributes(parsed, failures);
   failures.push(...parsed.unsupported);
   const hashOID = attempt(failures, () => hashAlgorithm(parsed.si[2]));
   const signatureOID = attempt(failures, () => algorithm(parsed.si[4]));
@@ -407,20 +420,33 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
         'CADES_DIGEST_SET',
       );
     });
-  attempt(failures, () => {
-    const contentType = one(parsed, OID.contentType);
-    check(contentType, 'CADES_CONTENT_TYPE_MISSING', 'INDETERMINATE');
-    check(oidText(contentType) === parsed.contentType, 'CADES_CONTENT_TYPE_BINDING');
-  });
-  attempt(failures, () => {
-    const messageDigest = one(parsed, OID.messageDigest);
-    check(messageDigest, 'CADES_MESSAGE_DIGEST_MISSING', 'INDETERMINATE');
-    check(messageDigest.tag === 4, 'CADES_MESSAGE_DIGEST_ENCODING');
-    check(Buffer.isBuffer(parsed.content), 'CADES_DETACHED_CONTENT_MISSING', 'INDETERMINATE');
-    if (hashOID)
-      check(equal(messageDigest.value, digest(hashOID, parsed.content)), 'CADES_CONTENT_DIGEST');
-  });
-  const ess = attempt(failures, () => essBinding(parsed));
+  if (profile !== 'SMIME' || parsed.hasSignedAttributes)
+    attempt(failures, () => {
+      const contentType = one(parsed, OID.contentType);
+      check(
+        contentType,
+        'CADES_CONTENT_TYPE_MISSING',
+        profile === 'SMIME' ? 'INVALID' : 'INDETERMINATE',
+      );
+      check(oidText(contentType) === parsed.contentType, 'CADES_CONTENT_TYPE_BINDING');
+    });
+  if (profile !== 'SMIME' || parsed.hasSignedAttributes)
+    attempt(failures, () => {
+      const messageDigest = one(parsed, OID.messageDigest);
+      check(
+        messageDigest,
+        'CADES_MESSAGE_DIGEST_MISSING',
+        profile === 'SMIME' ? 'INVALID' : 'INDETERMINATE',
+      );
+      check(messageDigest.tag === 4, 'CADES_MESSAGE_DIGEST_ENCODING');
+      check(Buffer.isBuffer(parsed.content), 'CADES_DETACHED_CONTENT_MISSING', 'INDETERMINATE');
+      if (hashOID)
+        check(equal(messageDigest.value, digest(hashOID, parsed.content)), 'CADES_CONTENT_DIGEST');
+    });
+  const ess =
+    profile === 'SMIME' && !one(parsed, OID.ess)
+      ? undefined
+      : attempt(failures, () => essBinding(parsed));
   const candidates = [];
   const unselectedIdentifier = parsed.si[1].tag === 0x80;
   const certificateCandidates = union(parsed.certificates, externalCertificates);
@@ -496,7 +522,11 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
       );
       check(parsed.si[4].children.length === 1, 'CADES_ECDSA_PARAMETERS');
     });
-    if (signatureOID === ECDSA_SHA256 && key.asymmetricKeyType === 'ec')
+    if (
+      signatureOID === ECDSA_SHA256 &&
+      key.asymmetricKeyType === 'ec' &&
+      (profile !== 'SMIME' || Buffer.isBuffer(parsed.tbs))
+    )
       attempt(failures, () =>
         check(
           verifySignature('sha256', parsed.tbs, key, parsed.si[5].value),
@@ -504,8 +534,9 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
         ),
       );
   }
+  let claimedSigningTime;
   if (!isTimestamp || one(parsed, SIGNING_TIME))
-    attempt(failures, () => signingTime(one(parsed, SIGNING_TIME)));
+    claimedSigningTime = attempt(failures, () => signingTime(one(parsed, SIGNING_TIME)));
   return {
     certificate: selected?.cert,
     certificateSource: selected
@@ -517,6 +548,7 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
     hashOID,
     signatureOID,
     essHash: ess?.hashOID,
+    ...(profile === 'SMIME' ? { claimedSigningTime } : {}),
   };
 }
 
@@ -541,7 +573,7 @@ function inspectMultipleSigners(
       if (
         signer.tag !== 0x30 ||
         !fields ||
-        fields.length < 6 ||
+        fields.length < (profile === 'SMIME' ? 5 : 6) ||
         fields.length > 7 ||
         fields[0].tag !== 2 ||
         ![1n, 3n].includes(intValue(fields[0])) ||
@@ -562,6 +594,7 @@ function inspectMultipleSigners(
                   crls.map((n) => n.raw),
                   [signer],
                   oidText(sd[2].children[0]),
+                  profile === 'SMIME',
                 ),
               ),
               ...sd.slice(1, -1).map((n) => n.raw),
@@ -570,7 +603,7 @@ function inspectMultipleSigners(
           ),
         );
         inspectSignature(
-          parseCMS(single, content, expectedType),
+          parseCMS(single, content, expectedType, profile),
           failures,
           profile,
           externalCertificates,
@@ -578,6 +611,38 @@ function inspectMultipleSigners(
       });
     }
   });
+}
+
+// This inspection profile selects ordinary opaque S/MIME with ESSv2. It does
+// not impose document signing or TSA purpose rules, nor decide mail authority.
+function inspectSmimeAttributes(parsed, failures) {
+  if (!parsed.hasSignedAttributes)
+    failures.push(result('UNSUPPORTED', 'SMIME_SIGNED_ATTRIBUTES_REQUIRED'));
+  if (!one(parsed, OID.ess)) failures.push(result('UNSUPPORTED', 'SMIME_ESS_BINDING_REQUIRED'));
+  if (!parsed.eci[1]) failures.push(result('UNSUPPORTED', 'SMIME_DETACHED_UNSUPPORTED'));
+  if (parsed.sd[1].children.length !== 1)
+    failures.push(result('UNSUPPORTED', 'SMIME_DIGEST_SET_UNSUPPORTED'));
+  const services = new Set([
+    ARCHIVE,
+    INDEX,
+    OID.timestamp,
+    '1.2.840.113549.1.9.16.2.1', // signed receipt request
+    '1.2.840.113549.1.9.16.2.2', // security label
+    '1.2.840.113549.1.9.16.2.3', // mailing-list expansion history
+    '1.2.840.113549.1.9.16.2.9', // equivalent labels
+    '1.2.840.113549.1.9.16.2.11', // encryption-key preference
+  ]);
+  for (const attr of [...parsed.signed, ...parsed.unsigned])
+    if (services.has(attr.id)) failures.push(result('UNSUPPORTED', 'SMIME_ATTRIBUTE_UNSUPPORTED'));
+  const capabilities = one(parsed, '1.2.840.113549.1.9.15');
+  if (capabilities)
+    attempt(failures, () => {
+      check(
+        capabilities.tag === 0x30 && capabilities.children.length <= 128,
+        'SMIME_CAPABILITIES_ENCODING',
+      );
+      for (const value of capabilities.children) algorithm(value);
+    });
 }
 
 // These are the optional CMS services listed in EN 319 142-1 V1.2.1
@@ -620,7 +685,7 @@ export function inspectAdESSignature(cms, { content, profile, externalCertificat
   let parsed, signature;
   try {
     check(
-      ['CADES', 'PADES', 'RFC3161'].includes(profile),
+      ['CADES', 'PADES', 'RFC3161', 'SMIME'].includes(profile),
       'ADES_PROFILE_UNSUPPORTED',
       'UNSUPPORTED',
     );
@@ -638,7 +703,7 @@ export function inspectAdESSignature(cms, { content, profile, externalCertificat
       'UNSUPPORTED',
     );
     externalCertificates = copy(externalCertificates);
-    parsed = parseCMS(cms, content, profile === 'RFC3161' ? OID.tstInfo : OID.data);
+    parsed = parseCMS(cms, content, profile === 'RFC3161' ? OID.tstInfo : OID.data, profile);
     signature = inspectSignature(parsed, failures, profile, externalCertificates);
   } catch (error) {
     failures.push(record(error));

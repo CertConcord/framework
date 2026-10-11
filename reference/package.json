@@ -30,8 +30,10 @@
     "@noble/curves": "2.4.0",
     "@noble/hashes": "2.4.0",
     "@xmldom/xmldom": "0.9.12",
+    "@zone-eu/mailsplit": "5.4.20",
     "cbor-x": "1.6.6",
     "koffi": "3.3.2",
+    "nodemailer": "10.0.16",
     "pdf-lib": "1.17.1",
     "pg": "8.23.1",
     "xml-crypto": "6.3.2"
