@@ -808,6 +808,148 @@
       "sha256": "9de0ca9e8570d6209e8bd48a355be8eb6ec376acfc3fc3ae97cd8730351417ff",
       "bytes": 22491828,
       "retrievedAt": "2026-10-07T19:19:30.3731561Z"
+    },
+    {
+      "id": "rfc8551",
+      "url": "https://www.rfc-editor.org/rfc/rfc8551.txt",
+      "sha256": "dac39f749a08d3422bd78d4e492195067e7bc03f5fc2d0dac515f0d7ed884ae2",
+      "bytes": 136849,
+      "retrievedAt": "2026-10-07T21:39:52.835Z"
+    },
+    {
+      "id": "rfc8550",
+      "url": "https://www.rfc-editor.org/rfc/rfc8550.txt",
+      "sha256": "adf5aa630e6fd10f75de524e4af249302548a68d6cb7254bf3bfb99b544d6c7a",
+      "bytes": 63210,
+      "retrievedAt": "2026-10-07T21:39:52.826Z"
+    },
+    {
+      "id": "rfc9788",
+      "url": "https://www.rfc-editor.org/rfc/rfc9788.txt",
+      "sha256": "0c9f361122b1ad11794389b50e1df3832663c76c6fa5a7a790abac162617cd64",
+      "bytes": 624648,
+      "retrievedAt": "2026-10-07T21:39:52.922Z"
+    },
+    {
+      "id": "rfc5322",
+      "url": "https://www.rfc-editor.org/rfc/rfc5322.txt",
+      "sha256": "cb459acca15a2aa895863eaeff6f1d5b9c4ca15578ae3e3706f757787a385969",
+      "bytes": 122322,
+      "retrievedAt": "2026-10-07T21:39:52.831Z"
+    },
+    {
+      "id": "rfc2045",
+      "url": "https://www.rfc-editor.org/rfc/rfc2045.txt",
+      "sha256": "9bb251635dd37fda97dcce6c08dea019432117a0f1e389051d2ecbf7b76350b0",
+      "bytes": 72932,
+      "retrievedAt": "2026-10-07T21:39:53.030Z"
+    },
+    {
+      "id": "rfc2046",
+      "url": "https://www.rfc-editor.org/rfc/rfc2046.txt",
+      "sha256": "7ac4096b9263e11a704f06892638258ac1ddc0394dd75ffdc171e7b5ba0123e0",
+      "bytes": 105854,
+      "retrievedAt": "2026-10-07T21:39:53.042Z"
+    },
+    {
+      "id": "rfc3560",
+      "url": "https://www.rfc-editor.org/rfc/rfc3560.txt",
+      "sha256": "2985a9576da01036d97d1626ff2fdbc1b099bd5661a86e311a2c112127f30bcf",
+      "bytes": 37381,
+      "retrievedAt": "2026-10-07T21:39:53.057Z"
+    },
+    {
+      "id": "rfc4055",
+      "url": "https://www.rfc-editor.org/rfc/rfc4055.txt",
+      "sha256": "b8a1ef3fb135c32aed4eee121264f3ec83a46def746c8fe68e05bd1b60324e9a",
+      "bytes": 57479,
+      "retrievedAt": "2026-10-07T21:39:53.035Z"
+    },
+    {
+      "id": "rfc5083",
+      "url": "https://www.rfc-editor.org/rfc/rfc5083.txt",
+      "sha256": "e65f8a8991b57d117ba9b24068f2249e1e025cc2fcf6f4592b4baac2115f03bf",
+      "bytes": 22810,
+      "retrievedAt": "2026-10-07T21:39:53.178Z"
+    },
+    {
+      "id": "rfc5084",
+      "url": "https://www.rfc-editor.org/rfc/rfc5084.txt",
+      "sha256": "463bcd40eb2c24db27a5e2356f94c0b1187bbc9897ec1a19429482a5c71108b8",
+      "bytes": 21821,
+      "retrievedAt": "2026-10-07T21:39:53.185Z"
+    },
+    {
+      "id": "mailsplit5420",
+      "url": "https://registry.npmjs.org/@zone-eu/mailsplit/-/mailsplit-5.4.20.tgz",
+      "sha256": "d6037f4f028bc1c386c331218e947c32e3ffc01504195efb3a99dec06b1e8188",
+      "bytes": 29977,
+      "retrievedAt": "2026-10-07T21:46:20.326Z",
+      "license": "MIT",
+      "integrity": "sha512-6B2w0zRBWOwbO5h7SL5N/2z1AuNchTP3OT33MObUr4/cz9bWPrZ6KadLKxnSrOZG0AGu7Q03p4X7eQhZHc1u/A=="
+    },
+    {
+      "id": "encodingJapanese240",
+      "url": "https://registry.npmjs.org/encoding-japanese/-/encoding-japanese-2.4.0.tgz",
+      "sha256": "139693bcc187d087c8b3a5e156c8a322eb9aff25c20c4fac84e92de4fb93f2e6",
+      "bytes": 261937,
+      "retrievedAt": "2026-10-07T21:46:20.326Z",
+      "license": "MIT",
+      "integrity": "sha512-PE0KjlsDy9JSsoU4C2Q8NXb1kC4c+bZRac9ZvHXUE4q1Ht63gScKMdEy9jst9+Fi3M4eDkqzkEhBZvix4blP2A=="
+    },
+    {
+      "id": "iconvLite073",
+      "url": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.3.tgz",
+      "sha256": "40789b7733e230a0439e07075fe2f37819f4a47ee7115fe17188451fab8e3941",
+      "bytes": 189859,
+      "retrievedAt": "2026-10-07T21:46:20.326Z",
+      "license": "MIT",
+      "integrity": "sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ=="
+    },
+    {
+      "id": "libbase64132",
+      "url": "https://registry.npmjs.org/libbase64/-/libbase64-1.3.2.tgz",
+      "sha256": "336bfd06847f77747c9edbfe6f69e8a29d51d5c2e9e818dc77c3e3ea4af29e66",
+      "bytes": 6628,
+      "retrievedAt": "2026-10-07T21:46:20.326Z",
+      "license": "MIT",
+      "integrity": "sha512-fFCoI0ceXhTu/0QiJ6Uf6BV9k7X/8QW2/D4BR1vw3BPrHcIjLbGLH+U7inQ4SeWrfNCOmpGE09Qt4XjSFfus0g=="
+    },
+    {
+      "id": "libmime547",
+      "url": "https://registry.npmjs.org/libmime/-/libmime-5.4.7.tgz",
+      "sha256": "9f2ff2a5c8d0c3e643905e1c2872d0367dc710ba11494d9ee823447971388704",
+      "bytes": 38746,
+      "retrievedAt": "2026-10-07T21:46:20.326Z",
+      "license": "MIT",
+      "integrity": "sha512-r1ENu4wMVSB52AAORwaW4L/MeQJr9rryzHLRpcjud3zcUPWXh1Xkgn+tAqL8oTnRO/LW7y5xxPBE20ta5amtMA=="
+    },
+    {
+      "id": "libqp212",
+      "url": "https://registry.npmjs.org/libqp/-/libqp-2.1.2.tgz",
+      "sha256": "97b4a4c1df4a4b52070f3454551375bcd55e11c36ae34d9cdf31026f15fadcf0",
+      "bytes": 7320,
+      "retrievedAt": "2026-10-07T21:46:20.326Z",
+      "license": "MIT",
+      "integrity": "sha512-rp+U80tl9Os4K7GnVbPzPRmghPu6eqB8rcF+ontvNAnoga0JhMFG/bkTD/reC8yoznKMgOc5/ttZHJasiWeFPw=="
+    },
+    {
+      "id": "nodemailer10016",
+      "url": "https://registry.npmjs.org/nodemailer/-/nodemailer-10.0.16.tgz",
+      "sha256": "67629613451b5d51e053785c87744c91bb8b53f619905c232c4ff8d5ea300372",
+      "bytes": 348526,
+      "retrievedAt": "2026-10-07T21:46:20.326Z",
+      "license": "MIT-0",
+      "integrity": "sha512-VL9xKErxN+el77o8eBOuYKUPMyEx7F9hfnDCuiUKJRp9v3wnWMOudYgP/SWbwSHy8rUL4cylobuXtki1LpQS7A=="
+    },
+    {
+      "id": "saferBuffer212",
+      "url": "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz",
+      "sha256": "78812f65ae3b98071ce1c9bacbe0666f4220d0b2753c2a11530eb27df440a3b3",
+      "bytes": 12035,
+      "retrievedAt": "2026-10-07T21:46:20.326Z",
+      "license": "MIT",
+      "integrity": "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="
     }
   ]
 }

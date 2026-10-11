@@ -276,9 +276,33 @@
         {
           "file": "reference/timestamp-client.test.mjs",
           "name": "a timely received response keeps its first trusted receipt time across a failed completion and late reconciliation"
+        },
+        {
+          "file": "reference/smime-application.test.mjs",
+          "name": "S/MIME resolver query mutation cannot change the admitted tuple or policy namespace"
+        },
+        {
+          "file": "reference/smime-application.test.mjs",
+          "name": "S/MIME rechecks the recipient reported by the actual decrypt operation"
+        },
+        {
+          "file": "reference/smime.test.mjs",
+          "name": "S/MIME actual encryption admits two explicit keys without inferring a To recipient"
+        },
+        {
+          "file": "reference/smime.test.mjs",
+          "name": "S/MIME actual GCM failure releases no MIME or attachments"
+        },
+        {
+          "file": "reference/smime.test.mjs",
+          "name": "S/MIME real completed signature is not encrypted or released after current withdrawal"
+        },
+        {
+          "file": "reference/smime-backend.test.mjs",
+          "name": "S/MIME absent Content-Type retains the RFC2045 text default despite a filename"
         }
       ],
-      "gap": "The standalone RFC 3161 application selects P-256, direct-root/full-CRL trust, current scoped authority and explicit clock admission, with durable issuance/client recovery. Operational time assurance, assessed key custody and a complete independent application implementation remain open. The S/MIME application contract remains incomplete."
+      "gap": "The standalone RFC 3161 application selects P-256, direct-root/full-CRL trust, current scoped authority and explicit clock admission, with durable issuance/client recovery. The selected S/MIME application adds complete MIME protection, explicit current mailbox/certificate/key admission and bounded opaque ES256 SignedData with optional RSA-OAEP/AES-GCM encryption. Full S/MIME receiving support, historical message preservation, SMTP/durable replay semantics, operational mailbox/time assurance, assessed key custody and complete independent application implementations remain open."
     },
     {
       "id": "CC-DOC-01",

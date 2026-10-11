@@ -15,8 +15,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "bytes": 3476,
-      "sha256": "3b468b291ea248833c1991ef5232afe68db0bb243ab4d5df78c0c513cdfbe43f"
+      "bytes": 3624,
+      "sha256": "3b75baed383f98cd4acebf41cdf35ad67474dd24f97c7fd9018592b8ba878aba"
     },
     {
       "path": ".github/workflows/codeql.yml",
@@ -90,8 +90,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 10403,
-      "sha256": "7204800ac43dd2bbf2d942f9e8b94ad3a26880ba803ebc5607b5627201fc4d0b"
+      "bytes": 10559,
+      "sha256": "c1d30ea9b5b219093f88e5d1e32f1f644365ca4e30ce046cee78294915c77189"
     },
     {
       "path": "SECURITY.md",
@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 32542,
-      "sha256": "0bc271fd9ea8f5bcb9f3eb49073db6be8e9059be8484b7f1360b6e770400be2d"
+      "bytes": 33769,
+      "sha256": "34f2e19ffba525f1ddd8b0a1f88c2c0385b630d597dd64c5889191c02646fee2"
     },
     {
       "path": "docs/apple-identity.md",
@@ -219,6 +219,11 @@
       "sha256": "01c4e9652ead4f78868704ee621b4d5f091eae8d1da9f850af14a7399c91d570"
     },
     {
+      "path": "docs/smime-application.md",
+      "bytes": 12721,
+      "sha256": "b9d5b99e3fcd7166a54953f6553606243bf6fddb3b8c295993f8d3b88cd0337f"
+    },
+    {
       "path": "docs/storage.md",
       "bytes": 5484,
       "sha256": "a795e2c887f9c071797c1ffc1cd9b08818bf25c13882d39fc130e501c5f1b5ea"
@@ -245,8 +250,8 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 90966,
-      "sha256": "28f9cd013e9db37439ab1ff008c28de0ad402e89ef40c04fcd4e8bb3b198daab"
+      "bytes": 94017,
+      "sha256": "b56752cfa5a26b6e68ae22f12cabc47f7a055be73907648c870afdb2e743efd7"
     },
     {
       "path": "package.json",
@@ -255,13 +260,13 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 11303,
-      "sha256": "8a939c17681616f4cfae801982ceb36b9fd2a4def159c34f8e33a66499ec777e"
+      "bytes": 11960,
+      "sha256": "87fa7aef2d199f0c65512ca9f25bbc35185ed9844f8db685745e995e4eaf2609"
     },
     {
       "path": "reference/README.md",
-      "bytes": 4369,
-      "sha256": "4d4fcaad094295fa02408598bb0d7d24cdafee6b8566c56555748ed215521da2"
+      "bytes": 4641,
+      "sha256": "d0ad44317e79f271074e1be7ddefc1492afd471f808571b99a4b3adc88fb07cb"
     },
     {
       "path": "reference/acme.mjs",
@@ -275,8 +280,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 41953,
-      "sha256": "056ad6559d8271a0072e51dc5e18cbb75d7566b0d5afd6a2d8659516342b1924"
+      "bytes": 44263,
+      "sha256": "bbf59e14709ada6ae60ac633bc8936ab4f3d729a431d7e9810241f634c0a46c7"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -285,8 +290,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 32505,
-      "sha256": "db968d1494cd3b28f84fa7df1b40ed19147536ba1ec9d38cdb2e378c8e246d22"
+      "bytes": 35355,
+      "sha256": "db462d8447f98a04cfe1263c37f2e14e0764fa07327f54699322503100340786"
     },
     {
       "path": "reference/annex-verifier.mjs",
@@ -390,8 +395,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 19793,
-      "sha256": "420ccf8bdcad051fd0c1cd2a0b80a369595883ff57ffd826ee436ec31cdb9e69"
+      "bytes": 29713,
+      "sha256": "06a1025900e83483299b7651ea6a344da46e3965c3e97807e56c6020de137acc"
     },
     {
       "path": "reference/cades.mjs",
@@ -895,8 +900,8 @@
     },
     {
       "path": "reference/package.json",
-      "bytes": 1398,
-      "sha256": "0ded9cd6cdafd94cd445df7fc5c973f62852c5770c419cac815cf2744fc157dd"
+      "bytes": 1463,
+      "sha256": "4bbf4e464fbc13b919ea1627238ba197c992fa3081ff7a5b6f256216aa7e4794"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
@@ -1124,14 +1129,99 @@
       "sha256": "969b2b8672a128ab74bbe7f2e3d22693943e53d786f108ec7abb609be5618270"
     },
     {
+      "path": "reference/smime-adapter-common.mjs",
+      "bytes": 3015,
+      "sha256": "a77d05b06729d9fb721128a395568b80ee508b69188c3a6cdcfc087579f5e012"
+    },
+    {
+      "path": "reference/smime-address.mjs",
+      "bytes": 4387,
+      "sha256": "f1dc1a612218905176e6348671ded9b342fbeefba02140a07a036e0b43a969bb"
+    },
+    {
+      "path": "reference/smime-application-fixtures.mjs",
+      "bytes": 12912,
+      "sha256": "d7ac2594a407b8103cfef0b70506da528b54b62cd57c222942e6224b046c9d1f"
+    },
+    {
+      "path": "reference/smime-application.test.mjs",
+      "bytes": 29565,
+      "sha256": "84ae99af51dd9df240acbd2f067d33d3f081536efb32ffc46c3878946fb3a678"
+    },
+    {
+      "path": "reference/smime-backend.mjs",
+      "bytes": 544,
+      "sha256": "61de0f59cb5261db9e7453caba6d14fbcf93aee59697913ab58d6a230cd9b500"
+    },
+    {
+      "path": "reference/smime-backend.test.mjs",
+      "bytes": 21887,
+      "sha256": "19fda1fdac27a40bde15055636f67ef2beb61cc73ef2163778f5c343227c451a"
+    },
+    {
+      "path": "reference/smime-callbacks.test.mjs",
+      "bytes": 2371,
+      "sha256": "ab5dcc16b1d689f59e47d48de6bdff74dd2d014576285313b73b35d71db679ac"
+    },
+    {
+      "path": "reference/smime-cms-worker.mjs",
+      "bytes": 10720,
+      "sha256": "e58412808361e279f43b1e221b8aa425e3df43f1a444e152ceec44e491dabe87"
+    },
+    {
+      "path": "reference/smime-cms.mjs",
+      "bytes": 15211,
+      "sha256": "52d844f280f19395aecfe86e1122bcbae5da9617c38c215c4e1465874bd9118b"
+    },
+    {
+      "path": "reference/smime-material-api.test.mjs",
+      "bytes": 294,
+      "sha256": "9542a1ca080c8636e4fd0da0000aae9779eaeaa83fe4e15b25b34310e88e9f78"
+    },
+    {
+      "path": "reference/smime-material-fixtures.mjs",
+      "bytes": 8577,
+      "sha256": "25149dcaa2fbfc05ba0ed0d38cfe83bf161f08c27020c0254450c76dade73ed9"
+    },
+    {
+      "path": "reference/smime-material.test.mjs",
+      "bytes": 20306,
+      "sha256": "dac60c7214c98c48603737357e9f2ca126f33ab6401ae4f0515409dc3be4ab4d"
+    },
+    {
+      "path": "reference/smime-message-fixtures.mjs",
+      "bytes": 5113,
+      "sha256": "484cd017739a7942ab45b6b25926644c0d8e055b33a1814b3c651c3d7d7850df"
+    },
+    {
+      "path": "reference/smime-mime-worker.mjs",
+      "bytes": 20248,
+      "sha256": "44b552fe306171c8f789132e77e49e36ad32e3fdfb16f35e3ea17aa9966ab27d"
+    },
+    {
+      "path": "reference/smime-mime.mjs",
+      "bytes": 1535,
+      "sha256": "fe00a3bd5342d80df8b87aea0170b84c5f6a376de93e1a836dfbf797f1541bfb"
+    },
+    {
+      "path": "reference/smime.mjs",
+      "bytes": 38695,
+      "sha256": "5499f06621ab054d7e3d280211a12ef2568e97fb71858739bea08244b7fc2f56"
+    },
+    {
+      "path": "reference/smime.test.mjs",
+      "bytes": 10154,
+      "sha256": "b049fef5099f8cb96d2ecc1d6c8cd79d32795692e4ebce3456598ef1c9160ef1"
+    },
+    {
       "path": "reference/source-lock.json",
-      "bytes": 36103,
-      "sha256": "9785e6edd93f7cdbd5922cb75ca9b4c215a6df2c704f729efc61d7dea621b130"
+      "bytes": 41929,
+      "sha256": "a79ffb349ec6c1807aa63ea75db3b860c64ed4a3d56992998a8ccaa73ea293fe"
     },
     {
       "path": "reference/sources.mjs",
-      "bytes": 15480,
-      "sha256": "239af403a8206ec01220f682c09dbee4d8f9e33fb0db63ba8d37cd0dd2d9a2dc"
+      "bytes": 16707,
+      "sha256": "142e970298d963c83f15a60a9bc3beeef4cea3ed4d5a0deadb3ab6a21670a893"
     },
     {
       "path": "reference/state-security.test.mjs",
@@ -1350,8 +1440,8 @@
     },
     {
       "path": "spec/applications.md",
-      "bytes": 2707,
-      "sha256": "a5ea544a2f17d9f2b283f0330bbd46b12ccd5dafeef7fec34d969c1406e11606"
+      "bytes": 2856,
+      "sha256": "331a7e87db9c8708847ea70f74c4a29d69caa70563833facdd9e000286d3451c"
     },
     {
       "path": "spec/architecture.md",
@@ -1415,8 +1505,8 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 28720,
-      "sha256": "7ff402f30f2cfbf011732168bebc35f421abcdd9b5ddbaecc1ac62fb41c63650"
+      "bytes": 29978,
+      "sha256": "4184e2315412c4ceceed59b64265816b30c2fd3d452210b2d632fe1584a8f95c"
     },
     {
       "path": "spec/conformance.md",

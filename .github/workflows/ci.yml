@@ -27,10 +27,11 @@ jobs:
           echo 'a2157c2830efdec3788939b00c9b0638306d3f0bbb76dc4832ee503bb397df98  '"$RUNNER_TEMP/openssl.tar.gz" | sha256sum --check
           tar -xzf "$RUNNER_TEMP/openssl.tar.gz" -C "$RUNNER_TEMP"
           cd "$RUNNER_TEMP/openssl-3.6.5"
-          ./Configure --prefix="$RUNNER_TEMP/certconcord-openssl" no-shared no-tests
+          ./Configure --prefix="$RUNNER_TEMP/certconcord-openssl" --openssldir="$RUNNER_TEMP/certconcord-openssl/ssl" no-shared no-tests
           make -j2
           make install_sw install_ssldirs
           echo "OPENSSL_BIN=$RUNNER_TEMP/certconcord-openssl/bin/openssl" >> "$GITHUB_ENV"
+          echo "OPENSSL_CONF=$RUNNER_TEMP/certconcord-openssl/ssl/openssl.cnf" >> "$GITHUB_ENV"
           echo 'CERTCONCORD_REQUIRE_OPENSSL=1' >> "$GITHUB_ENV"
           echo 'CERTCONCORD_REQUIRE_CMS_KEM=1' >> "$GITHUB_ENV"
       - run: npm test

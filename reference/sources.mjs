@@ -4,6 +4,24 @@ import { sha256 } from './core.mjs';
 const arf3 =
   'https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/';
 export const sources = {
+  mailsplit5420: 'https://registry.npmjs.org/@zone-eu/mailsplit/-/mailsplit-5.4.20.tgz',
+  encodingJapanese240: 'https://registry.npmjs.org/encoding-japanese/-/encoding-japanese-2.4.0.tgz',
+  iconvLite073: 'https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.3.tgz',
+  libbase64132: 'https://registry.npmjs.org/libbase64/-/libbase64-1.3.2.tgz',
+  libmime547: 'https://registry.npmjs.org/libmime/-/libmime-5.4.7.tgz',
+  libqp212: 'https://registry.npmjs.org/libqp/-/libqp-2.1.2.tgz',
+  nodemailer10016: 'https://registry.npmjs.org/nodemailer/-/nodemailer-10.0.16.tgz',
+  saferBuffer212: 'https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz',
+  rfc8551: 'https://www.rfc-editor.org/rfc/rfc8551.txt',
+  rfc8550: 'https://www.rfc-editor.org/rfc/rfc8550.txt',
+  rfc9788: 'https://www.rfc-editor.org/rfc/rfc9788.txt',
+  rfc5322: 'https://www.rfc-editor.org/rfc/rfc5322.txt',
+  rfc2045: 'https://www.rfc-editor.org/rfc/rfc2045.txt',
+  rfc2046: 'https://www.rfc-editor.org/rfc/rfc2046.txt',
+  rfc3560: 'https://www.rfc-editor.org/rfc/rfc3560.txt',
+  rfc4055: 'https://www.rfc-editor.org/rfc/rfc4055.txt',
+  rfc5083: 'https://www.rfc-editor.org/rfc/rfc5083.txt',
+  rfc5084: 'https://www.rfc-editor.org/rfc/rfc5084.txt',
   c2spCheckpoint:
     'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-checkpoint.md',
   rfc9360: 'https://www.rfc-editor.org/rfc/rfc9360.txt',
