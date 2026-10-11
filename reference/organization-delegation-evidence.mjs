@@ -133,7 +133,7 @@ function snapshot(value, budget = { nodes: 0, bytes: 0 }, depth = 0) {
   if (Array.isArray(value)) {
     need(Object.keys(descriptors).length === value.length + 1, 'ORG_ARRAY_SHAPE');
     return Array.from({ length: value.length }, (_, i) => {
-      need(own(descriptors, String(i)), 'ORG_ARRAY_HOLE');
+      need(own(descriptors, String(i)) && descriptors[i].enumerable, 'ORG_ARRAY_HOLE');
       return snapshot(descriptors[i].value, budget, depth + 1);
     });
   }
@@ -176,20 +176,24 @@ function resolverResult(value) {
   return result;
 }
 function detach(input) {
-  need(input && typeof input === 'object', 'ORG_INPUT');
+  need(input && [Object.prototype, null].includes(Object.getPrototypeOf(input)), 'ORG_INPUT');
   const descriptors = Object.getOwnPropertyDescriptors(input);
   need(
     Reflect.ownKeys(descriptors).every(
-      (k) => typeof k === 'string' && own(descriptors[k], 'value'),
+      (k) => typeof k === 'string' && own(descriptors[k], 'value') && descriptors[k].enumerable,
     ),
     'ORG_INPUT',
   );
   const context = descriptors.context?.value;
   need(context && typeof context === 'object', 'ORG_CONTEXT_REQUIRED', 'INDETERMINATE');
+  need([Object.prototype, null].includes(Object.getPrototypeOf(context)), 'ORG_CONTEXT_DATA');
   const contextDescriptors = Object.getOwnPropertyDescriptors(context);
   need(
     Reflect.ownKeys(contextDescriptors).every(
-      (k) => typeof k === 'string' && own(contextDescriptors[k], 'value'),
+      (k) =>
+        typeof k === 'string' &&
+        own(contextDescriptors[k], 'value') &&
+        contextDescriptors[k].enumerable,
     ),
     'ORG_CONTEXT_DATA',
   );
@@ -232,7 +236,10 @@ class Evaluation {
           : error instanceof ProtocolError
             ? 'INVALID'
             : 'INDETERMINATE',
-        reason: error.code ?? 'ORG_DEPENDENCY_UNAVAILABLE',
+        reason:
+          typeof error?.code === 'string' && error.code.length > 0 && error.code.length <= 256
+            ? error.code
+            : 'ORG_DEPENDENCY_UNAVAILABLE',
       });
       return undefined;
     }
@@ -269,13 +276,19 @@ class Evaluation {
         : ['cms', 'issuerCertificate'],
     );
     sized(member.cms, max, 'ORG_CONTROL');
-    this.cert(member.issuerCertificate);
+    const certificate = this.cert(member.issuerCertificate);
     const k = label + ':' + hex(sha512(member.cms)) + ':' + hex(sha512(member.issuerCertificate));
     if (!this.controls.has(k)) {
       try {
         const body = readControl(member.cms, label, member.issuerCertificate);
+        need(
+          ['ml-dsa-65', 'ml-dsa-87'].includes(certificate.publicKey.asymmetricKeyType),
+          'ORG_CONTROL_ALGORITHM',
+          'UNSUPPORTED',
+        );
         this.controls.set(k, { body });
       } catch (error) {
+        if (error.code === 'CMS_ALGORITHM') error.overall = 'UNSUPPORTED';
         this.controls.set(k, { error });
       }
     }
@@ -488,6 +501,7 @@ function contextShape(e) {
     'keyDeadlines',
     'executionCurrent',
   ]);
+  need(c.knowledgeTime !== null, 'ORG_KNOWLEDGE_TIME_UNAVAILABLE', 'INDETERMINATE');
   need(integer(c.knowledgeTime), 'ORG_KNOWLEDGE_TIME');
   e.K = c.knowledgeTime;
   id(c.trustDomainID);
@@ -530,7 +544,8 @@ function contextShape(e) {
   );
   list(p.allowedProfiles, 32, 1);
   need(p.allowedProfiles.includes(SEAL_PROFILE), 'ORG_POLICY_SEAL');
-  set(p.allowedOrigins, (v) => text(v));
+  list(p.allowedOrigins, 32, 1).forEach((v) => text(v));
+  need(new Set(p.allowedOrigins).size === p.allowedOrigins.length, 'ORG_POLICY_ORIGIN_DUPLICATE');
   text(p.audience);
   text(p.rpID);
   need(executionRequirement(p), 'ORG_EXECUTION_REQUIRED');
@@ -980,7 +995,6 @@ function statusBody(e, member) {
       body.nextUpdate > body.publishedAt,
     'ORG_STATUS_SCHEMA',
   );
-  need(body.nextUpdate - body.publishedAt <= 300, 'ORG_STATUS_LIFETIME', 'UNSUPPORTED');
   for (const k of ['effectiveTime', 'compromiseStart'])
     if (own(body, k)) need(integer(body[k]), 'ORG_STATUS_TIME');
   need(body.status !== 'REVOKED' || own(body, 'effectiveTime'), 'ORG_STATUS_REVOCATION_TIME');
@@ -1020,13 +1034,10 @@ function statuses(e, retained) {
       seen.add(k);
       // A future statement cannot establish a current epoch, conflict or key incident.
       if (body.publishedAt > e.K) return;
-      const target = [...e.targets, ...e.state.targets].find(
-        (t) =>
-          sameTarget(t, body) &&
-          equal(t.objectHash, body.objectHash) &&
-          equal(t.subjectKeyID, body.subjectKeyID),
-      );
-      need(target, 'ORG_STATUS_TARGET_UNAVAILABLE', 'INDETERMINATE');
+      const candidates = [...e.targets, ...e.state.targets].filter((t) => sameTarget(t, body));
+      need(candidates.length, 'ORG_STATUS_TARGET_UNAVAILABLE', 'INDETERMINATE');
+      const target = candidates.find((t) => equal(t.objectHash, body.objectHash));
+      need(target && equal(target.subjectKeyID, body.subjectKeyID), 'ORG_STATUS_TARGET_BINDING');
       e.authority(member.issuerCertificate, 'STATUS', body.publishedAt, body.objectType);
       e.authority(member.issuerCertificate, 'STATUS', e.K, body.objectType);
       const observation = {
@@ -1049,6 +1060,9 @@ function statuses(e, retained) {
       };
       e.statusObservations.push(observation);
       authenticated.push({ observation, body });
+      e.attempt('status-lifetime:' + i, () =>
+        need(body.nextUpdate - body.publishedAt <= 300, 'ORG_STATUS_LIFETIME', 'UNSUPPORTED'),
+      );
     });
   const known = [...e.state.heads, ...e.state.terminalObservations, ...e.statusObservations];
   for (const target of e.targets)
@@ -1086,8 +1100,11 @@ function statuses(e, retained) {
           equal(r.subjectKeyID, target.subjectKeyID),
       );
       need(current, 'ORG_STATUS_TARGET_MISMATCH');
-      const original = authenticated.find(({ observation }) =>
-        equal(observation.rawHash, current.rawHash),
+      const original = authenticated.find(
+        ({ observation }) =>
+          sameTarget(observation, current) &&
+          observation.epoch === current.epoch &&
+          equal(observation.semanticHash, current.semanticHash),
       );
       // The projection deliberately omits extension bytes. It is anti-rollback knowledge,
       // not a substitute for the current original statement's positive semantics.
@@ -1254,6 +1271,65 @@ function operation(e) {
   const { sim, activation, tbs } = e.input,
     { context: c } = e;
   need(sim && activation, 'ORG_OPERATION_MISSING', 'INDETERMINATE');
+  need(tbs !== null && tbs !== undefined, 'ORG_TBS_MISSING', 'INDETERMINATE');
+  fields(
+    sim,
+    [
+      'schemaVersion',
+      'trustDomainID',
+      'transactionID',
+      'subjectID',
+      'profileID',
+      'keyID',
+      'certificateID',
+      'certificateRepresentationHash',
+      'container',
+      'adapterID',
+      'documents',
+      'purpose',
+      'origin',
+      'policyHash',
+      'issuedAt',
+      'expiresAt',
+      'nonce',
+      'displayText',
+      'organizationID',
+      'organizationAuthorizationID',
+    ],
+    ['credentialType'],
+  );
+  need(!own(sim, 'credentialType'), 'ORG_CREDENTIAL_FORMAT', 'UNSUPPORTED');
+  [
+    'trustDomainID',
+    'transactionID',
+    'subjectID',
+    'nonce',
+    'organizationID',
+    'organizationAuthorizationID',
+  ].forEach((k) => id(sim[k]));
+  ['keyID', 'certificateID', 'certificateRepresentationHash', 'policyHash'].forEach((k) =>
+    hash(sim[k]),
+  );
+  text(sim.displayText, 65536);
+  text(sim.origin);
+  list(sim.documents, 1, 1);
+  const document = sim.documents[0];
+  fields(document, [
+    'documentID',
+    'mediaType',
+    'digestAlgorithm',
+    'digest',
+    'scope',
+    'displayName',
+  ]);
+  id(document.documentID);
+  hash(document.digest);
+  text(document.mediaType);
+  text(document.displayName, 65536);
+  need(
+    document.digestAlgorithm === 'SHA-512' && document.scope === 'CMS_CONTENT',
+    'ORG_DOCUMENT_SCOPE',
+  );
   sized(tbs, 16 * MiB, 'ORG_TBS');
   fields(activation, [
     'schemaVersion',
@@ -1434,9 +1510,11 @@ function checkRequest(e, request, info, regs) {
     'ORG_REQUEST_LIFETIME',
   );
   list(request.roster, 16);
+  need(request.roster.length === info.minimum, 'ORG_REQUEST_ROSTER');
   need(
-    request.roster.length === regs.length && request.roster.length === info.minimum,
-    'ORG_REQUEST_ROSTER',
+    request.roster.length === regs.length,
+    regs.length < request.roster.length ? 'ORG_APPROVALS_MISSING' : 'ORG_APPROVALS_EXTRA',
+    regs.length < request.roster.length ? 'INDETERMINATE' : 'INVALID',
   );
   const nonces = new Set();
   for (const [i, row] of request.roster.entries()) {
@@ -1465,6 +1543,11 @@ function checkRequest(e, request, info, regs) {
   return request;
 }
 function makeRequest(e, info, regs) {
+  need(
+    regs.length === info.minimum,
+    regs.length < info.minimum ? 'ORG_APPROVALS_MISSING' : 'ORG_APPROVALS_EXTRA',
+    regs.length < info.minimum ? 'INDETERMINATE' : 'INVALID',
+  );
   const nonces = list(e.input.rosterNonces, 16);
   need(nonces.length === regs.length, 'ORG_NONCE_COUNT');
   const request = {
@@ -1484,7 +1567,6 @@ function makeRequest(e, info, regs) {
       e.input.activation.issuedAt + 120,
     ),
   };
-  need(request.issuedAt === e.K, 'ORG_PREPARATION_TIME');
   return checkRequest(e, request, info, regs);
 }
 function approval(e, request, reg, assertion, counterBefore) {
@@ -1766,24 +1848,33 @@ function preflight(e, mode) {
       collection(e.input.statusCollection, 'statements', 8 * MiB, 64),
     );
   e.regMembers =
-    e.approvalCollection?.approvals.map((m) => ({
-      cms: m.registrationCMS,
-      issuerCertificate: m.registrationIssuerCertificate,
-    })) ?? e.input.approverRegistrations;
+    e.approvalCollection?.approvals.map((m, i) => {
+      e.attempt('approval-member:' + i, () =>
+        fields(m, ['personID', 'registrationCMS', 'registrationIssuerCertificate', 'assertion']),
+      );
+      return { cms: m?.registrationCMS, issuerCertificate: m?.registrationIssuerCertificate };
+    }) ?? e.input.approverRegistrations;
   for (const [i, m] of (e.path?.grants ?? []).entries())
-    e.attempt('grant-math:' + i, () => e.control(m, LABELS.GRANT));
+    e.attempt('grant-math:' + i, () => {
+      fields(m, ['cms', 'issuerCertificate', 'delegateCertificate']);
+      return e.control(m, LABELS.GRANT);
+    });
   if (Array.isArray(e.regMembers) && e.regMembers.length <= 16)
     for (const [i, m] of e.regMembers.entries())
-      e.attempt('registration-math:' + i, () => e.control(m, LABELS.APPROVER_REGISTRATION, 65536));
+      e.attempt('registration-math:' + i, () => {
+        fields(m, ['cms', 'issuerCertificate']);
+        return e.control(m, LABELS.APPROVER_REGISTRATION, 65536);
+      });
   for (const [label, members] of [
     ['source', e.context.statusMaterial],
     ['retained', e.statusCollection?.statements],
   ])
     if (Array.isArray(members) && members.length <= 64)
       for (const [i, m] of members.entries())
-        e.attempt('status-math:' + label + ':' + i, () =>
-          e.control(m, 'OrganizationDelegationStatus'),
-        );
+        e.attempt('status-math:' + label + ':' + i, () => {
+          fields(m, ['cms', 'issuerCertificate']);
+          return e.control(m, 'OrganizationDelegationStatus');
+        });
   if (mode === 'approval' && Array.isArray(e.regMembers)) {
     const index = e.regMembers.findIndex((m) => {
       try {
@@ -1797,8 +1888,8 @@ function preflight(e, mode) {
   for (const [i, member] of (e.approvalCollection?.approvals ?? []).entries())
     preflightAssertion(
       e,
-      { cms: member.registrationCMS, issuerCertificate: member.registrationIssuerCertificate },
-      member.assertion,
+      { cms: member?.registrationCMS, issuerCertificate: member?.registrationIssuerCertificate },
+      member?.assertion,
       'assertion-math:' + i,
     );
   if (mode === 'evidence')
