@@ -56,3 +56,21 @@ test('S/MIME rejected Promise at constructor is a typed unavailable context with
   assert.equal(f.count('decrypt'), 0);
   await setImmediate();
 });
+
+for (const overall of ['VALID', 'INVALID']) {
+  test(`S/MIME authority ${overall} without a reason produces a typed result instead of escaping recovery`, async () => {
+    const f = applicationFixture(material);
+    f.policy.authorityResolver = () => ({ overall });
+    const app = new SmimeApplication({ readContext: f.readContext, backend: f.backend });
+    let result;
+    await assert.doesNotReject(async () => {
+      result = await app.protectSmimeMessage(f.protectInput());
+    });
+    assert(['INVALID', 'UNSUPPORTED', 'INDETERMINATE'].includes(result.overall));
+    assert.equal(Object.hasOwn(result, 'message'), false);
+    assert.equal(Object.hasOwn(result, 'content'), false);
+    assert.equal(result.effectMayHaveOccurred, false);
+    assert.equal(f.count('sign'), 0);
+    assert.equal(f.count('encrypt'), 0);
+  });
+}

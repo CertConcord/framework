@@ -197,11 +197,11 @@ for (const [label, input, overall] of [
   ['HTTP preamble', Buffer.concat([Buffer.from('HTTP/1.1 200 OK\r\n'), textMessage]), 'INVALID'],
   ['malformed header name', simpleMessage(['Bad field: value']), 'INVALID'],
   [
-    'multiple From authors',
+    'multiple From authors without required Sender',
     Buffer.from('From: alice@example.test,bob@example.test\r\n\r\nBody.\r\n'),
-    'UNSUPPORTED',
+    'INVALID',
   ],
-  ['nonempty Bcc', simpleMessage(['Bcc: hidden@example.test']), 'INVALID'],
+  ['nonempty Bcc', simpleMessage(['Bcc: hidden@example.test']), 'UNSUPPORTED'],
   ['protected header extension', simpleMessage(['HP-Outer: value']), 'UNSUPPORTED'],
   [
     'unselected charset',
@@ -329,7 +329,7 @@ test('S/MIME a signed attachment beside unsigned text is not a protected root me
   ]);
   await fails(
     () => backend.parseProtectedMessage({ message: mixed, format: 'MESSAGE' }),
-    'UNSUPPORTED',
+    'INVALID',
   );
 });
 

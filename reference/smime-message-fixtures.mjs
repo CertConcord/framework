@@ -48,7 +48,7 @@ export function opaqueCarrier(cms, { kind = 'signed-data', extraHeaders = [], ou
 
 // The comparison producer uses the normal public OpenSSL CMS command. It is an
 // independent invocation and byte source, not a second trust implementation.
-export function ordinaryCMS(f, { content, leaf = f.signer, ess = true } = {}) {
+export function ordinaryCMS(f, { content, leaf = f.signer, ess = true, hash = 'sha256' } = {}) {
   const input = f.file('ordinary-cms-content.bin');
   const output = f.file('ordinary-cms.der');
   writeFileSync(
@@ -62,7 +62,7 @@ export function ordinaryCMS(f, { content, leaf = f.signer, ess = true } = {}) {
     '-nodetach',
     '-nosmimecap',
     '-md',
-    'sha256',
+    hash,
     ...(ess ? ['-cades'] : []),
     '-in',
     input,
@@ -122,7 +122,9 @@ export function flatPartsMessage(leafCount) {
 }
 export function nestedMessage(containerCount) {
   let value = 'Content-Type: text/plain\r\n\r\nLeaf.\r\n';
-  for (let i = containerCount - 1; i >= 0; i--)
-    value = `Content-Type: multipart/mixed; boundary=nest-${i}\r\n\r\n--nest-${i}\r\n${value}--nest-${i}--\r\n`;
+  for (let i = containerCount - 1; i >= 0; i--) {
+    const boundary = `nest-${String(i).padStart(2, '0')}`;
+    value = `Content-Type: multipart/mixed; boundary=${boundary}\r\n\r\n--${boundary}\r\n${value}--${boundary}--\r\n`;
+  }
   return Buffer.from('From: alice@example.test\r\n' + value);
 }
