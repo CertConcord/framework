@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as c from './core.mjs';
+import { issueExecutionBinding } from './execution-binding.mjs';
 import { OrganizationDelegationApplication } from './organization-delegation.mjs';
 import { createOrganizationFixture } from './organization-delegation-fixtures.mjs';
 
@@ -297,3 +298,52 @@ test('organization optional compromiseStart on GOOD cannot create a key incident
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('organization retains a newly learned lower-epoch revoked execution head through restart', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'org-execution-revocation-'));
+  const database = join(dir, 'journal.sqlite');
+  let f = createOrganizationFixture({ path: database });
+  try {
+    const active = issueExecutionBinding({ ...f.bindingBody, epoch: 5 }, f.keys.binding);
+    f.context.executionCurrent.binding = active;
+    let app = new OrganizationDelegationApplication(f.applicationOptions);
+    valid(app.prepare(f.prepareInput()));
+    f.context.executionCurrent.binding = issueExecutionBinding(
+      { ...f.bindingBody, epoch: 4, status: 'REVOKED' },
+      f.keys.binding,
+    );
+    noOutput(app.prepare(f.prepareInput()), 'INVALID');
+    f.context.executionCurrent.binding = active;
+    const snapshot = f.snapshot();
+    f.close();
+    f = null;
+    f = createOrganizationFixture({ snapshot, path: database });
+    app = new OrganizationDelegationApplication(f.applicationOptions);
+    noOutput(app.prepare(f.prepareInput()), 'INVALID');
+    assert.equal(f.calls.sign, 0);
+  } finally {
+    f?.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+for (const boundary of ['capabilities', 'after signature']) {
+  test(`organization unknown backend failure at ${boundary} is unavailable with no new output`, async () => {
+    const f = createOrganizationFixture();
+    try {
+      const app = new OrganizationDelegationApplication(f.applicationOptions);
+      authorize(f, app);
+      const unavailable = () => {
+        throw new Error('backend unavailable');
+      };
+      if (boundary === 'capabilities') f.hooks.capabilities = unavailable;
+      else f.hooks.afterSign = unavailable;
+      const result = noOutput(await app.execute({ operationID: f.operationID }), 'INDETERMINATE');
+      assert.equal(result.effectMayHaveOccurred, boundary === 'after signature');
+      assert.equal(f.calls.sign, boundary === 'after signature' ? 1 : 0);
+      if (boundary === 'after signature') assert.equal(result.status, 'UNKNOWN_EXECUTION');
+    } finally {
+      f.close();
+    }
+  });
+}

@@ -107,7 +107,7 @@ test('organization evidence authenticates distinct people and three raw collecti
     assert.equal(
       f.queries.some(
         (q) =>
-          c.equal(q.authorityID, c.keyID(f.keys.terminal.publicKey)) &&
+          c.equal(q.certificate, f.keys.terminal.certificate) &&
           q.scope.purpose === 'ORGANIZATION_DELEGATION_ISSUE',
       ),
       false,
@@ -786,6 +786,36 @@ test('organization accepts the maximum selected path of eight valid narrowing gr
   const f = createOrganizationFixture({ pathLength: 8 });
   try {
     verdict(evaluate(f), 'VALID');
+  } finally {
+    f.close();
+  }
+});
+
+test('organization approval cannot use authority coverage ending at the current instant', () => {
+  const f = createOrganizationFixture();
+  try {
+    const req = request(f);
+    f.hooks.authority = () => ({
+      overall: 'VALID',
+      reason: 'AUTHORITY_ADMITTED',
+      coverageUntil: f.at + 1,
+    });
+    verdict(verifyOrganizationApproval(approvalInput(f, req)), 'VALID');
+    f.advance(1);
+    verdict(verifyOrganizationApproval(approvalInput(f, req)), 'INDETERMINATE');
+  } finally {
+    f.close();
+  }
+});
+
+test('organization request lifetime ends before an already authenticated future revocation', () => {
+  const f = createOrganizationFixture();
+  try {
+    replaceStatus(f, { status: 'REVOKED', effectiveTime: f.at + 10 });
+    const result = verdict(evaluate(f), 'VALID');
+    assert(result.facts.request.expiresAt <= f.at + 10);
+    f.advance(10);
+    verdict(evaluate(f), 'INVALID');
   } finally {
     f.close();
   }

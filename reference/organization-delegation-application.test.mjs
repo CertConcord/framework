@@ -421,3 +421,62 @@ test('organization retained bad CMS mathematics dominates unavailable current co
     f.close();
   }
 });
+
+test('organization retained missing evidence and unknown version cannot conceal available bad mathematics', async () => {
+  const f = createOrganizationFixture(),
+    independent = verifier(f);
+  try {
+    const app = new OrganizationDelegationApplication(f.applicationOptions);
+    authorize(f, app);
+    const completed = accepted(await app.execute({ operationID: f.operationID }));
+    const original = c.decodeCBOR(completed.bundle);
+    for (const leaf of original.objects) {
+      const missing = createEvidencePackage(
+        ORGANIZATION_PLAN,
+        original.objects.filter((value) => value.type !== leaf.type),
+      );
+      const result = independent.value.verify({ bundle: c.dcbor(missing) });
+      assert.equal(
+        result.overall,
+        'INDETERMINATE',
+        `${leaf.type}: ${JSON.stringify(result.checks)}`,
+      );
+    }
+    const missing = createEvidencePackage(
+      ORGANIZATION_PLAN,
+      original.objects.filter((value) => value.type !== 'OrganizationDelegationPath'),
+    );
+    for (const key of ['schemaVersion', 'plan']) {
+      const unknown = copy(missing);
+      if (key === 'plan') unknown.plan.schemaVersion = 3;
+      else unknown.schemaVersion = 3;
+      rejected(independent.value.verify({ bundle: c.dcbor(unknown) }), 'UNSUPPORTED');
+    }
+    const damaged = missing.objects.map((value) => {
+      if (value.type !== 'CMS') return value;
+      const payload = Buffer.from(value.payload);
+      payload[payload.length - 1] ^= 1;
+      return evidenceLeaf(value.type, payload);
+    });
+    const invalid = createEvidencePackage(ORGANIZATION_PLAN, damaged);
+    rejected(independent.value.verify({ bundle: c.dcbor(invalid) }), 'INVALID');
+    invalid.schemaVersion = 3;
+    rejected(independent.value.verify({ bundle: c.dcbor(invalid) }), 'INVALID');
+  } finally {
+    independent.journal.close();
+    f.close();
+  }
+});
+
+test('organization current knowledge cannot roll back after an admitted operation observation', () => {
+  const f = createOrganizationFixture();
+  try {
+    const app = new OrganizationDelegationApplication(f.applicationOptions);
+    accepted(app.prepare(f.prepareInput()));
+    f.advance(-1);
+    rejected(app.prepare(f.prepareInput()), 'INVALID');
+    assert.equal(f.calls.sign, 0);
+  } finally {
+    f.close();
+  }
+});
