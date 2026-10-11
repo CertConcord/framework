@@ -493,7 +493,7 @@ test('organization status persists higher stale and UNKNOWN epochs without grant
     replaceStatus(f, {
       epoch: 3,
       status: 'UNKNOWN',
-      publishedAt: f.at - 100,
+      publishedAt: f.at - 10,
       nextUpdate: f.at - 1,
     });
     const newer = verdict(evaluate(f), 'INDETERMINATE');

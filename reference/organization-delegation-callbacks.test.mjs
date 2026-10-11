@@ -329,6 +329,11 @@ for (const [name, decision] of [
   ['native rejected Promise', () => Promise.reject(Error('dependency unavailable'))],
   ['incomplete positive decision', () => ({ overall: 'VALID' })],
   ['missing decision', () => undefined],
+  ...[null, false, 0].map((checks) => [
+    `explicit ${JSON.stringify(checks)} checks`,
+    (good) => ({ ...good, checks }),
+  ]),
+  ['non-string positive reason', (good) => ({ ...good, reason: false })],
 ]) {
   test(`organization gateway rejects ${name} with no private action`, async () => {
     const f = createOrganizationGatewayFixture();
