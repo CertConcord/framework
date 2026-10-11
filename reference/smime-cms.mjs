@@ -236,6 +236,9 @@ export function createSmimeCMS({
     certificateList(certificates); // Auxiliary public input is bounded; only the signer is embedded.
     const snapshot = key(keyRef, expectedPublicKeyDER, certificate, 'sign');
     check(expectedPublicKeyDER !== undefined, 'SMIME_PRIVATE_KEY_BINDING');
+    // POSIX mode bits provide the selected private-file isolation. Native
+    // Windows needs a dedicated ACL implementation before private operations.
+    check(process.platform !== 'win32', 'SMIME_PRIVATE_FILE_ISOLATION_UNSUPPORTED', 'UNSUPPORTED');
     await available();
     const secret = Buffer.from(snapshot.actual.export({ type: 'pkcs8', format: 'pem' }));
     try {
@@ -280,12 +283,20 @@ export function createSmimeCMS({
     cms = bytes(cms);
     recipientCertificates = certificateList(recipientCertificates);
     const inspected = await inspectStructure(cms, recipientCertificates);
+    const mathSuite =
+      (inspected.signer?.hashOID === '2.16.840.1.101.3.4.2.1' &&
+        inspected.signer?.signatureOID === '1.2.840.10045.4.3.2') ||
+      (['2.16.840.1.101.3.4.2.1', '2.16.840.1.101.3.4.2.3'].includes(inspected.signer?.hashOID) &&
+        [
+          '1.2.840.113549.1.1.1', // rsaEncryption with the declared CMS digest
+          '1.2.840.113549.1.1.11', // sha256WithRSAEncryption
+          '1.2.840.113549.1.1.13', // sha512WithRSAEncryption
+        ].includes(inspected.signer?.signatureOID));
     if (
       inspected.kind === 'SIGNED_DATA' &&
       inspected.certificate &&
       inspected.content !== undefined &&
-      inspected.signer?.hashOID === '2.16.840.1.101.3.4.2.1' &&
-      inspected.signer?.signatureOID === '1.2.840.10045.4.3.2'
+      mathSuite
     ) {
       try {
         await available();
@@ -400,6 +411,7 @@ export function createSmimeCMS({
     [certificate] = certificateList([certificate]);
     const snapshot = key(keyRef, expectedPublicKeyDER, certificate, 'decrypt');
     check(expectedPublicKeyDER !== undefined, 'SMIME_PRIVATE_KEY_BINDING');
+    check(process.platform !== 'win32', 'SMIME_PRIVATE_FILE_ISOLATION_UNSUPPORTED', 'UNSUPPORTED');
     const inspected = await inspectStructure(cms, [certificate]);
     check(
       inspected.kind === 'AUTH_ENVELOPED_DATA',

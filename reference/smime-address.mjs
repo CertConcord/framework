@@ -128,3 +128,16 @@ export function headerMailbox(value) {
   );
   return normalized;
 }
+
+export function hasMultipleHeaderMailboxes(value) {
+  check(typeof value === 'string' && value.length <= 1024, 'SMIME_MAILBOX_HEADER');
+  const parsed = addressparser(value);
+  if (parsed.length < 2 || parsed.some((entry) => entry.group)) return false;
+  try {
+    normalizeMailbox({ mailbox: value });
+  } catch (error) {
+    if (error.code === 'SMIME_MAILBOX_GRAMMAR_UNSUPPORTED') return true;
+    throw error;
+  }
+  return false;
+}

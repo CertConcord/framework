@@ -4,7 +4,7 @@ import { pipeline } from 'node:stream/promises';
 import mailsplit from '@zone-eu/mailsplit';
 import MimeNode from 'nodemailer/lib/mime-node';
 import { bytes, check, copy, failure, hash, LIMITS } from './smime-adapter-common.mjs';
-import { headerMailbox } from './smime-address.mjs';
+import { headerMailbox, hasMultipleHeaderMailboxes } from './smime-address.mjs';
 
 const writerOptions = Object.freeze({ disableFileAccess: true, disableUrlAccess: true });
 const token = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
@@ -174,6 +174,11 @@ function envelopeHeaders(records, format) {
   const from = field(records, 'from'),
     sender = field(records, 'sender');
   check(from !== undefined, 'SMIME_FROM_REQUIRED');
+  if (hasMultipleHeaderMailboxes(from)) {
+    check(sender !== undefined, 'SMIME_MULTIPLE_FROM_REQUIRES_SENDER');
+    headerMailbox(sender);
+    throw failure('SMIME_MULTIPLE_FROM_UNSUPPORTED', 'UNSUPPORTED');
+  }
   return {
     outerHeaders,
     headerClaims: {
@@ -296,6 +301,7 @@ async function parse(raw, format, carrier = false) {
   try {
     await pipeline(Readable.from([raw]), splitter);
   } catch (error) {
+    if (error.code === 'EMAXLEN') throw failure('SMIME_MIME_LIMIT', 'UNSUPPORTED');
     throw error.code ? error : failure('SMIME_MIME_PARSE');
   }
   check(nodes.length > 0, 'SMIME_MIME_EMPTY');
