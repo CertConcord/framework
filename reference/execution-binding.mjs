@@ -828,6 +828,11 @@ class OrganizationGateway {
       );
     try {
       fields(decision, ['overall', 'binding', 'journalGuards'], ['reason', 'checks']);
+      requireThat(
+        !Object.hasOwn(decision, 'reason') ||
+          (typeof decision.reason === 'string' && decision.reason.length > 0),
+        'ORG_CURRENT_ADMISSION_SCHEMA',
+      );
       const binding = decision.binding;
       fields(binding, [
         'stage',
@@ -857,7 +862,7 @@ class OrganizationGateway {
           'ORG_CURRENT_ADMISSION_SCHEMA',
         );
       }
-      if (decision.checks) {
+      if (Object.hasOwn(decision, 'checks')) {
         requireThat(
           Array.isArray(decision.checks) && decision.checks.length <= 256,
           'ORG_CURRENT_ADMISSION_SCHEMA',
