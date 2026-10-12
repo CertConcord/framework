@@ -855,3 +855,112 @@ test('organization status fallback requires the authorization bound to this oper
     },
   });
 });
+
+test('native credential fallback never borrows an unbound receipt time', async (t) => {
+  const f = await fixture('MDOC'),
+    originalReceipt = readControl(
+      payload(f.bundle, 'ExecutionReceipt'),
+      'ExecutionReceipt',
+      f.trust.receiptCertificate,
+    ),
+    credential = verifyIssuerSigned(payload(f.bundle, 'PersonalMdoc'), {
+      issuerKey: f.trust.issuerPublicKey,
+      certificate: f.trust.issuerCertificate,
+      docType: SIGNER_DOCTYPE,
+      at: originalReceipt.executedAt,
+      allowPartial: false,
+    }),
+    late =
+      Math.max(
+        credential.validity.validUntil,
+        p.parseCertificate(f.trust.issuerCertificate).notAfter,
+      ) + 1,
+    receiptKey = c.generate('ml-dsa-87'),
+    receiptCertificate = p.issueCertificate(
+      {
+        publicKey: receiptKey.publicKey,
+        serial: 1,
+        issuer: p.name('SDK unbound receipt time fixture'),
+        subject: p.name('SDK unbound receipt time fixture'),
+        profileID: 'CERTCONCORD-EVIDENCE-SIGN-v1',
+        notBefore: originalReceipt.executedAt - 60,
+        notAfter: late + 600,
+      },
+      receiptKey.privateKey,
+    ),
+    signReceipt = (body) =>
+      p.signCMS(
+        { content: c.D('ExecutionReceipt', body), certificate: receiptCertificate },
+        receiptKey.privateKey,
+      ),
+    trust = {
+      ...f.trust,
+      knowledgeTime: late,
+      receiptCertificate,
+      authorityResolver(query) {
+        if (query.role === 'RECEIPT_AUTHORITY' && equal(query.certificate, receiptCertificate))
+          return { overall: 'VALID', reason: 'FIXTURE_RECEIPT_AUTHORITY' };
+        return f.trust.authorityResolver(query);
+      },
+    },
+    candidate = (receipt) =>
+      without(
+        replace(f.bundle, 'ExecutionReceipt', signReceipt(receipt)),
+        'RegistrationAuthorization',
+      ),
+    unrelated = { ...originalReceipt, operationID: c.random(32), executedAt: late },
+    missingPermit = without(candidate(unrelated), 'OperationPermit');
+  assert.deepEqual(
+    dcbor(
+      readControl(
+        payload(missingPermit, 'ExecutionReceipt'),
+        'ExecutionReceipt',
+        receiptCertificate,
+      ),
+    ),
+    dcbor(unrelated),
+  );
+  await t.test('an original receipt with missing dependencies remains indeterminate', () => {
+    const result = verdict(
+      'MDOC',
+      f,
+      without(candidate(originalReceipt), 'OperationPermit'),
+      trust,
+    );
+    assert.equal(result.overall, 'INDETERMINATE', result.reason);
+    assert.notEqual(result.dimensions.integrity?.overall, 'INVALID');
+  });
+  await t.test(
+    'another signed receipt cannot establish credential expiry without its permit',
+    () => {
+      const result = verdict('MDOC', f, missingPermit, trust);
+      assert.equal(result.overall, 'INDETERMINATE', result.reason);
+      assert.notEqual(result.dimensions.integrity?.overall, 'INVALID');
+    },
+  );
+  await t.test(
+    'available permit exposes the unrelated operation as an authorization failure',
+    () => {
+      const result = verdict('MDOC', f, candidate(unrelated), trust);
+      assert.equal(result.overall, 'INVALID');
+      assert.equal(result.dimensions.authorization?.overall, 'INVALID', result.reason);
+      assert.notEqual(result.dimensions.integrity?.overall, 'INVALID');
+    },
+  );
+  await t.test(
+    'available invalid document mathematics still dominates missing dependencies',
+    () => {
+      const result = verdict('MDOC', f, corrupt(missingPermit, 'COSE'), trust);
+      assert.equal(result.overall, 'INVALID');
+      assert.equal(result.reason, 'MDOC_DOCUMENT_SIGNATURE');
+      assert.equal(result.dimensions.integrity?.overall, 'INVALID');
+    },
+  );
+  await t.test('available invalid issuer mathematics still dominates missing dependencies', () => {
+    const broken = mdocVariant(f, () => {}, { badSignature: true }),
+      result = verdict('MDOC', f, replace(missingPermit, 'PersonalMdoc', broken), trust);
+    assert.equal(result.overall, 'INVALID');
+    assert.equal(result.reason, 'COSE_SIGNATURE');
+    assert.equal(result.dimensions.integrity?.overall, 'INVALID');
+  });
+});

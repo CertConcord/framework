@@ -16,7 +16,7 @@ import {
 } from '../document-evidence.mjs';
 import { readControl, evaluateStatus, validateActivation } from '../state.mjs';
 import { verifyCMS, parseCertificate, OID } from '../pki.mjs';
-import { verifyIssuerSigned } from '../mdoc.mjs';
+import { inspectIssuerSigned, verifyIssuerSigned } from '../mdoc.mjs';
 import { verifyExternalCMS } from '../external-cms.mjs';
 import { verifyTimestampToken } from '../timestamp.mjs';
 import { requireAuthority, AuthorityError } from '../authority-history.mjs';
@@ -121,42 +121,39 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
     if (signedDocument) credentialBinding = signedDocument.cert;
   }
   if (format === 'MDOC' && values.PersonalMdoc) {
-    const receipt = controls.ExecutionReceipt;
-    if (receipt && Number.isSafeInteger(receipt.executedAt)) {
-      const credential = check('integrity', () =>
-        verifyIssuerSigned(values.PersonalMdoc, {
-          issuerKey: trust.issuerPublicKey,
-          certificate: trust.issuerCertificate,
-          docType: trust.docType ?? SIGNER_DOCTYPE,
-          certificateProfile: trust.certificateProfile ?? 'ISO_MDOC',
-          at: receipt.executedAt,
-          allowPartial: false,
-        }),
-      );
-      if (credential && values.COSE && values.Document && sim && policy) {
-        credentialBinding = check('integrity', () => ({
-          publicKey: publicFromDER(credential.claims.get(SIGNER_NAMESPACE).get('signing_key')),
-          certificateID: H('MdocIssuerAuth', credential.issuerAuthBytes),
-          representationHash: sha512(values.PersonalMdoc),
-        }));
-        if (credentialBinding)
-          signedDocument = check('integrity', () =>
-            verifyMdocDocument(values.COSE, values.Document, {
-              credential: values.PersonalMdoc,
-              publicKey: credentialBinding.publicKey,
-              context: {
-                schemaVersion: 1,
-                trustDomainID: trust.trustDomainID,
-                profileID: sim.profileID,
-                container: 'COSE',
-                adapterID: sim.adapterID,
-                credentialType: 'MDOC',
-              },
-              simHash: H('SIM', sim),
-              policyHash: H('SignaturePolicy', policy),
-            }),
-          );
-      }
+    // Receipt time is unavailable until its operation tuple has been bound.
+    // Reuse the component's no-time facts without granting credential acceptance.
+    const credential = check('integrity', () =>
+      inspectIssuerSigned(values.PersonalMdoc, {
+        issuerKey: trust.issuerPublicKey,
+        certificate: trust.issuerCertificate,
+        docType: trust.docType ?? SIGNER_DOCTYPE,
+        allowPartial: false,
+      }),
+    );
+    if (credential && values.COSE && values.Document && sim && policy) {
+      credentialBinding = check('integrity', () => ({
+        publicKey: publicFromDER(credential.claims.get(SIGNER_NAMESPACE).get('signing_key')),
+        certificateID: H('MdocIssuerAuth', credential.issuerAuthBytes),
+        representationHash: sha512(values.PersonalMdoc),
+      }));
+      if (credentialBinding)
+        signedDocument = check('integrity', () =>
+          verifyMdocDocument(values.COSE, values.Document, {
+            credential: values.PersonalMdoc,
+            publicKey: credentialBinding.publicKey,
+            context: {
+              schemaVersion: 1,
+              trustDomainID: trust.trustDomainID,
+              profileID: sim.profileID,
+              container: 'COSE',
+              adapterID: sim.adapterID,
+              credentialType: 'MDOC',
+            },
+            simHash: H('SIM', sim),
+            policyHash: H('SignaturePolicy', policy),
+          }),
+        );
     }
   }
   if (values.DocumentTimestamp && trust.timestamp?.certificate) {
@@ -260,6 +257,17 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
       );
       return true;
     });
+  if (boundReceipt && format === 'MDOC')
+    check('integrity', () =>
+      verifyIssuerSigned(values.PersonalMdoc, {
+        issuerKey: trust.issuerPublicKey,
+        certificate: trust.issuerCertificate,
+        docType: trust.docType ?? SIGNER_DOCTYPE,
+        certificateProfile: trust.certificateProfile ?? 'ISO_MDOC',
+        at: receipt.executedAt,
+        allowPartial: false,
+      }),
+    );
   if (boundReceipt && (controls.CertificateStatus || controls.OrganizationAuthorizationStatus)) {
     const knowledgeTime = trust.knowledgeTime ?? now();
     const scope = check('authorization', () => {
