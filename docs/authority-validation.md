@@ -1,6 +1,6 @@
 # Scoped issuance and authority validation
 
-A RegistrationAuthorization uses schema version 2 and signs exactly one
+A RegistrationAuthorization uses schema version 1 and signs exactly one
 `issuanceScope`: a 32-byte trust domain identifier, a configured issuer identifier,
 a 64-byte issuer key commitment, and one of `X509`, `MTC`, or `MDOC`. The existing
 signed profile selects the credential purpose. A registration decision cannot be
