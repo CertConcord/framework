@@ -229,15 +229,13 @@ export class OpenIDWallet {
           : rawStatus?.status_list;
     requireThat(status?.uri === this.issuer + '/status/1', 'CREDENTIAL_STATUS_URI');
     const r = await requestBytes(status.uri, { allowLoopback: this.allowLoopback });
-    requireThat(
-      r.status === 200 &&
-        verifyStatusList(r.body.toString('utf8'), {
-          publicKey: this.issuerPublicKey,
-          uri: status.uri,
-          index: status.idx,
-        }) === 'GOOD',
-      'CREDENTIAL_REVOKED',
-    );
+    requireThat(r.status === 200, 'STATUS_LIST_MISSING');
+    const assessment = verifyStatusList(r.body.toString('utf8'), {
+      publicKey: this.issuerPublicKey,
+      uri: status.uri,
+      index: status.idx,
+    });
+    requireThat(assessment.overall === 'VALID', assessment.reason);
     if (this.verifyCredentialExtension)
       await this.verifyCredentialExtension(response.credentials[0]);
     await this.post(

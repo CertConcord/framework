@@ -22,6 +22,8 @@ import {
   keyID,
   b64u,
   random,
+  dcbor,
+  decodeCBOR,
 } from './core.mjs';
 import {
   algID,
@@ -34,6 +36,21 @@ import {
 } from './pki.mjs';
 import { readControl } from './state.mjs';
 import { kemChallenge } from './protection.mjs';
+const snapshot = (value) => decodeCBOR(dcbor(value));
+
+function approvalCSR(parsed) {
+  return {
+    ...snapshot({
+      subject: parsed.subject,
+      spki: parsed.spki,
+      possessionMode: parsed.possessionMode,
+      requestHash: parsed.requestHash,
+    }),
+    publicKey: publicFromDER(parsed.spki),
+    attributes: new Map([...parsed.attributes].map(([id, value]) => [id, parseDER(value.raw)])),
+  };
+}
+
 export const possessionOID = '1.3.6.1.4.1.22112.2.1';
 export class KEMPossessionService {
   constructor({ journal, audience }) {
@@ -212,36 +229,56 @@ export class RegistrationAuthority {
     keyBindingID,
     kemProof,
   }) {
+    // Own the request before invoking any policy or admission callback. Callback views
+    // are separate values: freezing an object does not freeze the bytes in its Buffers.
+    ({ csr, subjectID, profileID, policyHash, identityEvidenceHash, keyBindingID, kemProof } =
+      snapshot({
+        csr,
+        subjectID,
+        profileID,
+        policyHash,
+        identityEvidenceHash,
+        ...(keyBindingID !== undefined ? { keyBindingID } : {}),
+        ...(kemProof !== undefined ? { kemProof } : {}),
+      }));
     requireThat(
       profileID !== 'CERTCONCORD-PERSON-PASSKEY-SIGN-v1' || (this.keyBindings && keyBindingID),
       'PASSKEY_ADMISSION_REQUIRED',
     );
     const admission =
       profileID === 'CERTCONCORD-PERSON-PASSKEY-SIGN-v1'
-        ? this.keyBindings.forIssuance(keyBindingID, {
-            csr,
-            subjectID,
-            profileID,
-            policyHash,
-            identityEvidenceHash,
-          })
+        ? snapshot(
+            this.keyBindings.forIssuance(
+              snapshot(keyBindingID),
+              snapshot({
+                csr,
+                subjectID,
+                profileID,
+                policyHash,
+                identityEvidenceHash,
+              }),
+            ),
+          )
         : null;
-    const parsed = verifyCSR(csr, { validatePossessionCertificate });
+    const parsed = verifyCSR(csr, {
+      validatePossessionCertificate: validatePossessionCertificate
+        ? (certificate) => validatePossessionCertificate(Buffer.from(certificate))
+        : undefined,
+    });
     let possession;
     if (profileID === 'CERTCONCORD-DOC-ENC-v1') {
       requireThat(this.kemPossession && kemProof, 'RA_KEM_POSSESSION_REQUIRED');
-      possession = this.kemPossession.verify(kemProof.requestID, kemProof.response, {
-        subjectID,
-        publicKey: parsed.publicKey,
-      });
+      possession = snapshot(
+        this.kemPossession.verify(Buffer.from(kemProof.requestID), Buffer.from(kemProof.response), {
+          subjectID: Buffer.from(subjectID),
+          publicKey: publicFromDER(parsed.spki),
+        }),
+      );
     }
     const decision = await this.approve({
-      subjectID,
-      profileID,
-      policyHash,
-      identityEvidenceHash,
-      csr: parsed,
-      ...(admission ? { keyBinding: admission.binding } : {}),
+      ...snapshot({ subjectID, profileID, policyHash, identityEvidenceHash }),
+      csr: approvalCSR(parsed),
+      ...(admission ? { keyBinding: snapshot(admission.binding) } : {}),
     });
     requireThat(decision?.approved === true, 'RA_DENIED');
     const request = {

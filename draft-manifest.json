@@ -30,8 +30,8 @@
     },
     {
       "path": ".github/workflows/draft-artifacts.yml",
-      "bytes": 852,
-      "sha256": "3ca69c6bf9ba379de218256e2d17ef8eb220345cd3681adab67f60a7f5adf495"
+      "bytes": 850,
+      "sha256": "3ddc4eb90d28d01cd8a541c8f258792d4d360faf4a181c4f24d70450b704a35a"
     },
     {
       "path": ".github/workflows/security.yml",
@@ -230,8 +230,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 8444,
-      "sha256": "e7c887527468bf892f611d8430b5e021a61545153ba72fa47fda8b97e6eb2046"
+      "bytes": 8612,
+      "sha256": "4345fb115049c6cbfdeb1fb9ff6817c08d8e6551d447f13876b90bee92d11220"
     },
     {
       "path": "reference/README.md",
@@ -260,8 +260,8 @@
     },
     {
       "path": "reference/annex-verifier.mjs",
-      "bytes": 7369,
-      "sha256": "c4fa8fdc6a34fe665ad34d4c57cb2e6a009c1d55e4fe73c9abf0219916375bd7"
+      "bytes": 7383,
+      "sha256": "54f8a701c490a6491d77a6fb4b3d9deba0f1a0c618c5e25b47fde99af78c078c"
     },
     {
       "path": "reference/archive-demo.mjs",
@@ -312,6 +312,11 @@
       "path": "reference/browser.mjs",
       "bytes": 14747,
       "sha256": "3a75014a131e445e74aca533a5492b7ccfa3bd748a7d2d3d6f9de1e9a284e1e5"
+    },
+    {
+      "path": "reference/certificate-key-usage.test.mjs",
+      "bytes": 3920,
+      "sha256": "fec6d87c96a023106bca10f5bae83976574607ca03590bacc0d5bca47e935c46"
     },
     {
       "path": "reference/cmp.mjs",
@@ -419,9 +424,14 @@
       "sha256": "ae66d23683514f88c79299b4927bbbf48dcae4896c9a8d449af6d50fb73c1b3d"
     },
     {
+      "path": "reference/enrollment-security.test.mjs",
+      "bytes": 7791,
+      "sha256": "20c2387226f8323b721e8db30676171bf593999d99944bb0a8fb31e956c74c81"
+    },
+    {
       "path": "reference/enrollment.mjs",
-      "bytes": 11156,
-      "sha256": "c74692a6544871e6d193d8dda795793b83cdc9143b76102097de1ef08c68370d"
+      "bytes": 12495,
+      "sha256": "3b2412d2d8c8587586c54887909e2608dbb14114e6fc98cb46714e5b20246c7d"
     },
     {
       "path": "reference/evidence.mjs",
@@ -530,8 +540,8 @@
     },
     {
       "path": "reference/fuzz/seed.mjs",
-      "bytes": 1729,
-      "sha256": "7cc0eaf0f78d52b1ce81f9495d751e26fc08ae35968e2d6817675718752ef760"
+      "bytes": 1757,
+      "sha256": "48f8a18195e3beff3fa5a4a8b2ac129f1c0d0634fc6d846423a52b42407a1454"
     },
     {
       "path": "reference/governance.test.mjs",
@@ -605,8 +615,8 @@
     },
     {
       "path": "reference/interop.test.mjs",
-      "bytes": 23734,
-      "sha256": "fb9009f9e1d5dccb14f214b96c6f444aeb02275dfafe20a36eaa011986052587"
+      "bytes": 23741,
+      "sha256": "7b2711deb6d23856053cb58512ff6777b83cadabb772b548d595df909731d05d"
     },
     {
       "path": "reference/interop/import-result.mjs",
@@ -680,8 +690,8 @@
     },
     {
       "path": "reference/mtc.mjs",
-      "bytes": 15977,
-      "sha256": "1891f05bc32cee0eb9dabc68204a094b4649ebef685853994296eafbe69a9d87"
+      "bytes": 16128,
+      "sha256": "407af6a53a8111c29ece9e444e01fce302259f9b34e43052ce21046441ec19be"
     },
     {
       "path": "reference/native-driver.mjs",
@@ -740,8 +750,8 @@
     },
     {
       "path": "reference/openid.mjs",
-      "bytes": 45286,
-      "sha256": "5ef8dd41bb412a28d117304acd03867b0c4db028eca6e43651ff57ecc3418e02"
+      "bytes": 46493,
+      "sha256": "b5c9686bfda1a2196c93caa1adb24f887011ca245610379d41e05ad11e875a3d"
     },
     {
       "path": "reference/openssl.test.mjs",
@@ -752,6 +762,11 @@
       "path": "reference/package.json",
       "bytes": 1398,
       "sha256": "913927d49138d8a21cd702b0d647773b5511d886922f9155a94b61939605368b"
+    },
+    {
+      "path": "reference/parser-boundaries.test.mjs",
+      "bytes": 659,
+      "sha256": "c1517885697b947631f1b4ed868849b2be5e32bcc01d20f453974f282d4a4a11"
     },
     {
       "path": "reference/passkey-credentials.mjs",
@@ -765,8 +780,8 @@
     },
     {
       "path": "reference/passkey.test.mjs",
-      "bytes": 27652,
-      "sha256": "df645b59ca0da42277a082e8cf2a68382f86c8fcbf0dbc33a4971d19bf861242"
+      "bytes": 27651,
+      "sha256": "d70e8d100266ed39e0366e1bdff71b45b7a12407bbb48c6797631721d4967892"
     },
     {
       "path": "reference/pdf-isolation.mjs",
@@ -795,8 +810,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 16417,
-      "sha256": "a4b053b17434d6b1458543310a30ef42212e0bfc0055d039ee1e072a2ade66f0"
+      "bytes": 17912,
+      "sha256": "2b714e4cb721feda07e22afc781a71457c5025e08f9fbaadd6d836012f7941d8"
     },
     {
       "path": "reference/protection.mjs",
@@ -835,8 +850,8 @@
     },
     {
       "path": "reference/sdk-results.test.mjs",
-      "bytes": 5442,
-      "sha256": "6691c7c658fe6f1dd8d53738074391d41e80c947de23f4b15eabc9ce587e76e4"
+      "bytes": 7561,
+      "sha256": "ad392a5bcd74ef3d1eb5b6a5f2afb69d8953cc03a20fdf35fce9060905de5deb"
     },
     {
       "path": "reference/sdk/README.md",
@@ -860,8 +875,8 @@
     },
     {
       "path": "reference/sdk/index.mjs",
-      "bytes": 6042,
-      "sha256": "9ebdbf4d9e76ca1ab89092f52a5946cf6722ecd07837bec44363d2089ffb512c"
+      "bytes": 6151,
+      "sha256": "5d8d56032521db7bc0e8aa33eb514b9c568a116a867acbdd75e33cca305f6f43"
     },
     {
       "path": "reference/sdk/package.json",
@@ -880,8 +895,8 @@
     },
     {
       "path": "reference/signer-mdoc.mjs",
-      "bytes": 25683,
-      "sha256": "648121b43575191a98dbeb5bdcbc19714685c234ecbbf388e301602595dd72da"
+      "bytes": 26056,
+      "sha256": "6d4dec1c409a007b4a6e32a269c907084b19f998344acac319bee4bdc1fd17b8"
     },
     {
       "path": "reference/source-lock.json",
@@ -902,6 +917,11 @@
       "path": "reference/state.mjs",
       "bytes": 17817,
       "sha256": "b7771db2d2e2fbf8479819a00e7612f40b9a92bc7c14238647f1feb8c295fe6c"
+    },
+    {
+      "path": "reference/status-list.test.mjs",
+      "bytes": 3534,
+      "sha256": "945bc6cb449a1ed37c9e5805447635352387a6bef48bdac5dee5abb399459e2e"
     },
     {
       "path": "reference/storage.test.mjs",
@@ -1000,13 +1020,13 @@
     },
     {
       "path": "reference/wallet.mjs",
-      "bytes": 12317,
-      "sha256": "02012cb11bbb3c8b03688b40b777e1ea7899cebf4bd650793ec96582c5c26f58"
+      "bytes": 12353,
+      "sha256": "1b4eb7bd0e3375711dde70474317096ea581247b8e5cf8c482d1700cc0dc70d4"
     },
     {
       "path": "reference/webauthn.mjs",
-      "bytes": 9870,
-      "sha256": "fec0680b5a4887b6af859bc50832634424eecd14ae6a1c754eebe3e4279f7daa"
+      "bytes": 9957,
+      "sha256": "fd6b31a491c07b183153c58be053943bd0f008f9a7aa4811f978c9fc31482bcd"
     },
     {
       "path": "reference/windows-tpm.mjs",

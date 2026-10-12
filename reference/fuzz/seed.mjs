@@ -12,6 +12,7 @@ const seeds = [
   [1, seq(integer(1), octet(Buffer.from('synthetic')))],
   [2, encode(new Tag(24, Buffer.from('a10126', 'hex')))],
   [3, encodeProof({ start: 0, end: 1, inclusion: [], signatures: [] })],
+  [4, Buffer.from('null')],
   [
     4,
     Buffer.from(

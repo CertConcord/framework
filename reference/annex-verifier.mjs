@@ -149,14 +149,12 @@ export class AnnexCVerifier {
         claims.issuer === r.issuerID && status?.uri === issuer.statusURI,
         'ANNEX_C_ISSUER_STATUS',
       );
-      requireThat(
-        verifyStatusList(await issuer.fetchStatus(), {
-          publicKey: issuer.publicKey,
-          uri: issuer.statusURI,
-          index: status.idx,
-        }) === 'GOOD',
-        'ANNEX_C_STATUS',
-      );
+      const assessment = verifyStatusList(await issuer.fetchStatus(), {
+        publicKey: issuer.publicKey,
+        uri: issuer.statusURI,
+        index: status.idx,
+      });
+      requireThat(assessment.overall === 'VALID', assessment.reason);
     }
     const qualification = {
       format: 'mso_mdoc',

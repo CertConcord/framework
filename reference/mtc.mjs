@@ -25,6 +25,7 @@ import {
   tbsCertificate,
   certificateFromTBS,
   parseCertificate,
+  validateKeyUsage,
 } from './pki.mjs';
 import { IndexedMerkleLog } from './storage/merkle.mjs';
 
@@ -378,6 +379,8 @@ export function verifyMTC(
   ]);
   for (const [id, e] of c.extensions)
     requireThat(!e.critical || known.has(id), 'MTC_UNKNOWN_CRITICAL_EXTENSION');
+  if (c.extensions.has('2.5.29.15'))
+    validateKeyUsage(c.extensions.get('2.5.29.15'), undefined, 'MTC_CERTIFICATE_PROFILE');
   if (profileID) {
     if (profileID === 'CERTCONCORD-PERSON-PASSKEY-SIGN-v1')
       requireThat(
@@ -388,11 +391,10 @@ export function verifyMTC(
       );
     const p = profiles[profileID];
     requireThat(
-      p &&
-        equal(c.extensions.get('2.5.29.37')?.value, seq(oid(p.eku))) &&
-        parseDER(c.extensions.get('2.5.29.15').value).value[1] === p.ku,
+      p && equal(c.extensions.get('2.5.29.37')?.value, seq(oid(p.eku))),
       'MTC_CERTIFICATE_PROFILE',
     );
+    validateKeyUsage(c.extensions.get('2.5.29.15'), p.ku, 'MTC_CERTIFICATE_PROFILE');
   }
   requireThat(
     c.serial > 0n && c.serial <= 0xffffffffffffffffn && at >= c.notBefore && at < c.notAfter,
