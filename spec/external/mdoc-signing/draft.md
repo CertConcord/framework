@@ -32,7 +32,16 @@ The MSO selects version `1.0`, digest `SHA-256`, exact `docType`, nonempty `valu
 
 `issuerAuth` is untagged COSE_Sign1 over the encoded tag-24 `MobileSecurityObjectBytes`, using empty external AAD. Protected `alg=-7` selects ES256/P-256 with a 64-byte `r || s` signature. `x5chain` (33) occurs in exactly one protected or unprotected bucket and contains a leaf-first byte string or array of one to eight certificate byte strings. Its leaf and key match the externally supplied issuer certificate and key.
 
-Result classification belongs to this component. Missing or structurally invalid algorithm values are `INVALID`. RFC 9052 permits integer or text algorithm identifiers; an unknown integer or text identifier is `UNSUPPORTED`, without guessing another algorithm. Known ES384, ES512, EdDSA or ML-DSA identifiers conflict with this selected P-256 issuer suite and are `INVALID`. This does not add support for those issuer algorithms.
+Result classification belongs to this component. Missing or structurally invalid algorithm values are `INVALID`. RFC 9052 permits integer or text algorithm identifiers. The following finite table conflicts with this selected ES256/P-256 issuer suite and returns `INVALID/MDOC_ISSUER_ALGORITHM_MISMATCH`:
+
+| Algorithms | COSE identifiers |
+| --- | --- |
+| ES384, ES512 | `-35`, `-36` |
+| EdDSA, Ed25519, Ed448 | `-8`, `-19`, `-53` |
+| ML-DSA-44, ML-DSA-65, ML-DSA-87 | `-48`, `-49`, `-50` |
+| ESP384, ESP512 | `-51`, `-52` |
+
+The names and assignments were checked against the [IANA COSE Algorithms registry](https://www.iana.org/assignments/cose#algorithms), updated 2026-08-25. This table is not complete coverage of that evolving registry and adds no issuer algorithm support. Other well-formed integer or text identifiers remain `UNSUPPORTED`, without guessing another algorithm's mathematics.
 
 For ES256, verification uses the exact received protected bytes and payload before returning an unsupported critical-header or MSO capability. A bad available signature is `INVALID/COSE_SIGNATURE` even when those semantics are unimplemented. A critical list must be nonempty, contain unique integer/text labels and refer only to protected parameters; malformed lists are `INVALID`. Well-formed critical lists remain outside this issuer-authentication selection and return `UNSUPPORTED`. Certificate location, thumbprint and externally pinned leaf mismatches remain independently invalid. A correctly typed unknown MSO version or digest is `UNSUPPORTED`; wrong-type version/digest values in the selected MSO structure are `INVALID`. Future versions are not interpreted as version 1.0. These typed outcomes do not establish issuer authority, status or an application permission.
 
@@ -91,5 +100,7 @@ Historical evaluation retains original bytes, policy and authenticated status/au
 `cbor.mjs`, `key-relation.mjs` and `base.mjs` have no framework imports. `vectors/base.json` contains complete credentials, certificates, document signatures, documents and signed JWT status fixtures with expected decisions. Negative cases include validly re-signed semantic violations. `vectors/manifest.json` records SHA-256 hashes. Tests use an independently configured synthetic issuer policy and status adapter.
 
 `vectors/classification.json` additionally contains complete original issuer credentials and public certificate inputs for typed capability/structure results. ES256-good/bad pairs retain identical protected and payload bytes. An independent native mathematical check precedes each expected component result. A noncanonical protected-map order demonstrates that validation uses received bytes rather than a rebuilt header map. These vectors preserve the existing wire profile and public API.
+
+The five appended key-mismatch cases change only the protected algorithm identifier in the saved selected credential and retain its original signature. Their independent ES256 result is explicitly false; they do not claim valid signatures under the declared nonselected algorithms. The preceding 31 credential byte strings are unchanged.
 
 This is one independently runnable reference, not a second independent implementation, full ISO certification, external security assessment or proof of operator independence. Its bounded codec and test JOSE adapter are not assessed production parsers. Production implementations need mature assessed CBOR/COSE/JOSE/PKIX and cryptographic stacks plus these semantics. Draft status remains until those separate stability gates are met.

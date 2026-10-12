@@ -394,6 +394,36 @@
       "overall": "INVALID",
       "reason": "MDOC_CERTIFICATE_THUMBPRINT",
       "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-ml-dsa-44-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-ed25519-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-ed448-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-esp384-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-esp512-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
     }
   ]
 }

@@ -43,14 +43,14 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "bf6e5452758ecc859c992410685e7035fabce43b",
+      "commit": "8c25bfa1e84dcae00f782e70251f9d3edbba3f78",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mdoc-signing/draft.md",
-          "sha256": "136cd9129518c322603f4d42ba9f388caf41ca107f08f2207cfda71fed30ba8a"
+          "sha256": "1d27332d07317aa5a1390dd11af71b71eb3a100d261a004c962c76c3fb61a8c1"
         },
         {
           "source": "sources.json",
@@ -60,7 +60,7 @@
         {
           "source": "cases.json",
           "path": "spec/external/mdoc-signing/cases.json",
-          "sha256": "32cd4529440fa83231437b52eb6acbf302820f3c19e9531132f81cf761c07376"
+          "sha256": "e4e4a823da15f2e2f2ff6ffd7bd0e6f31e0cec629dc2e203a84e7ab8b77735ef"
         },
         {
           "source": "NOTICE",
@@ -75,7 +75,7 @@
         {
           "source": "reference/base.mjs",
           "path": "reference/vendor/mdoc-signing/base.mjs",
-          "sha256": "593cc0e28da9edb98f672b96086662bd32b625f79815c65e79a9ce73d2b7e11d"
+          "sha256": "e31234b868ef598df783a5ba5dd19fcde85089eb7d29836da8383f527afd4380"
         },
         {
           "source": "reference/cbor.mjs",
@@ -95,12 +95,12 @@
         {
           "source": "vectors/manifest.json",
           "path": "spec/external/mdoc-signing/vectors/manifest.json",
-          "sha256": "4dc738cdacd40d13ab30e3247ae6c4697df188139a491fe2d10b6484e2edbe1f"
+          "sha256": "7da4e25f45ddcadfc07f3c0616b81fc24fdbff0ceeb60f6e73a86a81b73ce780"
         },
         {
           "source": "vectors/classification.json",
           "path": "spec/external/mdoc-signing/vectors/classification.json",
-          "sha256": "d3b0c2c9aa83aa9bfcbc8ae24370fe6b8502e333eb7f1be4787d1eb117f151ab"
+          "sha256": "7020913c1eaa905a9e1dff0f1da8ba16cf81be2f9fef4082fad2801d9eaea702"
         }
       ]
     },

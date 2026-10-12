@@ -14,6 +14,8 @@ const copy = value => decode(encode(value));
 const text = value => typeof value === 'string' && value.length > 0;
 const integer = value => Number.isSafeInteger(value) && value >= 0;
 const stamp = value => new Tag(0, new Date(value * 1000).toISOString().replace('.000Z', 'Z'));
+// Finite key/suite incompatibility table, not an implementation of the COSE registry.
+const incompatibleIssuerAlgorithms = new Set([-35, -36, -8, -19, -53, -48, -49, -50, -51, -52]);
 function time(value) {
   requireThat(value instanceof Tag && value.tag === 0 && typeof value.value === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(value.value), 'MDOC_TIME');
   const seconds = Date.parse(value.value) / 1000;
@@ -68,7 +70,7 @@ export function verifyIssuerSigned(credential, { issuerKey, certificate, docType
   const auth = issuerAuth(get(is, 'issuerAuth'));
   requireThat(same(auth.certificates[0], ds.certificate.raw), 'MDOC_ISSUER_PIN');
   const algorithm = auth.headers.get(1);
-  requireThat(![-35, -36, -8, -49, -50].includes(algorithm), 'MDOC_ISSUER_ALGORITHM_MISMATCH');
+  requireThat(!incompatibleIssuerAlgorithms.has(algorithm), 'MDOC_ISSUER_ALGORITHM_MISMATCH');
   requireThat(algorithm === -7, 'COSE_ALGORITHM_UNSUPPORTED', 'UNSUPPORTED');
   // Evaluate ES256 over the retained bytes before unimplemented critical or MSO
   // semantics. Unknown algorithms do not authorize guessing ES256 mathematics.
