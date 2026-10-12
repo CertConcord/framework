@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "trust": {
+    "trustDomainID": {
+      "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+    },
+    "issuanceScope": {
+      "trustDomainID": {
+        "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+      },
+      "issuerID": "32473.10",
+      "issuerKeyID": {
+        "$hex": "8fa709a7bd27f9a89cc26d665145ff0525b2ab2abea52f3ec50602423a0c78692855947a5309a9deeba53b785407a9e5c33f8f7e92f124de72816e302924dd8b"
+      },
+      "representation": "MTC"
+    },
+    "expectedPolicy": {
+      "schemaVersion": 1,
+      "activationMode": "HUMAN_WEBAUTHN",
+      "maxSAL": 2,
+      "allowedOrigins": [
+        "https://website.example"
+      ],
+      "allowedProfiles": [
+        "CERTCONCORD-PERSON-SIGN-v1"
+      ],
+      "acceptedQualifications": [
+        "CERTCONCORD-IAL2"
+      ],
+      "rpID": "website.example",
+      "audience": "certconcord-example-signer",
+      "maxActivationLifetime": 120,
+      "requireTrustedTime": true,
+      "documentEvidence": {
+        "profile": "certconcord-document-evidence-draft-03",
+        "organizationAuthorization": false
+      }
+    },
+    "raCertificate": {
+      "$file": "files/bbad28c442368267bffdcf06b198fdb7c590cbc97310566cabb0b9448486f2b5.der.b64",
+      "type": "bytes"
+    },
+    "permitCertificate": {
+      "$file": "files/bcf1510adaaaad9e72e0b515e422f380c329d0079851f233ab5e1e870c97c986.der.b64",
+      "type": "bytes"
+    },
+    "receiptCertificate": {
+      "$file": "files/bcf1510adaaaad9e72e0b515e422f380c329d0079851f233ab5e1e870c97c986.der.b64",
+      "type": "bytes"
+    },
+    "statusCertificate": {
+      "$file": "files/bcf1510adaaaad9e72e0b515e422f380c329d0079851f233ab5e1e870c97c986.der.b64",
+      "type": "bytes"
+    },
+    "knowledgeTime": 1791823027,
+    "mtc": {
+      "caID": "32473.10",
+      "caPublicKey": {
+        "$file": "files/ce763d2ba969e9609f834db4da74804337e04449c14510c6ed4ca1c5dbb2eb7b.spki.b64",
+        "type": "spki"
+      },
+      "members": [
+        {
+          "id": "32473.20",
+          "operatorID": "synthetic-mirror-0",
+          "publicKey": {
+            "$file": "files/9d5983d742894a08431f4c717bbe78915d3e9f2eccb055f649d2b598350c64a6.spki.b64",
+            "type": "spki"
+          }
+        },
+        {
+          "id": "32473.21",
+          "operatorID": "synthetic-mirror-1",
+          "publicKey": {
+            "$file": "files/e6aa9a7582166708ffc2804fb74e04470b898e67967d087eeb1f699535a983fb.spki.b64",
+            "type": "spki"
+          }
+        },
+        {
+          "id": "32473.22",
+          "operatorID": "synthetic-mirror-2",
+          "publicKey": {
+            "$file": "files/bc915c23a6acfc817304f9499f581c5ae87b93d442680912ae179715e639ef83.spki.b64",
+            "type": "spki"
+          }
+        }
+      ],
+      "threshold": 2,
+      "policyHash": {
+        "$hex": "5531d35ca817344e8dd5d6f14a762d30db411efd71176cd78813f0552e1ecf933b73b0a8aafe7eeb02a37430b10a6167bdd899c294c1fdaba3df4c5890d8891a"
+      },
+      "rtmHash": {
+        "$hex": "88eba03fdf2d74a580afbe3bd725521b4ae6a0f810307dd7145bf88c3810aff12171c7c1c8ca5c6faad11708ab72ccd082250e23b0990b9b9ae2b08f4f49cfd6"
+      },
+      "membershipEpoch": 1
+    },
+    "timestamp": {
+      "certificate": {
+        "$file": "files/7d11b0fa65c009ad01055c0f7b2849c3a93bc4fbddcdbb3b6ef83e0327895493.der.b64",
+        "type": "bytes"
+      },
+      "issuerKey": {
+        "$file": "files/106d24ca90590795f1300111e5731405cffbdb29b20b9708f1bb52d4188976bc.spki.b64",
+        "type": "spki"
+      },
+      "policy": "1.3.6.1.4.1.32473.90.1"
+    }
+  },
+  "authorities": [
+    {
+      "mode": "RAW_KEY",
+      "publicKeyDER": {
+        "$file": "files/56745fbb6a04f67cb692cdc12ad8240b8d5c0fb1e75f5c9a11a5273cc211ea61.der.b64",
+        "type": "bytes"
+      },
+      "knownAt": 1791822907,
+      "validFrom": 1791822907,
+      "validUntil": 1793551027,
+      "algorithmValidUntil": 1793551027,
+      "roles": [
+        "REGISTRATION_AUTHORITY"
+      ],
+      "scopes": [
+        {
+          "trustDomainID": {
+            "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+          }
+        }
+      ],
+      "status": {
+        "authorityID": {
+          "$hex": "9eceb5f700b0d70650357c24ef40125177807b3dfca7f8ac1d5553a1a89a6c51b8b5d6698e2cd50e476b5e07396c0f8e0af555a0354494fe22bc9540a4896233"
+        },
+        "trustDomainID": {
+          "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+        },
+        "scope": "AUTHORITY",
+        "status": "GOOD",
+        "publishedAt": 1791822907,
+        "nextUpdate": 1793551027
+      }
+    },
+    {
+      "mode": "RAW_KEY",
+      "publicKeyDER": {
+        "$file": "files/c9240ed555bec46e6b9648190f37d4593f0edb6ed9bbc8fd92733f02efc58a03.der.b64",
+        "type": "bytes"
+      },
+      "knownAt": 1791822907,
+      "validFrom": 1791822907,
+      "validUntil": 1793551027,
+      "algorithmValidUntil": 1793551027,
+      "roles": [
+        "PERMIT_AUTHORITY",
+        "RECEIPT_AUTHORITY",
+        "STATUS_AUTHORITY"
+      ],
+      "scopes": [
+        {
+          "trustDomainID": {
+            "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+          }
+        }
+      ],
+      "status": {
+        "authorityID": {
+          "$hex": "9d277e61afccf317c68b5e62838729228ff1a7ebc4c5952921cc6d85fab946170e8f5b436276a98a0f2c6504518981d85523558cdb4b56dc1e57158ccc36efcd"
+        },
+        "trustDomainID": {
+          "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+        },
+        "scope": "AUTHORITY",
+        "status": "GOOD",
+        "publishedAt": 1791822907,
+        "nextUpdate": 1793551027
+      }
+    },
+    {
+      "mode": "RAW_KEY",
+      "publicKeyDER": {
+        "$file": "files/79ce9c065578549bcd7548c9da1ac8463b913d22fbc4a21f70f35ff63a0b98e4.der.b64",
+        "type": "bytes"
+      },
+      "knownAt": 1791822907,
+      "validFrom": 1791822907,
+      "validUntil": 1793551027,
+      "algorithmValidUntil": 1793551027,
+      "roles": [
+        "TIMESTAMP_AUTHORITY"
+      ],
+      "scopes": [
+        {
+          "trustDomainID": {
+            "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+          }
+        }
+      ],
+      "status": {
+        "authorityID": {
+          "$hex": "17ebea48b6a91e398c7c6b04773b6f0d53da85d6748024c6bc8a65f0f776050bb25df8eb98de55054133cf881a1db5957207efea3c6f3e8e02ad28ac3b236f87"
+        },
+        "trustDomainID": {
+          "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+        },
+        "scope": "AUTHORITY",
+        "status": "GOOD",
+        "publishedAt": 1791822907,
+        "nextUpdate": 1793551027
+      }
+    },
+    {
+      "mode": "RAW_KEY",
+      "publicKeyDER": {
+        "$file": "files/ce763d2ba969e9609f834db4da74804337e04449c14510c6ed4ca1c5dbb2eb7b.der.b64",
+        "type": "bytes"
+      },
+      "knownAt": 1791822907,
+      "validFrom": 1791822907,
+      "validUntil": 1793551027,
+      "algorithmValidUntil": 1793551027,
+      "roles": [
+        "ISSUER"
+      ],
+      "scopes": [
+        {
+          "trustDomainID": {
+            "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+          }
+        }
+      ],
+      "status": {
+        "authorityID": {
+          "$hex": "8fa709a7bd27f9a89cc26d665145ff0525b2ab2abea52f3ec50602423a0c78692855947a5309a9deeba53b785407a9e5c33f8f7e92f124de72816e302924dd8b"
+        },
+        "trustDomainID": {
+          "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+        },
+        "scope": "AUTHORITY",
+        "status": "GOOD",
+        "publishedAt": 1791822907,
+        "nextUpdate": 1793551027
+      }
+    },
+    {
+      "mode": "RAW_KEY",
+      "publicKeyDER": {
+        "$file": "files/9d5983d742894a08431f4c717bbe78915d3e9f2eccb055f649d2b598350c64a6.der.b64",
+        "type": "bytes"
+      },
+      "knownAt": 1791822907,
+      "validFrom": 1791822907,
+      "validUntil": 1793551027,
+      "algorithmValidUntil": 1793551027,
+      "roles": [
+        "COSIGNER"
+      ],
+      "scopes": [
+        {
+          "trustDomainID": {
+            "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+          }
+        }
+      ],
+      "status": {
+        "authorityID": {
+          "$hex": "1ce7506fa262a47e1cc155e7041461bc79cde7535626401271061084de17701490f0b81ca22bed17b0dba349f4e76686edfa833a770e8d608fe111a86a9a8bd8"
+        },
+        "trustDomainID": {
+          "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+        },
+        "scope": "AUTHORITY",
+        "status": "GOOD",
+        "publishedAt": 1791822907,
+        "nextUpdate": 1793551027
+      }
+    },
+    {
+      "mode": "RAW_KEY",
+      "publicKeyDER": {
+        "$file": "files/e6aa9a7582166708ffc2804fb74e04470b898e67967d087eeb1f699535a983fb.der.b64",
+        "type": "bytes"
+      },
+      "knownAt": 1791822907,
+      "validFrom": 1791822907,
+      "validUntil": 1793551027,
+      "algorithmValidUntil": 1793551027,
+      "roles": [
+        "COSIGNER"
+      ],
+      "scopes": [
+        {
+          "trustDomainID": {
+            "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+          }
+        }
+      ],
+      "status": {
+        "authorityID": {
+          "$hex": "95ea910d8daa704e8f0d061ebeca7423d51e82902dfde905c1bfea4a34087c1b5cf9cfd3ecc8ae34f9d9ead371bf16b7fa524b20b4190a41256d2ef71cd1e010"
+        },
+        "trustDomainID": {
+          "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+        },
+        "scope": "AUTHORITY",
+        "status": "GOOD",
+        "publishedAt": 1791822907,
+        "nextUpdate": 1793551027
+      }
+    },
+    {
+      "mode": "RAW_KEY",
+      "publicKeyDER": {
+        "$file": "files/bc915c23a6acfc817304f9499f581c5ae87b93d442680912ae179715e639ef83.der.b64",
+        "type": "bytes"
+      },
+      "knownAt": 1791822907,
+      "validFrom": 1791822907,
+      "validUntil": 1793551027,
+      "algorithmValidUntil": 1793551027,
+      "roles": [
+        "COSIGNER"
+      ],
+      "scopes": [
+        {
+          "trustDomainID": {
+            "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+          }
+        }
+      ],
+      "status": {
+        "authorityID": {
+          "$hex": "e81a952580f0e8ff42870723cd3424ee20ae00760c54f46a0b7968cc64b5f301f0e7c183112ce9224f4a62624c91e70ef91a1783da8fd0f67a1bf47b16d2bf7f"
+        },
+        "trustDomainID": {
+          "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+        },
+        "scope": "AUTHORITY",
+        "status": "GOOD",
+        "publishedAt": 1791822907,
+        "nextUpdate": 1793551027
+      }
+    }
+  ],
+  "timestampStatus": {
+    "status": "GOOD",
+    "publishedAt": 1791822907,
+    "nextUpdate": 1793551027
+  }
+}
