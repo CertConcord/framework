@@ -255,8 +255,8 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 94017,
-      "sha256": "b56752cfa5a26b6e68ae22f12cabc47f7a055be73907648c870afdb2e743efd7"
+      "bytes": 94020,
+      "sha256": "345f504da6b9e9697c7ba9ce5000d01df55471d1664b36cc846a53efb3a21001"
     },
     {
       "path": "package.json",
@@ -960,8 +960,8 @@
     },
     {
       "path": "reference/package.json",
-      "bytes": 1463,
-      "sha256": "4bbf4e464fbc13b919ea1627238ba197c992fa3081ff7a5b6f256216aa7e4794"
+      "bytes": 1464,
+      "sha256": "e231452dde3099c9d24fa4220e222962450b247abf501a283dfc7a8047e49118"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
