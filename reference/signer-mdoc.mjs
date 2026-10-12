@@ -480,7 +480,7 @@ function inspectPersonalMdoc(
         documentKeyID: claims.signing_key_id,
         policyHash,
       },
-      credentialLogTrust,
+      { ...credentialLogTrust, knowledgeTime },
     ),
   );
   evaluationPhase(evaluation, 'status');

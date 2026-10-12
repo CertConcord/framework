@@ -26,6 +26,9 @@ import { PASSKEY_SIGN_PROFILE } from './raw-signing.mjs';
 import { verifyIssuerSigned } from './mdoc.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
 import { createVerifier } from './sdk/index.mjs';
+import { checkpointBody, noteSignature, verifyNote } from './transparency.mjs';
+import { verifyCredentialLog } from './credential-log.mjs';
+import { leafHash } from './mtc.mjs';
 
 const labels = {
   context: 'urn:certconcord:context:1',
@@ -232,4 +235,99 @@ test('a complete SDK native document uses the same component wire contract', asy
     get(decode(decode(values.COSE)[0]), labels.credential),
     sha512(values.PersonalMdoc),
   );
+});
+
+function withWallClock(milliseconds, callback) {
+  const original = Date.now;
+  try {
+    Date.now = () => milliseconds;
+    return callback();
+  } finally {
+    Date.now = original;
+  }
+}
+
+test('native document verification uses declared knowledge time independently of wall clock', async (t) => {
+  const f = await runFoundationDemo({ activationMode: 'HUMAN_WEBAUTHN' }),
+    knowledgeTime = Math.floor(Date.now() / 1000),
+    verifier = createVerifier({ format: 'MDOC', trust: { ...f.trust, knowledgeTime } }),
+    bytes = dcbor(f.bundle),
+    expected = verifier.verify(bytes);
+  assert.equal(expected.overall, 'VALID', expected.reason);
+  for (const milliseconds of [0, Date.UTC(2100, 0, 1)])
+    await t.test(String(milliseconds), () => {
+      assert.deepEqual(
+        withWallClock(milliseconds, () => verifier.verify(bytes)),
+        expected,
+      );
+    });
+});
+
+test('timestamped notes retain their future limit at explicit knowledge time', () => {
+  const signer = { ...generate('ed25519'), name: 'clock.example/mirror', scheme: 'ed25519-cosign' },
+    knowledgeTime = 1_800_000_000,
+    body = checkpointBody('clock.example/log', 1, random(32)),
+    note = (timestamp) => body + '\n' + noteSignature(body, signer, { timestamp });
+  withWallClock(0, () => {
+    assert.equal(verifyNote(note(knowledgeTime + 30), signer, { knowledgeTime }).body, body);
+  });
+  withWallClock(Date.UTC(2100, 0, 1), () => {
+    assert.throws(
+      () => verifyNote(note(knowledgeTime + 31), signer, { knowledgeTime }),
+      (error) => error.code === 'NOTE_UNTRUSTED_SIGNATURE',
+    );
+    for (const invalid of [null, -1, 1.5, '1800000000'])
+      assert.throws(
+        () => verifyNote(note(knowledgeTime), signer, { knowledgeTime: invalid }),
+        (error) => error.code === 'NOTE_VERIFICATION_TIME',
+      );
+  });
+});
+
+test('credential log checkpoint and mirror checks share explicit knowledge time', () => {
+  const log = { ...generate('ed25519'), name: 'clock.example/log', scheme: 'ed25519-cosign' },
+    mirror = {
+      ...generate('ed25519'),
+      name: 'clock.example/mirror',
+      operatorID: 'independent-mirror',
+      scheme: 'ed25519-cosign',
+    },
+    knowledgeTime = 1_800_000_000,
+    expectedEntry = { schemaVersion: 1, credentialID: random(64) },
+    entry = D('PersonalMdocLogEntry', expectedEntry),
+    root = leafHash(entry),
+    body = checkpointBody(log.name, 1, root),
+    proof = (logTime, mirrorTime) => ({
+      schemaVersion: 1,
+      adapterID: 'certconcord-mdoc-issuance-log-v1',
+      entry,
+      index: 0,
+      size: 1,
+      root,
+      path: [],
+      checkpoint: body + '\n' + noteSignature(body, log, { timestamp: logTime }),
+      receipts: [
+        {
+          operatorID: mirror.operatorID,
+          note: body + '\n' + noteSignature(body, mirror, { timestamp: mirrorTime }),
+        },
+      ],
+    }),
+    trust = { log, members: [mirror], threshold: 1, knowledgeTime };
+  withWallClock(0, () => {
+    assert.equal(
+      verifyCredentialLog(proof(knowledgeTime, knowledgeTime), expectedEntry, trust).operatorCount,
+      1,
+    );
+  });
+  withWallClock(Date.UTC(2100, 0, 1), () => {
+    for (const [logTime, mirrorTime] of [
+      [knowledgeTime + 31, knowledgeTime],
+      [knowledgeTime, knowledgeTime + 31],
+    ])
+      assert.throws(
+        () => verifyCredentialLog(proof(logTime, mirrorTime), expectedEntry, trust),
+        (error) => error.code === 'NOTE_UNTRUSTED_SIGNATURE',
+      );
+  });
 });

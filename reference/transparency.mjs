@@ -103,7 +103,15 @@ export function noteSignature(body, signer, { timestamp = now() } = {}) {
     encoded = scheme === 'ed25519-log' ? signature : Buffer.concat([uint(timestamp, 8), signature]);
   return `— ${signer.name} ${base64(Buffer.concat([noteKeyID(signer.name, pub, scheme), encoded]))}\n`;
 }
-export function verifyNote(note, signer, { maxFutureSkew = 30 } = {}) {
+export function verifyNote(note, signer, { maxFutureSkew = 30, knowledgeTime = now() } = {}) {
+  requireThat(
+    Number.isSafeInteger(knowledgeTime) &&
+      knowledgeTime >= 0 &&
+      Number.isSafeInteger(maxFutureSkew) &&
+      maxFutureSkew >= 0 &&
+      Number.isSafeInteger(knowledgeTime + maxFutureSkew),
+    'NOTE_VERIFICATION_TIME',
+  );
   const expectedType = signer.scheme.startsWith('ed25519')
     ? 'ed25519'
     : signer.scheme === 'mldsa44-cosign'
@@ -122,7 +130,7 @@ export function verifyNote(note, signer, { maxFutureSkew = 30 } = {}) {
     const timestamp = signer.scheme === 'ed25519-log' ? 0 : s.signature.readBigUInt64BE(0),
       sig = signer.scheme === 'ed25519-log' ? s.signature : s.signature.subarray(8);
     if (
-      timestamp <= BigInt(now() + maxFutureSkew) &&
+      timestamp <= BigInt(knowledgeTime + maxFutureSkew) &&
       verifyCrypto(null, signingInput(cp.body, signer, timestamp), signer.publicKey, sig)
     )
       good = true;

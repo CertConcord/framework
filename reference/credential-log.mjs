@@ -1,4 +1,4 @@
-import { H, D, b64u, dcbor, equal, requireThat, keyID, spki } from './core.mjs';
+import { H, D, b64u, dcbor, equal, requireThat, keyID, spki, now } from './core.mjs';
 import { evaluateInclusion, leafHash } from './mtc.mjs';
 import { witnessRequest, verifyNote } from './transparency.mjs';
 import { IndexedMerkleLog } from './storage/merkle.mjs';
@@ -62,7 +62,11 @@ export class CredentialLog {
   }
 }
 
-export function verifyCredentialLog(proof, expectedEntry, { log, members, threshold }) {
+export function verifyCredentialLog(
+  proof,
+  expectedEntry,
+  { log, members, threshold, knowledgeTime = now() },
+) {
   requireThat(
     proof.schemaVersion === 1 &&
       proof.adapterID === 'certconcord-mdoc-issuance-log-v1' &&
@@ -75,7 +79,7 @@ export function verifyCredentialLog(proof, expectedEntry, { log, members, thresh
       equal(proof.entry, D('PersonalMdocLogEntry', expectedEntry)),
     'CREDENTIAL_LOG_ENTRY',
   );
-  const cp = verifyNote(proof.checkpoint, log);
+  const cp = verifyNote(proof.checkpoint, log, { knowledgeTime });
   requireThat(
     cp.origin === log.name &&
       cp.size === BigInt(proof.size) &&
@@ -92,7 +96,7 @@ export function verifyCredentialLog(proof, expectedEntry, { log, members, thresh
   for (const receipt of proof.receipts) {
     const member = members.find((m) => m.operatorID === receipt.operatorID);
     if (!member) continue;
-    const signed = verifyNote(receipt.note, member),
+    const signed = verifyNote(receipt.note, member, { knowledgeTime }),
       id = b64u(keyID(member.publicKey));
     requireThat(
       signed.origin === cp.origin &&
