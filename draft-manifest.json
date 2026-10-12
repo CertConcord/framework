@@ -15,13 +15,13 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "bytes": 3624,
-      "sha256": "3b75baed383f98cd4acebf41cdf35ad67474dd24f97c7fd9018592b8ba878aba"
+      "bytes": 3623,
+      "sha256": "7a498009ad4250a9627fd81eb5de91536f948da039bcf45e801e426dfe16b9c1"
     },
     {
       "path": ".github/workflows/codeql.yml",
-      "bytes": 2163,
-      "sha256": "3bcba43c053149faa9359d222b985a3ed54ef5f5e14307f6b04f11d5526256d7"
+      "bytes": 2162,
+      "sha256": "dea5ab0e6c4aa5fd539c8c8b246c2b763b768e669b6040726296b56f630b7a62"
     },
     {
       "path": ".github/workflows/contributions.yml",
@@ -845,13 +845,13 @@
     },
     {
       "path": "reference/native/README.md",
-      "bytes": 9453,
-      "sha256": "e7e94106e5b49f1ebf375011bafeecc6792e5e783614314883c1ab29e68b89b8"
+      "bytes": 9795,
+      "sha256": "c99718220616e286281ec8396454541485a5a3f2afa2e9dce6275af151a63fde"
     },
     {
       "path": "reference/native/android/app/build.gradle.kts",
-      "bytes": 447,
-      "sha256": "956c920225267ba6afd96bb8a9678c0d2203fba8feb34a8068066f14feb5d5bf"
+      "bytes": 372,
+      "sha256": "0ac0965da79bf607df14d15cb8106d5db1f86ff23b0412bf94a5633810fb350c"
     },
     {
       "path": "reference/native/android/app/src/main/AndroidManifest.xml",
@@ -865,8 +865,8 @@
     },
     {
       "path": "reference/native/android/build.gradle.kts",
-      "bytes": 135,
-      "sha256": "30bc0dd2358ca2c685e10a102187533218ea412a61cb6779440e2d11d8595eea"
+      "bytes": 70,
+      "sha256": "1702d38c33dd90c19d72a939717f8d9cc5ddd92203426e6d0e64606ef5db3f83"
     },
     {
       "path": "reference/native/android/settings.gradle.kts",

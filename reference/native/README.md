@@ -48,7 +48,7 @@ IdentityDocumentServices provides the system registration and presentment interf
 
 ## Android
 
-Prerequisites: JDK 17, Gradle 8.11.1, Android SDK Platform 35/build tools, and an Android 11+ device with an enrolled strong biometric. StrongBox selection is explicit; an unavailable StrongBox produces an error.
+Prerequisites: JDK 17, Gradle 9.6.0, Android SDK Platform 35 and Build Tools 36.0.0, and an Android 11+ device with an enrolled strong biometric. The project uses AGP 9.4.1's built-in Kotlin support; no separate Kotlin Android plugin is required. These tool versions follow the [AGP compatibility requirements](https://developer.android.com/build/releases/agp-9-4-0-release-notes) and [built-in Kotlin migration](https://developer.android.com/build/migrate-to-built-in-kotlin). StrongBox selection is explicit; an unavailable StrongBox produces an error.
 
 ```sh
 gradle --project-dir native/android assembleDebug
