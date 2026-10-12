@@ -583,6 +583,18 @@
       "overall": "INVALID",
       "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
       "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-large-integer-critical",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_CRITICAL_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-large-integer-critical-bad-math",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/classification.json"
     }
   ]
 }

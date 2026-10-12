@@ -13,7 +13,7 @@ const spki = key => key.export({ format: 'der', type: 'spki' });
 const copy = value => decode(encode(value));
 const text = value => typeof value === 'string' && value.length > 0;
 const integer = value => Number.isSafeInteger(value) && value >= 0;
-const algorithmIdentifier = value => Number.isSafeInteger(value) || typeof value === 'bigint' || typeof value === 'string';
+const coseLabel = value => Number.isSafeInteger(value) || typeof value === 'bigint' || typeof value === 'string';
 const stamp = value => new Tag(0, new Date(value * 1000).toISOString().replace('.000Z', 'Z'));
 // Finite key/suite incompatibility table, not an implementation of the COSE registry.
 const incompatibleIssuerAlgorithms = new Set([-35, -36, -8, -19, -53, -48, -49, -50, -51, -52]);
@@ -41,11 +41,11 @@ function issuerAuth(value) {
   requireThat(Array.isArray(value) && value.length === 4 && Buffer.isBuffer(value[0]) && value[1] instanceof Map && Buffer.isBuffer(value[2]) && Buffer.isBuffer(value[3]), 'MDOC_ISSUER_AUTH');
   const headers = value[0].length ? decode(value[0]) : new Map(), unprotected = value[1];
   requireThat(headers instanceof Map, 'COSE_HEADERS');
-  requireThat(headers.has(1) && algorithmIdentifier(headers.get(1)), 'COSE_ALGORITHM_STRUCTURE');
+  requireThat(headers.has(1) && coseLabel(headers.get(1)), 'COSE_ALGORITHM_STRUCTURE');
   requireThat(!unprotected.has(1) && !unprotected.has(2), 'COSE_HEADERS');
   const critical = headers.get(2);
   if (headers.has(2)) requireThat(Array.isArray(critical) && critical.length > 0 &&
-    critical.every(key => (typeof key === 'string' || Number.isSafeInteger(key)) && headers.has(key)) &&
+    critical.every(key => coseLabel(key) && headers.has(key)) &&
     new Set(critical).size === critical.length, 'COSE_CRITICAL_STRUCTURE');
   requireThat([...headers.keys()].every(key => [1, 2, 33, 34].includes(key) || critical?.includes(key)) && [...unprotected.keys()].every(key => key === 33), 'COSE_HEADERS');
   requireThat(!(headers.has(33) && unprotected.has(33)), 'MDOC_CERTIFICATE_LOCATION');
@@ -214,7 +214,7 @@ export function verifyDocumentSignature(signature, document, options) {
   requireThat(Array.isArray(value) && value.length === 4 && Buffer.isBuffer(value[0]) && value[1] instanceof Map && value[1].size === 0 && value[2] === null && Buffer.isBuffer(value[3]), 'MDOC_DOCUMENT_COSE');
   const headers = value[0].length ? decode(value[0]) : new Map();
   requireThat(headers instanceof Map, 'COSE_HEADERS');
-  requireThat(headers.has(1) && algorithmIdentifier(headers.get(1)), 'COSE_ALGORITHM_STRUCTURE');
+  requireThat(headers.has(1) && coseLabel(headers.get(1)), 'COSE_ALGORITHM_STRUCTURE');
   const algorithm = headers.get(1);
   requireThat([-49, -50, -7].includes(algorithm), 'MDOC_DOCUMENT_ALGORITHM', 'UNSUPPORTED');
   const parameters = signatureParameters(document, options);

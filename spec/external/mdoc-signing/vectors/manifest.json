@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "sha256": {
     "vectors/base.json": "8f03dd203c4c09e95a8aa4c1c9ca02047435003406f048519eefc7d1daf3b921",
-    "vectors/classification.json": "06e93f24c9cf29bcc437d834f7bf15f498c9875b7cb07885a929d6a476a7f1f0",
+    "vectors/classification.json": "874ef12a917b0f8d3479ca2545a172369d65c2708664f0bcc6b1717d4f511a7f",
     "vectors/document-classification.json": "75ac64b7288f36dd3d73cc4517c94fbb1b9cf161d51fcf92e446b56fc298af1a"
   }
 }
