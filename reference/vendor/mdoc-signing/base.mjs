@@ -13,7 +13,10 @@ const spki = key => key.export({ format: 'der', type: 'spki' });
 const copy = value => decode(encode(value));
 const text = value => typeof value === 'string' && value.length > 0;
 const integer = value => Number.isSafeInteger(value) && value >= 0;
+const coseLabel = value => Number.isSafeInteger(value) || typeof value === 'bigint' || typeof value === 'string';
 const stamp = value => new Tag(0, new Date(value * 1000).toISOString().replace('.000Z', 'Z'));
+// Finite key/suite incompatibility table, not an implementation of the COSE registry.
+const incompatibleIssuerAlgorithms = new Set([-35, -36, -8, -19, -53, -48, -49, -50, -51, -52]);
 function time(value) {
   requireThat(value instanceof Tag && value.tag === 0 && typeof value.value === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(value.value), 'MDOC_TIME');
   const seconds = Date.parse(value.value) / 1000;
@@ -36,11 +39,15 @@ function certificateDetails(bytes) {
 }
 function issuerAuth(value) {
   requireThat(Array.isArray(value) && value.length === 4 && Buffer.isBuffer(value[0]) && value[1] instanceof Map && Buffer.isBuffer(value[2]) && Buffer.isBuffer(value[3]), 'MDOC_ISSUER_AUTH');
-  const headers = decode(value[0]), unprotected = value[1];
+  const headers = value[0].length ? decode(value[0]) : new Map(), unprotected = value[1];
   requireThat(headers instanceof Map, 'COSE_HEADERS');
-  requireThat(headers.get(1) === -7, 'COSE_ALGORITHM_UNSUPPORTED', 'UNSUPPORTED');
-  requireThat(!headers.has(2) && !unprotected.has(2), 'COSE_CRITICAL_UNSUPPORTED', 'UNSUPPORTED');
-  requireThat([...headers.keys()].every(key => [1, 33, 34].includes(key)) && [...unprotected.keys()].every(key => key === 33), 'COSE_HEADERS');
+  requireThat(headers.has(1) && coseLabel(headers.get(1)), 'COSE_ALGORITHM_STRUCTURE');
+  requireThat(!unprotected.has(1) && !unprotected.has(2), 'COSE_HEADERS');
+  const critical = headers.get(2);
+  if (headers.has(2)) requireThat(Array.isArray(critical) && critical.length > 0 &&
+    critical.every(key => coseLabel(key) && headers.has(key)) &&
+    new Set(critical).size === critical.length, 'COSE_CRITICAL_STRUCTURE');
+  requireThat([...headers.keys()].every(key => [1, 2, 33, 34].includes(key) || critical?.includes(key)) && [...unprotected.keys()].every(key => key === 33), 'COSE_HEADERS');
   requireThat(!(headers.has(33) && unprotected.has(33)), 'MDOC_CERTIFICATE_LOCATION');
   const chain = headers.get(33) ?? unprotected.get(33);
   const certificates = Array.isArray(chain) ? chain : [chain];
@@ -49,31 +56,37 @@ function issuerAuth(value) {
     const thumbprint = headers.get(34);
     requireThat(Array.isArray(thumbprint) && thumbprint.length === 2 && thumbprint[0] === -16 && same(thumbprint[1], hash('sha256', certificates[0])), 'MDOC_CERTIFICATE_THUMBPRINT');
   }
-  requireThat(value[3].length === 64, 'COSE_SIGNATURE');
-  return { value, headers, certificates, certificateBound: headers.has(34) };
+  return { value, headers, certificates, certificateBound: headers.has(34), critical: headers.has(2) };
 }
 
-// Cryptographic issuer-authentication primitive. This does not admit an issuer.
-export function verifyIssuerSigned(credential, { issuerKey, certificate, docType = SIGNING_DOCTYPE, at, allowPartial = false } = {}) {
-  requireThat(integer(at), 'MDOC_STATE_TIME');
+function issuerSignedFacts(credential, { issuerKey, certificate, docType = SIGNING_DOCTYPE, allowPartial = false }, at) {
   const bytes = Buffer.isBuffer(credential) ? Buffer.from(credential) : encode(credential);
   const is = decode(bytes);
   fields(is, ['nameSpaces', 'issuerAuth']);
   const ds = certificateDetails(Buffer.from(certificate ?? []));
   requireThat(p256(ds.publicKey) && p256(issuerKey) && same(spki(ds.publicKey), spki(issuerKey)), 'MDOC_ISSUER_KEY');
-  requireThat(ds.notBefore <= at && at < ds.notAfter, 'MDOC_CERTIFICATE_VALIDITY');
+  if (at !== undefined) requireThat(ds.notBefore <= at && at < ds.notAfter, 'MDOC_CERTIFICATE_VALIDITY');
   const auth = issuerAuth(get(is, 'issuerAuth'));
   requireThat(same(auth.certificates[0], ds.certificate.raw), 'MDOC_ISSUER_PIN');
-  requireThat(verify('sha256', encode(['Signature1', auth.value[0], Buffer.alloc(0), auth.value[2]]), { key: issuerKey, dsaEncoding: 'ieee-p1363' }, auth.value[3]), 'COSE_SIGNATURE');
+  const algorithm = auth.headers.get(1);
+  requireThat(!incompatibleIssuerAlgorithms.has(algorithm), 'MDOC_ISSUER_ALGORITHM_MISMATCH');
+  requireThat(algorithm === -7, 'COSE_ALGORITHM_UNSUPPORTED', 'UNSUPPORTED');
+  // Evaluate ES256 over the retained bytes before unimplemented critical or MSO
+  // semantics. Unknown algorithms do not authorize guessing ES256 mathematics.
+  requireThat(auth.value[3].length === 64 && verify('sha256', encode(['Signature1', auth.value[0], Buffer.alloc(0), auth.value[2]]), { key: issuerKey, dsaEncoding: 'ieee-p1363' }, auth.value[3]), 'COSE_SIGNATURE');
+  requireThat(!auth.critical, 'COSE_CRITICAL_UNSUPPORTED', 'UNSUPPORTED');
   const mso = unembed(decode(auth.value[2]));
-  fields(mso, ['version', 'digestAlgorithm', 'valueDigests', 'deviceKeyInfo', 'docType', 'validityInfo'], ['status']);
+  requireThat(mso instanceof Map && text(mso.get('version')), 'MDOC_CAPABILITY_STRUCTURE');
   requireThat(mso.get('version') === '1.0', 'MDOC_VERSION_UNSUPPORTED', 'UNSUPPORTED');
+  fields(mso, ['version', 'digestAlgorithm', 'valueDigests', 'deviceKeyInfo', 'docType', 'validityInfo'], ['status']);
+  requireThat(text(mso.get('digestAlgorithm')), 'MDOC_CAPABILITY_STRUCTURE');
   requireThat(mso.get('digestAlgorithm') === 'SHA-256', 'MDOC_DIGEST_UNSUPPORTED', 'UNSUPPORTED');
   requireThat(text(docType) && mso.get('docType') === docType, 'MDOC_DOCTYPE');
   const validityInfo = get(mso, 'validityInfo');
   fields(validityInfo, ['signed', 'validFrom', 'validUntil'], ['expectedUpdate']);
   const validity = Object.fromEntries([...validityInfo].map(([name, value]) => [name, time(value)]));
-  requireThat(ds.notBefore <= validity.signed && validity.signed <= validity.validFrom && validity.validFrom < validity.validUntil && validity.validUntil <= ds.notAfter && validity.validFrom <= at && at < validity.validUntil, 'MDOC_EXPIRED');
+  requireThat(ds.notBefore <= validity.signed && validity.signed <= validity.validFrom && validity.validFrom < validity.validUntil && validity.validUntil <= ds.notAfter, 'MDOC_EXPIRED');
+  if (at !== undefined) requireThat(validity.validFrom <= at && at < validity.validUntil, 'MDOC_EXPIRED');
   if (Object.hasOwn(validity, 'expectedUpdate')) requireThat(validity.signed <= validity.expectedUpdate && validity.expectedUpdate <= validity.validUntil, 'MDOC_UPDATE_TIME');
   const digests = get(mso, 'valueDigests'), namespaces = get(is, 'nameSpaces');
   requireThat(digests instanceof Map && digests.size > 0 && namespaces instanceof Map && namespaces.size > 0, 'MDOC_NAMESPACES');
@@ -103,6 +116,17 @@ export function verifyIssuerSigned(credential, { issuerKey, certificate, docType
   const holderPublicKey = createPublicKey({ key: holderJWK, format: 'jwk' });
   requireThat(!same(spki(issuerKey), spki(holderPublicKey)), 'MDOC_KEY_ROLE_COLLISION');
   return { mso, claims, holderJWK, holderPublicKey, issuerSigned: is, credential: bytes, issuerAuthBytes: encode(auth.value), certificateBytes: Buffer.from(certificate), certificateChain: auth.certificates.map(value => Buffer.from(value)), certificateBound: auth.certificateBound, validity };
+}
+
+// Original-byte mathematics and structure only, with no evaluation time or admission verdict.
+export function inspectIssuerSigned(credential, { issuerKey, certificate, docType = SIGNING_DOCTYPE, allowPartial = false } = {}) {
+  return issuerSignedFacts(credential, { issuerKey, certificate, docType, allowPartial });
+}
+
+// Cryptographic issuer authentication at an explicit time. This does not admit an issuer.
+export function verifyIssuerSigned(credential, { issuerKey, certificate, docType = SIGNING_DOCTYPE, at, allowPartial = false } = {}) {
+  requireThat(integer(at), 'MDOC_STATE_TIME');
+  return issuerSignedFacts(credential, { issuerKey, certificate, docType, allowPartial }, at);
 }
 
 export function issueIssuerSigned({ namespaces, holderJWK, certificate, privateKey, docType = SIGNING_DOCTYPE, signed, validFrom, validUntil }) {
@@ -198,12 +222,17 @@ export function prepareDocumentSignature(document, options) {
 export function verifyDocumentSignature(signature, document, options) {
   const value = decode(signature);
   requireThat(Array.isArray(value) && value.length === 4 && Buffer.isBuffer(value[0]) && value[1] instanceof Map && value[1].size === 0 && value[2] === null && Buffer.isBuffer(value[3]), 'MDOC_DOCUMENT_COSE');
-  const headers = decode(value[0]);
-  requireThat(headers instanceof Map && [-49, -50, -7].includes(headers.get(1)), 'MDOC_DOCUMENT_ALGORITHM', 'UNSUPPORTED');
+  const headers = value[0].length ? decode(value[0]) : new Map();
+  requireThat(headers instanceof Map, 'COSE_HEADERS');
+  requireThat(headers.has(1) && coseLabel(headers.get(1)), 'COSE_ALGORITHM_STRUCTURE');
+  const algorithm = headers.get(1);
+  requireThat([-49, -50, -7].includes(algorithm), 'MDOC_DOCUMENT_ALGORITHM', 'UNSUPPORTED');
   const parameters = signatureParameters(document, options);
+  requireThat(algorithm === parameters.algorithm, 'MDOC_DOCUMENT_ALGORITHM_MISMATCH');
+  const received = { ...parameters, tbs: encode(['Signature1', value[0], Buffer.alloc(0), document]) };
+  requireThat(verifyDocumentValue(received, value[3]), 'MDOC_DOCUMENT_SIGNATURE');
   requireThat(same(value[0], parameters.protectedBytes), 'MDOC_DOCUMENT_PROTECTED_HEADERS');
-  requireThat(verifyDocumentValue(parameters, value[3]), 'MDOC_DOCUMENT_SIGNATURE');
-  return { tbs: parameters.tbs, signature: Buffer.from(value[3]) };
+  return { tbs: received.tbs, signature: Buffer.from(value[3]) };
 }
 export function verifySignedDocument(document, signature, credential, options) {
   requireThat(Buffer.isBuffer(document) && Buffer.isBuffer(signature) && Buffer.isBuffer(credential), 'MDOC_DOCUMENT_BYTES');

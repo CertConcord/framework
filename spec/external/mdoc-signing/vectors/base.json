@@ -566,7 +566,7 @@
       "knowledgeTime": 1791389849,
       "expected": {
         "overall": "INVALID",
-        "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS"
+        "reason": "MDOC_DOCUMENT_SIGNATURE"
       }
     },
     {
@@ -582,7 +582,7 @@
       "knowledgeTime": 1791389849,
       "expected": {
         "overall": "INVALID",
-        "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS"
+        "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH"
       }
     }
   ]

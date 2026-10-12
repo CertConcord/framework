@@ -1,5 +1,6 @@
 import {
   issueIssuerSigned,
+  inspectIssuerSigned as inspectBaseIssuerSigned,
   verifyIssuerSigned as verifyBaseIssuerSigned,
 } from './vendor/mdoc-signing/base.mjs';
 import { validateMdocCertificate } from './mdoc-pki.mjs';
@@ -80,6 +81,14 @@ export function verifyIssuerSigned(
 ) {
   validateMdocCertificate(certificate, { at, certificateProfile });
   return verifyBaseIssuerSigned(credential, { issuerKey, certificate, docType, at, allowPartial });
+}
+// Structure and original-byte mathematics only. These facts do not establish
+// certificate-profile admission or credential validity at an operation time.
+export function inspectIssuerSigned(
+  credential,
+  { issuerKey, certificate, docType = DOCTYPE, allowPartial = false } = {},
+) {
+  return inspectBaseIssuerSigned(credential, { issuerKey, certificate, docType, allowPartial });
 }
 // The application supplies its status verifier explicitly to avoid a dependency
 // cycle with OpenID. It must authenticate the token and validate the URI/index

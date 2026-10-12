@@ -114,12 +114,31 @@ export interface MdocTrust extends CommonTrust {
   docType?: string;
   certificateProfile?: string;
 }
+export type VerificationOutcome = 'VALID' | 'INVALID' | 'INDETERMINATE' | 'UNSUPPORTED';
+export type VerificationDimension =
+  | 'integrity'
+  | 'issuerTrust'
+  | 'qualification'
+  | 'keyBinding'
+  | 'authorization'
+  | 'status'
+  | 'time'
+  | 'transparency';
+export interface VerificationDimensionResult {
+  readonly overall: VerificationOutcome;
+  readonly reason: string;
+}
 export interface VerificationResult {
-  overall: 'VALID' | 'INVALID' | 'INDETERMINATE' | 'UNSUPPORTED';
-  coreRevision: 'draft-03';
-  profile?: string;
-  reason?: string;
-  [dimension: string]: unknown;
+  readonly overall: VerificationOutcome;
+  readonly coreRevision: 'draft-03';
+  /** The parsed candidate plan label; this field does not imply acceptance. */
+  readonly profile: string | null;
+  readonly reason: string;
+  /** Omitted dimensions were not established by the checks that completed. */
+  readonly dimensions: Readonly<
+    Partial<Record<VerificationDimension, VerificationDimensionResult>>
+  >;
+  [detail: string]: unknown;
 }
 export function createVerifier(
   options: ({ format: 'CMS'; trust: CMSTrust } | { format: 'MDOC'; trust: MdocTrust }) & {

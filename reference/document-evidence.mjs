@@ -6,6 +6,7 @@ import { parseCertificate, RRA } from './pki.mjs';
 import { readControl, evaluateStatus } from './state.mjs';
 import { evidenceLeaf } from './evidence-plan.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
+import { evaluationPhase, evaluated, evaluatedCheck } from './verification-result.mjs';
 import {
   ORGANIZATION_PROFILE,
   ORGANIZATION_PLAN,
@@ -162,6 +163,56 @@ export function verifyRegistrationBinding(
   return r;
 }
 
+export function verifyOrganizationAuthorizationBinding(
+  authorization,
+  { raw, sim, activation, permit, receipt },
+) {
+  fields(authorization, [
+    'schemaVersion',
+    'authorizationID',
+    'trustDomainID',
+    'organizationID',
+    'actorID',
+    'actorType',
+    'keyID',
+    'certificateID',
+    'purpose',
+    'activationHash',
+    'policyHash',
+    'issuedAt',
+    'expiresAt',
+  ]);
+  requireThat(
+    authorization.schemaVersion === 1 &&
+      Buffer.isBuffer(authorization.authorizationID) &&
+      authorization.authorizationID.length === 32 &&
+      equal(authorization.authorizationID, sim.organizationAuthorizationID) &&
+      equal(authorization.trustDomainID, sim.trustDomainID) &&
+      equal(authorization.organizationID, sim.subjectID) &&
+      Buffer.isBuffer(authorization.actorID) &&
+      authorization.actorID.length === 32 &&
+      ['PERSON', 'WORKLOAD'].includes(authorization.actorType) &&
+      (authorization.actorType === 'WORKLOAD'
+        ? permit.proofMode === 'WORKLOAD'
+        : ['HUMAN_WEBAUTHN', 'HUMAN_MDOC', 'HUMAN_SESSION'].includes(permit.proofMode)) &&
+      authorization.purpose === 'ORGANIZATION_SEAL' &&
+      sim.purpose === 'ORGANIZATION_SEAL' &&
+      equal(authorization.keyID, sim.keyID) &&
+      equal(authorization.certificateID, sim.certificateID) &&
+      equal(authorization.policyHash, sim.policyHash) &&
+      equal(authorization.activationHash, H('ActivationContext', activation)) &&
+      equal(permit.activationEvidenceHash, sha512(raw)) &&
+      Number.isSafeInteger(authorization.issuedAt) &&
+      Number.isSafeInteger(authorization.expiresAt) &&
+      authorization.issuedAt >= activation.issuedAt &&
+      authorization.expiresAt <= activation.expiresAt &&
+      authorization.issuedAt <= receipt.executedAt &&
+      authorization.expiresAt > receipt.executedAt,
+    'DOCUMENT_ORGANIZATION_BINDING',
+  );
+  return authorization;
+}
+
 export function verifyDocumentEvidence(
   {
     format,
@@ -176,7 +227,9 @@ export function verifyDocumentEvidence(
     credential,
   },
   trust,
+  evaluation,
 ) {
+  evaluationPhase(evaluation, 'qualification');
   if (Object.hasOwn(policy, 'organizationDelegation')) {
     organizationEvidenceTypes(policy, format);
     throw orgError('ORG_CURRENT_VERIFIER_REQUIRED', 'UNSUPPORTED');
@@ -202,10 +255,12 @@ export function verifyDocumentEvidence(
       at: receipt.executedAt,
     });
   else {
-    registration = readControl(
-      values.RegistrationAuthorization,
-      'RegistrationAuthorization',
-      trust.raCertificate,
+    registration = evaluatedCheck(evaluation, 'integrity', () =>
+      readControl(
+        values.RegistrationAuthorization,
+        'RegistrationAuthorization',
+        trust.raCertificate,
+      ),
     );
     requireThat(
       registration.schemaVersion === 1 &&
@@ -241,69 +296,38 @@ export function verifyDocumentEvidence(
     'DOCUMENT_ORGANIZATION_PURPOSE',
   );
   if (!policy.documentEvidence) {
+    evaluationPhase(evaluation, undefined);
     requireAuthorities(trust.authorityResolver, authorityQueries);
     return { subjectBinding: 'REGISTRATION_AUTHORIZATION' };
   }
   let authorization, authority;
   if (org) {
+    evaluationPhase(evaluation, 'authorization');
     authority = trust.organizationAuthorities?.find((a) => equal(a.organizationID, sim.subjectID));
     requireThat(
       authority?.certificate && authority.statusCertificate,
       'DOCUMENT_ORGANIZATION_TRUST_REQUIRED',
     );
-    authorization = readControl(
-      values.OrganizationAuthorization,
-      'OrganizationAuthorization',
-      authority.certificate,
+    authorization = evaluatedCheck(evaluation, 'integrity', () =>
+      readControl(
+        values.OrganizationAuthorization,
+        'OrganizationAuthorization',
+        authority.certificate,
+      ),
     );
-    fields(authorization, [
-      'schemaVersion',
-      'authorizationID',
-      'trustDomainID',
-      'organizationID',
-      'actorID',
-      'actorType',
-      'keyID',
-      'certificateID',
-      'purpose',
-      'activationHash',
-      'policyHash',
-      'issuedAt',
-      'expiresAt',
-    ]);
-    requireThat(
-      authorization.schemaVersion === 1 &&
-        Buffer.isBuffer(authorization.authorizationID) &&
-        authorization.authorizationID.length === 32 &&
-        equal(authorization.authorizationID, sim.organizationAuthorizationID) &&
-        equal(authorization.trustDomainID, sim.trustDomainID) &&
-        equal(authorization.organizationID, sim.subjectID) &&
-        Buffer.isBuffer(authorization.actorID) &&
-        authorization.actorID.length === 32 &&
-        ['PERSON', 'WORKLOAD'].includes(authorization.actorType) &&
-        (authorization.actorType === 'WORKLOAD'
-          ? permit.proofMode === 'WORKLOAD'
-          : ['HUMAN_WEBAUTHN', 'HUMAN_MDOC', 'HUMAN_SESSION'].includes(permit.proofMode)) &&
-        authorization.purpose === 'ORGANIZATION_SEAL' &&
-        sim.purpose === 'ORGANIZATION_SEAL' &&
-        equal(authorization.keyID, sim.keyID) &&
-        equal(authorization.certificateID, sim.certificateID) &&
-        equal(authorization.policyHash, sim.policyHash) &&
-        equal(authorization.activationHash, H('ActivationContext', activation)) &&
-        equal(permit.activationEvidenceHash, sha512(values.OrganizationAuthorization)) &&
-        Number.isSafeInteger(authorization.issuedAt) &&
-        Number.isSafeInteger(authorization.expiresAt) &&
-        authorization.issuedAt >= activation.issuedAt &&
-        authorization.expiresAt <= activation.expiresAt &&
-        authorization.issuedAt <= receipt.executedAt &&
-        authorization.expiresAt > receipt.executedAt,
-      'DOCUMENT_ORGANIZATION_BINDING',
-    );
+    verifyOrganizationAuthorizationBinding(authorization, {
+      raw: values.OrganizationAuthorization,
+      sim,
+      activation,
+      permit,
+      receipt,
+    });
   }
   let stateTime = receipt.executedAt,
     time = 'DECLARED_EXECUTION_TIME',
     timeResult;
   if (policy.requireTrustedTime) {
+    evaluationPhase(evaluation, 'time');
     requireThat(
       trust.timestamp?.certificate &&
         trust.timestamp.issuerKey &&
@@ -356,10 +380,12 @@ export function verifyDocumentEvidence(
     time = 'TRUSTED_PROOF_OF_EXISTENCE';
   }
   if (org) {
+    evaluationPhase(evaluation, 'authorization');
     requireThat(
       authorization.issuedAt <= stateTime && authorization.expiresAt > stateTime,
       'DOCUMENT_ORGANIZATION_WINDOW',
     );
+    evaluationPhase(evaluation, 'status');
     const status = readControl(
       values.OrganizationAuthorizationStatus,
       'OrganizationAuthorizationStatus',
@@ -396,6 +422,8 @@ export function verifyDocumentEvidence(
       knowledgeTime,
       scope: 'ORGANIZATION_AUTHORIZATION',
     });
+    if (result.overall !== 'VALID')
+      evaluated(evaluation, 'status', result.overall, 'DOCUMENT_ORGANIZATION_' + result.reason);
     if (result.overall === 'INDETERMINATE')
       unavailable.push('DOCUMENT_ORGANIZATION_' + result.reason);
     else if (result.overall !== 'VALID')
@@ -403,6 +431,7 @@ export function verifyDocumentEvidence(
         new AuthorityError({ ...result, reason: 'DOCUMENT_ORGANIZATION_' + result.reason }),
       );
   }
+  evaluationPhase(evaluation, undefined);
   requireAuthorities(trust.authorityResolver, authorityQueries, unavailable, authorityFailures);
   return {
     time,

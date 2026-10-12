@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "format": "CMS",
+  "originalBytes": {
+    "$file": "files/683fdb08df3e0faf5d9979d9e8cefc2e88d8b5ed0178ec108199d30f9db7b479.der.b64",
+    "type": "bytes"
+  },
+  "currentBytes": {
+    "$file": "files/683fdb08df3e0faf5d9979d9e8cefc2e88d8b5ed0178ec108199d30f9db7b479.der.b64",
+    "type": "bytes"
+  },
+  "evidenceRecord": {
+    "$file": "files/15a881199b893bf50a2fc468a66db73ee9485ad90430cddf43c40b2138e382a4.der.b64",
+    "type": "bytes"
+  },
+  "historicalTrust": "files/22ffb1021b93411e69d400c34faad0cc629c206411fa23232e6a421adb314758.json",
+  "currentTrust": "files/f73d3105ba62457dd48ea8110edd094cbabd2c345d3fc3437ee1149daf8b3611.json",
+  "history": {
+    "$file": "files/3b6f0149606ef1b92f77dd31336f41556351e722558641426cfb387ce297a656.der.b64",
+    "type": "bytes"
+  },
+  "historyTrust": {
+    "trustDomainID": {
+      "$hex": "f3e4d1b2f67b4f0cc8d4961d23fc34bf9db542954838bdab54e18824a748b2c7"
+    },
+    "governance": {
+      "roots": [
+        {
+          "publicKeyDER": {
+            "$file": "files/8b557015ed9a66b377929b0eaf5c01a63489ffe9936c9a728d99d24f8e7d8e40.der.b64",
+            "type": "bytes"
+          },
+          "validFrom": 1791822935,
+          "validUntil": 1792859827
+        }
+      ],
+      "threshold": 1
+    },
+    "algorithmDeadlines": {
+      "ml-dsa-87": 1792859827,
+      "ml-dsa-65": 1792859827,
+      "ec": 1792859827,
+      "ed25519": 1792859827
+    },
+    "validationTime": 1791995827
+  },
+  "publicationTSA": {
+    "certificate": {
+      "$file": "files/79c6bced3ad6b8a82148fadd48c546e7eb6b13f130423c854b084d3b763f771b.der.b64",
+      "type": "bytes"
+    },
+    "issuerKey": {
+      "$file": "files/8b557015ed9a66b377929b0eaf5c01a63489ffe9936c9a728d99d24f8e7d8e40.spki.b64",
+      "type": "spki"
+    },
+    "policy": "1.3.6.1.4.1.32473.99.2"
+  },
+  "preservationPolicy": {
+    "at": 1791995827,
+    "dataValidUntil": 1791909427,
+    "hashValidUntil": {
+      "2.16.840.1.101.3.4.2.1": 1791825527,
+      "2.16.840.1.101.3.4.2.3": 1792859827
+    },
+    "timestampAuthorities": [
+      {
+        "certificate": {
+          "$file": "files/fed195b84328e665c0f3ff0585eb26c694d790ae3c1b045c020924178e75a403.der.b64",
+          "type": "bytes"
+        },
+        "issuerKey": {
+          "$file": "files/8b557015ed9a66b377929b0eaf5c01a63489ffe9936c9a728d99d24f8e7d8e40.spki.b64",
+          "type": "spki"
+        },
+        "policy": "1.3.6.1.4.1.32473.99.2",
+        "validUntil": 1791826027,
+        "status": {
+          "status": "GOOD",
+          "publishedAt": 1791822995,
+          "nextUpdate": 1792859827
+        }
+      },
+      {
+        "certificate": {
+          "$file": "files/d42661b5a0cf8f3aafe1053bed042bc99c9f8f056591156fa7f6236b3b761368.der.b64",
+          "type": "bytes"
+        },
+        "issuerKey": {
+          "$file": "files/8b557015ed9a66b377929b0eaf5c01a63489ffe9936c9a728d99d24f8e7d8e40.spki.b64",
+          "type": "spki"
+        },
+        "policy": "1.3.6.1.4.1.32473.99.2",
+        "validUntil": 1792859827,
+        "status": {
+          "status": "GOOD",
+          "publishedAt": 1791822995,
+          "nextUpdate": 1792859827
+        }
+      }
+    ]
+  },
+  "historicalKnowledgeTime": 1791823027,
+  "currentKnowledgeTime": 1791995827
+}

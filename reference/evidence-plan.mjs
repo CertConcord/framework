@@ -25,7 +25,10 @@ export function createEvidencePackage(profile, objects) {
 }
 
 // The plan references every leaf exactly once. No nested plans or graph links are admitted.
-export function verifyEvidencePackage(bundle, { requiredTypes, maxBytes = 64 * 1024 * 1024 } = {}) {
+export function inspectEvidencePackage(
+  bundle,
+  { requiredTypes, maxBytes = 64 * 1024 * 1024 } = {},
+) {
   requireThat(
     bundle && Number.isSafeInteger(bundle.schemaVersion) && bundle.schemaVersion > 0,
     'ECP_SCHEMA',
@@ -55,7 +58,13 @@ export function verifyEvidencePackage(bundle, { requiredTypes, maxBytes = 64 * 1
     leaves.set(leaf.type, leaf);
     ids.add(b64u(leaf.id));
   }
-  requireThat(Object.hasOwn(bundle, 'plan'), 'ECP_MISSING_OBJECT');
+  if (!Object.hasOwn(bundle, 'plan'))
+    return {
+      plan: null,
+      values: Object.fromEntries([...leaves].map(([type, leaf]) => [type, leaf.payload])),
+      missingTypes: ['VerificationPlan'],
+      supportedSchema: bundle.schemaVersion === 2,
+    };
   const plan = bundle.plan;
   fields(plan, ['schemaVersion', 'profile', 'objects']);
   requireThat(
@@ -86,15 +95,24 @@ export function verifyEvidencePackage(bundle, { requiredTypes, maxBytes = 64 * 1
       entries.every(([type]) => requiredTypes.includes(type)),
       'ECP_PLAN',
     );
-  requireThat(
-    entries.every(([type]) => leaves.has(type)) &&
-      (!requiredTypes || requiredTypes.every((type) => Object.hasOwn(plan.objects, type))),
-    'ECP_MISSING_OBJECT',
-  );
-  requireThat(bundle.schemaVersion === 2 && plan.schemaVersion === 2, 'ECP_UNSUPPORTED_SCHEMA');
   return {
     plan,
     values: Object.fromEntries([...leaves].map(([type, leaf]) => [type, leaf.payload])),
-    closure: 'COMPLETE',
+    missingTypes: [
+      ...new Set([
+        ...entries.filter(([type]) => !leaves.has(type)).map(([type]) => type),
+        ...(requiredTypes ?? []).filter((type) => !Object.hasOwn(plan.objects, type)),
+      ]),
+    ],
+    supportedSchema: bundle.schemaVersion === 2 && plan.schemaVersion === 2,
   };
+}
+
+// Inspection authenticates the available commitments only; callers must not
+// confuse its partial values with a complete or semantically validated package.
+export function verifyEvidencePackage(bundle, options) {
+  const inspected = inspectEvidencePackage(bundle, options);
+  requireThat(inspected.supportedSchema, 'ECP_UNSUPPORTED_SCHEMA');
+  requireThat(inspected.missingTypes.length === 0, 'ECP_MISSING_OBJECT');
+  return { plan: inspected.plan, values: inspected.values, closure: 'COMPLETE' };
 }

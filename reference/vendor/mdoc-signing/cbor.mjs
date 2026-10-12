@@ -111,7 +111,7 @@ export function decode(
       seen = new Set();
     for (let i = 0; i < l; i++) {
       const k = read(depth + 1);
-      requireThat(typeof k === 'string' || Number.isSafeInteger(k), 'CBOR_MAP_KEY');
+      requireThat(typeof k === 'string' || Number.isSafeInteger(k) || typeof k === 'bigint', 'CBOR_MAP_KEY');
       const id = typeof k + ':' + k;
       requireThat(!seen.has(id), 'CBOR_DUPLICATE');
       seen.add(id);

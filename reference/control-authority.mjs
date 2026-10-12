@@ -1,5 +1,6 @@
 import { requireAuthority, AuthorityError } from './authority-history.mjs';
 import { requireThat } from './core.mjs';
+import { evaluatedCheck } from './verification-result.mjs';
 
 export function collectAuthorityFailure(check, failures) {
   try {
@@ -91,6 +92,7 @@ export function requireAuthorities(
   unavailable = [],
   priorFailures = [],
   quorums = [],
+  evaluation,
 ) {
   const failures = [...priorFailures];
   for (const query of queries) {
@@ -102,7 +104,11 @@ export function requireAuthorities(
     }
   }
   for (const quorum of quorums)
-    collectAuthorityFailure(() => requireAuthorityQuorum(resolver, quorum), failures);
+    collectAuthorityFailure(
+      () =>
+        evaluatedCheck(evaluation, 'transparency', () => requireAuthorityQuorum(resolver, quorum)),
+      failures,
+    );
   const failure =
     failures.find((error) => error.overall === 'INVALID') ??
     failures.find((error) => error.overall === 'UNSUPPORTED') ??

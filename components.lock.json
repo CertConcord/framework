@@ -43,14 +43,14 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "72bfc4e75f465f174ee6bca00ac793641cb496f7",
+      "commit": "45b2b04bff5a8e8cd5e19c702c442eb06bb19e08",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mdoc-signing/draft.md",
-          "sha256": "bceae4a47da2c3d154e04070fd6c45e33e7d93dae4b588f2e892f6c2894b47f8"
+          "sha256": "e0f2345e1051cb28e1784ae50bcd3baab6081cc888341d6d1348e4a57c8d935d"
         },
         {
           "source": "sources.json",
@@ -60,7 +60,7 @@
         {
           "source": "cases.json",
           "path": "spec/external/mdoc-signing/cases.json",
-          "sha256": "11c73983979a885dd0a01c39c3bfcf32aadb3195205640ded572b34613f09a57"
+          "sha256": "d63a2f33118779ae36861b5d00f78c7fba015b9fa135e1d35e2a3cdfda3ca735"
         },
         {
           "source": "NOTICE",
@@ -75,12 +75,12 @@
         {
           "source": "reference/base.mjs",
           "path": "reference/vendor/mdoc-signing/base.mjs",
-          "sha256": "e969e643555f5750c1ad4343463b148d97ed056e2b8908dd0e49a582ad99c620"
+          "sha256": "a602bb6bd7c405c188208ce61629d49a8a6ba7cd3c358f6fe742b05bb623ca79"
         },
         {
           "source": "reference/cbor.mjs",
           "path": "reference/vendor/mdoc-signing/cbor.mjs",
-          "sha256": "8a306426f70e95bf550739331c0af852da4f5921309d16e9506885d46cf6e8c1"
+          "sha256": "73aa91b4aae2956bf97aca91c4f273b40133525f0745251e6e3899bcb65e718f"
         },
         {
           "source": "reference/errors.mjs",
@@ -90,12 +90,27 @@
         {
           "source": "vectors/base.json",
           "path": "spec/external/mdoc-signing/vectors/base.json",
-          "sha256": "1a71dde4c9e406577e956d93536107482a373b7588d1b22fa329272c33d8d706"
+          "sha256": "8f03dd203c4c09e95a8aa4c1c9ca02047435003406f048519eefc7d1daf3b921"
         },
         {
           "source": "vectors/manifest.json",
           "path": "spec/external/mdoc-signing/vectors/manifest.json",
-          "sha256": "764e07686c417ea7ba5f72e887f72ad3998942049f19fd2b4d52386e47946fd3"
+          "sha256": "1900c8309529858c61c1e5a25a9c7f41f4b0b233a2e82ea49f544415b587c0f9"
+        },
+        {
+          "source": "vectors/classification.json",
+          "path": "spec/external/mdoc-signing/vectors/classification.json",
+          "sha256": "874ef12a917b0f8d3479ca2545a172369d65c2708664f0bcc6b1717d4f511a7f"
+        },
+        {
+          "source": "vectors/document-classification.json",
+          "path": "spec/external/mdoc-signing/vectors/document-classification.json",
+          "sha256": "75ac64b7288f36dd3d73cc4517c94fbb1b9cf161d51fcf92e446b56fc298af1a"
+        },
+        {
+          "source": "vectors/issuer-facts.json",
+          "path": "spec/external/mdoc-signing/vectors/issuer-facts.json",
+          "sha256": "1c300512e0b280a96d9269c192ec480dcd210389affab8c4377beed6a6d77498"
         }
       ]
     },
