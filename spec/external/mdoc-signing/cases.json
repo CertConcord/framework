@@ -202,13 +202,13 @@
     {
       "id": "unknown-document-critical-header",
       "overall": "INVALID",
-      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
       "vector": "vectors/base.json"
     },
     {
       "id": "presentation-reinterpreted-as-signature",
       "overall": "INVALID",
-      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH",
       "vector": "vectors/base.json"
     },
     {
@@ -424,6 +424,165 @@
       "overall": "INVALID",
       "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
       "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-unknown-large-integer",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_ALGORITHM_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "document-result-valid-es256",
+      "overall": "VALID",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-valid-ml-dsa-65",
+      "overall": "VALID",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-valid-ml-dsa-87",
+      "overall": "VALID",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-missing",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-null",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-boolean",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-array",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-unknown-integer",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DOCUMENT_ALGORITHM",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-unknown-text",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DOCUMENT_ALGORITHM",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-unknown-large-integer",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DOCUMENT_ALGORITHM",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-key-mismatch-es256",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-key-mismatch-ml-dsa-65",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-key-mismatch-ml-dsa-87",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-credential-last",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-credential-last-bad-math",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-unexpected-critical",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-unexpected-critical-bad-math",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-changed-required-value",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-changed-required-value-bad-math",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-noncanonical-protected-order",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-noncanonical-protected-order-bad-math",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-unprotected-header",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_COSE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-embedded-payload",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_COSE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-bad-signature",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-changed-document",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-changed-external-credential",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
     }
   ]
 }
