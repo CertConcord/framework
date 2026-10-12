@@ -36,11 +36,15 @@ function certificateDetails(bytes) {
 }
 function issuerAuth(value) {
   requireThat(Array.isArray(value) && value.length === 4 && Buffer.isBuffer(value[0]) && value[1] instanceof Map && Buffer.isBuffer(value[2]) && Buffer.isBuffer(value[3]), 'MDOC_ISSUER_AUTH');
-  const headers = decode(value[0]), unprotected = value[1];
+  const headers = value[0].length ? decode(value[0]) : new Map(), unprotected = value[1];
   requireThat(headers instanceof Map, 'COSE_HEADERS');
-  requireThat(headers.get(1) === -7, 'COSE_ALGORITHM_UNSUPPORTED', 'UNSUPPORTED');
-  requireThat(!headers.has(2) && !unprotected.has(2), 'COSE_CRITICAL_UNSUPPORTED', 'UNSUPPORTED');
-  requireThat([...headers.keys()].every(key => [1, 33, 34].includes(key)) && [...unprotected.keys()].every(key => key === 33), 'COSE_HEADERS');
+  requireThat(headers.has(1) && (Number.isSafeInteger(headers.get(1)) || typeof headers.get(1) === 'string'), 'COSE_ALGORITHM_STRUCTURE');
+  requireThat(!unprotected.has(1) && !unprotected.has(2), 'COSE_HEADERS');
+  const critical = headers.get(2);
+  if (headers.has(2)) requireThat(Array.isArray(critical) && critical.length > 0 &&
+    critical.every(key => (typeof key === 'string' || Number.isSafeInteger(key)) && headers.has(key)) &&
+    new Set(critical).size === critical.length, 'COSE_CRITICAL_STRUCTURE');
+  requireThat([...headers.keys()].every(key => [1, 2, 33, 34].includes(key) || critical?.includes(key)) && [...unprotected.keys()].every(key => key === 33), 'COSE_HEADERS');
   requireThat(!(headers.has(33) && unprotected.has(33)), 'MDOC_CERTIFICATE_LOCATION');
   const chain = headers.get(33) ?? unprotected.get(33);
   const certificates = Array.isArray(chain) ? chain : [chain];
@@ -49,8 +53,7 @@ function issuerAuth(value) {
     const thumbprint = headers.get(34);
     requireThat(Array.isArray(thumbprint) && thumbprint.length === 2 && thumbprint[0] === -16 && same(thumbprint[1], hash('sha256', certificates[0])), 'MDOC_CERTIFICATE_THUMBPRINT');
   }
-  requireThat(value[3].length === 64, 'COSE_SIGNATURE');
-  return { value, headers, certificates, certificateBound: headers.has(34) };
+  return { value, headers, certificates, certificateBound: headers.has(34), critical: headers.has(2) };
 }
 
 // Cryptographic issuer-authentication primitive. This does not admit an issuer.
@@ -64,10 +67,18 @@ export function verifyIssuerSigned(credential, { issuerKey, certificate, docType
   requireThat(ds.notBefore <= at && at < ds.notAfter, 'MDOC_CERTIFICATE_VALIDITY');
   const auth = issuerAuth(get(is, 'issuerAuth'));
   requireThat(same(auth.certificates[0], ds.certificate.raw), 'MDOC_ISSUER_PIN');
-  requireThat(verify('sha256', encode(['Signature1', auth.value[0], Buffer.alloc(0), auth.value[2]]), { key: issuerKey, dsaEncoding: 'ieee-p1363' }, auth.value[3]), 'COSE_SIGNATURE');
+  const algorithm = auth.headers.get(1);
+  requireThat(![-35, -36, -8, -49, -50].includes(algorithm), 'MDOC_ISSUER_ALGORITHM_MISMATCH');
+  requireThat(algorithm === -7, 'COSE_ALGORITHM_UNSUPPORTED', 'UNSUPPORTED');
+  // Evaluate ES256 over the retained bytes before unimplemented critical or MSO
+  // semantics. Unknown algorithms do not authorize guessing ES256 mathematics.
+  requireThat(auth.value[3].length === 64 && verify('sha256', encode(['Signature1', auth.value[0], Buffer.alloc(0), auth.value[2]]), { key: issuerKey, dsaEncoding: 'ieee-p1363' }, auth.value[3]), 'COSE_SIGNATURE');
+  requireThat(!auth.critical, 'COSE_CRITICAL_UNSUPPORTED', 'UNSUPPORTED');
   const mso = unembed(decode(auth.value[2]));
-  fields(mso, ['version', 'digestAlgorithm', 'valueDigests', 'deviceKeyInfo', 'docType', 'validityInfo'], ['status']);
+  requireThat(mso instanceof Map && text(mso.get('version')), 'MDOC_CAPABILITY_STRUCTURE');
   requireThat(mso.get('version') === '1.0', 'MDOC_VERSION_UNSUPPORTED', 'UNSUPPORTED');
+  fields(mso, ['version', 'digestAlgorithm', 'valueDigests', 'deviceKeyInfo', 'docType', 'validityInfo'], ['status']);
+  requireThat(text(mso.get('digestAlgorithm')), 'MDOC_CAPABILITY_STRUCTURE');
   requireThat(mso.get('digestAlgorithm') === 'SHA-256', 'MDOC_DIGEST_UNSUPPORTED', 'UNSUPPORTED');
   requireThat(text(docType) && mso.get('docType') === docType, 'MDOC_DOCTYPE');
   const validityInfo = get(mso, 'validityInfo');

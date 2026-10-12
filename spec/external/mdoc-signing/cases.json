@@ -210,6 +210,190 @@
       "overall": "INVALID",
       "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
       "vector": "vectors/base.json"
+    },
+    {
+      "id": "issuer-result-valid-selected-issuer",
+      "overall": "VALID",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-valid-original-protected-order",
+      "overall": "VALID",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-null",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-array",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-boolean",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-missing",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-35",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-36",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-8",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-49",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-50",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-unknown-integer",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_ALGORITHM_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-unknown-text",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_ALGORITHM_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-unknown-with-wrong-pin",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_PIN",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-version-1-1",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_VERSION_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-version-1-1-bad-math",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-digest-sha384",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DIGEST_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-digest-sha384-bad-math",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-critical",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_CRITICAL_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-critical-bad-math",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-version-number",
+      "overall": "INVALID",
+      "reason": "MDOC_CAPABILITY_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-version-null",
+      "overall": "INVALID",
+      "reason": "MDOC_CAPABILITY_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-digest-null",
+      "overall": "INVALID",
+      "reason": "MDOC_CAPABILITY_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-digest-number",
+      "overall": "INVALID",
+      "reason": "MDOC_CAPABILITY_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-empty",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-null",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-duplicate",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-missing-protected",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-wrong-label",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-unprotected",
+      "overall": "INVALID",
+      "reason": "COSE_HEADERS",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-critical-wrong-thumbprint",
+      "overall": "INVALID",
+      "reason": "MDOC_CERTIFICATE_THUMBPRINT",
+      "vector": "vectors/classification.json"
     }
   ]
 }

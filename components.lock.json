@@ -43,14 +43,14 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "72bfc4e75f465f174ee6bca00ac793641cb496f7",
+      "commit": "bf6e5452758ecc859c992410685e7035fabce43b",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mdoc-signing/draft.md",
-          "sha256": "bceae4a47da2c3d154e04070fd6c45e33e7d93dae4b588f2e892f6c2894b47f8"
+          "sha256": "136cd9129518c322603f4d42ba9f388caf41ca107f08f2207cfda71fed30ba8a"
         },
         {
           "source": "sources.json",
@@ -60,7 +60,7 @@
         {
           "source": "cases.json",
           "path": "spec/external/mdoc-signing/cases.json",
-          "sha256": "11c73983979a885dd0a01c39c3bfcf32aadb3195205640ded572b34613f09a57"
+          "sha256": "32cd4529440fa83231437b52eb6acbf302820f3c19e9531132f81cf761c07376"
         },
         {
           "source": "NOTICE",
@@ -75,7 +75,7 @@
         {
           "source": "reference/base.mjs",
           "path": "reference/vendor/mdoc-signing/base.mjs",
-          "sha256": "e969e643555f5750c1ad4343463b148d97ed056e2b8908dd0e49a582ad99c620"
+          "sha256": "593cc0e28da9edb98f672b96086662bd32b625f79815c65e79a9ce73d2b7e11d"
         },
         {
           "source": "reference/cbor.mjs",
@@ -95,7 +95,12 @@
         {
           "source": "vectors/manifest.json",
           "path": "spec/external/mdoc-signing/vectors/manifest.json",
-          "sha256": "764e07686c417ea7ba5f72e887f72ad3998942049f19fd2b4d52386e47946fd3"
+          "sha256": "4dc738cdacd40d13ab30e3247ae6c4697df188139a491fe2d10b6484e2edbe1f"
+        },
+        {
+          "source": "vectors/classification.json",
+          "path": "spec/external/mdoc-signing/vectors/classification.json",
+          "sha256": "d3b0c2c9aa83aa9bfcbc8ae24370fe6b8502e333eb7f1be4787d1eb117f151ab"
         }
       ]
     },
