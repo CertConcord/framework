@@ -93,15 +93,54 @@ export async function runDemo({
     issuerCertificate = nativeCert(issuerKey.publicKey, 4),
     readerCertificate = nativeCert(readerKey.publicKey, 5),
     roots = [new X509Certificate(root)];
+  const mirrorJournals = [0, 1, 2].map((i) => journalFactory('mirror-' + i)),
+    members = mirrorJournals.map((_, i) => ({
+      id: '32473.' + (20 + i),
+      operatorID: 'synthetic-mirror-' + i,
+      ...c.generate('ml-dsa-87'),
+    }));
   const trustDomainID = c.random(),
-    issuanceScope = { trustDomainID, issuerID: '32473.10', issuerKeyID: c.keyID(pqCA.publicKey), representation: 'MTC' },
+    issuanceScope = {
+      trustDomainID,
+      issuerID: '32473.10',
+      issuerKeyID: c.keyID(pqCA.publicKey),
+      representation: 'MTC',
+    },
     timestamp = trustedTime ? exampleTimestamp(journal) : undefined,
-    authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities: [
-      { certificate: raCertificate, roles: ['REGISTRATION_AUTHORITY'] },
-      { certificate: authorityCertificate, roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'STATUS_AUTHORITY', 'EXECUTION_BINDING_AUTHORITY'] },
-      { mode: 'RAW_KEY', publicKeyDER: c.spki(pqCA.publicKey), knownAt: c.now() - 60, validFrom: c.now() - 60, validUntil: c.now() + 86400, roles: ['ISSUER'] },
-      ...(timestamp ? [{ certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] }] : []),
-    ] }),
+    authorityResolver = exampleAuthorityResolver({
+      trustDomainID,
+      authorities: [
+        { certificate: raCertificate, roles: ['REGISTRATION_AUTHORITY'] },
+        {
+          certificate: authorityCertificate,
+          roles: [
+            'PERMIT_AUTHORITY',
+            'RECEIPT_AUTHORITY',
+            'STATUS_AUTHORITY',
+            'EXECUTION_BINDING_AUTHORITY',
+          ],
+        },
+        {
+          mode: 'RAW_KEY',
+          publicKeyDER: c.spki(pqCA.publicKey),
+          knownAt: c.now() - 60,
+          validFrom: c.now() - 60,
+          validUntil: c.now() + 86400,
+          roles: ['ISSUER'],
+        },
+        ...members.map((member) => ({
+          mode: 'RAW_KEY',
+          publicKeyDER: c.spki(member.publicKey),
+          knownAt: c.now() - 60,
+          validFrom: c.now() - 60,
+          validUntil: c.now() + 86400,
+          roles: ['COSIGNER'],
+        })),
+        ...(timestamp
+          ? [{ certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] }]
+          : []),
+      ],
+    }),
     subjectID = c.random(),
     profileID = 'CERTCONCORD-PERSON-SIGN-v1',
     policy = {
@@ -131,13 +170,7 @@ export async function runDemo({
       publicKey: documentKey.publicKey,
       privateKey: documentKey.privateKey,
     });
-  const mirrorJournals = [0, 1, 2].map((i) => journalFactory('mirror-' + i)),
-    members = mirrorJournals.map((_, i) => ({
-      id: '32473.' + (20 + i),
-      operatorID: 'synthetic-mirror-' + i,
-      ...c.generate('ml-dsa-87'),
-    })),
-    mirrors = members.map(
+  const mirrors = members.map(
       (m, i) => new Mirror({ journal: mirrorJournals[i], id: m.id, privateKey: m.privateKey }),
     ),
     mtcTrust = {
@@ -479,9 +512,9 @@ export async function runDemo({
       bundle = createSignaturePackage({
         document,
         certificate,
+        registrationAuthorization: rar,
         sim,
         policy,
-        activation,
         permit,
         receipt: result.receipt,
         status,
@@ -490,13 +523,13 @@ export async function runDemo({
         ...(timestamp
           ? {
               documentEvidence: {
-                RegistrationAuthorization: rar,
                 DocumentTimestamp: timestamp.issue,
               },
             }
           : {}),
       }),
       trust = {
+        raCertificate,
         authorityResolver,
         issuanceScope,
         mtc: mtcTrust,
@@ -505,15 +538,22 @@ export async function runDemo({
         statusCertificate: authorityCertificate,
         expectedPolicy: policy,
         trustDomainID,
-        ...(timestamp ? { raCertificate, timestamp: timestamp.trust } : {}),
+        ...(timestamp ? { timestamp: timestamp.trust } : {}),
         ...(executionBinding
           ? { executionBindingCertificate: authorityCertificate, executionStatus: () => true }
           : {}),
       },
       verification = verifySignaturePackage(bundle, trust);
     if (onComplete)
-      await onComplete({ bundle, trust, timestamp,
-        signStatus: (statement) => p.signCMS({ content: c.D('CertificateStatus', statement), certificate: authorityCertificate }, authorityKey.privateKey),
+      await onComplete({
+        bundle,
+        trust,
+        timestamp,
+        signStatus: (statement) =>
+          p.signCMS(
+            { content: c.D('CertificateStatus', statement), certificate: authorityCertificate },
+            authorityKey.privateKey,
+          ),
       });
     if (outputDirectory) {
       await mkdir(outputDirectory, { recursive: true });
@@ -530,7 +570,7 @@ export async function runDemo({
       bundle,
       trust,
       summary: {
-        release: '0.2.0-draft.1',
+        release: '0.3.0-draft.1',
         activationMode,
         flow: [
           'RA approval',

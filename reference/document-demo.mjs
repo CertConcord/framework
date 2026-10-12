@@ -47,15 +47,49 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
     const trustDomainID = c.random(),
       organizationID = c.random(),
       recipientID = c.random();
-    const issuanceScope = { trustDomainID, issuerID: '32473.10', issuerKeyID: c.keyID(ca.publicKey), representation: 'MTC' },
+    const members = mirrorJournals.map((_, i) => ({
+      id: '32473.' + (20 + i),
+      operatorID: 'synthetic-operator-' + i,
+      ...c.generate('ml-dsa-87'),
+    }));
+    const issuanceScope = {
+        trustDomainID,
+        issuerID: '32473.10',
+        issuerKeyID: c.keyID(ca.publicKey),
+        representation: 'MTC',
+      },
       timestamp = exampleTimestamp(journal, timestampOptions),
-      authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities: [
-        { certificate: raCertificate, roles: ['REGISTRATION_AUTHORITY'] },
-        { certificate: controlCertificate, roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'STATUS_AUTHORITY'] },
-        { certificate: organizationCertificate, roles: ['ORGANIZATION_AUTHORITY', 'STATUS_AUTHORITY'] },
-        { certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] },
-        { mode: 'RAW_KEY', publicKeyDER: c.spki(ca.publicKey), knownAt: c.now() - 60, validFrom: c.now() - 60, validUntil: c.now() + 86400, roles: ['ISSUER'] },
-      ] });
+      authorityResolver = exampleAuthorityResolver({
+        trustDomainID,
+        authorities: [
+          { certificate: raCertificate, roles: ['REGISTRATION_AUTHORITY'] },
+          {
+            certificate: controlCertificate,
+            roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'STATUS_AUTHORITY'],
+          },
+          {
+            certificate: organizationCertificate,
+            roles: ['ORGANIZATION_AUTHORITY', 'STATUS_AUTHORITY'],
+          },
+          { certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] },
+          {
+            mode: 'RAW_KEY',
+            publicKeyDER: c.spki(ca.publicKey),
+            knownAt: c.now() - 60,
+            validFrom: c.now() - 60,
+            validUntil: c.now() + 86400,
+            roles: ['ISSUER'],
+          },
+          ...members.map((member) => ({
+            mode: 'RAW_KEY',
+            publicKeyDER: c.spki(member.publicKey),
+            knownAt: c.now() - 60,
+            validFrom: c.now() - 60,
+            validUntil: c.now() + 86400,
+            roles: ['COSIGNER'],
+          })),
+        ],
+      });
     const policy = {
       schemaVersion: 1,
       activationMode: 'WORKLOAD',
@@ -68,11 +102,6 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
       documentEvidence: { profile: DOCUMENT_EVIDENCE_PROFILE, organizationAuthorization: true },
     };
     const policyHash = c.H('SignaturePolicy', policy);
-    const members = mirrorJournals.map((_, i) => ({
-      id: '32473.' + (20 + i),
-      operatorID: 'synthetic-operator-' + i,
-      ...c.generate('ml-dsa-87'),
-    }));
     const mtc = {
       caID: '32473.10',
       caPublicKey: ca.publicKey,
@@ -275,15 +304,14 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
     const bundle = createSignaturePackage({
       document,
       certificate,
+      registrationAuthorization: rar,
       sim,
       policy,
-      activation,
       permit,
       receipt: execution.receipt,
       status: statusFor(certificate),
       cms: prepared.finish(execution.signature),
       documentEvidence: {
-        RegistrationAuthorization: rar,
         OrganizationAuthorization: organizationAuthorization,
         OrganizationAuthorizationStatus: organizationStatus(),
         DocumentTimestamp: timestamp.issue,
@@ -389,6 +417,22 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
       };
     });
     const recovery = new EncryptionRecoveryService({
+      trustDomainID,
+      authorityResolver: exampleAuthorityResolver({
+        trustDomainID,
+        authorities: [
+          ...approvers.map((a) => ({
+            certificate: a.certificate,
+            roles: ['RECOVERY_AUTHORITY'],
+            scopes: [{ trustDomainID, purpose: 'ENCRYPTION_VAULT_WRAP' }],
+          })),
+          {
+            certificate: controlCertificate,
+            roles: ['RECOVERY_AUTHORITY'],
+            scopes: [{ trustDomainID, purpose: 'ENCRYPTION_VAULT_WRAP' }],
+          },
+        ],
+      }),
       journal,
       approvers,
       threshold: 2,
@@ -413,6 +457,7 @@ export async function runDocumentDemo({ onComplete, timestampOptions } = {}) {
     const admitted = admitDocumentRecipient(replacement.evidence, replacement.trust);
     const request = {
       schemaVersion: 1,
+      trustDomainID,
       requestID: c.random(),
       targetRootID: rootID,
       subjectID: recipientID,

@@ -436,7 +436,8 @@ export function verifyMTC(
   }
   let ca = false;
   const operators = new Set(),
-    keys = new Set();
+    keys = new Set(),
+    verifiedCosigners = [];
   for (const s of proof.signatures) {
     const member =
       s.cosignerID === caID
@@ -471,10 +472,15 @@ export function verifyMTC(
       );
       keys.add(key);
       operators.add(member.operatorID);
+      verifiedCosigners.push({
+        id: member.id,
+        operatorID: member.operatorID,
+        publicKeyDER: member.publicKey.export({ type: 'spki', format: 'der' }),
+      });
     }
   }
   requireThat(ca && operators.size >= threshold, 'MTC_QUORUM');
-  return { certificate: c, root, mode: 'STANDALONE' };
+  return { certificate: c, root, mode: 'STANDALONE', verifiedCosigners };
 }
 export class Mirror {
   constructor({ journal, id, privateKey }) {

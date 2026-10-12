@@ -31,7 +31,7 @@ const clone = structuredClone;
 function fixture() {
   const submission = {
     files: [
-      { path: 'spec/bindings/DTI-draft-02.md', sha, status: 'modified', previousPath: null },
+      { path: 'spec/bindings/DTI-draft-03.md', sha, status: 'modified', previousPath: null },
       { path: 'synthetic.mjs', sha, status: 'added', previousPath: null },
     ],
     commits: [
@@ -189,7 +189,7 @@ test('rename out of normative paths and declared normative documents remain cove
     {
       ...submission.files[0],
       path: 'notes.md',
-      previousPath: 'spec/bindings/DTI-draft-02.md',
+      previousPath: 'spec/bindings/DTI-draft-03.md',
       status: 'renamed',
     },
   ];
@@ -339,15 +339,15 @@ test('specification snapshots bind the selected composition without importing RR
     roles: ['VERIFIER'],
     profiles: [],
     adapters: [],
-    framework: { edition: 'draft-02', document: 'spec/architecture.md' },
+    framework: { edition: 'draft-03', document: 'spec/architecture.md' },
     composition: {
-      id: 'certconcord-governed-draft-02',
-      specification: 'spec/bindings/DTI-draft-02.md',
+      id: 'certconcord-governed-draft-03',
+      specification: 'spec/bindings/DTI-draft-03.md',
       conformance: 'spec/conformance.md',
     },
     requiredPortions: [
       'spec/architecture.md',
-      'spec/bindings/DTI-draft-02.md',
+      'spec/bindings/DTI-draft-03.md',
       'spec/conformance.md',
     ].map((path) => ({ path, sections: ['all'] })),
   };
@@ -356,7 +356,7 @@ test('specification snapshots bind the selected composition without importing RR
     await save();
     assert.match(run('..', 'missing.json').stderr, /SPECIFICATION_REQUIRED_PORTIONS/);
     selection.requiredPortions.push({
-      path: 'spec/bindings/COMMON-draft-02.md',
+      path: 'spec/bindings/COMMON-draft-03.md',
       sections: ['all'],
     });
     await save();

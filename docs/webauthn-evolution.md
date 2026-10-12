@@ -12,7 +12,7 @@ Level 4 section 18.1 identifies three substantive additions or changes relative 
 | `remoteClientDataJSON` for remote-desktop clients                  | The proxy becomes a trusted participant in origin and RP-ID handling                         | The local enrollment drivers reject this input. A distinct deployment profile is required for a proxy; the existing verifier does not claim to detect all remote mediation.      |
 | Virtual Authenticator counter controls                             | Test absent counters, counter changes and rollback independently                             | `interop.test.mjs` exercises zero-to-zero, zero-to-positive, monotonic progress and rollback using signed assertions. These are protocol tests, not browser WebDriver execution. |
 
-The adopted requirements are connected to [DSCP sections 18 and 32](../spec/bindings/DSCP-draft-02.md) and [PRF-KPP section 35](../spec/bindings/PRF-KPP-draft-02.md). [COMMON](../spec/bindings/COMMON-draft-02.md) controls adapter selection and historical interpretation.
+The adopted requirements are connected to [DSCP sections 18 and 32](../spec/bindings/DSCP-draft-03.md) and [PRF-KPP section 35](../spec/bindings/PRF-KPP-draft-03.md). [COMMON](../spec/bindings/COMMON-draft-03.md) controls adapter selection and historical interpretation.
 
 ## PRF confidentiality across the signed boundary
 
@@ -48,7 +48,7 @@ The pinned draft's authentication processing text refers to `pkOptions.rp.id`, w
 | WebKit Remote CryptoKeys       | A WebCrypto handle invokes a platform-supplied key provider                                                      | Exact key admission, certified purpose, protected provider authorization and verified result.              |
 | PSCP raw-signing extension     | Separate document key signs selected message or split input; parent assertion authenticates the extension result | Attested parent/child binding, CSR possession, RA issuance, prior permit, dual proof and lifecycle checks. |
 
-Level 4 does not standardize `previewSign`, `previewSign5`, ARKG or general document-signature certificate issuance. The [raw-signing proposal](https://github.com/w3c/webauthn/pull/2078), [Yubico version 4](https://yubicolabs.github.io/webauthn-sign-extension/4/), locked version 5 snapshot and [WebKit explainer](https://github.com/WebKit/explainers/tree/6ce73fa4f91bbe7fb1990b6c1e7276c8dbd12609/remote-cryptokeys) retain their own source identifiers. [PSCP](../spec/bindings/PSCP-draft-02.md) supplies the missing certification, operation and evidence composition, while the independent ML-DSA path remains available.
+Level 4 does not standardize `previewSign`, `previewSign5`, ARKG or general document-signature certificate issuance. The [raw-signing proposal](https://github.com/w3c/webauthn/pull/2078), [Yubico version 4](https://yubicolabs.github.io/webauthn-sign-extension/4/), locked version 5 snapshot and [WebKit explainer](https://github.com/WebKit/explainers/tree/6ce73fa4f91bbe7fb1990b6c1e7276c8dbd12609/remote-cryptokeys) retain their own source identifiers. [PSCP](../spec/bindings/PSCP-draft-03.md) supplies the missing certification, operation and evidence composition, while the independent ML-DSA path remains available.
 
 ## Counters and assurance
 

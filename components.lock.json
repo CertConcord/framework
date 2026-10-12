@@ -43,73 +43,128 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "1ccdf65db01d63fd5e47f1d680d01db90fe969ab",
-      "edition": "draft-01",
+      "commit": "f9ce29a24bbfd093803884fd089b4c19eaeb8ded",
+      "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mdoc-signing/draft.md",
-          "sha256": "74a2da41d7e0c64b05444de52f2e01630d1d1594cb2c1ddf3ea744253ff847c6"
+          "sha256": "e0f2345e1051cb28e1784ae50bcd3baab6081cc888341d6d1348e4a57c8d935d"
         },
         {
           "source": "sources.json",
           "path": "spec/external/mdoc-signing/sources.json",
-          "sha256": "f78d1b05a7aba4b49a00c1536a8bf0fdd89bae389efa4cd812ea19785a51680c"
+          "sha256": "18969a19279bef50f4c074004b84e385a6e920a57537a9aacb19a8722ef8d606"
         },
         {
           "source": "cases.json",
           "path": "spec/external/mdoc-signing/cases.json",
-          "sha256": "92cae9f792fda069ac1590d538ec2c42b212193ffe246674540b4cb5d026174b"
+          "sha256": "d63a2f33118779ae36861b5d00f78c7fba015b9fa135e1d35e2a3cdfda3ca735"
         },
         {
           "source": "NOTICE",
           "path": "spec/external/mdoc-signing/NOTICE",
-          "sha256": "997db8d0f79550d2bef3b845ff6669669b031252d5e2213a3c9486d69f2e4e64"
+          "sha256": "044fab2abfc41fdf7099c840deb7b9ce8bf76da7c8e7a1b8fec936d8dc6b3ce9"
         },
         {
           "source": "reference/key-relation.mjs",
           "path": "reference/vendor/mdoc-signing/key-relation.mjs",
           "sha256": "70048d9dbfc9ed6adeeb24f7994155cef8010414a44184179a944709172e7f5f"
+        },
+        {
+          "source": "reference/base.mjs",
+          "path": "reference/vendor/mdoc-signing/base.mjs",
+          "sha256": "a602bb6bd7c405c188208ce61629d49a8a6ba7cd3c358f6fe742b05bb623ca79"
+        },
+        {
+          "source": "reference/cbor.mjs",
+          "path": "reference/vendor/mdoc-signing/cbor.mjs",
+          "sha256": "73aa91b4aae2956bf97aca91c4f273b40133525f0745251e6e3899bcb65e718f"
+        },
+        {
+          "source": "reference/errors.mjs",
+          "path": "reference/vendor/mdoc-signing/errors.mjs",
+          "sha256": "b5a6b8b16ea6b24d6dd1596e33407ad9080550e7bf90445e9714e53bff69b495"
+        },
+        {
+          "source": "vectors/base.json",
+          "path": "spec/external/mdoc-signing/vectors/base.json",
+          "sha256": "8f03dd203c4c09e95a8aa4c1c9ca02047435003406f048519eefc7d1daf3b921"
+        },
+        {
+          "source": "vectors/manifest.json",
+          "path": "spec/external/mdoc-signing/vectors/manifest.json",
+          "sha256": "1900c8309529858c61c1e5a25a9c7f41f4b0b233a2e82ea49f544415b587c0f9"
+        },
+        {
+          "source": "vectors/classification.json",
+          "path": "spec/external/mdoc-signing/vectors/classification.json",
+          "sha256": "874ef12a917b0f8d3479ca2545a172369d65c2708664f0bcc6b1717d4f511a7f"
+        },
+        {
+          "source": "vectors/document-classification.json",
+          "path": "spec/external/mdoc-signing/vectors/document-classification.json",
+          "sha256": "75ac64b7288f36dd3d73cc4517c94fbb1b9cf161d51fcf92e446b56fc298af1a"
+        },
+        {
+          "source": "vectors/issuer-facts.json",
+          "path": "spec/external/mdoc-signing/vectors/issuer-facts.json",
+          "sha256": "1c300512e0b280a96d9269c192ec480dcd210389affab8c4377beed6a6d77498"
         }
       ]
     },
     {
       "name": "tlog-cosignature-ml-dsa",
       "repository": "https://github.com/CertConcord/tlog-cosignature-ml-dsa",
-      "commit": "26f4e60b100f25f1a4b3591da305a46897778bbd",
-      "edition": "draft-01",
+      "commit": "c25847fe4f9ebe8df92e9e7f37d78241868c0cae",
+      "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/tlog-cosignature-ml-dsa/draft.md",
-          "sha256": "9305062ea523b7c779880b6eefd4f29e7e8737a4c5e8e9915673321c2eeec7bd"
+          "sha256": "927fd602099d85ae6b06f0c14c81951d0e8b171d5800c8f8c7b4f7c6e9d4d91a"
         },
         {
           "source": "sources.json",
           "path": "spec/external/tlog-cosignature-ml-dsa/sources.json",
-          "sha256": "5071a097284a038757e20ce781897ba15347e149bacd7df6206018073ee2892f"
+          "sha256": "d76ed348c4d4f11a6ddbad8abac5149b2f5bd0d3f48563aea7b1bf2ef56a3f0d"
         },
         {
           "source": "cases.json",
           "path": "spec/external/tlog-cosignature-ml-dsa/cases.json",
-          "sha256": "ff610056ce05eaf27aaa097ab1bd8d053c3422a0d3a4235ac229ef64877d4eda"
+          "sha256": "009e4c0cee05cf4a284a4ca8007141badf58ae56de6833f768f2a52f515fc20f"
         },
         {
           "source": "NOTICE",
           "path": "spec/external/tlog-cosignature-ml-dsa/NOTICE",
-          "sha256": "f723a6f06febe7064fade97c827dcd2de35b30f30d348958e06d3084fcef8a12"
+          "sha256": "6c70d4231fdfe2b593cb5c6d4d7867cbd93f954730d36dc71eeb59237a733643"
         },
         {
           "source": "reference/extension.mjs",
           "path": "reference/vendor/tlog-cosignature-ml-dsa/extension.mjs",
-          "sha256": "222b703730dea6e2dca06333cd4724d75cd9ed27bea49b5f725785c230b1abbc"
+          "sha256": "2ea3330baca32277e2132eba6707d4ee8627f216079233e07f7202d35d76d09e"
         },
         {
           "source": "vectors/prefix.json",
           "path": "spec/external/tlog-cosignature-ml-dsa/vectors/prefix.json",
           "sha256": "0b54e1010a0a8d1ef47e92140111f97c94c5f6829003688704dee2d2847547bb"
+        },
+        {
+          "source": "reference/transport.mjs",
+          "path": "reference/vendor/tlog-cosignature-ml-dsa/transport.mjs",
+          "sha256": "abf3a212489677294636a0e2c44e9824cd8cfce5b56228cccd806cf8a20e63cf"
+        },
+        {
+          "source": "vectors/transport.json",
+          "path": "spec/external/tlog-cosignature-ml-dsa/vectors/transport.json",
+          "sha256": "cfb88d8554f5da27a9433bb363204940d8eab16f4769f1acf42b71cb013951f4"
+        },
+        {
+          "source": "vectors/manifest.json",
+          "path": "spec/external/tlog-cosignature-ml-dsa/vectors/manifest.json",
+          "sha256": "4ab9b6a3cbeba388feddfab27dd55f4ccaa31fdd9db5fd22d5630e0525d78d4d"
         }
       ]
     },

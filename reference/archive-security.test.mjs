@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import * as a from './archive.mjs';
-import { Journal, evidenceObject } from './state.mjs';
+import { Journal } from './state.mjs';
+import { evidenceLeaf, createEvidencePackage } from './evidence-plan.mjs';
 import { runArchiveDemo } from './archive-demo.mjs';
 import { runDocumentDemo } from './document-demo.mjs';
 import { createVerifier } from './sdk/index.mjs';
@@ -299,16 +300,10 @@ test('preserved GOOD evidence cannot override subsequently known certificate com
           effectiveTime: knowledgeTime,
           compromiseStart: historical.stateTime - 1,
         }),
-        objects = r.bundle.objects
-          .filter((o) => o.type !== 'VerificationPlan')
-          .map((o) => (o.type === 'CertificateStatus' ? evidenceObject(o.type, status) : o)),
-        oldPlan = c.decodeCBOR(r.bundle.objects.find((o) => o.type === 'VerificationPlan').payload),
-        plan = evidenceObject(
-          'VerificationPlan',
-          c.dcbor({ ...oldPlan, objects: Object.fromEntries(objects.map((o) => [o.type, o.id])) }),
-          objects.map((o) => o.id),
+        objects = r.bundle.objects.map((o) =>
+          o.type === 'CertificateStatus' ? evidenceLeaf(o.type, status) : o,
         ),
-        augmented = c.dcbor({ schemaVersion: 1, root: plan.id, objects: [...objects, plan] }),
+        augmented = c.dcbor(createEvidencePackage(r.bundle.plan.profile, objects)),
         current = createVerifier({ format: 'CMS', trust: { ...r.trust, knowledgeTime } }).verify(
           augmented,
         );

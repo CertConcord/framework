@@ -1,17 +1,57 @@
 import { H, sha512, spki, parseDER, equal, requireThat, fields, dcbor } from './core.mjs';
 import { snapshotIssuanceScope, issuanceAuthorityScope } from './enrollment-scope.mjs';
 import { requireAuthorities } from './control-authority.mjs';
+import { AuthorityError } from './authority-history.mjs';
 import { parseCertificate, RRA } from './pki.mjs';
-import { evidenceObject, readControl, evaluateStatus } from './state.mjs';
+import { readControl, evaluateStatus } from './state.mjs';
+import { evidenceLeaf } from './evidence-plan.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
+import { evaluationPhase, evaluated, evaluatedCheck } from './verification-result.mjs';
+import {
+  ORGANIZATION_PROFILE,
+  ORGANIZATION_PLAN,
+  orgError,
+} from './organization-delegation-state.mjs';
 
-export const DOCUMENT_EVIDENCE_PROFILE = 'certconcord-document-evidence-draft-02';
+export function organizationEvidenceTypes(policy, format = 'CMS') {
+  if (!Object.hasOwn(policy, 'organizationDelegation')) return [];
+  const selected = policy.organizationDelegation;
+  fields(selected, ['profile', 'mode', 'identityNamespace', 'minimumApprovers']);
+  if (selected.profile !== ORGANIZATION_PROFILE || selected.mode !== 'CURRENT_STATE_ONLY')
+    throw orgError('ORG_PROFILE_UNSUPPORTED', 'UNSUPPORTED');
+  if (format !== 'CMS') throw orgError('ORG_REPRESENTATION_UNSUPPORTED', 'UNSUPPORTED');
+  requireThat(
+    !Object.hasOwn(policy, 'documentEvidence') &&
+      policy.requireTrustedTime === false &&
+      policy.activationMode === 'WORKLOAD' &&
+      policy.executionBinding &&
+      policy.allowedProfiles?.includes('CERTCONCORD-ORG-SEAL-v1') &&
+      Number.isSafeInteger(policy.maxActivationLifetime) &&
+      policy.maxActivationLifetime > 0 &&
+      policy.maxActivationLifetime <= 120 &&
+      Number.isSafeInteger(selected.minimumApprovers) &&
+      selected.minimumApprovers >= 2 &&
+      selected.minimumApprovers <= 16 &&
+      typeof selected.identityNamespace === 'string' &&
+      /^[\x21-\x7e]{1,128}$/.test(selected.identityNamespace),
+    'ORG_POLICY',
+  );
+  return [
+    'OrganizationAuthorization',
+    'OrganizationDelegationPath',
+    'OrganizationApprovalSet',
+    'OrganizationDelegationStatus',
+  ];
+}
+
+export const DOCUMENT_EVIDENCE_PROFILE = 'certconcord-document-evidence-draft-03';
 export const documentPlans = Object.freeze({
-  'certconcord-ecp-cms-attested-draft-02': 'certconcord-ecp-cms-attested-v1',
-  'certconcord-ecp-mdoc-attested-draft-02': 'certconcord-ecp-mdoc-attested-v1',
+  'certconcord-ecp-cms-document-draft-03': 'certconcord-ecp-cms-attested-draft-03',
+  'certconcord-ecp-mdoc-document-draft-03': 'certconcord-ecp-mdoc-attested-draft-03',
 });
 
 export function documentEvidenceTypes(policy, format) {
+  organizationEvidenceTypes(policy, format);
   if (!policy.documentEvidence) return [];
   fields(policy.documentEvidence, ['profile', 'organizationAuthorization']);
   requireThat(
@@ -26,7 +66,6 @@ export function documentEvidenceTypes(policy, format) {
     'DOCUMENT_ORGANIZATION_REPRESENTATION',
   );
   return [
-    'RegistrationAuthorization',
     ...(policy.documentEvidence.organizationAuthorization
       ? ['OrganizationAuthorization', 'OrganizationAuthorizationStatus']
       : []),
@@ -40,7 +79,6 @@ const mutableTypes = new Set([
   'CredentialStatusList',
   'OrganizationAuthorizationStatus',
   'DocumentTimestamp',
-  'VerificationPlan',
 ]);
 export function documentTimestampImprint(format, objects) {
   const selected = objects.filter((o) => !mutableTypes.has(o.type));
@@ -58,24 +96,30 @@ export function documentTimestampImprint(format, objects) {
 }
 
 export function appendDocumentEvidence(objects, { policy, format, evidence }) {
+  organizationEvidenceTypes(policy, format);
   requireThat(!!policy.documentEvidence === !!evidence, 'DOCUMENT_EVIDENCE_REQUIRED');
   if (!evidence) return;
   const types = documentEvidenceTypes(policy, format);
   fields(evidence, types);
   for (const type of types.filter((t) => t !== 'DocumentTimestamp')) {
     requireThat(Buffer.isBuffer(evidence[type]), 'DOCUMENT_EVIDENCE_BINARY');
-    objects.push(evidenceObject(type, evidence[type]));
+    objects.push(evidenceLeaf(type, evidence[type]));
   }
   if (types.includes('DocumentTimestamp')) {
     const source = evidence.DocumentTimestamp;
     const token =
       typeof source === 'function' ? source(documentTimestampImprint(format, objects)) : source;
     requireThat(Buffer.isBuffer(token), 'DOCUMENT_EVIDENCE_BINARY');
-    objects.push(evidenceObject('DocumentTimestamp', token));
+    objects.push(evidenceLeaf('DocumentTimestamp', token));
   }
 }
 
 export function selectDocumentPlan(base, policy) {
+  if (Object.hasOwn(policy, 'organizationDelegation')) {
+    organizationEvidenceTypes(policy, 'CMS');
+    requireThat(base === ORGANIZATION_PLAN, 'ORG_PLAN_DOWNGRADE');
+    return base;
+  }
   if (!policy.documentEvidence) return base;
   const selected = Object.entries(documentPlans).find(([, value]) => value === base);
   requireThat(selected, 'DOCUMENT_EVIDENCE_PLAN');
@@ -119,6 +163,56 @@ export function verifyRegistrationBinding(
   return r;
 }
 
+export function verifyOrganizationAuthorizationBinding(
+  authorization,
+  { raw, sim, activation, permit, receipt },
+) {
+  fields(authorization, [
+    'schemaVersion',
+    'authorizationID',
+    'trustDomainID',
+    'organizationID',
+    'actorID',
+    'actorType',
+    'keyID',
+    'certificateID',
+    'purpose',
+    'activationHash',
+    'policyHash',
+    'issuedAt',
+    'expiresAt',
+  ]);
+  requireThat(
+    authorization.schemaVersion === 1 &&
+      Buffer.isBuffer(authorization.authorizationID) &&
+      authorization.authorizationID.length === 32 &&
+      equal(authorization.authorizationID, sim.organizationAuthorizationID) &&
+      equal(authorization.trustDomainID, sim.trustDomainID) &&
+      equal(authorization.organizationID, sim.subjectID) &&
+      Buffer.isBuffer(authorization.actorID) &&
+      authorization.actorID.length === 32 &&
+      ['PERSON', 'WORKLOAD'].includes(authorization.actorType) &&
+      (authorization.actorType === 'WORKLOAD'
+        ? permit.proofMode === 'WORKLOAD'
+        : ['HUMAN_WEBAUTHN', 'HUMAN_MDOC', 'HUMAN_SESSION'].includes(permit.proofMode)) &&
+      authorization.purpose === 'ORGANIZATION_SEAL' &&
+      sim.purpose === 'ORGANIZATION_SEAL' &&
+      equal(authorization.keyID, sim.keyID) &&
+      equal(authorization.certificateID, sim.certificateID) &&
+      equal(authorization.policyHash, sim.policyHash) &&
+      equal(authorization.activationHash, H('ActivationContext', activation)) &&
+      equal(permit.activationEvidenceHash, sha512(raw)) &&
+      Number.isSafeInteger(authorization.issuedAt) &&
+      Number.isSafeInteger(authorization.expiresAt) &&
+      authorization.issuedAt >= activation.issuedAt &&
+      authorization.expiresAt <= activation.expiresAt &&
+      authorization.issuedAt <= receipt.executedAt &&
+      authorization.expiresAt > receipt.executedAt,
+    'DOCUMENT_ORGANIZATION_BINDING',
+  );
+  return authorization;
+}
+
 export function verifyDocumentEvidence(
   {
     format,
@@ -133,10 +227,16 @@ export function verifyDocumentEvidence(
     credential,
   },
   trust,
+  evaluation,
 ) {
-  if (!policy.documentEvidence) return undefined;
+  evaluationPhase(evaluation, 'qualification');
+  if (Object.hasOwn(policy, 'organizationDelegation')) {
+    organizationEvidenceTypes(policy, format);
+    throw orgError('ORG_CURRENT_VERIFIER_REQUIRED', 'UNSUPPORTED');
+  }
   documentEvidenceTypes(policy, format);
   const authorityQueries = [],
+    authorityFailures = [],
     unavailable = [],
     scope = {
       trustDomainID: sim.trustDomainID,
@@ -155,10 +255,12 @@ export function verifyDocumentEvidence(
       at: receipt.executedAt,
     });
   else {
-    registration = readControl(
-      values.RegistrationAuthorization,
-      'RegistrationAuthorization',
-      trust.raCertificate,
+    registration = evaluatedCheck(evaluation, 'integrity', () =>
+      readControl(
+        values.RegistrationAuthorization,
+        'RegistrationAuthorization',
+        trust.raCertificate,
+      ),
     );
     requireThat(
       registration.schemaVersion === 1 &&
@@ -188,71 +290,44 @@ export function verifyDocumentEvidence(
     stateTime: registration.issuedAt,
     knowledgeTime,
   });
-  const org = policy.documentEvidence.organizationAuthorization;
+  const org = policy.documentEvidence?.organizationAuthorization ?? false;
   requireThat(
     org === (sim.profileID === 'CERTCONCORD-ORG-SEAL-v1'),
     'DOCUMENT_ORGANIZATION_PURPOSE',
   );
+  if (!policy.documentEvidence) {
+    evaluationPhase(evaluation, undefined);
+    requireAuthorities(trust.authorityResolver, authorityQueries);
+    return { subjectBinding: 'REGISTRATION_AUTHORIZATION' };
+  }
   let authorization, authority;
   if (org) {
+    evaluationPhase(evaluation, 'authorization');
     authority = trust.organizationAuthorities?.find((a) => equal(a.organizationID, sim.subjectID));
     requireThat(
       authority?.certificate && authority.statusCertificate,
       'DOCUMENT_ORGANIZATION_TRUST_REQUIRED',
     );
-    authorization = readControl(
-      values.OrganizationAuthorization,
-      'OrganizationAuthorization',
-      authority.certificate,
+    authorization = evaluatedCheck(evaluation, 'integrity', () =>
+      readControl(
+        values.OrganizationAuthorization,
+        'OrganizationAuthorization',
+        authority.certificate,
+      ),
     );
-    fields(authorization, [
-      'schemaVersion',
-      'authorizationID',
-      'trustDomainID',
-      'organizationID',
-      'actorID',
-      'actorType',
-      'keyID',
-      'certificateID',
-      'purpose',
-      'activationHash',
-      'policyHash',
-      'issuedAt',
-      'expiresAt',
-    ]);
-    requireThat(
-      authorization.schemaVersion === 1 &&
-        Buffer.isBuffer(authorization.authorizationID) &&
-        authorization.authorizationID.length === 32 &&
-        equal(authorization.authorizationID, sim.organizationAuthorizationID) &&
-        equal(authorization.trustDomainID, sim.trustDomainID) &&
-        equal(authorization.organizationID, sim.subjectID) &&
-        Buffer.isBuffer(authorization.actorID) &&
-        authorization.actorID.length === 32 &&
-        ['PERSON', 'WORKLOAD'].includes(authorization.actorType) &&
-        (authorization.actorType === 'WORKLOAD'
-          ? permit.proofMode === 'WORKLOAD'
-          : ['HUMAN_WEBAUTHN', 'HUMAN_MDOC', 'HUMAN_SESSION'].includes(permit.proofMode)) &&
-        authorization.purpose === 'ORGANIZATION_SEAL' &&
-        sim.purpose === 'ORGANIZATION_SEAL' &&
-        equal(authorization.keyID, sim.keyID) &&
-        equal(authorization.certificateID, sim.certificateID) &&
-        equal(authorization.policyHash, sim.policyHash) &&
-        equal(authorization.activationHash, H('ActivationContext', activation)) &&
-        equal(permit.activationEvidenceHash, sha512(values.OrganizationAuthorization)) &&
-        Number.isSafeInteger(authorization.issuedAt) &&
-        Number.isSafeInteger(authorization.expiresAt) &&
-        authorization.issuedAt >= activation.issuedAt &&
-        authorization.expiresAt <= activation.expiresAt &&
-        authorization.issuedAt <= receipt.executedAt &&
-        authorization.expiresAt > receipt.executedAt,
-      'DOCUMENT_ORGANIZATION_BINDING',
-    );
+    verifyOrganizationAuthorizationBinding(authorization, {
+      raw: values.OrganizationAuthorization,
+      sim,
+      activation,
+      permit,
+      receipt,
+    });
   }
   let stateTime = receipt.executedAt,
     time = 'DECLARED_EXECUTION_TIME',
     timeResult;
   if (policy.requireTrustedTime) {
+    evaluationPhase(evaluation, 'time');
     requireThat(
       trust.timestamp?.certificate &&
         trust.timestamp.issuerKey &&
@@ -301,14 +376,16 @@ export function verifyDocumentEvidence(
         permit.expiresAt > stateTime,
       'DOCUMENT_TIMESTAMP_OPERATION_WINDOW',
     );
-    verifyState(stateTime);
+    verifyState(stateTime, { proofOfExistenceUpperBound: stateTime });
     time = 'TRUSTED_PROOF_OF_EXISTENCE';
   }
   if (org) {
+    evaluationPhase(evaluation, 'authorization');
     requireThat(
       authorization.issuedAt <= stateTime && authorization.expiresAt > stateTime,
       'DOCUMENT_ORGANIZATION_WINDOW',
     );
+    evaluationPhase(evaluation, 'status');
     const status = readControl(
       values.OrganizationAuthorizationStatus,
       'OrganizationAuthorizationStatus',
@@ -322,13 +399,17 @@ export function verifyDocumentEvidence(
         stateTime,
         knowledgeTime,
       },
-      {
-        certificate: authority.statusCertificate,
-        role: 'STATUS_AUTHORITY',
-        scope,
-        stateTime: status.publishedAt,
-        knowledgeTime,
-      },
+      ...(status.publishedAt <= knowledgeTime
+        ? [
+            {
+              certificate: authority.statusCertificate,
+              role: 'STATUS_AUTHORITY',
+              scope,
+              stateTime: status.publishedAt,
+              knowledgeTime,
+            },
+          ]
+        : []),
     );
     requireThat(
       equal(status.authorizationID, authorization.authorizationID) &&
@@ -341,11 +422,17 @@ export function verifyDocumentEvidence(
       knowledgeTime,
       scope: 'ORGANIZATION_AUTHORIZATION',
     });
-    if (['STALE', 'UNKNOWN', 'NOT_YET_KNOWN'].includes(result))
-      unavailable.push('DOCUMENT_ORGANIZATION_STATUS_' + result);
-    else requireThat(result === 'GOOD', 'DOCUMENT_ORGANIZATION_STATUS_' + result);
+    if (result.overall !== 'VALID')
+      evaluated(evaluation, 'status', result.overall, 'DOCUMENT_ORGANIZATION_' + result.reason);
+    if (result.overall === 'INDETERMINATE')
+      unavailable.push('DOCUMENT_ORGANIZATION_' + result.reason);
+    else if (result.overall !== 'VALID')
+      authorityFailures.push(
+        new AuthorityError({ ...result, reason: 'DOCUMENT_ORGANIZATION_' + result.reason }),
+      );
   }
-  requireAuthorities(trust.authorityResolver, authorityQueries, unavailable);
+  evaluationPhase(evaluation, undefined);
+  requireAuthorities(trust.authorityResolver, authorityQueries, unavailable, authorityFailures);
   return {
     time,
     stateTime,

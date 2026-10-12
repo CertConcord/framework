@@ -1,5 +1,5 @@
 {
-  "draft": "draft-02",
+  "draft": "draft-03",
   "claim": "coverage-index-not-certification",
   "requirements": [
     {
@@ -13,9 +13,21 @@
         {
           "file": "reference/state-security.test.mjs",
           "name": "trust bootstrap rejects duplicate roots and threshold overrides; restart preserves fork detection"
+        },
+        {
+          "file": "reference/authority-history.test.mjs",
+          "name": "control authority pins require role, scope, certificate validity and knowledge coverage"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "root succession needs both quorums, retained links and explicit algorithm lifetimes"
+        },
+        {
+          "file": "reference/quorum-authorities.test.mjs",
+          "name": "accepts only a quorum of independently authorized signing members"
         }
       ],
-      "gap": "Fixed bootstrap pins and durable watermarks are exercised. Dynamic root rotation, emergency replacement and independent deployment review remain unimplemented or unassessed."
+      "gap": "Fixed pins, durable watermarks and a separate retained-history resolver with dual-quorum root succession are exercised. Emergency replacement, distributed operation and independent deployment assessment remain open."
     },
     {
       "id": "CC-CORE-02",
@@ -32,6 +44,26 @@
         {
           "file": "reference/document-evidence.test.mjs",
           "name": "certified encryption closes admission, delivery and recovery with purpose and replay controls"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "RAR rejects ${boundary} replay at an independent issuer"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "issuer authority certificate must identify the actual signing key"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "MDOC offer enforces signed scope and authorization lifetime before durable allocation"
+        },
+        {
+          "file": "reference/enrollment-security.test.mjs",
+          "name": "RA isolates the possession-certificate policy callback from verified CSR bytes"
+        },
+        {
+          "file": "reference/certificate-key-usage.test.mjs",
+          "name": "rejects signed malformed KeyUsage extension schemas"
         }
       ],
       "gap": "Selected CMS and native mdoc admission paths are covered; external identity and custody assessment remains separate."
@@ -58,6 +90,10 @@
         {
           "file": "reference/foundation-security.test.mjs",
           "name": "native credential log: growth, unavailable mirror, quorum and durable failed allocation"
+        },
+        {
+          "file": "reference/quorum-authorities.test.mjs",
+          "name": "accepts only a quorum of independently authorized signing members"
         }
       ],
       "gap": "Operator independence, privacy and deployment failure assumptions require assessed evidence."
@@ -73,6 +109,10 @@
         {
           "file": "reference/sdk-results.test.mjs",
           "name": "execution plans are declared in CDDL and SDK enforces the selected policy"
+        },
+        {
+          "file": "reference/evidence-plan.test.mjs",
+          "name": "nested verification plans and independent activation leaves are forbidden even with valid commitments"
         }
       ],
       "gap": "Durable execution evidence covers selected providers; all operation/provider combinations are not assessed."
@@ -104,6 +144,22 @@
         {
           "file": "reference/state-security.test.mjs",
           "name": "wrapper verification and commit are atomic across write failure, restart and stale retirement"
+        },
+        {
+          "file": "reference/authority-history.test.mjs",
+          "name": "control authority pins require role, scope, certificate validity and knowledge coverage"
+        },
+        {
+          "file": "reference/status-results.test.mjs",
+          "name": "CRL, OCSP, Status List and experimental status share authenticated result semantics"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "revocation learned during root loading prevents release and leaves an uncertain operation"
+        },
+        {
+          "file": "reference/component-integration.test.mjs",
+          "name": "mdoc status TTL is authenticated and cannot erase invalid or revoked evidence"
         }
       ],
       "gap": "Document recovery and bounded historical status are covered; cross-application operational compromise review remains open."
@@ -115,9 +171,121 @@
         {
           "file": "reference/sdk-results.test.mjs",
           "name": "SDK distinguishes invalid, incomplete and unsupported evidence for CMS and mdoc"
+        },
+        {
+          "file": "reference/status-results.test.mjs",
+          "name": "CRL, OCSP, Status List and experimental status share authenticated result semantics"
+        },
+        {
+          "file": "reference/evidence-plan.test.mjs",
+          "name": "a known invalid leaf takes precedence over a missing plan or unsupported schema"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} SDK returns stable identity and immutable evaluated dimensions"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} supported leaf commitments precede unsupported semantics and missing evidence"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} missing timestamp cannot hide an available invalid permit signature"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native mdoc signed digest and version capability outcomes survive the SDK boundary"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native mdoc malformed capability discriminators remain invalid"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native mdoc unknown text algorithms are capabilities rather than malformed labels"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native mdoc unsupported critical semantics cannot hide supported signature mathematics"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "CMS unknown algorithm capability differs from implemented algorithm mismatch"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "different evaluated dimensions retain independent failures with the same code"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "authority dimensions follow the evaluated role rather than shared reason text"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "transparency dimensions reflect the admitted operator quorum rather than every vote"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} missing registration cannot hide an independently invalid timestamp signature"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "missing registration preserves only authenticated subject-bound certificate revocation"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "unused MTC configuration does not claim transparency for an X509 signature"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} incomplete evidence binds every receipt field before using operation time"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "certificate status fallback never borrows another operation receipt time"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "organization status fallback requires the authorization bound to this operation"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native credential fallback never borrows an unbound receipt time"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "${label} framework document is consumed by the pinned component"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "${label} component document is consumed by the framework without rewriting bytes"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "${label} a mathematically valid legacy critical order has no compatibility fallback"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "${label} framework retains component bad mathematics before a protected binding mismatch"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "a complete SDK native document uses the same component wire contract"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "native document verification uses declared knowledge time independently of wall clock"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "timestamped notes retain their future limit at explicit knowledge time"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "credential log checkpoint and mirror checks share explicit knowledge time"
         }
       ],
-      "gap": "Nested unsupported algorithms and complete per-dimension result reporting remain incomplete."
+      "gap": "Selected CMS/MTC and native mdoc SDK paths provide stable identity/reason fields, bounded evaluated dimensions and explicit malformed, missing, unsupported and invalid precedence. This record covers the named selected boundaries, not all algorithms, containers or future extensions. Independent implementation, complete external parser assessment and stability review remain separate evidence."
     },
     {
       "id": "CC-CORE-08",
@@ -161,15 +329,84 @@
         {
           "file": "reference/archive-security.test.mjs",
           "name": "preserved GOOD evidence cannot override subsequently known certificate compromise"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "root succession needs both quorums, retained links and explicit algorithm lifetimes"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "publication time and authority admission cannot be supplied by backdated content"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "lost renewal responses reconcile the exact retained timestamp without another TSA execution"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "process termination between archive write and SQLite commit cannot publish half a renewal"
+        },
+        {
+          "file": "reference/retained-document.test.mjs",
+          "name": "retains offline authorization, renewed preservation and later admissibility separately"
         }
       ],
-      "gap": "A bounded RFC 4998 lifecycle covers TSA replacement, hash renewal, explicit lifetimes and historical replay after signer-certificate expiry; stale current status remains INDETERMINATE. Generic historical authority/status resolution, container-specific AdES LT/LTA augmentation and operational archive succession remain draft implementation gaps. Independent implementation and assessment are later stability evidence."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-CORE-10",
-      "coverage": "planned",
-      "tests": [],
-      "gap": "S/MIME and standalone timestamp application profiles have not yet been specified completely."
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/timestamp-verifier.test.mjs",
+          "name": "nonce-free standalone proof is valid without claiming a nonce binding"
+        },
+        {
+          "file": "reference/timestamp-verifier.test.mjs",
+          "name": "unsupported response status retains bad-signature INVALID precedence"
+        },
+        {
+          "file": "reference/timestamp-service.test.mjs",
+          "name": "unknown signer outcome never repeats signing and reconciles the original signature"
+        },
+        {
+          "file": "reference/timestamp-service.test.mjs",
+          "name": "a known appointment gap inside the timestamp interval prevents signing"
+        },
+        {
+          "file": "reference/timestamp-client.test.mjs",
+          "name": "lost transport result is not replayed and only an exact bound response reconciles"
+        },
+        {
+          "file": "reference/timestamp-client.test.mjs",
+          "name": "a timely received response keeps its first trusted receipt time across a failed completion and late reconciliation"
+        },
+        {
+          "file": "reference/smime-application.test.mjs",
+          "name": "S/MIME resolver query mutation cannot change the admitted tuple or policy namespace"
+        },
+        {
+          "file": "reference/smime-application.test.mjs",
+          "name": "S/MIME rechecks the recipient reported by the actual decrypt operation"
+        },
+        {
+          "file": "reference/smime.test.mjs",
+          "name": "S/MIME actual encryption admits two explicit keys without inferring a To recipient"
+        },
+        {
+          "file": "reference/smime.test.mjs",
+          "name": "S/MIME actual GCM failure releases no MIME or attachments"
+        },
+        {
+          "file": "reference/smime.test.mjs",
+          "name": "S/MIME real completed signature is not encrypted or released after current withdrawal"
+        },
+        {
+          "file": "reference/smime-backend.test.mjs",
+          "name": "S/MIME absent Content-Type retains the RFC2045 text default despite a filename"
+        }
+      ],
+      "gap": "The standalone RFC 3161 application selects P-256, direct-root/full-CRL trust, current scoped authority and explicit clock admission, with durable issuance/client recovery. The selected S/MIME application adds complete MIME protection, explicit current mailbox/certificate/key admission and bounded opaque ES256 SignedData with optional RSA-OAEP/AES-GCM encryption. Full S/MIME receiving support, historical message preservation, SMTP/durable replay semantics, operational mailbox/time assurance, assessed key custody and complete independent application implementations remain open."
     },
     {
       "id": "CC-DOC-01",
@@ -194,6 +431,14 @@
         {
           "file": "reference/sdk-results.test.mjs",
           "name": "ordinary WebAuthn completes CMS and mdoc document verification without raw signing or execution proposals"
+        },
+        {
+          "file": "reference/retained-document.test.mjs",
+          "name": "retains offline authorization, renewed preservation and later admissibility separately"
+        },
+        {
+          "file": "reference/evidence-plan.test.mjs",
+          "name": "nested verification plans and independent activation leaves are forbidden even with valid commitments"
         }
       ],
       "gap": "Ordinary WebAuthn completes selected CMS and mdoc document plans without raw-signing or execution proposals. Independent full-profile interoperability remains unrecorded."
@@ -205,9 +450,33 @@
         {
           "file": "reference/document-evidence.test.mjs",
           "name": "organization evidence rejects authority substitution, wrong grants and revocation at the proof bound"
+        },
+        {
+          "file": "reference/organization-delegation-application.test.mjs",
+          "name": "organization application produces one real signature and independently verifies original flat evidence"
+        },
+        {
+          "file": "reference/organization-delegation-evidence.test.mjs",
+          "name": "organization path cannot reduce the inherited minimum number of people"
+        },
+        {
+          "file": "reference/organization-delegation-evidence.test.mjs",
+          "name": "organization known off-path registration compromise follows its key into a new registration"
+        },
+        {
+          "file": "reference/organization-delegation-durability.test.mjs",
+          "name": "organization actual process death after signing reconciles exact bytes without another private action"
+        },
+        {
+          "file": "reference/organization-delegation-durability.test.mjs",
+          "name": "organization retains the earliest effective revocation through later heads and an actual restart"
+        },
+        {
+          "file": "reference/organization-delegation-durability.test.mjs",
+          "name": "organization final application admission withholds an already committed gateway result"
         }
       ],
-      "gap": "Direct authority-to-operation seals are specified and exercised; hierarchical delegation, organizational mdoc and assessed custody remain open."
+      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. Organizational mdoc, arbitrary graphs, historical delegation proof, independently assessed identity/custody and a second complete implementation remain open."
     },
     {
       "id": "CC-DOC-03",
@@ -224,6 +493,18 @@
         {
           "file": "reference/openssl.test.mjs",
           "name": "independent OpenSSL and reference exchange ML-KEM AuthEnvelopedData in both directions"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "revocation learned during root loading prevents release and leaves an uncertain operation"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "recovery completion failure stays uncertain after restart and never reloads the root"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "recovery requests and saved results stay isolated across trust domains sharing a journal"
         }
       ],
       "gap": "Certified recipient delivery and two-operator encryption-key recovery are exercised; external recovery services and hardware key import remain unassessed."
@@ -233,12 +514,40 @@
       "coverage": "partial",
       "tests": [
         {
+          "file": "reference/cades.test.mjs",
+          "name": "signature timestamp request hashes raw signature octets and excludes the OCTET STRING tag and length"
+        },
+        {
+          "file": "reference/cades-interop.test.mjs",
+          "name": "OpenSSL CMS verification proves original signature remains valid after independently encoded unsigned ATS augmentation"
+        },
+        {
+          "file": "reference/cades-security.test.mjs",
+          "name": "originalCMS guard rejects a different otherwise valid original signature"
+        },
+        {
           "file": "reference/containers.test.mjs",
           "name": "PAdES actual PDF ByteRange, detached CMS and incremental second signature"
         },
         {
           "file": "reference/security-engineering.test.mjs",
           "name": "CMS rejects relative OIDs and wrong signed-attribute value types even with a valid signature"
+        },
+        {
+          "file": "reference/certificate-key-usage.test.mjs",
+          "name": "rejects signed malformed KeyUsage extension schemas"
+        },
+        {
+          "file": "reference/pades.test.mjs",
+          "name": "selected PAdES B/T/LT/LTA lifecycle preserves every previous revision and approval CMS byte"
+        },
+        {
+          "file": "reference/pades.test.mjs",
+          "name": "independent PDF and CMS fixture has a real page and OpenSSL-verified detached signature"
+        },
+        {
+          "file": "reference/pades-structure.test.mjs",
+          "name": "a timestamp cannot legitimize an earlier unauthorized page modification"
         }
       ],
       "gap": "Selected container behavior is tested. The custom reference parsers and SDK are not recommended production security boundaries; evaluated production parser integration, semantic equivalence and complete rendering coverage need independent review."
@@ -247,6 +556,38 @@
       "id": "CC-DOC-05",
       "coverage": "partial",
       "tests": [
+        {
+          "file": "reference/cades-boundaries.test.mjs",
+          "name": "historical validation cannot authenticate an uncovered timestamp after current TSA key protection ends"
+        },
+        {
+          "file": "reference/cades-boundaries.test.mjs",
+          "name": "historical B validation cannot authenticate an unprotected document signature after current signer key cutoff"
+        },
+        {
+          "file": "reference/cades-material.test.mjs",
+          "name": "negative CRL protected before root cutoff remains authenticated and INVALID"
+        },
+        {
+          "file": "reference/cades-material.test.mjs",
+          "name": "unprotected GOOD after root cutoff cannot be accepted on its claimed publication time"
+        },
+        {
+          "file": "reference/cades.test.mjs",
+          "name": "timely TSA succession preserves expired document and prior TSA certificates"
+        },
+        {
+          "file": "reference/cades.test.mjs",
+          "name": "historical material remains offline and authority queries retain actual knowledge time"
+        },
+        {
+          "file": "reference/cades-security.test.mjs",
+          "name": "accuracy upper bound equal to a protection deadline is too late"
+        },
+        {
+          "file": "reference/cades-security.test.mjs",
+          "name": "old CRL bytes cannot be reused historically without ATS protection"
+        },
         {
           "file": "reference/containers.test.mjs",
           "name": "RFC3161 TSA request/response validates imprint, nonce, policy, EKU and POE interval"
@@ -290,15 +631,112 @@
         {
           "file": "reference/archive-security.test.mjs",
           "name": "preserved GOOD evidence cannot override subsequently known certificate compromise"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "root succession needs both quorums, retained links and explicit algorithm lifetimes"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "publication time and authority admission cannot be supplied by backdated content"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "lost renewal responses reconcile the exact retained timestamp without another TSA execution"
+        },
+        {
+          "file": "reference/retained-authorities.test.mjs",
+          "name": "process termination between archive write and SQLite commit cannot publish half a renewal"
+        },
+        {
+          "file": "reference/retained-document.test.mjs",
+          "name": "retains offline authorization, renewed preservation and later admissibility separately"
+        },
+        {
+          "file": "reference/status-results.test.mjs",
+          "name": "CRL, OCSP, Status List and experimental status share authenticated result semantics"
+        },
+        {
+          "file": "reference/pades.test.mjs",
+          "name": "timely document timestamp succession preserves expired signer and first TSA certificates"
+        },
+        {
+          "file": "reference/pades-security.test.mjs",
+          "name": "actual knowledgeTime cannot hide later known compromise applying to the first timestamp"
+        },
+        {
+          "file": "reference/pades-security.test.mjs",
+          "name": "current DSS appended after the last timestamp has no retroactive coverage"
         }
       ],
-      "gap": "A bounded RFC 4998 lifecycle covers TSA replacement, hash renewal, explicit lifetimes and historical replay after signer-certificate expiry; stale current status remains INDETERMINATE. Generic historical authority/status resolution, container-specific AdES LT/LTA augmentation and operational archive succession remain draft implementation gaps. Independent implementation and assessment are later stability evidence."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-DOC-06",
-      "coverage": "planned",
-      "tests": [],
-      "gap": "Draft acceptance develops the public verification contract and reproducible vectors. A second independently developed complete implementation and interoperability record are later stability requirements, not prerequisites for continuing draft development."
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published CMS and native mdoc originals verify through the public SDK"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published negative documents preserve exact typed outcomes"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published replay is offline and uses its declared knowledge time"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published ERS records distinguish timely missing and late renewal"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published retained lifecycle separates preservation from current admissibility"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published corpus inventory contains only public material and exact hashes"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader rejects corrupt inventories and unsafe file references"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector runner rejects an incorrect expected verdict"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "document replay uses the supplied public verifier factory"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader detects replacement of a checked manifest or material"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader bounds descriptor reads when a file grows"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader rejects truncation during a descriptor read"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader closes its descriptor after a read failure"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader retains directory and escaping link rejection"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader closes descriptors after successful loading"
+        }
+      ],
+      "gap": "The public original-byte corpus, external trust schema, fixed knowledge times and offline runner reproduce selected CMS/MTC and native mdoc document results, ERS renewal and separate historical/current decisions. The installed SDK replays the document cases through its public export. This is draft acceptance evidence; a second independently developed complete implementation and recorded interoperability remain later stability requirements."
     },
     {
       "id": "CC-MDOC-01",
@@ -311,9 +749,17 @@
         {
           "file": "reference/authority.test.mjs",
           "name": "RA decision and signed RAR bind issuer policy, profile, subject request and one issuance"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "RAR rejects ${boundary} replay at an independent issuer"
+        },
+        {
+          "file": "reference/audit-regressions.test.mjs",
+          "name": "MDOC offer enforces signed scope and authorization lifetime before durable allocation"
         }
       ],
-      "gap": "Add explicit cross-domain substitution vectors for all accepted identity sources."
+      "gap": "Scoped native issuance and cross-domain/issuer replay rejection are exercised. Interoperability with every selected external identity source still needs independent evidence."
     },
     {
       "id": "CC-MDOC-02",
@@ -337,6 +783,14 @@
         {
           "file": "reference/foundation.test.mjs",
           "name": "DeviceKey and independent ML-DSA profiles preserve distinct key and algorithm semantics"
+        },
+        {
+          "file": "reference/component-integration.test.mjs",
+          "name": "locked component snapshots retain the exact reviewed bytes"
+        },
+        {
+          "file": "reference/component-integration.test.mjs",
+          "name": "mdoc status TTL is authenticated and cannot erase invalid or revoked evidence"
         }
       ],
       "gap": "Native certificate semantics need full external parser/issuer interoperability vectors."

@@ -86,6 +86,14 @@ async function issuanceFixture(t, representation) {
 
   const makeIssuer = (scope = issuanceScope, key = issuerKey, overrides = {}) => {
     const issuerJournal = journal(),
+      members =
+        scope.representation === 'MTC'
+          ? [0, 1, 2].map((i) => ({
+              id: '32473.' + (20 + i),
+              operatorID: 'synthetic-scope-mirror-' + i,
+              ...c.generate('ml-dsa-87'),
+            }))
+          : [],
       common = {
         journal: issuerJournal,
         raCertificate,
@@ -105,6 +113,14 @@ async function issuanceFixture(t, representation) {
               validFrom: c.now() - 60,
               validUntil: c.now() + 86400,
             },
+            ...members.map((member) => ({
+              mode: 'RAW_KEY',
+              publicKeyDER: c.spki(member.publicKey),
+              roles: ['COSIGNER'],
+              knownAt: c.now() - 60,
+              validFrom: c.now() - 60,
+              validUntil: c.now() + 86400,
+            })),
           ],
         }),
         ...overrides,
@@ -117,12 +133,7 @@ async function issuanceFixture(t, representation) {
         journal: issuerJournal,
       };
     }
-    const members = [0, 1, 2].map((i) => ({
-        id: '32473.' + (20 + i),
-        operatorID: 'synthetic-scope-mirror-' + i,
-        ...c.generate('ml-dsa-87'),
-      })),
-      mirrors = members.map(
+    const mirrors = members.map(
         (member) =>
           new Mirror({ journal: journal(), id: member.id, privateKey: member.privateKey }),
       ),
@@ -359,6 +370,14 @@ async function documentFixture(t, { expiredPermitAuthority = false } = {}) {
         validFrom: at - 60,
         validUntil: at + 86400,
       },
+      ...members.map((member) => ({
+        mode: 'RAW_KEY',
+        publicKeyDER: c.spki(member.publicKey),
+        roles: ['COSIGNER'],
+        knownAt: at - 60,
+        validFrom: at - 60,
+        validUntil: at + 86400,
+      })),
     ],
     authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities, at }),
     issuer = new MTCIssuer({
@@ -482,12 +501,12 @@ async function documentFixture(t, { expiredPermitAuthority = false } = {}) {
         certificate,
         sim,
         policy,
-        activation,
         permit,
         receipt: executed.receipt,
         status,
         cms: prepared.finish(executed.signature),
-        documentEvidence: { RegistrationAuthorization: rar, DocumentTimestamp: tsa.issue },
+        registrationAuthorization: rar,
+        documentEvidence: { DocumentTimestamp: tsa.issue },
       }),
       trust = {
         mtc,

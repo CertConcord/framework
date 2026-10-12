@@ -2,12 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as c from './core.mjs';
 
-test('draft 02 domain has fixed bytes and rejects another domain revision', () => {
+test('draft 03 domain has fixed bytes and rejects another domain revision', () => {
   const value = { test: true }, input = c.D('example', value);
-  assert.equal(input.toString('hex'), '846b43657274436f6e636f726402676578616d706c65a16474657374f5');
+  assert.equal(input.toString('hex'), '846b43657274436f6e636f726403676578616d706c65a16474657374f5');
   const key = c.generate('ml-dsa-87'), signature = c.sign(input, key.privateKey);
   assert(c.verify(input, signature, key.publicKey));
-  assert(!c.verify(c.dcbor(['CertConcord', 1, 'example', value]), signature, key.publicKey));
+  assert(!c.verify(c.dcbor(['CertConcord', 2, 'example', value]), signature, key.publicKey));
 });
 
 test('DCBOR fixed bytes and integer boundaries', () => {

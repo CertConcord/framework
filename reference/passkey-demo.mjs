@@ -66,19 +66,42 @@ export async function runPasskeyDemo({
       receiptControl = control('Synthetic Receipt'),
       statusControl = control('Synthetic Status'),
       authenticator = examplePasskey({ version, algorithm });
-    const issuanceScope = { trustDomainID, issuerID: '32473.10', issuerKeyID: c.keyID(ca.publicKey), representation: mtc ? 'MTC' : 'X509' },
-      authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities: [
-        { certificate: raControl.certificate, roles: ['REGISTRATION_AUTHORITY'] },
-        { certificate: permitControl.certificate, roles: ['PERMIT_AUTHORITY'] },
-        { certificate: receiptControl.certificate, roles: ['RECEIPT_AUTHORITY'] },
-        { certificate: statusControl.certificate, roles: ['STATUS_AUTHORITY'] },
-        { mode: 'RAW_KEY', publicKeyDER: c.spki(ca.publicKey), knownAt: c.now() - 60, validFrom: c.now() - 60, validUntil: c.now() + 86400, roles: ['ISSUER'] },
-      ] });
     const members = mirrorJournals.map((_, i) => ({
       id: '32473.' + (20 + i),
       operatorID: 'synthetic-mirror-' + i,
       ...c.generate('ml-dsa-87'),
     }));
+    const issuanceScope = {
+        trustDomainID,
+        issuerID: '32473.10',
+        issuerKeyID: c.keyID(ca.publicKey),
+        representation: mtc ? 'MTC' : 'X509',
+      },
+      authorityResolver = exampleAuthorityResolver({
+        trustDomainID,
+        authorities: [
+          { certificate: raControl.certificate, roles: ['REGISTRATION_AUTHORITY'] },
+          { certificate: permitControl.certificate, roles: ['PERMIT_AUTHORITY'] },
+          { certificate: receiptControl.certificate, roles: ['RECEIPT_AUTHORITY'] },
+          { certificate: statusControl.certificate, roles: ['STATUS_AUTHORITY'] },
+          {
+            mode: 'RAW_KEY',
+            publicKeyDER: c.spki(ca.publicKey),
+            knownAt: c.now() - 60,
+            validFrom: c.now() - 60,
+            validUntil: c.now() + 86400,
+            roles: ['ISSUER'],
+          },
+          ...members.map((member) => ({
+            mode: 'RAW_KEY',
+            publicKeyDER: c.spki(member.publicKey),
+            knownAt: c.now() - 60,
+            validFrom: c.now() - 60,
+            validUntil: c.now() + 86400,
+            roles: ['COSIGNER'],
+          })),
+        ],
+      });
     const mtcTrust = {
       caID: '32473.10',
       caPublicKey: ca.publicKey,
@@ -328,9 +351,9 @@ export async function runPasskeyDemo({
     const bundle = createSignaturePackage({
       document,
       certificate,
+      registrationAuthorization: rar,
       sim,
       policy,
-      activation,
       permit,
       receipt: result.receipt,
       status,
@@ -349,6 +372,7 @@ export async function runPasskeyDemo({
       },
     });
     const packageTrust = {
+      raCertificate: raControl.certificate,
       issuanceScope,
       authorityResolver,
       ...(mtc ? { mtc: mtcTrust } : { issuerPublicKey: ca.publicKey }),

@@ -1,5 +1,24 @@
-import { H, D, sha512, equal, requireThat, now, b64u, octet, sign, dcbor, decodeCBOR } from './core.mjs';
-import { snapshotIssuanceScope, issuanceRequestID, requireIssuanceAuthority } from './enrollment-scope.mjs';
+import { createPublicKey } from 'node:crypto';
+import {
+  H,
+  D,
+  sha512,
+  equal,
+  requireThat,
+  now,
+  b64u,
+  octet,
+  sign,
+  dcbor,
+  decodeCBOR,
+} from './core.mjs';
+import {
+  snapshotIssuanceScope,
+  issuanceRequestID,
+  issuanceAuthorityScope,
+  requireIssuanceAuthority,
+} from './enrollment-scope.mjs';
+import { requireAuthorityQuorum } from './control-authority.mjs';
 import { verifyCSR } from './enrollment.mjs';
 import { readControl } from './state.mjs';
 import { RRA, OID, extension, certificateFromTBS, parseCertificate } from './pki.mjs';
@@ -50,7 +69,10 @@ export class MTCIssuer {
       authorityResolver,
       issuerCertificate,
     });
-    requireThat(this.issuanceScope.representation === 'MTC' && this.issuanceScope.issuerID === caID, 'ISSUANCE_SCOPE');
+    requireThat(
+      this.issuanceScope.representation === 'MTC' && this.issuanceScope.issuerID === caID,
+      'ISSUANCE_SCOPE',
+    );
     const origin = this.caID + '.0.' + this.logNumber;
     requireThat(
       !journal.get('mtc-log', origin) || journal.get('log-migration', 'mtc:' + origin),
@@ -104,7 +126,10 @@ export class MTCIssuer {
               ? { notAfter: Math.min(now() + 86400, admission.binding.expiresAt) }
               : {}),
             extraExtensions: [
-              extension(RRA['id-pe-certconcordAuthorizationID'], octet(H('RegistrationAuthorization', a))),
+              extension(
+                RRA['id-pe-certconcordAuthorizationID'],
+                octet(H('RegistrationAuthorization', a)),
+              ),
               extension(
                 RRA['id-pe-certconcordKeyAssurance'],
                 octet(
@@ -127,7 +152,32 @@ export class MTCIssuer {
       this.journal.put('mtc-issuance', id, value);
       return value;
     });
-    if (issuance.state === 'CERTIFIED') return issuance.certificate;
+    const verifyCosigners = (certificate) => {
+      const at = now(),
+        proof = verifyMTC(certificate, {
+          caID: this.caID,
+          caPublicKey: createPublicKey(this.privateKey),
+          members: this.members,
+          threshold: this.threshold,
+          policyHash: this.policyHash,
+          rtmHash: this.rtmHash,
+          membershipEpoch: this.membershipEpoch,
+          profileID: issuance.profileID,
+          at,
+        });
+      requireAuthorityQuorum(this.authorityResolver, {
+        members: proof.verifiedCosigners,
+        threshold: this.threshold,
+        role: 'COSIGNER',
+        scope: issuanceAuthorityScope(a),
+        stateTime: at,
+        knowledgeTime: at,
+      });
+    };
+    if (issuance.state === 'CERTIFIED') {
+      verifyCosigners(issuance.certificate);
+      return issuance.certificate;
+    }
     const size = this.log.head().size,
       root = this.log.root(size),
       params = { caID: this.caID, logNumber: this.logNumber, start: 0, end: size, root },
@@ -153,16 +203,7 @@ export class MTCIssuer {
         signatures,
       }),
     );
-    verifyMTC(certificate, {
-      caID: this.caID,
-      caPublicKey: (await import('node:crypto')).createPublicKey(this.privateKey),
-      members: this.members,
-      threshold: this.threshold,
-      policyHash: this.policyHash,
-      rtmHash: this.rtmHash,
-      membershipEpoch: this.membershipEpoch,
-      profileID: issuance.profileID,
-    });
+    verifyCosigners(certificate);
     return this.journal.transaction(() => {
       requireIssuanceAuthority(a, this);
       if (admission) this.keyBindings.forIssuance(a.keyBindingID, { ...a, csr });

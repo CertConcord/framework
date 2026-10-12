@@ -1,7 +1,7 @@
 import { PDFDocument, PDFName, PDFArray, PDFDict, PDFRef, StandardFonts } from 'pdf-lib';
 import { random, requireThat, parseDER, equal, sha512 } from './core.mjs';
 
-export async function examplePDF(text = 'CertConcord draft 02 synthetic document') {
+export async function examplePDF(text = 'CertConcord draft 03 synthetic document') {
   const d = await PDFDocument.create();
   const p = d.addPage([595, 842]),
     f = await d.embedFont(StandardFonts.Helvetica);

@@ -64,10 +64,7 @@ test('Status List preserves an established revocation even after the evidence re
 test('Staleness cannot hide invalid signatures, bindings, encodings or status indices', () => {
   const { options, claims, token } = fixture(),
     stale = { ...options, at: claims.exp + 1 };
-  assert.throws(
-    () => verifyStatusList(token({}, generate('ec').privateKey), stale),
-    /JWS_SIGNATURE/,
-  );
+  assert.equal(verifyStatusList(token({}, generate('ec').privateKey), stale).reason, 'JWS_SIGNATURE');
   for (const changes of [
     { sub: 'https://other.example/status/1' },
     { iat: '0' },
@@ -77,12 +74,9 @@ test('Staleness cannot hide invalid signatures, bindings, encodings or status in
     { nbf: '0' },
     { status_list: { ...claims.status_list, bits: 2 } },
   ])
-    assert.throws(() => verifyStatusList(token(changes), stale), /STATUS_LIST_CONTEXT/);
-  assert.throws(() => verifyStatusList(token(), { ...stale, index: 8192 }), /STATUS_INDEX/);
-  assert.throws(
-    () => verifyStatusList(token({ status_list: { bits: 1, lst: '?' } }), stale),
-    /BAD_BASE64URL/,
-  );
+    assert.equal(verifyStatusList(token(changes), stale).reason, 'STATUS_LIST_CONTEXT');
+  assert.equal(verifyStatusList(token(), { ...stale, index: 8192 }).reason, 'STATUS_INDEX');
+  assert.equal(verifyStatusList(token({ status_list: { bits: 1, lst: '?' } }), stale).reason, 'BAD_BASE64URL');
 });
 
 test('Expired authorization JWTs retain JWT_EXPIRED semantics', () => {

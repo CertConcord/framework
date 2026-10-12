@@ -4,12 +4,41 @@ import { sha256 } from './core.mjs';
 const arf3 =
   'https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/';
 export const sources = {
+  mailsplit5420: 'https://registry.npmjs.org/@zone-eu/mailsplit/-/mailsplit-5.4.20.tgz',
+  encodingJapanese240: 'https://registry.npmjs.org/encoding-japanese/-/encoding-japanese-2.4.0.tgz',
+  iconvLite073: 'https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.3.tgz',
+  libbase64132: 'https://registry.npmjs.org/libbase64/-/libbase64-1.3.2.tgz',
+  libmime547: 'https://registry.npmjs.org/libmime/-/libmime-5.4.7.tgz',
+  libqp212: 'https://registry.npmjs.org/libqp/-/libqp-2.1.2.tgz',
+  nodemailer10016: 'https://registry.npmjs.org/nodemailer/-/nodemailer-10.0.16.tgz',
+  saferBuffer212: 'https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz',
+  rfc8551: 'https://www.rfc-editor.org/rfc/rfc8551.txt',
+  rfc8550: 'https://www.rfc-editor.org/rfc/rfc8550.txt',
+  rfc9788: 'https://www.rfc-editor.org/rfc/rfc9788.txt',
+  rfc5322: 'https://www.rfc-editor.org/rfc/rfc5322.txt',
+  rfc2045: 'https://www.rfc-editor.org/rfc/rfc2045.txt',
+  rfc2046: 'https://www.rfc-editor.org/rfc/rfc2046.txt',
+  rfc3560: 'https://www.rfc-editor.org/rfc/rfc3560.txt',
+  rfc4055: 'https://www.rfc-editor.org/rfc/rfc4055.txt',
+  rfc5083: 'https://www.rfc-editor.org/rfc/rfc5083.txt',
+  rfc5084: 'https://www.rfc-editor.org/rfc/rfc5084.txt',
+  c2spCheckpoint:
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-checkpoint.md',
+  rfc9360: 'https://www.rfc-editor.org/rfc/rfc9360.txt',
+  wg10WorkingDraft:
+    'https://raw.githubusercontent.com/ISOWG10/ISO-18013/b250e7a64f99e22ceed10d2a5799bed38ee89f85/Working%20Documents/Working%20Draft%20ISO_IEC_18013-5_second-edition_CD_ballot_resolution_v4.pdf',
   mtcDeploymentUseCases:
     'https://www.ietf.org/archive/id/draft-gray-plants-mtc-deploy-use-cases-01.txt',
   cades:
     'https://www.etsi.org/deliver/etsi_EN/319100_319199/31912201/01.03.01_60/en_31912201v010301p.pdf',
+  cadesERS:
+    'https://www.etsi.org/deliver/etsi_ts/119100_119199/11912203/01.02.01_60/ts_11912203v010201p.pdf',
+  cryptoSuites:
+    'https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/02.01.01_60/ts_119312v020101p.pdf',
   pades:
     'https://www.etsi.org/deliver/etsi_EN/319100_319199/31914201/01.02.01_60/en_31914201v010201p.pdf',
+  pdf17Authorized:
+    'https://raw.githubusercontent.com/adobe/dc-acrobat-sdk-docs/b21b8bca628d7e436b5d19e00ae161c0f5e52e4a/docs/standards/pdfstandards/pdf/PDF32000_2008.pdf',
   jades:
     'https://www.etsi.org/deliver/etsi_TS/119100_119199/11918201/01.02.01_60/ts_11918201v010201p.pdf',
   adesValidation:
@@ -93,13 +122,13 @@ export const sources = {
   c2spMirror:
     'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-mirror.md',
   c2spWitness:
-    'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-witness.md',
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-witness.md',
   c2spCosignature:
-    'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-cosignature.md',
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-cosignature.md',
   c2spNote:
-    'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/signed-note.md',
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/signed-note.md',
   c2spTiles:
-    'https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-tiles.md',
+    'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-tiles.md',
   pkcs11:
     'https://raw.githubusercontent.com/oasis-tcs/pkcs11/6edf334c5b324626c95e82b0cb9737eaaa37a340/published/3-02/pkcs11t.h',
   openssl365:
@@ -158,7 +187,7 @@ export const sources = {
     [
       5280, 5652, 5869, 3394, 5649, 8949, 9052, 9629, 9881, 9882, 9883, 9935, 9936, 3161, 5816,
       5035, 4998, 6283, 8555, 9901, 9449, 9964, 9180, 6960, 2986, 9810, 7797, 7515, 7516, 7518,
-      7638,
+      7638, 6211,
     ].map((n) => ['rfc' + n, `https://www.rfc-editor.org/rfc/rfc${n}.txt`]),
   ),
 };

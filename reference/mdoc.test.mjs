@@ -47,6 +47,8 @@ function fixture() {
       privateKey: issuer.privateKey,
     });
   return {
+    ca,
+    root,
     issuer,
     holder,
     reader,
@@ -72,6 +74,45 @@ test('ISO CBOR agrees with external CBOR and rejects ambiguous duplicate labels'
   assert.equal(get(decode(external), 1), -7);
   assert.throws(() => decode(Buffer.from('a201010102', 'hex')), /DUPLICATE/);
   assert.throws(() => decode(Buffer.from('9fff', 'hex')), /INDEFINITE/);
+});
+test('framework issuance binds the exact DS certificate through the component protected thumbprint', () => {
+  const f = fixture(),
+    auth = get(decode(f.credential), 'issuerAuth'),
+    headers = decode(auth[0]);
+  assert.deepEqual(headers.get(34), [-16, sha256(f.cert)]);
+  const replacement = issueMdocCertificate({
+    publicKey: f.issuer.publicKey,
+    subject: name('Reissued Synthetic Document Signer'),
+    serial: 9,
+    issuerCertificate: f.root,
+    issuerKey: f.ca.privateKey,
+  });
+  const changed = decode(f.credential);
+  get(changed, 'issuerAuth')[1].set(33, replacement);
+  assert.throws(
+    () =>
+      m.verifyIssuerSigned(encode(changed), {
+        issuerKey: f.issuer.publicKey,
+        certificate: replacement,
+      }),
+    { code: 'MDOC_CERTIFICATE_THUMBPRINT' },
+  );
+  const verified = m.verifyIssuerSigned(f.credential, {
+    issuerKey: f.issuer.publicKey,
+    certificate: f.cert,
+  });
+  assert(verified.validity.validUntil <= new X509Certificate(f.cert).validToDate.getTime() / 1000);
+  assert.throws(
+    () =>
+      m.issueMdoc({
+        claims: { qualification: 'CERTCONCORD-IAL2' },
+        holderJWK: publicJWK(f.holder.publicKey),
+        certificate: f.cert,
+        privateKey: f.issuer.privateKey,
+        validFrom: now() - 10,
+      }),
+    { code: 'MDOC_VALIDITY' },
+  );
 });
 test('mdoc issuer digest, selective disclosure and OpenID4VP device binding', async () => {
   const f = fixture(),
@@ -288,7 +329,10 @@ test('OpenID issuance -> mdoc holder -> encrypted website presentation -> RRA ac
     ),
   });
   try {
-    const bypass = issuer.offer({ claims: { qualification: 'CERTCONCORD-IAL2' }, subjectID: 'synthetic' });
+    const bypass = issuer.offer({
+      claims: { qualification: 'CERTCONCORD-IAL2' },
+      subjectID: 'synthetic',
+    });
     assert.throws(
       () =>
         issuer.token(

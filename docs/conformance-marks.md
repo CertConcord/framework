@@ -1,6 +1,6 @@
 # Conformance mark policy — draft reference
 
-No CertConcord conformance mark, certification program or active mark grant is established by draft 02. The following retained administrative rules describe how an explicitly established future designation would need to be scoped and evidenced. The empty register does not award a mark, and the historical CertConcord label is not an active CertConcord designation.
+No CertConcord conformance mark, certification program or active mark grant is established by draft 03. The following retained administrative rules describe how an explicitly established future designation would need to be scoped and evidenced. The empty register does not award a mark, and the historical CertConcord label is not an active CertConcord designation.
 
 ## Eligibility and authorization
 
@@ -14,7 +14,7 @@ A grant binds all of the following:
 - A versioned assessment plan mapping every applicable normative requirement to evidence; every mandatory test has a passing result.
 - Assessor authority, report/artifact digests, assessment date, validity period and an explicit administrative decision.
 
-The [conformance requirements](../spec/bindings/CONFORMANCE-draft-02.md) determine applicability. A narrowly scoped component mark must display that scope next to the mark; it must not imply complete trust-domain conformance. An extension or experimental draft may only appear in a designation whose registered scope explicitly includes that draft. Passing an OIDF, EUDI or platform-specific assessment supports its stated scope and cannot independently grant a CertConcord or CertConcord mark.
+The [conformance requirements](../spec/bindings/CONFORMANCE-draft-03.md) determine applicability. A narrowly scoped component mark must display that scope next to the mark; it must not imply complete trust-domain conformance. An extension or experimental draft may only appear in a designation whose registered scope explicitly includes that draft. Passing an OIDF, EUDI or platform-specific assessment supports its stated scope and cannot independently grant a CertConcord or CertConcord mark.
 
 ## Assessment and decision
 

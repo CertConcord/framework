@@ -1,6 +1,6 @@
 # Native key adapters — draft reference
 
-Native adapters expose P-256 key generation, public-key retrieval and ES256 signing. INDEPENDENT_PQ uses this key for holder proof and a separate ML-DSA provider for documents. DEVICE_KEY uses the same approved P-256 key for a distinct document signature. Both profiles require the [DCP admission and authorization rules](../../spec/bindings/DCP-draft-02.md#22-key-attestation-admission).
+Native adapters expose P-256 key generation, public-key retrieval and ES256 signing. INDEPENDENT_PQ uses this key for holder proof and a separate ML-DSA provider for documents. DEVICE_KEY uses the same approved P-256 key for a distinct document signature. Both profiles require the [DCP admission and authorization rules](../../spec/bindings/DCP-draft-03.md#22-key-attestation-admission).
 
 ## Enrollment contract
 
@@ -48,7 +48,7 @@ IdentityDocumentServices provides the system registration and presentment interf
 
 ## Android
 
-Prerequisites: JDK 17, Gradle 8.11.1, Android SDK Platform 35/build tools, and an Android 11+ device with an enrolled strong biometric. StrongBox selection is explicit; an unavailable StrongBox produces an error.
+Prerequisites: JDK 17, Gradle 9.6.0, Android SDK Platform 35 and Build Tools 36.0.0, and an Android 11+ device with an enrolled strong biometric. The project uses AGP 9.4.1's built-in Kotlin support; no separate Kotlin Android plugin is required. These tool versions follow the [AGP compatibility requirements](https://developer.android.com/build/releases/agp-9-4-0-release-notes) and [built-in Kotlin migration](https://developer.android.com/build/migrate-to-built-in-kotlin). StrongBox selection is explicit; an unavailable StrongBox produces an error.
 
 ```sh
 gradle --project-dir native/android assembleDebug

@@ -3,14 +3,8 @@ import assert from 'node:assert/strict';
 import { unlinkSync, mkdirSync } from 'node:fs';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
-import {
-  Journal,
-  SigningGateway,
-  activationContext,
-  issuePermit,
-  evidenceObject,
-  readControl,
-} from './state.mjs';
+import { Journal, SigningGateway, activationContext, issuePermit, readControl } from './state.mjs';
+import { createEvidencePackage } from './evidence-plan.mjs';
 import { RemoteCryptoKeyService } from './providers.mjs';
 import {
   EXECUTION_BINDING_PROFILE,
@@ -705,19 +699,8 @@ test('legacy gateway and remote service recheck permit expiry after asynchronous
 });
 
 function downgraded(bundle, profile) {
-  const objects = bundle.objects.filter(
-    (o) => !['ExecutionBindingEvidence', 'VerificationPlan'].includes(o.type),
-  );
-  const plan = evidenceObject(
-    'VerificationPlan',
-    c.dcbor({
-      schemaVersion: 1,
-      profile,
-      objects: Object.fromEntries(objects.map((o) => [o.type, o.id])),
-    }),
-    objects.map((o) => o.id),
-  );
-  return { schemaVersion: 1, root: plan.id, objects: [...objects, plan] };
+  const objects = bundle.objects.filter((o) => o.type !== 'ExecutionBindingEvidence');
+  return createEvidencePackage(profile, objects);
 }
 test('execution evidence closes CMS/MTC and both mdoc key modes with mandatory anti-downgrade plans', async () => {
   for (const mode of ['CMS', 'INDEPENDENT_PQ', 'DEVICE_KEY']) {
@@ -756,8 +739,8 @@ test('execution evidence closes CMS/MTC and both mdoc key modes with mandatory a
           downgraded(
             r.bundle,
             format === 'CMS'
-              ? 'certconcord-ecp-cms-attested-v1'
-              : 'certconcord-ecp-mdoc-attested-v1',
+              ? 'certconcord-ecp-cms-attested-draft-03'
+              : 'certconcord-ecp-mdoc-attested-draft-03',
           ),
           r.trust,
         ),

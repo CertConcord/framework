@@ -38,6 +38,7 @@ test('C2SP mirror HTTP checkpoint, entries, immutable tiles and sign-subtree', a
     assert.equal((await post('/add-entries', t.mirrorUpload(log.name, entries))).status, 200);
     const cp = await (await fetch(base + '/' + hash + '/checkpoint')).text();
     t.verifyNote(cp, signer);
+    t.verifyPublishedCheckpoint(cp, log);
     const tile = await fetch(base + '/' + hash + '/tile/0/000.p/2');
     assert.equal(tile.status, 200);
     assert.equal((await tile.arrayBuffer()).byteLength, 64);
@@ -53,11 +54,15 @@ test('C2SP mirror HTTP checkpoint, entries, immutable tiles and sign-subtree', a
         end: 2,
         root: treeHash(entries),
         proof: consistencyProof(entries, 0, 2),
-        checkpoint: cp,
+        checkpoint: t.checkpointForSubtree(cp, signer),
       }),
       result = await post('/sign-subtree', q);
     assert.equal(result.status, 200);
-    assert.match(await result.text(), /^— mirror\.example\/network /);
+    const response = await result.text();
+    assert.equal(t.verifySubtreeResponse(response, t.parseSubtreeRequest(q), signer).length, 4627);
+    const witnessOnly = t.checkpointForSubtree(cp, signer);
+    const oldRequest = q.slice(0, -witnessOnly.length) + cp;
+    assert.equal((await post('/sign-subtree', oldRequest)).status, 400);
     const bad = await post(
       '/sign-subtree',
       q.replace(treeHash(entries).toString('base64'), c.random().toString('base64')),
@@ -131,7 +136,9 @@ test('RRA VCI admission rejects foreign domain, changed holder, caller claims an
     const binding = enroll(trustDomainID),
       offer = {
         subjectID: c.b64u(subjectID),
-        claims: registry.qualificationClaims(binding.bindingID, { qualification: 'CERTCONCORD-IAL2' }),
+        claims: registry.qualificationClaims(binding.bindingID, {
+          qualification: 'CERTCONCORD-IAL2',
+        }),
       };
     assert.equal(
       registry.authorizeCredential({ offer, holderJWK: publicJWK(holder.publicKey) }),

@@ -1,6 +1,6 @@
 {
   "name": "@certconcord/verifier",
-  "version": "0.2.0-draft.1",
+  "version": "0.3.0-draft.1",
   "private": true,
   "description": "CertConcord draft evidence verification with explicit relying-party trust and policy",
   "type": "module",

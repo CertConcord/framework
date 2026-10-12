@@ -4,6 +4,7 @@ import { encode, Tag } from '../cose.mjs';
 import { encodeProof } from '../mtc.mjs';
 const dir = process.argv[2] ?? '.runtime/fuzz-corpus/parsers';
 await mkdir(dir, { recursive: true });
+const unsignedCheckpoint = 'synthetic/log\n1\n' + Buffer.alloc(32).toString('base64') + '\n\n';
 const seeds = [
   [0, dcbor({ a: 1, bytes: Buffer.from('synthetic'), nested: [true, null, -1, 2n ** 63n] })],
   [0, Buffer.from('a2616101616102', 'hex')],
@@ -23,9 +24,20 @@ const seeds = [
       }),
     ),
   ],
-  [5, Buffer.from('synthetic/log\n1\n' + Buffer.alloc(32).toString('base64') + '\n\n')],
+  // Retain the old unsigned envelope: the current component must reject it.
+  [5, Buffer.from(unsignedCheckpoint)],
   [6, Buffer.from('{"a":1,"a":2}')],
   [6, Buffer.from('{"nested":[true,null,{"a":"b"}]}')],
+  // Shape-only parser fixture: a key hint plus a 64-byte signature. This is not
+  // an authenticated checkpoint and is never used by a log verifier.
+  [
+    5,
+    Buffer.from(
+      unsignedCheckpoint + '— synthetic/log ' + Buffer.alloc(68).toString('base64') + '\n',
+    ),
+  ],
+  [2, Buffer.from('9f0102ff', 'hex')],
+  [2, Buffer.from('a2616101616102', 'hex')],
 ];
 for (const [i, [type, bytes]] of seeds.entries())
   await writeFile(dir + '/' + i, Buffer.concat([Buffer.from([type]), bytes]));

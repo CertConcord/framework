@@ -1,10 +1,121 @@
-{"cases":[
-  {"id":"ml-dsa-87-prefix-subtree","expected":"VALID"},
-  {"id":"origin-substitution","expected":"INVALID"},
-  {"id":"witness-substitution","expected":"INVALID"},
-  {"id":"range-substitution","expected":"INVALID"},
-  {"id":"root-substitution","expected":"INVALID"},
-  {"id":"timestamp-substitution","expected":"INVALID"},
-  {"id":"algorithm-substitution","expected":"NOTE_KEY_SCHEME"},
-  {"id":"non-prefix-timestamp","expected":"SUBTREE_CONTEXT"}
-]}
+{
+  "cases": [
+    {
+      "id": "ml-dsa-87-prefix-subtree",
+      "expected": "VALID"
+    },
+    {
+      "id": "origin-substitution",
+      "expected": "INVALID"
+    },
+    {
+      "id": "witness-substitution",
+      "expected": "INVALID"
+    },
+    {
+      "id": "range-substitution",
+      "expected": "INVALID"
+    },
+    {
+      "id": "root-substitution",
+      "expected": "INVALID"
+    },
+    {
+      "id": "timestamp-substitution",
+      "expected": "INVALID"
+    },
+    {
+      "id": "algorithm-substitution",
+      "expected": "NOTE_KEY_SCHEME"
+    },
+    {
+      "id": "non-prefix-timestamp",
+      "expected": "SUBTREE_CONTEXT"
+    },
+    {
+      "id": "raw-subtree-response",
+      "expected": "VALID",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "legacy-note-response",
+      "expected": "SUBTREE_RESPONSE_ENCODING",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "legacy-timestamp-prefix",
+      "expected": "SUBTREE_SIGNATURE_LENGTH",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "legacy-key-hint-prefix",
+      "expected": "SUBTREE_SIGNATURE_LENGTH",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "missing-response-lf",
+      "expected": "SUBTREE_RESPONSE_ENCODING",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "response-crlf",
+      "expected": "SUBTREE_RESPONSE_ENCODING",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "response-no-padding",
+      "expected": "SUBTREE_BASE64",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "extra-response-line",
+      "expected": "SUBTREE_RESPONSE_ENCODING",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "one-witness-request",
+      "expected": "VALID",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "legacy-mixed-checkpoint",
+      "expected": "SUBTREE_ONE_WITNESS",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "duplicate-witness",
+      "expected": "CHECKPOINT_DUPLICATE_SIGNATURE",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "log-instead-of-witness",
+      "expected": "SUBTREE_WITNESS_KEY",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "subtree-outside-checkpoint",
+      "expected": "SUBTREE_CHECKPOINT_RANGE",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "request-leading-zero",
+      "expected": "SUBTREE_RANGE",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "request-crlf",
+      "expected": "SUBTREE_REQUEST",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "log-checkpoint",
+      "expected": "VALID",
+      "vector": "vectors/transport.json"
+    },
+    {
+      "id": "witness-only-log-checkpoint",
+      "expected": "CHECKPOINT_LOG_SIGNATURE_REQUIRED",
+      "vector": "vectors/transport.json"
+    }
+  ]
+}

@@ -29,6 +29,12 @@ export function identityCRLValidator({
         at,
         minNumber: watermark,
       });
+      // Only authenticated, already-published CRLs carry usable metadata. A
+      // typed failure must retain its reason and must not advance the watermark.
+      requireThat(
+        ['GOOD', 'REVOKED', 'STALE'].includes(status.status),
+        status.reason ?? 'IDENTITY_CRL_STATUS',
+      );
       requireThat(at - status.thisUpdate <= maxPublicationAge, 'IDENTITY_CRL_FRESHNESS');
       requireThat(
         !row ||

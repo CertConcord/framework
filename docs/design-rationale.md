@@ -2,7 +2,7 @@
 
 ## The central problem
 
-A trustworthy document operation depends on more than a certificate signature. It must connect governance, identity qualification, possession of the correct key, the intended document bytes, authorized key use, current status and evidence that survives software and policy changes. [FRAMEWORK draft 02](../spec/bindings/FRAMEWORK-draft-02.md) separates those requirements from replaceable governance, issuance, transparency and interaction mechanisms. Within `certconcord-governed-draft-02`, DTI, DSCP, PRF-KPP and DCP divide the responsibilities, while COMMON provides their shared identifiers, encodings and state transitions.
+A trustworthy document operation depends on more than a certificate signature. It must connect governance, identity qualification, possession of the correct key, the intended document bytes, authorized key use, current status and evidence that survives software and policy changes. [FRAMEWORK draft 03](../spec/bindings/FRAMEWORK-draft-03.md) separates those requirements from replaceable governance, issuance, transparency and interaction mechanisms. Within `certconcord-governed-draft-03`, DTI, DSCP, PRF-KPP and DCP divide the responsibilities, while COMMON provides their shared identifiers, encodings and state transitions.
 
 The document infrastructure governs authority and transparent issuance. DSCP defines what a signing key is allowed to do and how an intentional operation reaches it. PRF-KPP protects local secrets and private evidence. DCP connects the same authority model to native holders and websites. A valid object in one domain does not automatically authorize an action in another.
 
@@ -70,6 +70,6 @@ Raw-signing APIs and WebKit Remote CryptoKeys expose different provider boundari
 
 ## Execution commitments across providers
 
-[EBP draft 02](../spec/bindings/EBP-draft-02.md) makes that broker boundary explicit. A governed admission binds a provider/key/epoch to exact policy and control authorities. The operation commitment joins that admission to the original permit, SIM and container input before dispatch. A mandatory evidence plan makes a missing admission detectable. Monotonic epochs address rollback and contradictory admission; a key-scoped durable lock prevents binding renewal from bypassing an unresolved operation.
+[EBP draft 03](../spec/bindings/EBP-draft-03.md) makes that broker boundary explicit. A governed admission binds a provider/key/epoch to exact policy and control authorities. The operation commitment joins that admission to the original permit, SIM and container input before dispatch. A mandatory evidence plan makes a missing admission detectable. Monotonic epochs address rollback and contradictory admission; a key-scoped durable lock prevents binding renewal from bypassing an unresolved operation.
 
 The design remains useful when an upstream API offers only generic signing. Exclusive broker credentials can enforce an RRA policy at that boundary, while an authenticator with only a raw-signing API retains PSCP's narrower evidence semantics. An eventual permit-aware authenticator needs protected policy and replay state of its own. This separation allows protocol development without equating a transport hash, an application assertion and hardware enforcement.

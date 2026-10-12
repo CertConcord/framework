@@ -2,7 +2,7 @@
 
 **Certificate trust for document signing and encryption, with transparent issuance and post-quantum evolution.**
 
-**Working draft 02 · reference software 0.2.0-draft.1 · no stable specification release.**
+**Working draft 03 · reference software 0.3.0-draft.1 · no stable specification release.**
 
 CertConcord develops certificate structures and trust protocols around **MTC-based issuance and transparency, post-quantum cryptography, native mdoc signing certificates, and expanded Passkey capabilities**. The initial lifecycle is **MTC/PQC for long-term documents**: intentional signing, retained certificate and status evidence, offline verification after issuer retirement, and timely preservation renewal. Signer-certificate validity and document retention have distinct lifetimes.
 
@@ -16,7 +16,7 @@ CertConcord develops certificate structures and trust protocols around **MTC-bas
 
 ## Application scope
 
-**Document trust processing** is the first complete specification baseline under development: personal signatures, organizational signatures and seals, document encryption, status and revocation, independent verification, and the time and historical evidence these operations require. S/MIME and standalone trusted timestamp services advance as separate application tracks built on the **same certificate trust core**.
+**Document trust processing** is the first complete specification baseline under development: personal signatures, organizational signatures and seals, document encryption, status and revocation, independent verification, and the time and historical evidence these operations require. S/MIME, standalone trusted timestamp services and bounded organizational delegation advance as separate application tracks built on the **same certificate trust core**.
 
 EUDI, government mDL and photoID are optional interoperability environments and identity sources. An RA can validate an accepted identity credential before a CA issues a signing certificate. Identity-source acceptance and signing-issuer trust remain separate policy decisions. The framework supports independent issuers, wallets and verifiers.
 
@@ -29,6 +29,11 @@ EUDI, government mDL and photoID are optional interoperability environments and 
 | [Document baseline](spec/document-baseline.md)             | The complete first application and its explicit completion criteria                        |
 | [MTC document validation](docs/mtc-document-validation.md) | Standalone certificates, offline evidence, independent monitoring and archival obligations |
 | [Document preservation](docs/document-preservation.md)     | Executable MTC/PQC lifecycle, TSA and hash renewal, historical and current results         |
+| [CAdES preservation](docs/cades-preservation.md)           | Selected standard B/T/LT/LTA path, direct-root CRLs and ATSv3 renewal                      |
+| [PAdES preservation](docs/pades-preservation.md)           | Selected PDF B/T/LT/LTA path, revision-bound DSS and document timestamp renewal            |
+| [Timestamp application](docs/timestamp-application.md)     | Standard RFC 3161 issuance, client requests, current trust decisions and durable recovery  |
+| [S/MIME application](docs/smime-application.md)            | Complete MIME signing and encryption with current mailbox, key and purpose admission       |
+| [Organization delegation](docs/organization-delegation.md) | Bounded grant paths, independent WebAuthn approvals and current execution admission        |
 | [mdoc certificates](spec/mdoc-certificates.md)             | Identity admission, native signing credentials and issuer trust separation                 |
 | [Passkey credentials](spec/passkey-credentials.md)         | Authentication, signing extensions and experimental execution bindings                     |
 | [Profiles and maturity](spec/profiles.md)                  | Which candidate bindings and external standards are selected                               |
@@ -52,7 +57,7 @@ The [component map](docs/components.md) identifies canonical ownership, exact co
 
 A draft document can contain normative requirements without being a final standard. Passing the reference tests does not establish independent interoperability, production assurance, regulatory qualification, or patent clearance. [Conformance](spec/conformance.md) records these distinct questions and the current gaps.
 
-MTC certificate/proof semantics, C2SP mirror/witness protocols and RRA governance have distinct origins. Their selection and combination here belong to CertConcord. The reference parsers and verifier SDK demonstrate protocol semantics; production implementations should use mature, independently evaluated parser/crypto stacks and enforce the [additional semantic checks](spec/bindings/SEP-draft-02.md#2-parser-and-execution-boundaries).
+MTC certificate/proof semantics, C2SP mirror/witness protocols and RRA governance have distinct origins. Their selection and combination here belong to CertConcord. The reference parsers and verifier SDK demonstrate protocol semantics; production implementations should use mature, independently evaluated parser/crypto stacks and enforce the [additional semantic checks](spec/bindings/SEP-draft-03.md#2-parser-and-execution-boundaries).
 
 ## Run the reference
 
@@ -73,13 +78,13 @@ npm run sdk:build
 npm run sdk:test
 ```
 
-The document example covers organizational authorization, MTC issuance, a seal with trusted-time evidence, certified ML-KEM recipients, encrypted delivery, verification after decryption, and two-operator encryption-key recovery. Its [binding](spec/bindings/DOCUMENT-draft-02.md) states the exact evidence and limitations. The [security-claim matrix](docs/security-claims.md) separates the assurance of each path.
+The document example covers organizational authorization, MTC issuance, a seal with trusted-time evidence, certified ML-KEM recipients, encrypted delivery, verification after decryption, and two-operator encryption-key recovery. Its [binding](spec/bindings/DOCUMENT-draft-03.md) states the exact evidence and limitations. The [security-claim matrix](docs/security-claims.md) separates the assurance of each path.
 
 The archive example retains the complete MTC document evidence package through TSA replacement, hash renewal and signer-certificate expiry. It separates preserved historical validation from current admissibility; stale current status cannot yield VALID. Second-implementation and external-assessment evidence belong to later stability gates, not prerequisites for this draft research.
 
 The examples use generated software keys, synthetic identities and a synthetic clock. The raw Passkey signing example exercises a selected proposal through a software authenticator; it is not a claim that ordinary deployed Passkeys implement that extension. Independent CMS KEM exchange requires OpenSSL 3.6 or later; CI pins OpenSSL 3.6.5 and requires the check. Use OPENSSL_BIN to select a compatible executable. A 3.5 build can run the signature checks but cannot establish CMS KEM interoperability.
 
-No stable tag, GitHub release or npm publication is part of draft 02. The manual draft-artifact workflow produces review artifacts only. Both npm packages remain private to prevent accidental registry publication; the repository itself is public.
+No stable tag, GitHub release or npm publication is part of draft 03. The manual draft-artifact workflow produces review artifacts only. Both npm packages remain private to prevent accidental registry publication; the repository itself is public.
 
 ## Participation and rights
 

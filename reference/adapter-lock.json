@@ -1,5 +1,5 @@
 {
-  "release": "0.2.0-draft.1",
+  "release": "0.3.0-draft.1",
   "sourceLock": "source-lock.json",
   "adapters": [
     {
@@ -63,13 +63,24 @@
       "downgradeForbidden": true
     },
     {
-      "id": "certconcord-c2sp-mirror-v1",
+      "id": "certconcord-c2sp-mirror-v2",
       "name": "C2SP witness/mirror",
-      "version": "1.0.0",
-      "wireProfile": "Pinned C2SP note/checkpoint, add-checkpoint, add-entries, sign-subtree, monitor and tiles; CertConcord governance and CERTCONCORD-MLDSA87-SUBTREE-v1 extension are separate composition rules",
+      "version": "2.0.0",
+      "wireProfile": "C2SP-20261007-MLDSA87-v2: one admitted witness signature per subtree request; raw padded-base64 ML-DSA response plus LF; cryptographically verified log signature on published checkpoint. CERTCONCORD-MLDSA87-SUBTREE-v1 remains the algorithm key-hint identifier.",
       "modules": ["transparency.mjs"],
-      "tests": ["transparency.test.mjs", "adapters-network.test.mjs"],
-      "sources": ["c2spMirror", "c2spWitness", "c2spCosignature", "c2spNote", "c2spTiles"],
+      "tests": [
+        "transparency.test.mjs",
+        "adapters-network.test.mjs",
+        "component-integration.test.mjs"
+      ],
+      "sources": [
+        "c2spMirror",
+        "c2spWitness",
+        "c2spCosignature",
+        "c2spNote",
+        "c2spCheckpoint",
+        "c2spTiles"
+      ],
       "inputSemantics": "Exact adapter-defined bytes; upstream encodings preserved as specified in ADAPTERS.md",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
       "limits": "COMMON section 2 and adapter-specific bounds in ADAPTERS.md",
@@ -128,6 +139,38 @@
       "downgradeForbidden": true
     },
     {
+      "id": "certconcord-cades-preservation-v1",
+      "name": "Selected CAdES baseline preservation",
+      "version": "1.0.1",
+      "wireProfile": "EN 319 122-1 V1.3.1; DER single-signer id-data; P-256/SHA-256; B/T/LT/LTA with ATSv3 and ATSHashIndexV3; SHA-256/SHA-512 imprints",
+      "modules": ["cades.mjs", "cades-validation.mjs", "ades-cms.mjs"],
+      "tests": [
+        "cades.test.mjs",
+        "cades-boundaries.test.mjs",
+        "cades-format.test.mjs",
+        "cades-security.test.mjs",
+        "cades-material.test.mjs",
+        "cades-interop.test.mjs",
+        "timestamp-revocation.test.mjs"
+      ],
+      "sources": [
+        "cades",
+        "adesValidation",
+        "cryptoSuites",
+        "cadesERS",
+        "rfc5652",
+        "rfc5035",
+        "rfc3161",
+        "rfc5816",
+        "rfc5280",
+        "rfc6211"
+      ],
+      "inputSemantics": "Bare standard CMS; exact signed core retained; signature-value timestamp and standard archive-index inputs; external role/status policy at unchanged knowledgeTime; authenticated TSU revocation reasons and independent exact-token proof before key-risk cutoffs",
+      "environment": "Node.js 24.15+; OpenSSL 3.6.5 differential fixtures; external admitted roots, role resolver, finite signature/hash/key cutoffs and current status",
+      "limits": "docs/cades-preservation.md; direct root/full CRL only; no OCSP/intermediates/legacy ER attributes or complete ETSI algorithm/process claim; no production or PQ preservation assurance",
+      "downgradeForbidden": true
+    },
+    {
       "id": "certconcord-pdf-v1",
       "name": "PDF / PAdES container",
       "version": "1.0.0",
@@ -138,6 +181,46 @@
       "inputSemantics": "Exact adapter-defined bytes; upstream encodings preserved as specified in ADAPTERS.md",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
       "limits": "COMMON section 2 and adapter-specific bounds in ADAPTERS.md",
+      "downgradeForbidden": true
+    },
+    {
+      "id": "certconcord-pades-preservation-v1",
+      "name": "Selected PAdES baseline preservation",
+      "version": "1.0.1",
+      "wireProfile": "Published EN 319 142-1 V1.2.1; PDF 1.7 classic xref; one detached ES256 approval; B/T/LT/LTA using DSS and document timestamps; SHA-256/SHA-512 imprints",
+      "modules": [
+        "pades.mjs",
+        "ades-cms.mjs",
+        "cades-validation.mjs",
+        "pades-io.mjs",
+        "pades-structure.mjs",
+        "pades-worker.mjs"
+      ],
+      "tests": [
+        "pades-capabilities.test.mjs",
+        "pades-dates.test.mjs",
+        "pades-lexer.test.mjs",
+        "pades-revision-security.test.mjs",
+        "pades-security.test.mjs",
+        "pades-structure.test.mjs",
+        "pades-time-boundaries.test.mjs",
+        "pades.test.mjs",
+        "timestamp-revocation.test.mjs"
+      ],
+      "sources": [
+        "pades",
+        "pdf17Authorized",
+        "adesValidation",
+        "cryptoSuites",
+        "rfc5652",
+        "rfc5035",
+        "rfc3161",
+        "rfc5816",
+        "rfc5280"
+      ],
+      "inputSemantics": "Exact signed PDF revision and Contents span; cumulative DSS material at each revision; original object roles and byte prefixes retained; external authority/status policy at actual knowledgeTime; authenticated TSU revocation reasons and independent exact-token proof before key-risk cutoffs",
+      "environment": "Node.js 24.15+; isolated bounded pdf-lib worker; OpenSSL 3.6.5 fixture differentials; pyHanko 0.37.0 independent primitive/path/modification review; no implicit trust or network fallback",
+      "limits": "docs/pades-preservation.md; direct root/full CRL only; no general PDF rendering, object/xref streams, OCSP/VRI, multiple approvals or complete independent PAdES preservation assurance; pyHanko complete LTA procedure has a CMS signature-timestamp constraint",
       "downgradeForbidden": true
     },
     {
@@ -388,6 +471,86 @@
       "downgradeForbidden": true
     },
     {
+      "id": "certconcord-smime-application-v1",
+      "name": "Selected S/MIME message application",
+      "version": "1.0.0",
+      "wireProfile": "RFC 8551/8550 selected opaque SignedData and sign-then-AuthEnvelopedData; single P-256/SHA-256 signer with SHA-256 ESSCertIDv2; RSA3072/4096 OAEP SHA-256/MGF1-SHA-256 and AES-256-GCM nonce12/tag16",
+      "modules": [
+        "smime.mjs",
+        "smime-backend.mjs",
+        "smime-mime.mjs",
+        "smime-mime-worker.mjs",
+        "smime-address.mjs",
+        "smime-cms.mjs",
+        "smime-cms-worker.mjs",
+        "smime-adapter-common.mjs",
+        "cades-validation.mjs",
+        "ades-cms.mjs"
+      ],
+      "tests": [
+        "smime-material-api.test.mjs",
+        "smime-material.test.mjs",
+        "smime-application.test.mjs",
+        "smime-callbacks.test.mjs",
+        "smime-backend.test.mjs",
+        "smime-backend-boundaries.test.mjs",
+        "smime.test.mjs"
+      ],
+      "sources": [
+        "rfc8551",
+        "rfc8550",
+        "rfc9788",
+        "rfc5322",
+        "rfc2045",
+        "rfc2046",
+        "rfc3560",
+        "rfc4055",
+        "rfc5083",
+        "rfc5084",
+        "rfc5652",
+        "rfc5035",
+        "rfc5280",
+        "openssl365",
+        "mailsplit5420",
+        "nodemailer10016",
+        "encodingJapanese240",
+        "iconvLite073",
+        "libbase64132",
+        "libmime547",
+        "libqp212",
+        "saferBuffer212"
+      ],
+      "inputSemantics": "Complete immutable RFC5322 message bytes; exact finalized SignedData MIME content; explicit sender and recipients; constructor-fixed synchronous context, roots and resolver identities; current certificate/key/mailbox/purpose admission before private use and release",
+      "environment": "Node.js 24.15+; explicit OpenSSL 3.6.5 executable/configuration and fixed local key map; POSIX private-file isolation for sign/decrypt; mailsplit 5.4.20 and Nodemailer 10.0.16; direct-root/full-CRL trust and finite cryptographic deadlines",
+      "limits": "docs/smime-application.md; 32 MiB input, separate 16 MiB complete CMS DER and canonical/decoded MIME ceilings, 128 nodes, depth16, 128 headers/64 KiB per entity, 32 certificates/CRLs/recipients, two security layers; 10-second workers and OpenSSL operations; no SMTP, historical preservation, durable replay service or full S/MIME receiving claim",
+      "downgradeForbidden": true
+    },
+    {
+      "id": "certconcord-timestamp-application-v1",
+      "name": "Standalone RFC 3161 timestamp application",
+      "version": "1.0.0",
+      "wireProfile": "RFC 3161 and RFC 5816 DER requests/responses; single P-256/SHA-256 TSU signer; SHA-256 ESSCertIDv2; SHA-256/SHA-512 imprints; explicit integral microsecond accuracy",
+      "modules": [
+        "timestamp-protocol.mjs",
+        "timestamp-service.mjs",
+        "ades-cms.mjs",
+        "cades-validation.mjs"
+      ],
+      "tests": [
+        "timestamp-application-api.test.mjs",
+        "timestamp-protocol.test.mjs",
+        "timestamp-verifier.test.mjs",
+        "timestamp-service.test.mjs",
+        "timestamp-client.test.mjs",
+        "timestamp-durability.test.mjs"
+      ],
+      "sources": ["rfc3161", "rfc5816", "rfc5652", "rfc5035", "rfc5280", "adesValidation"],
+      "inputSemantics": "Exact standard request and response bytes; externally fixed trust/clock context; actual knowledge time and TIMESTAMP_APPLICATION purpose; immutable durable operation reservations and explicit reconciliation",
+      "environment": "Node.js 24.15+; SQLite or compatible synchronous Journal; explicit admitted signer, clock, root, authority/status policy and finite cryptographic deadlines; OpenSSL 3.6.5 fixture exchange",
+      "limits": "docs/timestamp-application.md; 64 KiB requests, 1 MiB responses, direct-root/full-CRL profile, 60-second maximum uncertainty; no implicit historical proof, production time/custody assurance or automatic network retry",
+      "downgradeForbidden": true
+    },
+    {
       "id": "certconcord-rfc3161-v1",
       "name": "RFC 3161",
       "version": "1.0.0",
@@ -405,21 +568,31 @@
       "name": "ERS / XMLERS",
       "version": "1.0.1",
       "wireProfile": "RFC 4998/RFC 6283 single-object renewal. ERS hashes the complete DER ArchiveTimeStampSequence and selects Figure 4 sorted renewal inputs (erratum 7411 remains Reported); earlier unframed/unsorted records are incompatible.",
-      "modules": ["archive.mjs"],
-      "tests": ["containers.test.mjs", "archive-security.test.mjs"],
+      "modules": ["archive.mjs", "retained-authorities.mjs", "historical-validation.mjs"],
+      "tests": [
+        "containers.test.mjs",
+        "archive-security.test.mjs",
+        "retained-authorities.test.mjs",
+        "retained-document.test.mjs"
+      ],
       "sources": ["rfc4998", "rfc6283"],
       "inputSemantics": "Exact original bytes and DER-encoded prior chains; no signed archive wrapper. ERS preservation additionally requires external TSA/status and finite security lifetimes.",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
-      "limits": "Bounded SHA-256/SHA-512 subset. Generic historical trust/status resolution and operational archive succession are unimplemented. XMLERS checks integrity only.",
+      "limits": "Bounded SHA-256/SHA-512 subset; selected retained authority history and atomic archive succession are separate composition services. XMLERS checks integrity only. Distributed operations and container-specific LT/LTA are outside this adapter.",
       "downgradeForbidden": true
     },
     {
-      "id": "certconcord-ecp-v1",
+      "id": "certconcord-ecp-v2",
       "name": "Evidence closure",
-      "version": "1.1.0",
-      "wireProfile": "Hash-bound dependency DAG; certconcord-ecp-cms-attested-v1 and certconcord-ecp-cms-passkey-v1 semantic plans with explicit dual-proof and downgrade checks",
-      "modules": ["state.mjs", "evidence.mjs"],
-      "tests": ["evidence.test.mjs", "passkey.test.mjs"],
+      "version": "2.0.0-draft.1",
+      "wireProfile": "Draft 03 domain; schema-2 single verification plan with exact typed hash-bound leaves; no nested graphs or duplicate activation leaf",
+      "modules": ["evidence-plan.mjs", "evidence.mjs", "signer-mdoc.mjs"],
+      "tests": [
+        "evidence-plan.test.mjs",
+        "evidence.test.mjs",
+        "passkey.test.mjs",
+        "sdk-results.test.mjs"
+      ],
       "sources": ["rfc8949"],
       "inputSemantics": "Exact adapter-defined bytes; upstream encodings preserved as specified in ADAPTERS.md",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
@@ -594,33 +767,37 @@
       "limits": "65535-byte entries; 256-entry pages; configured entry and byte capacity"
     },
     {
-      "id": "certconcord-execution-binding-draft-02",
+      "id": "certconcord-execution-binding-draft-03",
       "name": "RRA Execution Binding Profile",
-      "version": "1.0.0-draft.1",
-      "wireProfile": "EBP draft 02; governed CMS admission, immutable message request, signed receipt and mandatory CMS/mdoc evidence plans",
+      "version": "1.1.0-draft.1",
+      "wireProfile": "EBP draft 03; governed CMS admission, immutable message request, signed receipt and mandatory CMS/mdoc evidence plans; selected organization policy adds fixed current-admission gates without changing wire fields",
       "inputSemantics": "Exact SIM, original signed permit and message bytes; externally pinned provider, key, control authorities and policy",
       "environment": "Node.js 24.15+; exclusively controlled message-signing backend and shared durable SQLite or PostgreSQL journal",
       "limits": "65536-byte binding, 1 MiB permit, 16 MiB message; 30-second permit and policy-bounded lease up to 86400 seconds",
       "downgradeForbidden": true,
       "modules": ["execution-binding.mjs", "evidence.mjs", "signer-mdoc.mjs"],
-      "tests": ["execution-binding.test.mjs", "storage/postgres.test.mjs"],
+      "tests": [
+        "execution-binding.test.mjs",
+        "storage/postgres.test.mjs",
+        "organization-delegation-callbacks.test.mjs"
+      ],
       "sources": ["rfc5652", "webauthn", "rawSigningV4", "webKitRemoteKeys"]
     },
     {
-      "id": "certconcord-document-evidence-draft-02",
+      "id": "certconcord-document-evidence-draft-03",
       "name": "Document evidence composition",
       "wireProfile": "Attested CMS/mdoc plans with certified subject binding, scoped organizational authority and RFC 3161 proof-bound status evaluation",
       "modules": ["document-evidence.mjs", "evidence.mjs", "signer-mdoc.mjs", "timestamp.mjs"],
       "tests": ["document-evidence.test.mjs", "sdk-results.test.mjs"],
       "sources": ["mtc", "rfc3161", "rfc5652"],
-      "version": "draft-02",
-      "inputSemantics": "Exact signed and encrypted bytes defined in DOCUMENT-draft-02",
+      "version": "draft-03",
+      "inputSemantics": "Exact signed and encrypted bytes defined in DOCUMENT-draft-03",
       "environment": "Node.js 24.15+; independent CMS KEM exchange requires OpenSSL 3.6+",
       "limits": "Attested plans; documents at most 16 MiB; 100 recipients; direct organizational delegation",
       "downgradeForbidden": true
     },
     {
-      "id": "certconcord-document-encryption-draft-02",
+      "id": "certconcord-document-encryption-draft-03",
       "name": "Certified encrypted document delivery",
       "wireProfile": "RA-attested KEM possession, purpose-bound certificate admission, exact recipient SKI, CMS AuthEnvelopedData and encryption-only recovery",
       "modules": [
@@ -631,11 +808,38 @@
       ],
       "tests": ["document-evidence.test.mjs", "openssl.test.mjs"],
       "sources": ["rfc9629", "rfc9883", "rfc9936", "openssl365"],
-      "version": "draft-02",
-      "inputSemantics": "Exact signed and encrypted bytes defined in DOCUMENT-draft-02",
+      "version": "draft-03",
+      "inputSemantics": "Exact signed and encrypted bytes defined in DOCUMENT-draft-03",
       "environment": "Node.js 24.15+; independent CMS KEM exchange requires OpenSSL 3.6+",
       "limits": "Attested plans; documents at most 16 MiB; 100 recipients; direct organizational delegation",
       "downgradeForbidden": true
+    },
+    {
+      "id": "certconcord-organization-delegation-v1",
+      "name": "Current organization delegation and approvals",
+      "version": "1.0.0-draft.1",
+      "wireProfile": "Selected CMS organization-seal application; one attenuating grant path, exact independent WebAuthn roster, schema-2 final authorization and flat original-evidence plan",
+      "inputSemantics": "Original grant, registration, assertion and status bytes; constructor-bound organization, policy, workload, authorities and actual current knowledge time; no plan downgrade",
+      "environment": "Node.js 24.15+; one shared durable SQLite journal; local synchronous control keys and a governed document-signing backend",
+      "limits": "CURRENT_STATE_ONLY; WORKLOAD and X509 CMS; 8 grants, 16 people, 64 status statements; 120-second activation/request and 30-second authorization/permit; no historical delegation proof",
+      "downgradeForbidden": true,
+      "modules": [
+        "organization-delegation.mjs",
+        "organization-delegation-state.mjs",
+        "organization-delegation-evidence.mjs",
+        "execution-binding.mjs",
+        "evidence.mjs",
+        "document-evidence.mjs"
+      ],
+      "tests": [
+        "organization-delegation-api.test.mjs",
+        "organization-delegation-fixtures.test.mjs",
+        "organization-delegation-evidence.test.mjs",
+        "organization-delegation-application.test.mjs",
+        "organization-delegation-callbacks.test.mjs",
+        "organization-delegation-durability.test.mjs"
+      ],
+      "sources": ["rfc5652", "rfc5035", "rfc5280", "webauthn"]
     }
   ]
 }

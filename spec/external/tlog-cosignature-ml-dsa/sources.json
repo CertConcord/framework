@@ -1,19 +1,6 @@
 {
-  "reviewDate": "2026-10-05",
+  "reviewDate": "2026-10-07",
   "sources": [
-    {
-      "id": "c2spCosignature",
-      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/tlog-cosignature.md",
-      "sha256": "d5fc06ef7c1eb77b869148e52784074190db8b5209b5551fb91bfce329b805bd",
-      "bytes": 9427,
-      "retrievedAt": "2026-10-06T01:50:24.341Z"
-    },
-    {
-      "id": "c2spNote",
-      "url": "https://raw.githubusercontent.com/C2SP/C2SP/625d8db08a0f196540e40f0a2256332275492f78/signed-note.md",
-      "sha256": "870f329f0c71b81b9b739baa85f09dab287cd6a29b99177333a53209d65450e1",
-      "bytes": 7610
-    },
     {
       "id": "mtc",
       "url": "https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-06.txt",
@@ -26,6 +13,51 @@
       "sha256": "b778cb1f9c325b64bba9f177c78f5edc6b790b1695dd5cce27941fe26a5569cb",
       "bytes": 192184,
       "retrievedAt": "2026-10-06T02:05:12.059Z"
+    },
+    {
+      "id": "c2spCosignature",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-cosignature.md",
+      "sha256": "f9549ff0ac74b09dc75a2e425b19ae9bb675dbff3113314121a33a04aff9aeef",
+      "bytes": 10665,
+      "revision": "a29318317776ae8a0e65ff45cfe450fd935a1aca",
+      "status": "editor-copy",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "id": "c2spNote",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/signed-note.md",
+      "sha256": "03e2703bb9f97a5c76a1d9a92af6e6b7b7441c3c67c15a87f16ed29a160a2782",
+      "bytes": 7609,
+      "revision": "a29318317776ae8a0e65ff45cfe450fd935a1aca",
+      "status": "editor-copy",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "id": "c2spWitness",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-witness.md",
+      "sha256": "7cdf67fb841181a072e6cad0d7da3e861457679d33f9db2b3e83e3e96e12a484",
+      "bytes": 14353,
+      "revision": "a29318317776ae8a0e65ff45cfe450fd935a1aca",
+      "status": "editor-copy",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "id": "c2spCheckpoint",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-checkpoint.md",
+      "sha256": "82b023046a998e08545f2cc2fa75668135ae78ee0a4badb86a1da019f6335f40",
+      "bytes": 5938,
+      "revision": "a29318317776ae8a0e65ff45cfe450fd935a1aca",
+      "status": "editor-copy",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "id": "c2spTiles",
+      "url": "https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-tiles.md",
+      "sha256": "5bb3fd974559b56f4f5d35ed55a8c89ae6bd5185c026fa2320b66f3d15204e86",
+      "bytes": 12426,
+      "revision": "a29318317776ae8a0e65ff45cfe450fd935a1aca",
+      "status": "editor-copy",
+      "license": "CC-BY-4.0"
     }
   ]
 }

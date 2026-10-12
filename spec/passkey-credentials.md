@@ -1,4 +1,4 @@
-# Passkey credentials and operations — draft 02
+# Passkey credentials and operations — draft 03
 
 Expanding Passkey use beyond account login is a core research direction. The framework separates actual deployed authentication capabilities from proposed signing interfaces so that an implementation can state exactly what it supports.
 
@@ -16,4 +16,4 @@ CC-PASSKEY-02: Key admission and certification MUST bind the exact key and its p
 
 CC-PASSKEY-03: Missing capabilities MUST fail explicitly. A path MUST NOT silently switch algorithms, keys, extensions or evidence plans to retain a stronger assurance claim. A broker receipt is not proof of hardware enforcement unless independently supported by the declared evidence and assumptions.
 
-The [PSCP candidate](bindings/PSCP-draft-02.md), [EBP proposal](bindings/EBP-draft-02.md), [implementation guide](../docs/passkey-signing.md) and [WebAuthn edition comparison](../docs/webauthn-evolution.md) contain published technical work. New interfaces and original mechanisms remain open research; accepting an existing standard does not forbid proposing a better contract for the application.
+The [PSCP candidate](bindings/PSCP-draft-03.md), [EBP proposal](bindings/EBP-draft-03.md), [implementation guide](../docs/passkey-signing.md) and [WebAuthn edition comparison](../docs/webauthn-evolution.md) contain published technical work. New interfaces and original mechanisms remain open research; accepting an existing standard does not forbid proposing a better contract for the application.

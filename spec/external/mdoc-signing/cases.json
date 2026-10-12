@@ -1,12 +1,641 @@
 {
-  "cases":[
-    {"id":"separate-ml-dsa-key","expected":"INDEPENDENT_PQ"},
-    {"id":"same-holder-document-p256","expected":"DEVICE_KEY"},
-    {"id":"separate-associated-p256","expected":"PASSKEY_KEY","limit":"parent association requires the selected application profile"},
-    {"id":"device-key-substitution","expected":"DOCUMENT_DEVICE_KEY_BINDING"},
-    {"id":"same-key-declared-independent","expected":"DOCUMENT_PASSKEY_KEY_BINDING"},
-    {"id":"classical-key-declared-pq","expected":"DOCUMENT_INDEPENDENT_PQ_KEY"},
-    {"id":"presentation-reinterpreted-as-signature","expected":"INVALID","coverage":"document-signature contract"},
-    {"id":"untrusted-identity-issuer-as-signing-anchor","expected":"INVALID","coverage":"issuer-policy contract"}
+  "cases": [
+    {
+      "id": "independent-ml-dsa-65",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "independent-ml-dsa-87",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "explicit-device-document-key",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "explicit-associated-document-key",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "invalid-issuer-signature",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "changed-issuer-item",
+      "overall": "INVALID",
+      "reason": "MDOC_DIGEST",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "duplicate-issuer-item",
+      "overall": "INVALID",
+      "reason": "MDOC_ITEM",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "incomplete-credential",
+      "overall": "INVALID",
+      "reason": "MDOC_INCOMPLETE_ISSUANCE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "changed-document",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "invalid-document-signature",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "legacy-missing-certificate-binding",
+      "overall": "INVALID",
+      "reason": "MDOC_CERTIFICATE_BINDING_REQUIRED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "same-key-certificate-substitution",
+      "overall": "INVALID",
+      "reason": "MDOC_CERTIFICATE_THUMBPRINT",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "protected-x5chain",
+      "overall": "VALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "unsupported-mso-digest",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DIGEST_UNSUPPORTED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "invalid-calendar-date",
+      "overall": "INVALID",
+      "reason": "MDOC_TIME",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "unknown-issuer-critical-header",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_CRITICAL_UNSUPPORTED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "unselected-mso-status-location",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_MSO_STATUS_UNSUPPORTED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "purpose-escalation",
+      "overall": "INVALID",
+      "reason": "MDOC_PURPOSE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "profile-substitution",
+      "overall": "INVALID",
+      "reason": "MDOC_PROFILE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "key-identifier-substitution",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_KEY_ID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "mode-downgrade",
+      "overall": "INVALID",
+      "reason": "MDOC_KEY_MODE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "mso-expired-at-state-time",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-stale",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_STATUS_STALE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-revoked",
+      "overall": "INVALID",
+      "reason": "MDOC_STATUS_REVOKED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-missing",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_STATUS_MISSING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-conflicting",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_STATUS_CONFLICTING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-wrong-uri",
+      "overall": "INVALID",
+      "reason": "MDOC_STATUS_INVALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-bad-signature",
+      "overall": "INVALID",
+      "reason": "MDOC_STATUS_INVALID",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "issuer-not-admitted",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_AUTHORIZATION",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "issuer-authorization-missing",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_ISSUER_AUTHORIZATION_MISSING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-resolver-missing",
+      "overall": "INDETERMINATE",
+      "reason": "MDOC_STATUS_MISSING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "status-method-unimplemented",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_STATUS_UNSUPPORTED",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "trailing-cbor-bytes",
+      "overall": "INVALID",
+      "reason": "CBOR_TRAILING",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "original-credential-bytes-required",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "unknown-document-critical-header",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "presentation-reinterpreted-as-signature",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH",
+      "vector": "vectors/base.json"
+    },
+    {
+      "id": "issuer-result-valid-selected-issuer",
+      "overall": "VALID",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-valid-original-protected-order",
+      "overall": "VALID",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-null",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-array",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-boolean",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-missing",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-35",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-36",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-8",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-49",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-key-mismatch-50",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-unknown-integer",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_ALGORITHM_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-unknown-text",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_ALGORITHM_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-unknown-with-wrong-pin",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_PIN",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-version-1-1",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_VERSION_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-version-1-1-bad-math",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-digest-sha384",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DIGEST_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-digest-sha384-bad-math",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-critical",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_CRITICAL_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-critical-bad-math",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-version-number",
+      "overall": "INVALID",
+      "reason": "MDOC_CAPABILITY_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-version-null",
+      "overall": "INVALID",
+      "reason": "MDOC_CAPABILITY_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-digest-null",
+      "overall": "INVALID",
+      "reason": "MDOC_CAPABILITY_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-digest-number",
+      "overall": "INVALID",
+      "reason": "MDOC_CAPABILITY_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-empty",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-null",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-duplicate",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-missing-protected",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-wrong-label",
+      "overall": "INVALID",
+      "reason": "COSE_CRITICAL_STRUCTURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-critical-unprotected",
+      "overall": "INVALID",
+      "reason": "COSE_HEADERS",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-critical-wrong-thumbprint",
+      "overall": "INVALID",
+      "reason": "MDOC_CERTIFICATE_THUMBPRINT",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-ml-dsa-44-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-ed25519-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-ed448-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-esp384-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-esp512-key-mismatch",
+      "overall": "INVALID",
+      "reason": "MDOC_ISSUER_ALGORITHM_MISMATCH",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-algorithm-unknown-large-integer",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_ALGORITHM_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "document-result-valid-es256",
+      "overall": "VALID",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-valid-ml-dsa-65",
+      "overall": "VALID",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-valid-ml-dsa-87",
+      "overall": "VALID",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-missing",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-null",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-boolean",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-array",
+      "overall": "INVALID",
+      "reason": "COSE_ALGORITHM_STRUCTURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-unknown-integer",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DOCUMENT_ALGORITHM",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-unknown-text",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DOCUMENT_ALGORITHM",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-unknown-large-integer",
+      "overall": "UNSUPPORTED",
+      "reason": "MDOC_DOCUMENT_ALGORITHM",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-key-mismatch-es256",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-key-mismatch-ml-dsa-65",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-algorithm-key-mismatch-ml-dsa-87",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_ALGORITHM_MISMATCH",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-credential-last",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-credential-last-bad-math",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-unexpected-critical",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-unexpected-critical-bad-math",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-changed-required-value",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-changed-required-value-bad-math",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-noncanonical-protected-order",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-noncanonical-protected-order-bad-math",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-unprotected-header",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_COSE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-embedded-payload",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_COSE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-bad-signature",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-changed-document",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_SIGNATURE",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "document-result-changed-external-credential",
+      "overall": "INVALID",
+      "reason": "MDOC_DOCUMENT_PROTECTED_HEADERS",
+      "vector": "vectors/document-classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-large-integer-critical",
+      "overall": "UNSUPPORTED",
+      "reason": "COSE_CRITICAL_UNSUPPORTED",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-result-unknown-large-integer-critical-bad-math",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-facts-valid-facts",
+      "overall": "VALID",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-signed-before-certificate",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-signed-after-valid-from",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-empty-validity-window",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-validity-beyond-certificate",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-bad-mathematics",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    }
   ]
 }

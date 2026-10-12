@@ -19,8 +19,9 @@ import { verifyRegistrationBinding } from './document-evidence.mjs';
 import { encryptCMS, decryptCMS } from './protection.mjs';
 import { snapshotIssuanceScope, issuanceAuthorityScope } from './enrollment-scope.mjs';
 import { requireAuthorities } from './control-authority.mjs';
+import { AuthorityError } from './authority-history.mjs';
 
-export const DOCUMENT_ENCRYPTION_PROFILE = 'certconcord-document-encryption-draft-02';
+export const DOCUMENT_ENCRYPTION_PROFILE = 'certconcord-document-encryption-draft-03';
 const suite = 'ML-KEM-HKDF-SHA256-AES256KW-AES256GCM';
 const maxBytes = 16 * 1024 * 1024;
 function recipientBinding(certificate, subjectID) {
@@ -49,17 +50,21 @@ function recipientBinding(certificate, subjectID) {
 
 export function admitDocumentRecipient({ certificate, rar, status }, trust, at = now()) {
   const profileID = 'CERTCONCORD-DOC-ENC-v1',
-    cert = parseCertificate(certificate);
+    cert = parseCertificate(certificate),
+    knowledgeTime = trust.knowledgeTime ?? at;
   requireThat(
     Number.isSafeInteger(at) &&
       at >= 0 &&
+      Number.isSafeInteger(knowledgeTime) &&
+      knowledgeTime >= at &&
       Buffer.isBuffer(trust.trustDomainID) &&
       trust.trustDomainID.length === 32,
     'DOCUMENT_RECIPIENT_TRUST',
   );
+  let mtcProof;
   if (cert.algorithm === OID.mtc) {
     requireThat(trust.mtc, 'DOCUMENT_RECIPIENT_MTC_TRUST');
-    verifyMTC(certificate, { ...trust.mtc, at, profileID });
+    mtcProof = verifyMTC(certificate, { ...trust.mtc, at, profileID, trustedSubtrees: [] });
   } else {
     requireThat(trust.issuerPublicKey, 'DOCUMENT_RECIPIENT_ISSUER_TRUST');
     validateCertificate(certificate, trust.issuerPublicKey, { at, profileID });
@@ -83,15 +88,14 @@ export function admitDocumentRecipient({ certificate, rar, status }, trust, at =
       equal(statement.trustDomainID, trust.trustDomainID),
     'DOCUMENT_RECIPIENT_STATUS_BINDING',
   );
-  requireThat(
-    evaluateStatus(statement, { stateTime: at, knowledgeTime: at, scope: 'CERTIFICATE' }) ===
-      'GOOD',
-    'DOCUMENT_RECIPIENT_STATUS',
-  );
+  const statusAssessment = evaluateStatus(statement, {
+    stateTime: at,
+    knowledgeTime,
+    scope: 'CERTIFICATE',
+  });
   const selectedScope = snapshotIssuanceScope(trust.issuanceScope),
     scope = issuanceAuthorityScope(authorization),
-    issuerKey = cert.algorithm === OID.mtc ? trust.mtc.caPublicKey : trust.issuerPublicKey,
-    knowledgeTime = trust.knowledgeTime ?? at;
+    issuerKey = cert.algorithm === OID.mtc ? trust.mtc.caPublicKey : trust.issuerPublicKey;
   requireThat(
     equal(selectedScope.trustDomainID, trust.trustDomainID) &&
       selectedScope.representation === (cert.algorithm === OID.mtc ? 'MTC' : 'X509') &&
@@ -103,31 +107,61 @@ export function admitDocumentRecipient({ certificate, rar, status }, trust, at =
       equal(keyID(parseCertificate(trust.issuerCertificate).publicKey), keyID(issuerKey)),
       'ISSUER_KEY_BINDING',
     );
-  requireAuthorities(trust.authorityResolver, [
-    {
-      certificate: trust.raCertificate,
-      role: 'REGISTRATION_AUTHORITY',
-      scope,
-      stateTime: authorization.issuedAt,
-      knowledgeTime,
-    },
-    {
-      ...(trust.issuerCertificate
-        ? { certificate: trust.issuerCertificate }
-        : { publicKeyDER: spki(issuerKey) }),
-      role: 'ISSUER',
-      scope,
-      stateTime: authorization.issuedAt,
-      knowledgeTime,
-    },
-    {
-      certificate: trust.statusCertificate,
-      role: 'STATUS_AUTHORITY',
-      scope,
-      stateTime: statement.publishedAt,
-      knowledgeTime,
-    },
-  ]);
+  requireAuthorities(
+    trust.authorityResolver,
+    [
+      {
+        certificate: trust.raCertificate,
+        role: 'REGISTRATION_AUTHORITY',
+        scope,
+        stateTime: authorization.issuedAt,
+        knowledgeTime,
+      },
+      {
+        ...(trust.issuerCertificate
+          ? { certificate: trust.issuerCertificate }
+          : { publicKeyDER: spki(issuerKey) }),
+        role: 'ISSUER',
+        scope,
+        stateTime: authorization.issuedAt,
+        knowledgeTime,
+      },
+      ...(statement.publishedAt <= knowledgeTime
+        ? [
+            {
+              certificate: trust.statusCertificate,
+              role: 'STATUS_AUTHORITY',
+              scope,
+              stateTime: statement.publishedAt,
+              knowledgeTime,
+            },
+          ]
+        : []),
+    ],
+    statusAssessment.overall === 'INDETERMINATE'
+      ? ['DOCUMENT_RECIPIENT_' + statusAssessment.reason]
+      : [],
+    ['INVALID', 'UNSUPPORTED'].includes(statusAssessment.overall)
+      ? [
+          new AuthorityError({
+            ...statusAssessment,
+            reason: 'DOCUMENT_RECIPIENT_' + statusAssessment.reason,
+          }),
+        ]
+      : [],
+    mtcProof
+      ? [
+          {
+            members: mtcProof.verifiedCosigners,
+            threshold: trust.mtc.threshold,
+            role: 'COSIGNER',
+            scope,
+            stateTimes: [authorization.issuedAt, at],
+            knowledgeTime,
+          },
+        ]
+      : [],
+  );
   return recipientBinding(certificate, trust.subjectID);
 }
 

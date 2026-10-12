@@ -42,13 +42,83 @@ test('C2SP checkpoint, witness conflict, durable mirror prefix upload and ML-DSA
       start: 256,
       end: 300,
       proof: consistencyProof(entries, 256, 300),
-      checkpoint: mirror.checkpoint(log.name),
+      checkpoint: t.checkpointForSubtree(mirror.checkpoint(log.name), mirrorSigner),
     });
     assert(equal(subtree.root, treeHash(entries.slice(256))));
     const forged = [...entries];
     forged[0] = Buffer.from('fork');
     const bad = t.signedCheckpoint({ origin: log.name, entries: forged, signer: log });
     assert.throws(() => w.addCheckpoint(t.witnessRequest(300, [], bad)), /HASH/);
+  } finally {
+    journal.close();
+  }
+});
+test('subtree requests have one selected witness and published checkpoints retain the log signature', () => {
+  const journal = new Journal(),
+    log = { ...generate('ed25519'), name: 'log.example/subtree', scheme: 'ed25519-log' },
+    signer = {
+      ...generate('ml-dsa-87'),
+      name: 'witness.example/subtree',
+      scheme: 'CERTCONCORD-MLDSA87-SUBTREE-v1',
+    },
+    entries = [Buffer.from('one'), Buffer.from('two')],
+    checkpoint = t.signedCheckpoint({ origin: log.name, entries, signer: log }),
+    service = new t.TlogWitness({ journal, signer, logs: new Map([[log.name, log]]) });
+  try {
+    const cosignature = service.addCheckpoint(t.witnessRequest(0, [], checkpoint)).body,
+      published = checkpoint + cosignature,
+      single = t.checkpointForSubtree(published, signer),
+      context = {
+        origin: log.name,
+        start: 0,
+        end: entries.length,
+        root: treeHash(entries),
+        proof: [],
+        checkpoint: single,
+      };
+    assert.equal(t.verifyPublishedCheckpoint(published, log).size, 2n);
+    const cp = t.parseCheckpoint(published),
+      logSignature = cp.signatures.find((value) => value.name === log.name),
+      forged = Buffer.from(logSignature.signature);
+    forged[0] ^= 1;
+    const forgedPublished =
+      cp.body +
+      '\n' +
+      `— ${log.name} ${Buffer.concat([logSignature.keyID, forged]).toString('base64')}\n` +
+      cosignature;
+    assert.throws(() => t.verifyPublishedCheckpoint(forgedPublished, log), {
+      code: 'NOTE_UNTRUSTED_SIGNATURE',
+    });
+    assert.throws(() => t.verifyPublishedCheckpoint(single, log), {
+      code: 'CHECKPOINT_LOG_SIGNATURE_REQUIRED',
+    });
+    assert.throws(() => t.subtreeRequest({ ...context, checkpoint: published }), {
+      code: 'SUBTREE_ONE_WITNESS',
+    });
+    assert.throws(() => service.signSubtree({ ...context, checkpoint: published }), {
+      code: 'SUBTREE_ONE_WITNESS',
+    });
+    const signature = service.signSubtree(context).signature,
+      response = signature.toString('base64') + '\n';
+    assert(t.verifySubtreeResponse(response, context, signer).equals(signature));
+    assert.throws(() => t.verifySubtreeResponse(cosignature, context, signer), {
+      code: 'SUBTREE_RESPONSE_ENCODING',
+    });
+    assert.throws(
+      () =>
+        t.verifySubtreeResponse(
+          Buffer.concat([Buffer.alloc(8), signature]).toString('base64') + '\n',
+          context,
+          signer,
+        ),
+      { code: 'SUBTREE_SIGNATURE_LENGTH' },
+    );
+    assert.throws(() => t.verifySubtreeResponse(response, { ...context, root: random() }, signer), {
+      code: 'SUBTREE_SIGNATURE',
+    });
+    assert.throws(() => service.signSubtree({ ...context, checkpoint }), {
+      code: 'NOTE_UNTRUSTED_SIGNATURE',
+    });
   } finally {
     journal.close();
   }

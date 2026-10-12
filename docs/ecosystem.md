@@ -1,6 +1,6 @@
 # Credential ecosystem alignment
 
-The NIST NCCoE credential series provides informative context for ecosystem roles, formats, issuance and presentation. The following mappings connect those observations to [FRAMEWORK](../spec/bindings/FRAMEWORK-draft-02.md) and the concrete requirements of COMMON, DTI, DSCP and DCP in the CERTCONCORD-governed composition.
+The NIST NCCoE credential series provides informative context for ecosystem roles, formats, issuance and presentation. The following mappings connect those observations to [FRAMEWORK](../spec/bindings/FRAMEWORK-draft-03.md) and the concrete requirements of COMMON, DTI, DSCP and DCP in the CERTCONCORD-governed composition.
 
 CertConcord separates the framework contract from compositions, interfaces, ecosystems and platforms. None gives an external organization implicit authority over a trust domain.
 
@@ -9,7 +9,7 @@ CertConcord derives holder roles and interfaces from its own credential and oper
 | Layer                | Governing selection                                                                                                                     |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | Framework contract   | Mechanism-independent authority, purpose, operation, lifecycle and evidence requirements in FRAMEWORK                                   |
-| Composition profile  | A selected governance and mechanism composition; `certconcord-governed-draft-02` uses COMMON, DTI, DSCP, PRF-KPP, DCP and enabled extensions |
+| Composition profile  | A selected governance and mechanism composition; `certconcord-governed-draft-03` uses COMMON, DTI, DSCP, PRF-KPP, DCP and enabled extensions |
 | Open interfaces      | Independently versioned MTC, PKIX/CMS, WebAuthn, OpenID, ISO mdoc and browser mediation adapters                                        |
 | Credential ecosystem | A selected national, regional, professional or organizational rulebook, with its type, issuer, reader and assurance policy              |
 | Platform             | The chosen browser, wallet API, device key provider or remote service, with exact capabilities and admission evidence                   |

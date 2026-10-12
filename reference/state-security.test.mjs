@@ -18,7 +18,7 @@ test('signed control reader requires the selected draft domain revision', () => 
   const current = signCMS({ content: c.D('ControlExample', value), certificate }, key.privateKey);
   assert.deepEqual({ ...readControl(current, 'ControlExample', certificate) }, value);
   const incompatible = signCMS({
-    content: c.dcbor(['CertConcord', 1, 'ControlExample', value]), certificate,
+    content: c.dcbor(['CertConcord', 2, 'ControlExample', value]), certificate,
   }, key.privateKey);
   assert.throws(() => readControl(incompatible, 'ControlExample', certificate), /CONTROL_DOMAIN/);
 });
