@@ -23,6 +23,7 @@ import { exampleAssertion } from './example-authenticator.mjs';
 import { exampleExecutionGateway, exampleExecutionPolicy } from './example-execution.mjs';
 import { exampleTimestamp } from './example-timestamp.mjs';
 import { DOCUMENT_EVIDENCE_PROFILE } from './document-evidence.mjs';
+import { exampleAuthorityResolver } from './example-authorities.mjs';
 
 export async function runDemo({
   outputDirectory,
@@ -32,6 +33,7 @@ export async function runDemo({
   executionBinding = false,
   trustedTime = false,
   journalFactory = () => new Journal(),
+  onComplete,
 } = {}) {
   c.requireThat(
     ['openid4vp', 'annex-c'].includes(presentationTransport) &&
@@ -92,6 +94,14 @@ export async function runDemo({
     readerCertificate = nativeCert(readerKey.publicKey, 5),
     roots = [new X509Certificate(root)];
   const trustDomainID = c.random(),
+    issuanceScope = { trustDomainID, issuerID: '32473.10', issuerKeyID: c.keyID(pqCA.publicKey), representation: 'MTC' },
+    timestamp = trustedTime ? exampleTimestamp(journal) : undefined,
+    authorityResolver = exampleAuthorityResolver({ trustDomainID, authorities: [
+      { certificate: raCertificate, roles: ['REGISTRATION_AUTHORITY'] },
+      { certificate: authorityCertificate, roles: ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'STATUS_AUTHORITY', 'EXECUTION_BINDING_AUTHORITY'] },
+      { mode: 'RAW_KEY', publicKeyDER: c.spki(pqCA.publicKey), knownAt: c.now() - 60, validFrom: c.now() - 60, validUntil: c.now() + 86400, roles: ['ISSUER'] },
+      ...(timestamp ? [{ certificate: timestamp.trust.certificate, roles: ['TIMESTAMP_AUTHORITY'] }] : []),
+    ] }),
     subjectID = c.random(),
     profileID = 'CERTCONCORD-PERSON-SIGN-v1',
     policy = {
@@ -156,6 +166,7 @@ export async function runDemo({
         }),
       }),
       rar = await ra.authorize({
+        issuanceScope,
         csr,
         subjectID,
         profileID,
@@ -163,6 +174,8 @@ export async function runDemo({
         identityEvidenceHash: c.H('SyntheticIdentity', { subjectID }),
       }),
       issuer = new MTCIssuer({
+        issuanceScope,
+        authorityResolver,
         ...mtcTrust,
         journal,
         raCertificate,
@@ -415,6 +428,7 @@ export async function runDemo({
     }
     const backend = new SoftwareProvider(new Map([['document-key', documentKey]])),
       gatewayOptions = {
+        authorityResolver,
         journal,
         permitCertificate: authorityCertificate,
         receiptCertificate: authorityCertificate,
@@ -462,7 +476,6 @@ export async function runDemo({
         },
         authorityKey.privateKey,
       ),
-      timestamp = trustedTime ? exampleTimestamp(journal) : undefined,
       bundle = createSignaturePackage({
         document,
         certificate,
@@ -484,6 +497,8 @@ export async function runDemo({
           : {}),
       }),
       trust = {
+        authorityResolver,
+        issuanceScope,
         mtc: mtcTrust,
         permitCertificate: authorityCertificate,
         receiptCertificate: authorityCertificate,
@@ -496,6 +511,10 @@ export async function runDemo({
           : {}),
       },
       verification = verifySignaturePackage(bundle, trust);
+    if (onComplete)
+      await onComplete({ bundle, trust, timestamp,
+        signStatus: (statement) => p.signCMS({ content: c.D('CertificateStatus', statement), certificate: authorityCertificate }, authorityKey.privateKey),
+      });
     if (outputDirectory) {
       await mkdir(outputDirectory, { recursive: true });
       await writeFile(outputDirectory + '/document.txt', document);

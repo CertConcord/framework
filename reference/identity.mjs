@@ -1,5 +1,6 @@
 import { H, sha512, equal, random, now, b64u, requireThat } from './core.mjs';
 import { verifyCSR, issueRAR } from './enrollment.mjs';
+import { snapshotIssuanceScope } from './enrollment-scope.mjs';
 import { verifyCRL } from './revocation.mjs';
 import { parseCertificate } from './pki.mjs';
 
@@ -126,6 +127,7 @@ export class IdentityAdmission {
     privateKey,
     decide,
     issuanceAudience,
+    issuanceScope,
     keyBindings,
   }) {
     requireThat(
@@ -143,8 +145,12 @@ export class IdentityAdmission {
       privateKey,
       decide,
       issuanceAudience,
+      issuanceScope: snapshotIssuanceScope(issuanceScope),
       keyBindings,
     });
+    requireThat(this.issuanceScope.representation === 'MDOC' &&
+      this.issuanceScope.issuerID === issuanceAudience &&
+      equal(this.issuanceScope.trustDomainID, trustDomainID), 'ISSUANCE_SCOPE');
   }
   begin({
     csr,
@@ -248,6 +254,7 @@ export class IdentityAdmission {
           trustDomainID: this.trustDomainID,
           audience: this.issuanceAudience,
           credentialFormat: 'mso_mdoc',
+          issuanceScope: this.issuanceScope,
           identityAssurance: decision.assurance,
           subjectID: decision.subjectID,
           profileID: enrollment.request.profileID,

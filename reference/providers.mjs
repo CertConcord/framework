@@ -1,3 +1,4 @@
+import { requireOperationAuthorities } from './control-authority.mjs';
 import {
   X509Certificate,
   createPublicKey,
@@ -91,9 +92,9 @@ export class RemoteCryptoKey {
 }
 // The service runs behind authenticated transport. Every invocation still needs a signed permit.
 export class RemoteCryptoKeyService {
-  constructor({ provider, journal, permitCertificate, audience, authorize, clock = now }) {
+  constructor({ provider, journal, permitCertificate, audience, authorize, authorityResolver, clock = now }) {
     requireThat(typeof authorize === 'function', 'REMOTE_AUTHORIZATION_REQUIRED');
-    Object.assign(this, { provider, journal, permitCertificate, audience, authorize, clock });
+    Object.assign(this, { provider, journal, permitCertificate, audience, authorize, authorityResolver, clock });
   }
   async handle(path, data) {
     data = decodeCBOR(dcbor(data));
@@ -146,6 +147,7 @@ export class RemoteCryptoKeyService {
           b64u(p.activation.operationID) === data.operationID,
         'REMOTE_PERMIT',
       );
+      requireOperationAuthorities(this, { trustDomainID: p.activation.trustDomainID }, at);
     };
     checkTime();
     const authorize = async () =>

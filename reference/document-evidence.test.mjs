@@ -196,6 +196,14 @@ test('certified encryption closes admission, delivery and recovery with purpose 
       const bytes = decryptDocument(delivery, decryption);
       assert.equal(createVerifier({ format: 'CMS', trust }).verify(bytes).overall, 'VALID');
       assert.throws(
+        () =>
+          admitDocumentRecipient(recipient.evidence, {
+            ...recipient.trust,
+            issuerCertificate: recipient.trust.raCertificate,
+          }),
+        { code: 'ISSUER_KEY_BINDING' },
+      );
+      assert.throws(
         () => decryptDocument(delivery, { ...decryption, privateKey: replacement.key.privateKey }),
         /DECRYPTION_KEY/,
       );
@@ -259,6 +267,7 @@ test('certified encryption closes admission, delivery and recovery with purpose 
         validatePossessionCertificate: r.validatePossessionCertificate,
         identityEvidenceHash: c.random(64),
         kemProof: recipient.kemProof,
+        issuanceScope: trust.issuanceScope,
       };
       await assert.rejects(r.ra.authorize(request), /KEM_POP_INVALID_OR_REPLAY/);
       await assert.rejects(

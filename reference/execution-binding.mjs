@@ -1,3 +1,9 @@
+import { requireAuthority } from './authority-history.mjs';
+import {
+  requireOperationAuthorities,
+  operationAuthorityQueries,
+  requireAuthorities,
+} from './control-authority.mjs';
 import {
   D,
   H,
@@ -88,7 +94,7 @@ export function issueExecutionBinding(binding, { certificate, privateKey }) {
   return signCMS({ content: D('ExecutionBinding', binding), certificate }, privateKey);
 }
 
-function readBinding(envelope, trust, { active = true, at = now() } = {}) {
+function readBinding(envelope, trust, { active = true, at = now(), checkAuthority = true } = {}) {
   requireThat(Number.isSafeInteger(at) && at >= 0, 'EXECUTION_TIME');
   requireThat(Buffer.isBuffer(envelope) && envelope.length <= 65536, 'EXECUTION_BINDING_LIMIT');
   const binding = shapeBinding(readControl(envelope, 'ExecutionBinding', trust.bindingCertificate));
@@ -109,10 +115,25 @@ function readBinding(envelope, trust, { active = true, at = now() } = {}) {
       (!active || binding.status === 'ACTIVE'),
     'EXECUTION_BINDING_INACTIVE',
   );
+  if (checkAuthority)
+    requireAuthority(trust.authorityResolver, {
+      certificate: trust.bindingCertificate,
+      role: 'EXECUTION_BINDING_AUTHORITY',
+      scope: { trustDomainID: trust.trustDomainID },
+      stateTime: at,
+      knowledgeTime: trust.knowledgeTime ?? at,
+    });
   return binding;
 }
 
-function requestBinding({ permit, tbs, sim }, binding, trust, publicKey, at) {
+function requestBinding(
+  { permit, tbs, sim },
+  binding,
+  trust,
+  publicKey,
+  at,
+  checkAuthority = true,
+) {
   requireThat(
     Buffer.isBuffer(tbs) && tbs.length > 0 && tbs.length <= 16 * 1024 * 1024,
     'EXECUTION_INPUT_LIMIT',
@@ -187,6 +208,13 @@ function requestBinding({ permit, tbs, sim }, binding, trust, publicKey, at) {
     tbsHash: sha512(tbs),
     keyID: binding.keyID,
   });
+  if (checkAuthority)
+    requireOperationAuthorities(
+      trust,
+      { trustDomainID: activation.trustDomainID, profileID: sim.profileID },
+      at,
+      trust.knowledgeTime ?? at,
+    );
   return { permit: p, activation, activationHash, requestHash };
 }
 
@@ -205,6 +233,7 @@ export class ExecutionBindingGateway {
     policy,
     trustDomainID,
     authorize,
+    authorityResolver,
     clock = now,
   }) {
     requireThat(
@@ -222,6 +251,7 @@ export class ExecutionBindingGateway {
       receiptCertificate: Buffer.from(receiptCertificate),
       policy: copy(policy),
       trustDomainID: Buffer.from(trustDomainID),
+      authorityResolver,
     };
     this.installBinding(binding);
   }
@@ -426,6 +456,7 @@ export function verifyExecutionEvidence(
     trustDomainID,
     at,
     knowledgeTime = at,
+    authorityResolver,
     status,
   },
 ) {
@@ -442,9 +473,11 @@ export function verifyExecutionEvidence(
     receiptCertificate,
     policy,
     trustDomainID,
+    authorityResolver,
+    knowledgeTime,
   };
-  const binding = readBinding(evidence.binding, trust, { at });
-  const checked = requestBinding({ permit, tbs, sim }, binding, trust, publicKey, at);
+  const binding = readBinding(evidence.binding, trust, { at, checkAuthority: false });
+  const checked = requestBinding({ permit, tbs, sim }, binding, trust, publicKey, at, false);
   const r = readControl(receipt, 'ExecutionReceipt', receiptCertificate);
   fields(r, [
     'schemaVersion',
@@ -485,6 +518,17 @@ export function verifyExecutionEvidence(
     'EXECUTION_RECEIPT_BINDING',
   );
   requireThat(status(copy(binding), { at, knowledgeTime }) === true, 'EXECUTION_STATUS');
+  const scope = { trustDomainID, profileID: sim.profileID };
+  requireAuthorities(authorityResolver, [
+    {
+      certificate: bindingCertificate,
+      role: 'EXECUTION_BINDING_AUTHORITY',
+      scope,
+      stateTime: at,
+      knowledgeTime,
+    },
+    ...operationAuthorityQueries(trust, scope, at, knowledgeTime),
+  ]);
   return {
     profile: EXECUTION_BINDING_PROFILE,
     enforcement: 'BROKER_ENFORCED',

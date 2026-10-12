@@ -622,10 +622,24 @@ export class CredentialIssuer {
     const offer = this.journal.get('offers', access.offerID);
     requireThat(
       offer &&
-        !offer.value.issued &&
         offer.value.configurationID === params.credential_configuration_id,
       'invalid_credential_request',
     );
+    const requestHash = H('CredentialIssuance', {
+      configurationID: params.credential_configuration_id,
+      holders: holderKeys.map((k) => thumbprint(k.jwk)),
+      encryption: params.credential_response_encryption ?? null,
+      defer,
+    }), previous = this.journal.get('credential-results', access.offerID);
+    if (previous) {
+      requireThat(equal(previous.value.requestHash, requestHash), 'ISSUANCE_CONFLICT');
+      return previous.value.result;
+    }
+    requireThat(!offer.value.issued, 'invalid_credential_request');
+    const remember = (result) => {
+      this.journal.put('credential-results', access.offerID, { requestHash, result });
+      return result;
+    };
     this.journal.put('offers', access.offerID, { ...offer.value, issued: true }, offer.revision);
     const credentials = holderKeys.map((k) => {
       requireThat(
@@ -695,14 +709,14 @@ export class CredentialIssuer {
         expiresAt: now() + 300,
         used: false,
       });
-      return { transaction_id, interval: 1 };
+      return remember({ transaction_id, interval: 1 });
     }
     if (params.credential_response_encryption) {
       const e = params.credential_response_encryption;
       requireThat(!e.zip, 'encryption_parameters_not_supported');
-      return encryptJWE(response, e.jwk, { enc: e.enc, kid: e.jwk.kid });
+      return remember(encryptJWE(response, e.jwk, { enc: e.enc, kid: e.jwk.kid }));
     }
-    return response;
+    return remember(response);
   }
   deferred(params, headers) {
     const a = this.access(headers, this.issuer + '/deferred'),

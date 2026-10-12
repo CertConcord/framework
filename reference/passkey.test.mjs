@@ -459,6 +459,7 @@ test('durable execution rejects duplicate dispatch, reconciles a response once, 
             policyHash: registry.policyHash,
             identityEvidenceHash: evidence.binding.identityEvidenceHash,
             keyBindingID: bindingID,
+            issuanceScope: x.issuingCA.issuanceScope,
           }),
         /ISSUANCE_ALREADY_ACTIVE/,
       );

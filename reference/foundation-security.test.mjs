@@ -165,6 +165,12 @@ test('identity admission cannot authorize a wrong session, denied identity or re
     certificate,
     privateKey: ra.privateKey,
     issuanceAudience: 'https://ca.example',
+    issuanceScope: {
+      trustDomainID,
+      issuerID: 'https://ca.example',
+      issuerKeyID: c.keyID(ra.publicKey),
+      representation: 'MDOC',
+    },
     decide: () => ({ approved: allowed, subjectID, assurance: 'VERIFIED_IDENTITY' }),
   });
   try {

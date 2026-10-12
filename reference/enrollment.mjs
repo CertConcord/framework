@@ -36,6 +36,7 @@ import {
 } from './pki.mjs';
 import { readControl } from './state.mjs';
 import { kemChallenge } from './protection.mjs';
+import { snapshotIssuanceScope, issuanceRequestID, requireIssuanceAuthority } from './enrollment-scope.mjs';
 const snapshot = (value) => decodeCBOR(dcbor(value));
 
 function approvalCSR(parsed) {
@@ -202,6 +203,7 @@ export function verifyCSR(
   };
 }
 export function issueRAR(request, { privateKey, certificate }) {
+  snapshotIssuanceScope(request.issuanceScope);
   requireThat(
     request.schemaVersion === 1 &&
       request.expiresAt > now() &&
@@ -228,16 +230,18 @@ export class RegistrationAuthority {
     validatePossessionCertificate,
     keyBindingID,
     kemProof,
+    issuanceScope,
   }) {
     // Own the request before invoking any policy or admission callback. Callback views
     // are separate values: freezing an object does not freeze the bytes in its Buffers.
-    ({ csr, subjectID, profileID, policyHash, identityEvidenceHash, keyBindingID, kemProof } =
+    ({ csr, subjectID, profileID, policyHash, identityEvidenceHash, keyBindingID, kemProof, issuanceScope } =
       snapshot({
         csr,
         subjectID,
         profileID,
         policyHash,
         identityEvidenceHash,
+        issuanceScope: snapshotIssuanceScope(issuanceScope),
         ...(keyBindingID !== undefined ? { keyBindingID } : {}),
         ...(kemProof !== undefined ? { kemProof } : {}),
       }));
@@ -276,7 +280,7 @@ export class RegistrationAuthority {
       );
     }
     const decision = await this.approve({
-      ...snapshot({ subjectID, profileID, policyHash, identityEvidenceHash }),
+      ...snapshot({ subjectID, profileID, policyHash, identityEvidenceHash, issuanceScope }),
       csr: approvalCSR(parsed),
       ...(admission ? { keyBinding: snapshot(admission.binding) } : {}),
     });
@@ -288,6 +292,7 @@ export class RegistrationAuthority {
       profileID,
       policyHash,
       identityEvidenceHash,
+      issuanceScope,
       spkiHash: sha512(parsed.spki),
       csrHash: sha512(csr),
       possessionMode: parsed.possessionMode,
@@ -313,6 +318,9 @@ export class AuthorizedIssuer {
     approvedExtensions = () => [],
     keyAssurance = { level: 'KAL1', custody: 'SOFTWARE' },
     keyBindings,
+    issuanceScope,
+    authorityResolver,
+    issuerCertificate,
   }) {
     Object.assign(this, {
       journal,
@@ -325,11 +333,16 @@ export class AuthorizedIssuer {
       approvedExtensions,
       keyAssurance,
       keyBindings,
+      issuanceScope: snapshotIssuanceScope(issuanceScope),
+      authorityResolver,
+      issuerCertificate,
     });
+    requireThat(this.issuanceScope.representation === 'X509', 'ISSUANCE_SCOPE');
   }
   issue({ csr, rar }) {
     const r = readControl(rar, 'RegistrationAuthorization', this.raCertificate),
       p = verifyCSR(csr, { validatePossessionCertificate: this.validatePossessionCertificate });
+    requireIssuanceAuthority(r, this);
     requireThat(
       r.schemaVersion === 1 &&
         r.expiresAt > now() &&
@@ -352,7 +365,7 @@ export class AuthorizedIssuer {
         : null;
     if (admission) requireThat(equal(admission.hash, r.keyBindingHash), 'PASSKEY_RA_BINDING');
     return this.journal.transaction(() => {
-      const id = b64u(r.requestID),
+      const id = issuanceRequestID(r),
         prior = this.journal.get('issuance', id);
       if (prior) {
         requireThat(equal(prior.value.rarHash, sha512(rar)), 'ISSUANCE_CONFLICT');

@@ -10,12 +10,15 @@ import {
   now,
   random,
   parseDER,
+  spki,
 } from './core.mjs';
 import { parseCertificate, validateCertificate, OID } from './pki.mjs';
 import { verifyMTC } from './mtc.mjs';
 import { readControl, evaluateStatus } from './state.mjs';
 import { verifyRegistrationBinding } from './document-evidence.mjs';
 import { encryptCMS, decryptCMS } from './protection.mjs';
+import { snapshotIssuanceScope, issuanceAuthorityScope } from './enrollment-scope.mjs';
+import { requireAuthorities } from './control-authority.mjs';
 
 export const DOCUMENT_ENCRYPTION_PROFILE = 'certconcord-document-encryption-draft-02';
 const suite = 'ML-KEM-HKDF-SHA256-AES256KW-AES256GCM';
@@ -67,6 +70,7 @@ export function admitDocumentRecipient({ certificate, rar, status }, trust, at =
     profileID,
     policyHash: trust.policyHash,
     at,
+    issuanceScope: trust.issuanceScope,
   });
   requireThat(
     Buffer.isBuffer(authorization.kemPossessionEvidenceHash) &&
@@ -84,6 +88,46 @@ export function admitDocumentRecipient({ certificate, rar, status }, trust, at =
       'GOOD',
     'DOCUMENT_RECIPIENT_STATUS',
   );
+  const selectedScope = snapshotIssuanceScope(trust.issuanceScope),
+    scope = issuanceAuthorityScope(authorization),
+    issuerKey = cert.algorithm === OID.mtc ? trust.mtc.caPublicKey : trust.issuerPublicKey,
+    knowledgeTime = trust.knowledgeTime ?? at;
+  requireThat(
+    equal(selectedScope.trustDomainID, trust.trustDomainID) &&
+      selectedScope.representation === (cert.algorithm === OID.mtc ? 'MTC' : 'X509') &&
+      equal(selectedScope.issuerKeyID, keyID(issuerKey)),
+    'ISSUANCE_SCOPE',
+  );
+  if (trust.issuerCertificate)
+    requireThat(
+      equal(keyID(parseCertificate(trust.issuerCertificate).publicKey), keyID(issuerKey)),
+      'ISSUER_KEY_BINDING',
+    );
+  requireAuthorities(trust.authorityResolver, [
+    {
+      certificate: trust.raCertificate,
+      role: 'REGISTRATION_AUTHORITY',
+      scope,
+      stateTime: authorization.issuedAt,
+      knowledgeTime,
+    },
+    {
+      ...(trust.issuerCertificate
+        ? { certificate: trust.issuerCertificate }
+        : { publicKeyDER: spki(issuerKey) }),
+      role: 'ISSUER',
+      scope,
+      stateTime: authorization.issuedAt,
+      knowledgeTime,
+    },
+    {
+      certificate: trust.statusCertificate,
+      role: 'STATUS_AUTHORITY',
+      scope,
+      stateTime: statement.publishedAt,
+      knowledgeTime,
+    },
+  ]);
   return recipientBinding(certificate, trust.subjectID);
 }
 

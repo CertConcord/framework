@@ -1,3 +1,4 @@
+import { requireOperationAuthorities } from './control-authority.mjs';
 import {
   D,
   H,
@@ -551,6 +552,7 @@ export class PasskeySigningService {
     receiptKey,
     audience,
     authorize,
+    authorityResolver,
   }) {
     requireThat(
       journal === registry.journal && typeof authorize === 'function',
@@ -564,11 +566,13 @@ export class PasskeySigningService {
       receiptKey,
       audience,
       authorize,
+      authorityResolver,
     });
   }
   async check({ bindingID, permit, tbs }) {
     const r = this.registry.active(bindingID),
       p = readControl(permit, 'OperationPermit', this.permitCertificate);
+    requireOperationAuthorities(this, { trustDomainID: p.activation.trustDomainID, profileID: PASSKEY_SIGN_PROFILE }, now());
     requireThat(
       p.proofMode === 'HUMAN_WEBAUTHN' &&
         p.issuedAt <= now() &&
@@ -760,6 +764,8 @@ export function verifyPasskeyOperation(
     mdocVerifier,
     audience,
     at = now(),
+    knowledgeTime = at,
+    authorityResolver,
     status,
   },
 ) {
@@ -834,6 +840,8 @@ export function verifyPasskeyOperation(
       r.executedAt < p.expiresAt,
     'PASSKEY_EXECUTION_RECEIPT',
   );
+  requireOperationAuthorities({ permitCertificate, receiptCertificate, authorityResolver },
+    { trustDomainID: binding.trustDomainID, profileID: PASSKEY_SIGN_PROFILE }, at, knowledgeTime);
   return {
     cryptographicValidity: 'VALID',
     authorization: 'PREAUTHORIZED_EVIDENCE',
