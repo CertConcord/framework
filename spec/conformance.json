@@ -179,9 +179,113 @@
         {
           "file": "reference/evidence-plan.test.mjs",
           "name": "a known invalid leaf takes precedence over a missing plan or unsupported schema"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} SDK returns stable identity and immutable evaluated dimensions"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} supported leaf commitments precede unsupported semantics and missing evidence"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} missing timestamp cannot hide an available invalid permit signature"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native mdoc signed digest and version capability outcomes survive the SDK boundary"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native mdoc malformed capability discriminators remain invalid"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native mdoc unknown text algorithms are capabilities rather than malformed labels"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native mdoc unsupported critical semantics cannot hide supported signature mathematics"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "CMS unknown algorithm capability differs from implemented algorithm mismatch"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "different evaluated dimensions retain independent failures with the same code"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "authority dimensions follow the evaluated role rather than shared reason text"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "transparency dimensions reflect the admitted operator quorum rather than every vote"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} missing registration cannot hide an independently invalid timestamp signature"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "missing registration preserves only authenticated subject-bound certificate revocation"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "unused MTC configuration does not claim transparency for an X509 signature"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "${format} incomplete evidence binds every receipt field before using operation time"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "certificate status fallback never borrows another operation receipt time"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "organization status fallback requires the authorization bound to this operation"
+        },
+        {
+          "file": "reference/sdk-conformance.test.mjs",
+          "name": "native credential fallback never borrows an unbound receipt time"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "${label} framework document is consumed by the pinned component"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "${label} component document is consumed by the framework without rewriting bytes"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "${label} a mathematically valid legacy critical order has no compatibility fallback"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "${label} framework retains component bad mathematics before a protected binding mismatch"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "a complete SDK native document uses the same component wire contract"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "native document verification uses declared knowledge time independently of wall clock"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "timestamped notes retain their future limit at explicit knowledge time"
+        },
+        {
+          "file": "reference/mdoc-document-boundary.test.mjs",
+          "name": "credential log checkpoint and mirror checks share explicit knowledge time"
         }
       ],
-      "gap": "Nested unsupported algorithms and complete per-dimension result reporting remain incomplete."
+      "gap": "Selected CMS/MTC and native mdoc SDK paths provide stable identity/reason fields, bounded evaluated dimensions and explicit malformed, missing, unsupported and invalid precedence. This record covers the named selected boundaries, not all algorithms, containers or future extensions. Independent implementation, complete external parser assessment and stability review remain separate evidence."
     },
     {
       "id": "CC-CORE-08",
@@ -569,9 +673,46 @@
     },
     {
       "id": "CC-DOC-06",
-      "coverage": "planned",
-      "tests": [],
-      "gap": "Draft acceptance develops the public verification contract and reproducible vectors. A second independently developed complete implementation and interoperability record are later stability requirements, not prerequisites for continuing draft development."
+      "coverage": "partial",
+      "tests": [
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published CMS and native mdoc originals verify through the public SDK"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published negative documents preserve exact typed outcomes"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published replay is offline and uses its declared knowledge time"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published ERS records distinguish timely missing and late renewal"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published retained lifecycle separates preservation from current admissibility"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "published corpus inventory contains only public material and exact hashes"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader rejects corrupt inventories and unsafe file references"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector runner rejects an incorrect expected verdict"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "document replay uses the supplied public verifier factory"
+        }
+      ],
+      "gap": "The public original-byte corpus, external trust schema, fixed knowledge times and offline runner reproduce selected CMS/MTC and native mdoc document results, ERS renewal and separate historical/current decisions. The installed SDK replays the document cases through its public export. This is draft acceptance evidence; a second independently developed complete implementation and recorded interoperability remain later stability requirements."
     },
     {
       "id": "CC-MDOC-01",

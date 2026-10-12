@@ -43,7 +43,7 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "45b2b04bff5a8e8cd5e19c702c442eb06bb19e08",
+      "commit": "f9ce29a24bbfd093803884fd089b4c19eaeb8ded",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [
@@ -117,7 +117,7 @@
     {
       "name": "tlog-cosignature-ml-dsa",
       "repository": "https://github.com/CertConcord/tlog-cosignature-ml-dsa",
-      "commit": "bf1d353e6f034ed1bc3e12496d1ef65daf1a216d",
+      "commit": "c25847fe4f9ebe8df92e9e7f37d78241868c0cae",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [

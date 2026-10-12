@@ -8,6 +8,7 @@ import { runDemo } from '../demo.mjs';
 import { runFoundationDemo } from '../foundation-demo.mjs';
 import { runDocumentDemo } from '../document-demo.mjs';
 import { dcbor, decodeCBOR } from '../core.mjs';
+import { runDocumentVectors } from '../verify-vectors.mjs';
 const cwd = resolve('.runtime/sdk-consumer');
 const sdkPackage = JSON.parse(await readFile('sdk/package.json'));
 assert.equal(sdkPackage.private, true);
@@ -34,6 +35,7 @@ const sdk = await import(pathToFileURL(entry));
 assert.deepEqual(Object.keys(sdk).sort(), ['createVerifier', 'profiles']);
 assert.throws(() => require.resolve('@certconcord/verifier/core.mjs'), /not defined|not exported/);
 assert.throws(() => sdk.createVerifier({ format: 'CMS', trust: {} }), /SDK_TRUST/);
+const publicVectors = runDocumentVectors({ createVerifier: sdk.createVerifier });
 for (const [format, executionBinding, trustedTime = false] of [
   ['CMS', false],
   ['MDOC', false],
@@ -77,5 +79,7 @@ assert.equal(
   'AUTHORITY_ATTESTED_OPERATION',
 );
 console.log(
-  'SDK archive install, export boundary, trust binding, document evidence and execution plans passed',
+  'SDK archive install, export boundary, trust binding, document evidence and execution plans passed; ' +
+    publicVectors.length +
+    ' public document vectors reproduced through the installed package',
 );
