@@ -4,6 +4,8 @@ import { readFileSync, writeFileSync, cpSync, mkdtempSync, rmSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join, resolve, sep } from 'node:path';
 import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+import { syncBuiltinESMExports } from 'node:module';
 import { createVerifier } from './sdk/index.mjs';
 import {
   defaultVectorDirectory,
@@ -287,4 +289,186 @@ test('document replay uses the supplied public verifier factory', () => {
   assert.equal(seen.length, loadVectorCorpus().manifest.documents.length);
   assert.equal(results.length, seen.length);
   assert(seen.includes('CMS') && seen.includes('MDOC'));
+});
+
+function smallCorpus(t) {
+  const parent = resolve(tmpdir());
+  const temporary = fs.mkdtempSync(join(parent, 'certconcord-vector-io-'));
+  const directory = join(temporary, 'corpus');
+  fs.mkdirSync(join(directory, 'files'), { recursive: true });
+  const decoded = Buffer.from('original public bytes');
+  const stored = Buffer.from(decoded.toString('base64') + '\n');
+  const name = 'files/object.b64';
+  const manifest = {
+    schemaVersion: 1,
+    profile: 'certconcord-document-acceptance-vectors-draft-03',
+    description: 'Original fixture',
+    files: [
+      {
+        path: name,
+        bytes: stored.length,
+        sha256: hash(stored),
+        mediaType: 'application/octet-stream',
+        encoding: 'base64',
+        decodedBytes: decoded.length,
+        decodedSHA256: hash(decoded),
+      },
+    ],
+    documents: [],
+    preservation: [],
+    retained: [],
+  };
+  fs.writeFileSync(join(directory, name), stored);
+  fs.writeFileSync(join(directory, 'manifest.json'), JSON.stringify(manifest) + '\n');
+  t.after(() => {
+    assert(resolve(temporary).startsWith(parent + sep + 'certconcord-vector-io-'));
+    fs.rmSync(temporary, { recursive: true });
+  });
+  return { directory, temporary, manifest, name, decoded, stored };
+}
+
+function mockFilesystem(t, name, implementation) {
+  const replacement = t.mock.method(fs, name, implementation);
+  syncBuiltinESMExports();
+  t.after(() => {
+    replacement.mock.restore();
+    syncBuiltinESMExports();
+  });
+}
+
+function fileReadBoundary(t, target, mutate) {
+  const original = {
+    open: fs.openSync,
+    read: fs.readSync,
+    readFile: fs.readFileSync,
+    close: fs.closeSync,
+  };
+  const state = { opened: new Set(), closed: new Set(), requested: 0, returned: 0, mutated: false };
+  const matches = (path) => typeof path === 'string' && resolve(path) === resolve(target);
+  const change = () => {
+    if (!state.mutated) {
+      state.mutated = true;
+      mutate?.();
+    }
+  };
+  mockFilesystem(t, 'openSync', (path, flags, ...rest) => {
+    const fd = original.open(path, flags, ...rest);
+    if (
+      matches(path) &&
+      (flags === 'r' ||
+        (typeof flags === 'number' &&
+          (flags & (fs.constants.O_WRONLY | fs.constants.O_RDWR)) === 0))
+    )
+      state.opened.add(fd);
+    return fd;
+  });
+  mockFilesystem(t, 'readSync', (fd, buffer, offset, length, position) => {
+    if (state.opened.has(fd)) {
+      change();
+      state.requested += length;
+    }
+    const count = original.read(fd, buffer, offset, length, position);
+    if (state.opened.has(fd)) state.returned += count;
+    return count;
+  });
+  mockFilesystem(t, 'readFileSync', (path, ...rest) => {
+    if (matches(path)) change();
+    const bytes = original.readFile(path, ...rest);
+    if (matches(path)) state.returned += bytes.length;
+    return bytes;
+  });
+  mockFilesystem(t, 'closeSync', (fd) => {
+    if (state.opened.has(fd)) state.closed.add(fd);
+    return original.close(fd);
+  });
+  return state;
+}
+
+test('vector loader detects replacement of a checked manifest or material', async (t) => {
+  for (const kind of ['manifest', 'material'])
+    await t.test(kind, (caseTest) => {
+      const fixture = smallCorpus(caseTest);
+      const target = join(fixture.directory, kind === 'manifest' ? 'manifest.json' : fixture.name);
+      const original = fs.lstatSync;
+      let replaced = false;
+      mockFilesystem(caseTest, 'lstatSync', (path, ...args) => {
+        const result = original(path, ...args);
+        if (!replaced && resolve(path) === resolve(target)) {
+          replaced = true;
+          fs.renameSync(target, target + '.original');
+          const replacement =
+            kind === 'manifest'
+              ? Buffer.from(
+                  JSON.stringify({ ...fixture.manifest, description: 'Replaced fixture' }) + '\n',
+                )
+              : Buffer.alloc(fixture.stored.length, 65);
+          fs.writeFileSync(target, replacement);
+        }
+        return result;
+      });
+      assert.throws(() => loadVectorCorpus(fixture.directory), { code: 'VECTOR_FILE_CHANGED' });
+      assert.equal(replaced, true);
+    });
+});
+
+test('vector loader bounds descriptor reads when a file grows', (t) => {
+  const fixture = smallCorpus(t),
+    target = join(fixture.directory, fixture.name);
+  const boundary = fileReadBoundary(t, target, () =>
+    fs.appendFileSync(target, Buffer.alloc(1024 * 1024)),
+  );
+  assert.throws(() => loadVectorCorpus(fixture.directory), { code: 'VECTOR_FILE_CHANGED' });
+  assert.equal(boundary.mutated, true);
+  assert(boundary.requested <= fixture.stored.length + 1);
+  assert(boundary.returned <= fixture.stored.length + 1);
+  assert.equal(boundary.opened.size, 1);
+  assert.deepEqual(boundary.closed, boundary.opened);
+});
+
+test('vector loader rejects truncation during a descriptor read', (t) => {
+  const fixture = smallCorpus(t),
+    target = join(fixture.directory, fixture.name);
+  const boundary = fileReadBoundary(t, target, () => fs.truncateSync(target, 0));
+  assert.throws(() => loadVectorCorpus(fixture.directory), { code: 'VECTOR_FILE_CHANGED' });
+  assert.equal(boundary.mutated, true);
+  assert.equal(boundary.opened.size, 1);
+  assert.deepEqual(boundary.closed, boundary.opened);
+});
+
+test('vector loader closes its descriptor after a read failure', (t) => {
+  const fixture = smallCorpus(t),
+    target = join(fixture.directory, fixture.name);
+  const boundary = fileReadBoundary(t, target, () => {
+    throw Object.assign(new Error('Read failed'), { code: 'EIO' });
+  });
+  assert.throws(() => loadVectorCorpus(fixture.directory), { code: 'EIO' });
+  assert.equal(boundary.mutated, true);
+  assert.equal(boundary.opened.size, 1);
+  assert.deepEqual(boundary.closed, boundary.opened);
+});
+
+test('vector loader retains directory and escaping link rejection', async (t) => {
+  await t.test('directory', (caseTest) => {
+    const fixture = smallCorpus(caseTest),
+      target = join(fixture.directory, fixture.name);
+    fs.unlinkSync(target);
+    fs.mkdirSync(target);
+    assert.throws(() => loadVectorCorpus(fixture.directory), { code: 'VECTOR_FILE_TYPE' });
+  });
+  await t.test('escaping-directory-link', (caseTest) => {
+    const fixture = smallCorpus(caseTest);
+    const outside = join(fixture.temporary, 'outside');
+    fs.renameSync(join(fixture.directory, 'files'), outside);
+    fs.symlinkSync(outside, join(fixture.directory, 'files'), 'junction');
+    assert.throws(() => loadVectorCorpus(fixture.directory), { code: 'VECTOR_PATH' });
+  });
+});
+
+test('vector loader closes descriptors after successful loading', (t) => {
+  const fixture = smallCorpus(t),
+    target = join(fixture.directory, fixture.name);
+  const boundary = fileReadBoundary(t, target);
+  assert.deepEqual(loadVectorCorpus(fixture.directory).read(fixture.name), fixture.decoded);
+  assert.equal(boundary.opened.size, 1);
+  assert.deepEqual(boundary.closed, boundary.opened);
 });
