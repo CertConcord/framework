@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 11653,
-      "sha256": "64c0767554b84d2f1209418ad6dc57f1daef3ec99069a58d6b50ea264150c581"
+      "bytes": 12282,
+      "sha256": "84d8743e6c5b9cf7584781a26f7d8685ce76a48a7e52ce03937e187e2b2f98da"
     },
     {
       "path": "docs/ecosystem.md",
@@ -265,8 +265,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 12640,
-      "sha256": "73796014ffe49d0349dfab8e5b98ad932663a739fb43111d6711f71ffb431b82"
+      "bytes": 12692,
+      "sha256": "514d41a3ac93573a7cb2fb907037a30f415414abe65d085f6f64690eabadd51b"
     },
     {
       "path": "reference/README.md",
@@ -1114,14 +1114,19 @@
       "sha256": "2740be85ef14cdf2bf0a860a68c99afc773ddf73fa644fbc69db77a5f2ef997a"
     },
     {
+      "path": "reference/retained-authorities-crash-child.mjs",
+      "bytes": 1643,
+      "sha256": "1b67685f18ea0e742dd4a1b5a2d320b14a27883ac4eec551a5b4f77dd84df35a"
+    },
+    {
       "path": "reference/retained-authorities.mjs",
       "bytes": 14912,
       "sha256": "4644f8d15b869b5ffcb99015906dd97f5ebad0c047db80fbf55829157610d4eb"
     },
     {
       "path": "reference/retained-authorities.test.mjs",
-      "bytes": 15517,
-      "sha256": "d1161dce3039007d6c67ca45267ce271b9db1d12f98fa0d3075b1889d1064aec"
+      "bytes": 20666,
+      "sha256": "7d59b552379b9ac980302db35ef4e6ee034242a15c7af6f65e8b43f2b62d9fd7"
     },
     {
       "path": "reference/retained-document.test.mjs",

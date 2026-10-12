@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import { Journal } from './state.mjs';
@@ -188,33 +189,203 @@ test('archive history and ERS head publish atomically, survive restart and rejec
   } finally { journal.close(); rmSync(directory, { recursive: true, force: true }); }
 });
 
-test('process termination between archive write and SQLite commit cannot publish half a renewal', () => {
-  const directory = mkdtempSync(join(tmpdir(), 'certconcord-archive-crash-')), path = join(directory, 'journal.sqlite');
-  let journal = new Journal(path);
-  const first = { archiveID: 'process-crash', previousHash: null, dataHash: c.sha512(Buffer.from('document')),
-    evidenceRecord: Buffer.from('validated initial ERS'), history: [{ serial: 0 }] };
+function terminateAtPublicationBoundary({
+  cwd,
+  path,
+  snapshot,
+  publication,
+  observePending,
+  mode = 'publish',
+}) {
+  return new Promise((resolve, reject) => {
+    const childPath = fileURLToPath(
+      new URL('./retained-authorities-crash-child.mjs', import.meta.url),
+    );
+    const worker = spawn(process.execPath, [childPath, path, snapshot, mode], {
+      cwd,
+      windowsHide: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '',
+      stderr = '',
+      ready,
+      failure,
+      killAcknowledged = false;
+    const stop = (error) => {
+      failure ??= error;
+      worker.kill('SIGKILL');
+    };
+    const timer = setTimeout(
+      () => stop(new Error('Archive child did not finish the crash protocol within 10 seconds')),
+      10000,
+    );
+    worker.stdout.setEncoding('utf8');
+    worker.stderr.setEncoding('utf8');
+    worker.once('error', (error) => {
+      failure ??= error;
+    });
+    worker.stderr.on('data', (chunk) => {
+      stderr += chunk;
+      if (stderr.length > 16384) stop(new Error('Archive child stderr exceeded its bound'));
+    });
+    worker.stdout.on('data', (chunk) => {
+      stdout += chunk;
+      try {
+        assert.ok(stdout.length <= 16384, 'Archive child stdout exceeded its bound');
+        if (!stdout.includes('\n')) return;
+        assert.equal(ready, undefined, 'Archive child emitted more than one boundary observation');
+        assert.equal(
+          stdout.indexOf('\n'),
+          stdout.length - 1,
+          'Archive child emitted unexpected output',
+        );
+        ready = JSON.parse(stdout);
+        assert.deepEqual(ready, {
+          event: 'publication-pending',
+          point: 'after-publication-before-commit',
+          pid: worker.pid,
+          archiveID: publication.archiveID,
+          digest: c.sha512(c.dcbor(publication)).toString('hex'),
+          revision: 1,
+          transactionDepth: 1,
+        });
+        observePending();
+        killAcknowledged = worker.kill('SIGKILL');
+        assert.equal(
+          killAcknowledged,
+          true,
+          'The parent must successfully request forcible termination',
+        );
+      } catch (error) {
+        stop(error);
+      }
+    });
+    worker.once('close', (exitCode, signal) => {
+      clearTimeout(timer);
+      try {
+        if (failure) throw failure;
+        if (!ready) {
+          throw Object.assign(
+            new Error('Archive child exited before the transaction boundary: ' + stderr),
+            {
+              code: 'ARCHIVE_CRASH_BOUNDARY_NOT_REACHED',
+              exitCode,
+              signal,
+              killAcknowledged,
+            },
+          );
+        }
+        assert.equal(killAcknowledged, true);
+        if (process.platform === 'win32' && signal === null) {
+          assert.ok(
+            Number.isInteger(exitCode) && exitCode !== 0,
+            'Forced Windows termination must not be normal success',
+          );
+        } else {
+          assert.equal(signal, 'SIGKILL', stderr);
+          assert.equal(exitCode, null);
+        }
+        resolve({ ready, exitCode, signal, killAcknowledged });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}
+
+test('process termination between archive write and SQLite commit cannot publish half a renewal', async (t) => {
+  const workingDirectories = [
+    ['reference working directory', fileURLToPath(new URL('.', import.meta.url))],
+    ['repository root working directory', fileURLToPath(new URL('..', import.meta.url))],
+    ['unrelated working directory with spaces', null],
+  ];
+  for (const [name, configuredCwd] of workingDirectories) {
+    await t.test(name, async (subtest) => {
+      const directory = mkdtempSync(join(tmpdir(), 'certconcord archive crash ')),
+        path = join(directory, 'journal.sqlite');
+      const snapshot = join(directory, 'publication.cbor');
+      let journal = new Journal(path);
+      const options = { validatePublication: () => ({ overall: 'VALID' }) };
+      const first = {
+        archiveID: 'process-crash',
+        previousHash: null,
+        dataHash: c.sha512(Buffer.from('document')),
+        evidenceRecord: Buffer.from('validated initial ERS'),
+        history: [{ serial: 0 }],
+      };
+      try {
+        const initial = new ArchivePublicationStore(journal, options).publish(first);
+        const previousRow = { revision: 0, value: c.decodeCBOR(c.dcbor(initial)) };
+        assert.deepEqual(journal.get('archive-publication', first.archiveID), previousRow);
+        const second = {
+          ...first,
+          previousHash: initial.digest,
+          evidenceRecord: Buffer.from('validated renewal'),
+          history: [{ serial: 0 }, { serial: 1, custodian: 'successor' }],
+        };
+        writeFileSync(snapshot, c.dcbor(second));
+        const termination = await terminateAtPublicationBoundary({
+          cwd: configuredCwd ?? directory,
+          path,
+          snapshot,
+          publication: second,
+          observePending: () =>
+            assert.deepEqual(journal.get('archive-publication', first.archiveID), previousRow),
+        });
+        subtest.diagnostic(JSON.stringify({ phase: 'forced-termination', ...termination }));
+        journal.close();
+        journal = new Journal(path);
+        assert.deepEqual(journal.get('archive-publication', first.archiveID), previousRow);
+        const completed = new ArchivePublicationStore(journal, options).publish(second);
+        const expected = {
+          digest: c.sha512(c.dcbor(second)),
+          publication: c.decodeCBOR(c.dcbor(second)),
+        };
+        assert.deepEqual(completed, expected);
+        journal.close();
+        journal = new Journal(path);
+        const renewedRow = { revision: 1, value: c.decodeCBOR(c.dcbor(expected)) };
+        assert.deepEqual(journal.get('archive-publication', first.archiveID), renewedRow);
+        assert.deepEqual(
+          new ArchivePublicationStore(journal, options).publish(second),
+          renewedRow.value,
+        );
+        assert.deepEqual(journal.get('archive-publication', first.archiveID), renewedRow);
+        subtest.diagnostic(
+          JSON.stringify({ phase: 'restart-verified', previousRevision: 0, renewedRevision: 1 }),
+        );
+      } finally {
+        journal.close();
+        rmSync(directory, { recursive: true, force: true });
+      }
+    });
+  }
+});
+
+test('archive crash harness rejects an exit before the transaction boundary', async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'certconcord archive early exit '));
+  let observed = false;
   try {
-    const store = new ArchivePublicationStore(journal, { validatePublication: () => ({ overall: 'VALID' }) });
-    const initial = store.publish(first);
-    journal.close(); journal = undefined;
-    const second = { ...first, previousHash: initial.digest, evidenceRecord: Buffer.from('validated renewal'),
-      history: [{ serial: 0 }, { serial: 1 }] };
-    const worker = spawnSync(process.execPath, ['--input-type=module', '-e', `
-      import { Journal } from './state.mjs';
-      import { decodeCBOR } from './core.mjs';
-      import { ArchivePublicationStore } from './retained-authorities.mjs';
-      const journal = new Journal(process.argv[1]);
-      const store = new ArchivePublicationStore(journal, {
-        validatePublication: () => ({ overall: 'VALID' }),
-        crash: (point) => { if (point === 'after-publication-before-commit') process.kill(process.pid, 'SIGKILL'); }
-      });
-      store.publish(decodeCBOR(Buffer.from(process.argv[2], 'base64')));
-    `, path, c.dcbor(second).toString('base64')], { encoding: 'utf8', windowsHide: true });
-    assert.equal(worker.signal, 'SIGKILL', worker.stderr);
-    journal = new Journal(path);
-    const restarted = new ArchivePublicationStore(journal, { validatePublication: () => ({ overall: 'VALID' }) });
-    assert.deepEqual(restarted.read(first.archiveID).digest, initial.digest);
-    assert.equal(restarted.read(first.archiveID).publication.history.length, 1);
-    assert.equal(restarted.publish(second).publication.history.length, 2);
-  } finally { journal?.close(); rmSync(directory, { recursive: true, force: true }); }
+    await assert.rejects(
+      terminateAtPublicationBoundary({
+        cwd: directory,
+        path: join(directory, 'unused.sqlite'),
+        snapshot: join(directory, 'unused.cbor'),
+        publication: {},
+        mode: 'exit-before-publication',
+        observePending: () => {
+          observed = true;
+        },
+      }),
+      {
+        code: 'ARCHIVE_CRASH_BOUNDARY_NOT_REACHED',
+        exitCode: 23,
+        signal: null,
+        killAcknowledged: false,
+      },
+    );
+    assert.equal(observed, false);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
