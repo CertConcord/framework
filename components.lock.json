@@ -43,14 +43,14 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "fd5dcae07bafba0d28b3c9218ef86d4c4af98ccd",
+      "commit": "45b2b04bff5a8e8cd5e19c702c442eb06bb19e08",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mdoc-signing/draft.md",
-          "sha256": "a6d7e2d862e1dace3df58844b3f14178e367bf2bd64813eee195b0448c688837"
+          "sha256": "e0f2345e1051cb28e1784ae50bcd3baab6081cc888341d6d1348e4a57c8d935d"
         },
         {
           "source": "sources.json",
@@ -60,7 +60,7 @@
         {
           "source": "cases.json",
           "path": "spec/external/mdoc-signing/cases.json",
-          "sha256": "227e16443b8949c5e9977b06313b0132ef8abcec23a00796b824f640a38fcb5e"
+          "sha256": "d63a2f33118779ae36861b5d00f78c7fba015b9fa135e1d35e2a3cdfda3ca735"
         },
         {
           "source": "NOTICE",
@@ -75,7 +75,7 @@
         {
           "source": "reference/base.mjs",
           "path": "reference/vendor/mdoc-signing/base.mjs",
-          "sha256": "84d23353513b464d7e1611deb239bc00dce16419fd1700376b5a6bd1499c0b95"
+          "sha256": "a602bb6bd7c405c188208ce61629d49a8a6ba7cd3c358f6fe742b05bb623ca79"
         },
         {
           "source": "reference/cbor.mjs",
@@ -95,7 +95,7 @@
         {
           "source": "vectors/manifest.json",
           "path": "spec/external/mdoc-signing/vectors/manifest.json",
-          "sha256": "e9c62b1166d3b42f40edf5a0f1d19c1507b2569b3395f8783df8669d52965980"
+          "sha256": "1900c8309529858c61c1e5a25a9c7f41f4b0b233a2e82ea49f544415b587c0f9"
         },
         {
           "source": "vectors/classification.json",
@@ -106,6 +106,11 @@
           "source": "vectors/document-classification.json",
           "path": "spec/external/mdoc-signing/vectors/document-classification.json",
           "sha256": "75ac64b7288f36dd3d73cc4517c94fbb1b9cf161d51fcf92e446b56fc298af1a"
+        },
+        {
+          "source": "vectors/issuer-facts.json",
+          "path": "spec/external/mdoc-signing/vectors/issuer-facts.json",
+          "sha256": "1c300512e0b280a96d9269c192ec480dcd210389affab8c4377beed6a6d77498"
         }
       ]
     },

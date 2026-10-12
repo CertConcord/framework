@@ -595,6 +595,47 @@
       "overall": "INVALID",
       "reason": "COSE_SIGNATURE",
       "vector": "vectors/classification.json"
+    },
+    {
+      "id": "issuer-facts-valid-facts",
+      "overall": "VALID",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-signed-before-certificate",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-signed-after-valid-from",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-empty-validity-window",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-validity-beyond-certificate",
+      "overall": "INVALID",
+      "reason": "MDOC_EXPIRED",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
+    },
+    {
+      "id": "issuer-facts-bad-mathematics",
+      "overall": "INVALID",
+      "reason": "COSE_SIGNATURE",
+      "vector": "vectors/issuer-facts.json",
+      "scope": "Cryptographic facts only; no temporal admission or authority verdict."
     }
   ]
 }

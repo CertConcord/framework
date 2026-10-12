@@ -59,15 +59,13 @@ function issuerAuth(value) {
   return { value, headers, certificates, certificateBound: headers.has(34), critical: headers.has(2) };
 }
 
-// Cryptographic issuer-authentication primitive. This does not admit an issuer.
-export function verifyIssuerSigned(credential, { issuerKey, certificate, docType = SIGNING_DOCTYPE, at, allowPartial = false } = {}) {
-  requireThat(integer(at), 'MDOC_STATE_TIME');
+function issuerSignedFacts(credential, { issuerKey, certificate, docType = SIGNING_DOCTYPE, allowPartial = false }, at) {
   const bytes = Buffer.isBuffer(credential) ? Buffer.from(credential) : encode(credential);
   const is = decode(bytes);
   fields(is, ['nameSpaces', 'issuerAuth']);
   const ds = certificateDetails(Buffer.from(certificate ?? []));
   requireThat(p256(ds.publicKey) && p256(issuerKey) && same(spki(ds.publicKey), spki(issuerKey)), 'MDOC_ISSUER_KEY');
-  requireThat(ds.notBefore <= at && at < ds.notAfter, 'MDOC_CERTIFICATE_VALIDITY');
+  if (at !== undefined) requireThat(ds.notBefore <= at && at < ds.notAfter, 'MDOC_CERTIFICATE_VALIDITY');
   const auth = issuerAuth(get(is, 'issuerAuth'));
   requireThat(same(auth.certificates[0], ds.certificate.raw), 'MDOC_ISSUER_PIN');
   const algorithm = auth.headers.get(1);
@@ -87,7 +85,8 @@ export function verifyIssuerSigned(credential, { issuerKey, certificate, docType
   const validityInfo = get(mso, 'validityInfo');
   fields(validityInfo, ['signed', 'validFrom', 'validUntil'], ['expectedUpdate']);
   const validity = Object.fromEntries([...validityInfo].map(([name, value]) => [name, time(value)]));
-  requireThat(ds.notBefore <= validity.signed && validity.signed <= validity.validFrom && validity.validFrom < validity.validUntil && validity.validUntil <= ds.notAfter && validity.validFrom <= at && at < validity.validUntil, 'MDOC_EXPIRED');
+  requireThat(ds.notBefore <= validity.signed && validity.signed <= validity.validFrom && validity.validFrom < validity.validUntil && validity.validUntil <= ds.notAfter, 'MDOC_EXPIRED');
+  if (at !== undefined) requireThat(validity.validFrom <= at && at < validity.validUntil, 'MDOC_EXPIRED');
   if (Object.hasOwn(validity, 'expectedUpdate')) requireThat(validity.signed <= validity.expectedUpdate && validity.expectedUpdate <= validity.validUntil, 'MDOC_UPDATE_TIME');
   const digests = get(mso, 'valueDigests'), namespaces = get(is, 'nameSpaces');
   requireThat(digests instanceof Map && digests.size > 0 && namespaces instanceof Map && namespaces.size > 0, 'MDOC_NAMESPACES');
@@ -117,6 +116,17 @@ export function verifyIssuerSigned(credential, { issuerKey, certificate, docType
   const holderPublicKey = createPublicKey({ key: holderJWK, format: 'jwk' });
   requireThat(!same(spki(issuerKey), spki(holderPublicKey)), 'MDOC_KEY_ROLE_COLLISION');
   return { mso, claims, holderJWK, holderPublicKey, issuerSigned: is, credential: bytes, issuerAuthBytes: encode(auth.value), certificateBytes: Buffer.from(certificate), certificateChain: auth.certificates.map(value => Buffer.from(value)), certificateBound: auth.certificateBound, validity };
+}
+
+// Original-byte mathematics and structure only, with no evaluation time or admission verdict.
+export function inspectIssuerSigned(credential, { issuerKey, certificate, docType = SIGNING_DOCTYPE, allowPartial = false } = {}) {
+  return issuerSignedFacts(credential, { issuerKey, certificate, docType, allowPartial });
+}
+
+// Cryptographic issuer authentication at an explicit time. This does not admit an issuer.
+export function verifyIssuerSigned(credential, { issuerKey, certificate, docType = SIGNING_DOCTYPE, at, allowPartial = false } = {}) {
+  requireThat(integer(at), 'MDOC_STATE_TIME');
+  return issuerSignedFacts(credential, { issuerKey, certificate, docType, allowPartial }, at);
 }
 
 export function issueIssuerSigned({ namespaces, holderJWK, certificate, privateKey, docType = SIGNING_DOCTYPE, signed, validFrom, validUntil }) {
