@@ -21,6 +21,7 @@ import { SIGNER_DOCTYPE } from './signer-mdoc.mjs';
 import { createEvidencePackage, evidenceLeaf } from './evidence-plan.mjs';
 import { runDemo } from './demo.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
+import { runDocumentDemo } from './document-demo.mjs';
 import { createVerifier } from './sdk/index.mjs';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
@@ -657,7 +658,12 @@ function x509Fixture(f) {
       ],
     }),
   };
-  return { bundle, trust };
+  return {
+    bundle,
+    trust,
+    signControl: (label, body) =>
+      p.signCMS({ content: c.D(label, body), certificate: controlCertificate }, control.privateKey),
+  };
 }
 
 test('unused MTC configuration does not claim transparency for an X509 signature', async () => {
@@ -668,4 +674,183 @@ test('unused MTC configuration does not claim transparency for an X509 signature
   const extra = verdict('CMS', f, f.bundle, { ...f.trust, mtc: {} });
   assert.equal(extra.overall, 'VALID', extra.reason);
   assert.equal(extra.dimensions.transparency, undefined);
+});
+
+for (const format of ['CMS', 'MDOC']) {
+  test(`${format} incomplete evidence binds every receipt field before using operation time`, async (t) => {
+    const original = await fixture(format),
+      key = c.generate('ml-dsa-87'),
+      certificate = p.issueCertificate(
+        {
+          publicKey: key.publicKey,
+          serial: 1,
+          issuer: p.name('SDK receipt binding fixture'),
+          subject: p.name('SDK receipt binding fixture'),
+          profileID: 'CERTCONCORD-EVIDENCE-SIGN-v1',
+        },
+        key.privateKey,
+      ),
+      receipt = readControl(
+        payload(original.bundle, 'ExecutionReceipt'),
+        'ExecutionReceipt',
+        original.trust.receiptCertificate,
+      ),
+      signReceipt = (body) =>
+        p.signCMS({ content: c.D('ExecutionReceipt', body), certificate }, key.privateKey),
+      trust = {
+        ...original.trust,
+        receiptCertificate: certificate,
+        authorityResolver(query) {
+          if (query.role === 'RECEIPT_AUTHORITY' && equal(query.certificate, certificate))
+            return { overall: 'VALID', reason: 'FIXTURE_RECEIPT_AUTHORITY' };
+          return original.trust.authorityResolver(query);
+        },
+      },
+      candidate = (body) =>
+        without(
+          replace(original.bundle, 'ExecutionReceipt', signReceipt(body)),
+          'RegistrationAuthorization',
+        );
+    assert.equal(verdict(format, original, candidate(receipt), trust).overall, 'INDETERMINATE');
+    for (const field of [
+      'operationID',
+      'activationHash',
+      'permitHash',
+      'keyID',
+      'tbsHash',
+      'signatureHash',
+    ])
+      await t.test(field, () => {
+        const changed = { ...receipt, [field]: c.random(receipt[field].length) },
+          result = verdict(format, original, candidate(changed), trust);
+        assert.equal(result.overall, 'INVALID');
+        assert.equal(
+          result.reason,
+          format === 'CMS' ? 'ECP_EXECUTION_RECEIPT' : 'MDOC_ECP_RECEIPT',
+        );
+        assert.equal(result.dimensions.authorization?.overall, 'INVALID');
+        assert.notEqual(result.dimensions.status?.reason, 'ECP_STATUS_REVOKED');
+      });
+  });
+}
+
+test('certificate status fallback never borrows another operation receipt time', async (t) => {
+  const f = x509Fixture(await fixture('CMS')),
+    receipt = readControl(
+      payload(f.bundle, 'ExecutionReceipt'),
+      'ExecutionReceipt',
+      f.trust.receiptCertificate,
+    ),
+    status = readControl(
+      payload(f.bundle, 'CertificateStatus'),
+      'CertificateStatus',
+      f.trust.statusCertificate,
+    ),
+    revoked = f.signControl('CertificateStatus', {
+      ...status,
+      status: 'REVOKED',
+      effectiveTime: receipt.executedAt + 1,
+    }),
+    bundle = replace(f.bundle, 'CertificateStatus', revoked),
+    trust = { ...f.trust, knowledgeTime: receipt.executedAt + 3 },
+    missing = (value) => without(value, 'RegistrationAuthorization');
+  const actual = verdict('CMS', f, missing(bundle), trust);
+  assert.equal(actual.overall, 'INDETERMINATE');
+  assert.notEqual(actual.dimensions.status?.reason, 'ECP_STATUS_REVOKED');
+  await t.test('another signed operation cannot move the revocation evaluation time', () => {
+    const unrelated = f.signControl('ExecutionReceipt', {
+      ...receipt,
+      operationID: c.random(32),
+      executedAt: receipt.executedAt + 2,
+    });
+    const result = verdict(
+      'CMS',
+      f,
+      missing(replace(bundle, 'ExecutionReceipt', unrelated)),
+      trust,
+    );
+    assert.equal(result.overall, 'INVALID');
+    assert.equal(result.reason, 'ECP_EXECUTION_RECEIPT');
+    assert.equal(result.dimensions.authorization?.overall, 'INVALID');
+    assert.notEqual(result.dimensions.status?.reason, 'ECP_STATUS_REVOKED');
+  });
+  const effective = replace(
+    f.bundle,
+    'CertificateStatus',
+    f.signControl('CertificateStatus', {
+      ...status,
+      status: 'REVOKED',
+      effectiveTime: receipt.executedAt,
+    }),
+  );
+  for (const type of ['Document', 'Certificate', 'CMS', 'OperationPermit'])
+    await t.test(`missing ${type} prevents a status-time inference`, () => {
+      const result = verdict('CMS', f, without(missing(effective), type), trust);
+      assert.equal(result.overall, 'INDETERMINATE');
+      assert.notEqual(result.dimensions.status?.reason, 'ECP_STATUS_REVOKED');
+    });
+});
+
+test('organization status fallback requires the authorization bound to this operation', async (t) => {
+  await runDocumentDemo({
+    onComplete: async (f) => {
+      const receipt = readControl(
+          payload(f.bundle, 'ExecutionReceipt'),
+          'ExecutionReceipt',
+          f.trust.receiptCertificate,
+        ),
+        originalStatus = readControl(
+          payload(f.bundle, 'OrganizationAuthorizationStatus'),
+          'OrganizationAuthorizationStatus',
+          f.organizationAuthority.certificate,
+        ),
+        revoked = (raw, authorization) =>
+          f.signControl(
+            'OrganizationAuthorizationStatus',
+            {
+              ...originalStatus,
+              authorizationID: authorization.authorizationID,
+              authorizationHash: c.sha512(raw),
+              status: 'REVOKED',
+              effectiveTime: receipt.executedAt,
+            },
+            f.organizationAuthority,
+          ),
+        candidate = (raw, authorization) =>
+          without(
+            replace(
+              replace(f.bundle, 'OrganizationAuthorization', raw),
+              'OrganizationAuthorizationStatus',
+              revoked(raw, authorization),
+            ),
+            'RegistrationAuthorization',
+          );
+      const current = verdict(
+        'CMS',
+        f,
+        candidate(payload(f.bundle, 'OrganizationAuthorization'), f.authorizationBody),
+      );
+      assert.equal(current.overall, 'INVALID');
+      assert.equal(current.reason, 'DOCUMENT_ORGANIZATION_STATUS_REVOKED');
+      for (const field of [
+        'organizationID',
+        'authorizationID',
+        'activationHash',
+        'policyHash',
+        'keyID',
+      ])
+        await t.test(field, () => {
+          const body = {
+              ...f.authorizationBody,
+              [field]: c.random(f.authorizationBody[field].length),
+            },
+            raw = f.signControl('OrganizationAuthorization', body, f.organizationAuthority),
+            result = verdict('CMS', f, candidate(raw, body));
+          assert.equal(result.overall, 'INVALID');
+          assert.equal(result.reason, 'DOCUMENT_ORGANIZATION_BINDING');
+          assert.equal(result.dimensions.authorization?.overall, 'INVALID');
+          assert.notEqual(result.dimensions.status?.reason, 'DOCUMENT_ORGANIZATION_STATUS_REVOKED');
+        });
+    },
+  });
 });

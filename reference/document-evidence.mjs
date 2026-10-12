@@ -163,6 +163,56 @@ export function verifyRegistrationBinding(
   return r;
 }
 
+export function verifyOrganizationAuthorizationBinding(
+  authorization,
+  { raw, sim, activation, permit, receipt },
+) {
+  fields(authorization, [
+    'schemaVersion',
+    'authorizationID',
+    'trustDomainID',
+    'organizationID',
+    'actorID',
+    'actorType',
+    'keyID',
+    'certificateID',
+    'purpose',
+    'activationHash',
+    'policyHash',
+    'issuedAt',
+    'expiresAt',
+  ]);
+  requireThat(
+    authorization.schemaVersion === 1 &&
+      Buffer.isBuffer(authorization.authorizationID) &&
+      authorization.authorizationID.length === 32 &&
+      equal(authorization.authorizationID, sim.organizationAuthorizationID) &&
+      equal(authorization.trustDomainID, sim.trustDomainID) &&
+      equal(authorization.organizationID, sim.subjectID) &&
+      Buffer.isBuffer(authorization.actorID) &&
+      authorization.actorID.length === 32 &&
+      ['PERSON', 'WORKLOAD'].includes(authorization.actorType) &&
+      (authorization.actorType === 'WORKLOAD'
+        ? permit.proofMode === 'WORKLOAD'
+        : ['HUMAN_WEBAUTHN', 'HUMAN_MDOC', 'HUMAN_SESSION'].includes(permit.proofMode)) &&
+      authorization.purpose === 'ORGANIZATION_SEAL' &&
+      sim.purpose === 'ORGANIZATION_SEAL' &&
+      equal(authorization.keyID, sim.keyID) &&
+      equal(authorization.certificateID, sim.certificateID) &&
+      equal(authorization.policyHash, sim.policyHash) &&
+      equal(authorization.activationHash, H('ActivationContext', activation)) &&
+      equal(permit.activationEvidenceHash, sha512(raw)) &&
+      Number.isSafeInteger(authorization.issuedAt) &&
+      Number.isSafeInteger(authorization.expiresAt) &&
+      authorization.issuedAt >= activation.issuedAt &&
+      authorization.expiresAt <= activation.expiresAt &&
+      authorization.issuedAt <= receipt.executedAt &&
+      authorization.expiresAt > receipt.executedAt,
+    'DOCUMENT_ORGANIZATION_BINDING',
+  );
+  return authorization;
+}
+
 export function verifyDocumentEvidence(
   {
     format,
@@ -265,49 +315,13 @@ export function verifyDocumentEvidence(
         authority.certificate,
       ),
     );
-    fields(authorization, [
-      'schemaVersion',
-      'authorizationID',
-      'trustDomainID',
-      'organizationID',
-      'actorID',
-      'actorType',
-      'keyID',
-      'certificateID',
-      'purpose',
-      'activationHash',
-      'policyHash',
-      'issuedAt',
-      'expiresAt',
-    ]);
-    requireThat(
-      authorization.schemaVersion === 1 &&
-        Buffer.isBuffer(authorization.authorizationID) &&
-        authorization.authorizationID.length === 32 &&
-        equal(authorization.authorizationID, sim.organizationAuthorizationID) &&
-        equal(authorization.trustDomainID, sim.trustDomainID) &&
-        equal(authorization.organizationID, sim.subjectID) &&
-        Buffer.isBuffer(authorization.actorID) &&
-        authorization.actorID.length === 32 &&
-        ['PERSON', 'WORKLOAD'].includes(authorization.actorType) &&
-        (authorization.actorType === 'WORKLOAD'
-          ? permit.proofMode === 'WORKLOAD'
-          : ['HUMAN_WEBAUTHN', 'HUMAN_MDOC', 'HUMAN_SESSION'].includes(permit.proofMode)) &&
-        authorization.purpose === 'ORGANIZATION_SEAL' &&
-        sim.purpose === 'ORGANIZATION_SEAL' &&
-        equal(authorization.keyID, sim.keyID) &&
-        equal(authorization.certificateID, sim.certificateID) &&
-        equal(authorization.policyHash, sim.policyHash) &&
-        equal(authorization.activationHash, H('ActivationContext', activation)) &&
-        equal(permit.activationEvidenceHash, sha512(values.OrganizationAuthorization)) &&
-        Number.isSafeInteger(authorization.issuedAt) &&
-        Number.isSafeInteger(authorization.expiresAt) &&
-        authorization.issuedAt >= activation.issuedAt &&
-        authorization.expiresAt <= activation.expiresAt &&
-        authorization.issuedAt <= receipt.executedAt &&
-        authorization.expiresAt > receipt.executedAt,
-      'DOCUMENT_ORGANIZATION_BINDING',
-    );
+    verifyOrganizationAuthorizationBinding(authorization, {
+      raw: values.OrganizationAuthorization,
+      sim,
+      activation,
+      permit,
+      receipt,
+    });
   }
   let stateTime = receipt.executedAt,
     time = 'DECLARED_EXECUTION_TIME',

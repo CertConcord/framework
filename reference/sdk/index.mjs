@@ -1,4 +1,4 @@
-import { decodeCBOR, requireThat, H, publicFromDER, equal, now, sha512 } from '../core.mjs';
+import { decodeCBOR, requireThat, H, publicFromDER, equal, now, sha512, keyID } from '../core.mjs';
 import { verifySignaturePackage } from '../evidence.mjs';
 import {
   verifyMdocSignaturePackage,
@@ -12,8 +12,9 @@ import {
   documentPlans,
   documentEvidenceTypes,
   documentTimestampImprint,
+  verifyOrganizationAuthorizationBinding,
 } from '../document-evidence.mjs';
-import { readControl, evaluateStatus } from '../state.mjs';
+import { readControl, evaluateStatus, validateActivation } from '../state.mjs';
 import { verifyCMS, parseCertificate, OID } from '../pki.mjs';
 import { verifyIssuerSigned } from '../mdoc.mjs';
 import { verifyExternalCMS } from '../external-cms.mjs';
@@ -96,8 +97,9 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
         ),
       );
   }
-  if (format === 'CMS' && values.CMS && values.Certificate && values.Document)
-    check('integrity', () =>
+  let signedDocument, credentialBinding;
+  if (format === 'CMS' && values.CMS && values.Certificate && values.Document) {
+    signedDocument = check('integrity', () =>
       verifyCMS(values.CMS, {
         content: values.Document,
         expectedCertificate: values.Certificate,
@@ -116,6 +118,8 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
           : {}),
       }),
     );
+    if (signedDocument) credentialBinding = signedDocument.cert;
+  }
   if (format === 'MDOC' && values.PersonalMdoc) {
     const receipt = controls.ExecutionReceipt;
     if (receipt && Number.isSafeInteger(receipt.executedAt)) {
@@ -129,23 +133,30 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
           allowPartial: false,
         }),
       );
-      if (credential && values.COSE && values.Document && sim && policy)
-        check('integrity', () =>
-          verifyMdocDocument(values.COSE, values.Document, {
-            credential: values.PersonalMdoc,
-            publicKey: publicFromDER(credential.claims.get(SIGNER_NAMESPACE).get('signing_key')),
-            context: {
-              schemaVersion: 1,
-              trustDomainID: trust.trustDomainID,
-              profileID: sim.profileID,
-              container: 'COSE',
-              adapterID: sim.adapterID,
-              credentialType: 'MDOC',
-            },
-            simHash: H('SIM', sim),
-            policyHash: H('SignaturePolicy', policy),
-          }),
-        );
+      if (credential && values.COSE && values.Document && sim && policy) {
+        credentialBinding = check('integrity', () => ({
+          publicKey: publicFromDER(credential.claims.get(SIGNER_NAMESPACE).get('signing_key')),
+          certificateID: H('MdocIssuerAuth', credential.issuerAuthBytes),
+          representationHash: sha512(values.PersonalMdoc),
+        }));
+        if (credentialBinding)
+          signedDocument = check('integrity', () =>
+            verifyMdocDocument(values.COSE, values.Document, {
+              credential: values.PersonalMdoc,
+              publicKey: credentialBinding.publicKey,
+              context: {
+                schemaVersion: 1,
+                trustDomainID: trust.trustDomainID,
+                profileID: sim.profileID,
+                container: 'COSE',
+                adapterID: sim.adapterID,
+                credentialType: 'MDOC',
+              },
+              simHash: H('SIM', sim),
+              policyHash: H('SignaturePolicy', policy),
+            }),
+          );
+      }
     }
   }
   if (values.DocumentTimestamp && trust.timestamp?.certificate) {
@@ -181,12 +192,75 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
       );
   }
   const receipt = controls.ExecutionReceipt;
-  if (
+  const permit = controls.OperationPermit;
+  // A valid receipt signature alone supplies no operation time for this document.
+  // Require the original signed message and the complete selected binding tuple.
+  const boundReceipt =
     sim &&
     policy &&
     receipt &&
-    (controls.CertificateStatus || controls.OrganizationAuthorizationStatus)
-  ) {
+    permit &&
+    signedDocument &&
+    credentialBinding &&
+    check('authorization', () => {
+      const activation = permit.activation,
+        prefix = format === 'CMS' ? 'ECP_' : 'MDOC_ECP_',
+        at = receipt.executedAt;
+      requireThat(
+        equal(credentialBinding.certificateID, sim.certificateID) &&
+          equal(credentialBinding.representationHash, sim.certificateRepresentationHash) &&
+          equal(keyID(credentialBinding.publicKey), sim.keyID),
+        prefix + 'CERTIFICATE_BINDING',
+      );
+      for (const field of [
+        'trustDomainID',
+        'transactionID',
+        'keyID',
+        'certificateID',
+        'certificateRepresentationHash',
+        'policyHash',
+      ])
+        requireThat(equal(sim[field], activation[field]), prefix + 'SIM_ACTIVATION');
+      requireThat(
+        Number.isSafeInteger(at) &&
+          at >= 0 &&
+          at <= (trust.knowledgeTime ?? now()) &&
+          sim.issuedAt <= at &&
+          sim.expiresAt > at &&
+          sim.origin === activation.origin &&
+          activation.tbsKind === (format === 'CMS' ? 'CMS_SIGNED_ATTRS_DER' : 'ADAPTER_MESSAGE') &&
+          equal(activation.simHash, H('SIM', sim)),
+        prefix + 'ACTIVATION_CONTEXT',
+      );
+      const activationHash = validateActivation(activation, {
+        tbs: signedDocument.tbs,
+        publicKey: credentialBinding.publicKey,
+        audience: policy.audience,
+        at,
+        maxLifetime: policy.maxActivationLifetime,
+      });
+      requireThat(
+        permit.proofMode === policy.activationMode &&
+          permit.issuedAt <= at &&
+          permit.expiresAt > at &&
+          permit.expiresAt <= activation.expiresAt &&
+          Buffer.isBuffer(permit.activationEvidenceHash) &&
+          permit.activationEvidenceHash.length === 64,
+        prefix + 'PERMIT',
+      );
+      requireThat(
+        equal(receipt.operationID, activation.operationID) &&
+          equal(receipt.activationHash, activationHash) &&
+          equal(receipt.permitHash, sha512(values.OperationPermit)) &&
+          equal(receipt.keyID, sim.keyID) &&
+          equal(receipt.tbsHash, sha512(signedDocument.tbs)) &&
+          equal(receipt.signatureHash, sha512(signedDocument.signature)) &&
+          typeof receipt.provider === 'string',
+        format === 'CMS' ? 'ECP_EXECUTION_RECEIPT' : 'MDOC_ECP_RECEIPT',
+      );
+      return true;
+    });
+  if (boundReceipt && (controls.CertificateStatus || controls.OrganizationAuthorizationStatus)) {
     const knowledgeTime = trust.knowledgeTime ?? now();
     const scope = check('authorization', () => {
       const selected = snapshotIssuanceScope(trust.issuanceScope);
@@ -257,7 +331,24 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
           );
         },
       );
-    if (scope && controls.OrganizationAuthorizationStatus && controls.OrganizationAuthorization)
+    const boundOrganization =
+      scope &&
+      controls.OrganizationAuthorization &&
+      check('authorization', () => {
+        requireThat(
+          policy.documentEvidence?.organizationAuthorization === true,
+          'DOCUMENT_ORGANIZATION_PURPOSE',
+        );
+        verifyOrganizationAuthorizationBinding(controls.OrganizationAuthorization, {
+          raw: values.OrganizationAuthorization,
+          sim,
+          activation: permit.activation,
+          permit,
+          receipt,
+        });
+        return true;
+      });
+    if (boundOrganization && controls.OrganizationAuthorizationStatus)
       statusCheck(
         controls.OrganizationAuthorizationStatus,
         organizationAuthority.statusCertificate,
