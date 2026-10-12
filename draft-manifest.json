@@ -530,8 +530,8 @@
     },
     {
       "path": "reference/document-vectors.test.mjs",
-      "bytes": 10549,
-      "sha256": "848d9c7ef829f5dd89480579a7d4c7c2d5e38602e533eedd43eb045ac508e5b1"
+      "bytes": 17520,
+      "sha256": "0ffd50fe4b8d85df0a66cd7d5be8f14a49b5eddb2422bccec07bf2ee758bdca9"
     },
     {
       "path": "reference/draft-domain.test.mjs",
@@ -2030,8 +2030,8 @@
     },
     {
       "path": "reference/verify-vectors.mjs",
-      "bytes": 16372,
-      "sha256": "a4559066c5ebe5edbf3a9119c7d4a2faa8b38f35dd40bac8dafe2b5965f0338e"
+      "bytes": 17970,
+      "sha256": "5d615eb2d073ca4a218a835ddd059c5bcc90087dd5bed90b433cfbc6d31961bb"
     },
     {
       "path": "reference/wallet.mjs",
@@ -2115,8 +2115,8 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 38025,
-      "sha256": "2ead93e805bdf43152142e27245973e79676071f0518b8f052d87df9725834d0"
+      "bytes": 38970,
+      "sha256": "7781752a9115054e540360295d6a9beae77fde480cade2d5228398ba1e5a8a4e"
     },
     {
       "path": "spec/conformance.md",

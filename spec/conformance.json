@@ -710,6 +710,30 @@
         {
           "file": "reference/document-vectors.test.mjs",
           "name": "document replay uses the supplied public verifier factory"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader detects replacement of a checked manifest or material"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader bounds descriptor reads when a file grows"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader rejects truncation during a descriptor read"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader closes its descriptor after a read failure"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader retains directory and escaping link rejection"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "vector loader closes descriptors after successful loading"
         }
       ],
       "gap": "The public original-byte corpus, external trust schema, fixed knowledge times and offline runner reproduce selected CMS/MTC and native mdoc document results, ERS renewal and separate historical/current decisions. The installed SDK replays the document cases through its public export. This is draft acceptance evidence; a second independently developed complete implementation and recorded interoperability remain later stability requirements."
