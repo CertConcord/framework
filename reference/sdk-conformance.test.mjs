@@ -838,6 +838,7 @@ test('organization status fallback requires the authorization bound to this oper
         'activationHash',
         'policyHash',
         'keyID',
+        'actorID',
       ])
         await t.test(field, () => {
           const body = {
