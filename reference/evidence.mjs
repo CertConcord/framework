@@ -34,6 +34,12 @@ import {
   organizationEvidenceTypes,
 } from './document-evidence.mjs';
 import { ORGANIZATION_PLAN, orgError } from './organization-delegation-state.mjs';
+import {
+  evaluationPhase,
+  evaluationMissing,
+  evaluated,
+  evaluatedCheck,
+} from './verification-result.mjs';
 
 const types = [
   'Document',
@@ -133,7 +139,9 @@ export function verifySignaturePackage(
     executionStatus,
     ...documentTrust
   },
+  evaluation,
 ) {
+  evaluationPhase(evaluation, 'integrity');
   const { plan, values: preliminaryValues } = verifyEvidencePackage(bundle);
   if (plan.profile === ORGANIZATION_PLAN)
     throw orgError('ORG_CURRENT_VERIFIER_REQUIRED', 'UNSUPPORTED');
@@ -153,6 +161,10 @@ export function verifySignaturePackage(
         : types),
     ...(document ? documentEvidenceTypes(expectedPolicy, 'CMS') : []),
   ];
+  evaluationMissing(
+    evaluation,
+    selectedTypes.filter((type) => !Object.hasOwn(preliminaryValues, type)),
+  );
   const { values } = verifyEvidencePackage(bundle, { requiredTypes: selectedTypes });
   requireThat(
     execution ||
@@ -167,7 +179,10 @@ export function verifySignaturePackage(
     permit = readControl(values.OperationPermit, 'OperationPermit', permitCertificate),
     activation = permit.activation,
     receipt = readControl(values.ExecutionReceipt, 'ExecutionReceipt', receiptCertificate),
-    status = readControl(values.CertificateStatus, 'CertificateStatus', statusCertificate);
+    status = evaluatedCheck(evaluation, 'status', () =>
+      readControl(values.CertificateStatus, 'CertificateStatus', statusCertificate),
+    );
+  evaluationPhase(evaluation, 'authorization');
   requireThat(!!executionRequirement(policy) === execution, 'ECP_EXECUTION_DOWNGRADE');
   requireThat(!!policy.documentEvidence === document, 'DOCUMENT_EVIDENCE_DOWNGRADE');
   requireThat(
@@ -191,6 +206,7 @@ export function verifySignaturePackage(
       sim.documents?.length === 1,
     'ECP_SIGNATURE_PROFILE',
   );
+  evaluationPhase(evaluation, 'integrity');
   const context = {
       schemaVersion: 1,
       trustDomainID,
@@ -205,6 +221,7 @@ export function verifySignaturePackage(
       simHash: H('SIM', sim),
       policyHash: H('SignaturePolicy', policy),
     });
+  evaluationPhase(evaluation, 'keyBinding');
   const doc = sim.documents[0];
   requireThat(
     doc.scope === 'CMS_CONTENT' &&
@@ -227,6 +244,7 @@ export function verifySignaturePackage(
     'policyHash',
   ])
     requireThat(equal(sim[field], activation[field]), 'ECP_SIM_ACTIVATION');
+  evaluationPhase(evaluation, 'authorization');
   const at = receipt.executedAt;
   requireThat(
     Number.isSafeInteger(at) &&
@@ -263,6 +281,7 @@ export function verifySignaturePackage(
       typeof receipt.provider === 'string',
     'ECP_EXECUTION_RECEIPT',
   );
+  evaluationPhase(evaluation, 'issuerTrust');
   const selectedScope = snapshotIssuanceScope(issuanceScope),
     scope = {
       trustDomainID,
@@ -271,10 +290,12 @@ export function verifySignaturePackage(
       profileID: sim.profileID,
     },
     issuerKey = cert.algorithm === OID.mtc ? mtc?.caPublicKey : issuerPublicKey,
-    issuedAt = readControl(
-      values.RegistrationAuthorization,
-      'RegistrationAuthorization',
-      documentTrust.raCertificate,
+    issuedAt = evaluatedCheck(evaluation, 'integrity', () =>
+      readControl(
+        values.RegistrationAuthorization,
+        'RegistrationAuthorization',
+        documentTrust.raCertificate,
+      ),
     ).issuedAt,
     authorityQueries = [],
     authorityQuorums = [],
@@ -293,14 +314,17 @@ export function verifySignaturePackage(
       'ISSUER_KEY_BINDING',
     );
   const verifyState = (stateTime, { proofOfExistenceUpperBound } = {}) => {
+    evaluationPhase(evaluation, 'issuerTrust');
     if (cert.algorithm === OID.mtc) {
       requireThat(mtc, 'ECP_MTC_TRUST_REQUIRED');
-      const proof = verifyMTC(values.Certificate, {
-        ...mtc,
-        at: stateTime,
-        profileID: sim.profileID,
-        trustedSubtrees: [],
-      });
+      const proof = evaluatedCheck(evaluation, 'transparency', () =>
+        verifyMTC(values.Certificate, {
+          ...mtc,
+          at: stateTime,
+          profileID: sim.profileID,
+          trustedSubtrees: [],
+        }),
+      );
       authorityQuorums.push({
         members: proof.verifiedCosigners,
         threshold: mtc.threshold,
@@ -319,6 +343,7 @@ export function verifySignaturePackage(
         profileID: sim.profileID,
       });
     }
+    evaluationPhase(evaluation, 'status');
     requireThat(
       equal(status.certificateID, cert.certificateID) && equal(status.trustDomainID, trustDomainID),
       'ECP_STATUS_BINDING',
@@ -328,6 +353,8 @@ export function verifySignaturePackage(
       knowledgeTime,
       scope: 'CERTIFICATE',
     });
+    if (statusResult.overall !== 'VALID')
+      evaluated(evaluation, 'status', statusResult.overall, 'ECP_' + statusResult.reason);
     if (statusResult.overall === 'INDETERMINATE') unavailable.push('ECP_' + statusResult.reason);
     else if (statusResult.overall !== 'VALID')
       authorityFailures.push(
@@ -363,6 +390,7 @@ export function verifySignaturePackage(
     );
   };
   verifyState(at);
+  evaluationPhase(evaluation, 'authorization');
   if (passkey) {
     const binding = decodeCBOR(values.PasskeySigningBinding),
       raw = decodeCBOR(values.PasskeyRawEvidence);
@@ -442,16 +470,24 @@ export function verifySignaturePackage(
           verifyState,
         },
         { ...documentTrust, issuanceScope, authorityResolver },
+        evaluation,
       ),
     authorityFailures,
   );
+  // Timestamp/status/log proofs have their own dimensions. Every selected
+  // document, credential and control signature/binding above has completed.
+  evaluated(evaluation, 'integrity', 'VALID', 'SELECTED_SIGNATURES_AND_BINDINGS_VALID');
+  evaluationPhase(evaluation, undefined);
   requireAuthorities(
     authorityResolver,
     authorityQueries,
     unavailable,
     authorityFailures,
     authorityQuorums,
+    evaluation,
   );
+  if (cert.algorithm === OID.mtc)
+    evaluated(evaluation, 'transparency', 'VALID', 'SELECTED_TRANSPARENCY_VALID');
   const missingTime = policy.requireTrustedTime && !policy.documentEvidence;
   return {
     ...(executionResult ? { execution: executionResult } : {}),

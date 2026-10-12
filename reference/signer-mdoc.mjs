@@ -44,6 +44,12 @@ import { verifyCredentialLog } from './credential-log.mjs';
 import { PASSKEY_SIGN_PROFILE } from './raw-signing.mjs';
 import { verifyPasskeyOperation } from './passkey-credentials.mjs';
 import { executionRequirement, verifyExecutionEvidence } from './execution-binding.mjs';
+import {
+  evaluationPhase,
+  evaluationMissing,
+  evaluated,
+  evaluatedCheck,
+} from './verification-result.mjs';
 
 export const SIGNER_DOCTYPE = 'org.certconcord.signer.1';
 export const SIGNER_NAMESPACE = SIGNER_DOCTYPE;
@@ -375,7 +381,9 @@ function inspectPersonalMdoc(
     at = now(),
     knowledgeTime = at,
   },
+  evaluation,
 ) {
+  evaluationPhase(evaluation, 'issuerTrust');
   requireThat(
     parseCertificate(sealCertificate).publicKey.asymmetricKeyType === 'ml-dsa-87',
     'PERSONAL_MDOC_SEAL_AUTHORITY',
@@ -384,18 +392,23 @@ function inspectPersonalMdoc(
     at,
     expectedLeaf: issuerCertificate,
   });
-  const v = verifyIssuerSigned(credential, {
-      issuerKey: issuerPublicKey,
-      certificate: issuerCertificate,
-      docType,
-      at,
-      allowPartial: false,
-      certificateProfile,
-    }),
+  const v = evaluatedCheck(evaluation, 'integrity', () =>
+      verifyIssuerSigned(credential, {
+        issuerKey: issuerPublicKey,
+        certificate: issuerCertificate,
+        docType,
+        at,
+        allowPartial: false,
+        certificateProfile,
+      }),
+    ),
     claims = plain(v.claims.get(SIGNER_NAMESPACE)),
     publicKey = publicFromDER(claims.signing_key),
     credentialID = H('MdocIssuerAuth', authBytes(credential)),
-    s = readControl(seal, 'MdocCredentialSeal', sealCertificate);
+    s = evaluatedCheck(evaluation, 'integrity', () =>
+      readControl(seal, 'MdocCredentialSeal', sealCertificate),
+    );
+  evaluationPhase(evaluation, 'keyBinding');
   requireThat(
     !equal(keyID(publicKey), keyID(parseCertificate(sealCertificate).publicKey)),
     'PERSONAL_MDOC_KEY_ROLE_COLLISION',
@@ -456,18 +469,21 @@ function inspectPersonalMdoc(
     );
   }
   validateAdmissionAssessment(claims.key_admission, holderPublicKey, at);
-  const verifiedLog = verifyCredentialLog(
-    s.logProof,
-    {
-      schemaVersion: 1,
-      trustDomainID,
-      credentialID,
-      raAuthorizationHash: claims.ra_authorization_hash,
-      documentKeyID: claims.signing_key_id,
-      policyHash,
-    },
-    credentialLogTrust,
+  const verifiedLog = evaluatedCheck(evaluation, 'transparency', () =>
+    verifyCredentialLog(
+      s.logProof,
+      {
+        schemaVersion: 1,
+        trustDomainID,
+        credentialID,
+        raAuthorizationHash: claims.ra_authorization_hash,
+        documentKeyID: claims.signing_key_id,
+        policyHash,
+      },
+      credentialLogTrust,
+    ),
   );
+  evaluationPhase(evaluation, 'status');
   const status = claims.status?.status_list;
   requireThat(status?.uri === statusURI, 'PERSONAL_MDOC_STATUS');
   const assessment = verifyMdocStatusList(statusToken, {
@@ -477,6 +493,8 @@ function inspectPersonalMdoc(
     at: knowledgeTime,
     evaluateStatusList: verifyStatusList,
   });
+  if (assessment.overall !== 'VALID')
+    evaluated(evaluation, 'status', assessment.overall, assessment.reason);
   requireThat(assessment.overall !== 'INVALID', assessment.reason);
   const authorityQueries = [
     {
@@ -704,8 +722,9 @@ export function createMdocSignaturePackage({
     objects,
   );
 }
-export function verifyMdocSignaturePackage(bundle, trust) {
-  const { plan } = verifyEvidencePackage(bundle);
+export function verifyMdocSignaturePackage(bundle, trust, evaluation) {
+  evaluationPhase(evaluation, 'integrity');
+  const { plan, values: preliminaryValues } = verifyEvidencePackage(bundle);
   const document = Object.hasOwn(documentPlans, plan?.profile);
   const passkey = plan?.profile === 'certconcord-ecp-mdoc-passkey-draft-03',
     execution = plan?.profile === 'certconcord-ecp-mdoc-execution-draft-03',
@@ -724,6 +743,10 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       documentPlans[plan.profile] === 'certconcord-ecp-mdoc-attested-draft-03',
     'MDOC_ECP_PLAN',
   );
+  evaluationMissing(
+    evaluation,
+    selectedTypes.filter((type) => !Object.hasOwn(preliminaryValues, type)),
+  );
   const { values: value } = verifyEvidencePackage(bundle, { requiredTypes: selectedTypes });
   const sim = decodeCBOR(value.SIM),
     policy = decodeCBOR(value.SignaturePolicy),
@@ -732,6 +755,7 @@ export function verifyMdocSignaturePackage(bundle, trust) {
     receipt = readControl(value.ExecutionReceipt, 'ExecutionReceipt', trust.receiptCertificate),
     at = receipt.executedAt,
     knowledgeTime = trust.knowledgeTime ?? now();
+  evaluationPhase(evaluation, 'authorization');
   requireThat(!!executionRequirement(policy) === execution, 'MDOC_ECP_EXECUTION_DOWNGRADE');
   requireThat(!!policy.documentEvidence === document, 'DOCUMENT_EVIDENCE_DOWNGRADE');
   requireThat(
@@ -743,14 +767,18 @@ export function verifyMdocSignaturePackage(bundle, trust) {
     authorityQuorums = [],
     authorityFailures = [];
   const verifyState = (stateTime, { proofOfExistenceUpperBound } = {}) => {
-    const inspected = inspectPersonalMdoc(value.PersonalMdoc, {
-      ...trust,
-      seal: value.CredentialSeal,
-      statusToken: value.CredentialStatusList.toString('utf8'),
-      policyHash: H('SignaturePolicy', policy),
-      at: stateTime,
-      knowledgeTime,
-    });
+    const inspected = inspectPersonalMdoc(
+      value.PersonalMdoc,
+      {
+        ...trust,
+        seal: value.CredentialSeal,
+        statusToken: value.CredentialStatusList.toString('utf8'),
+        policyHash: H('SignaturePolicy', policy),
+        at: stateTime,
+        knowledgeTime,
+      },
+      evaluation,
+    );
     authorityQueries.push(
       ...inspected.authorityQueries,
       ...operationAuthorityQueries(
@@ -787,6 +815,7 @@ export function verifyMdocSignaturePackage(bundle, trust) {
     return inspected;
   };
   const v = verifyState(at);
+  evaluationPhase(evaluation, 'keyBinding');
   requireThat(
     sim.container === 'COSE' &&
       sim.adapterID === 'certconcord-mdoc-document-v1' &&
@@ -808,6 +837,7 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       (!policy.requirePostQuantumDocument || v.documentKeyMode === 'INDEPENDENT_PQ'),
     'MDOC_ECP_ASSURANCE',
   );
+  evaluationPhase(evaluation, 'integrity');
   const context = {
       schemaVersion: 1,
       trustDomainID: trust.trustDomainID,
@@ -823,6 +853,7 @@ export function verifyMdocSignaturePackage(bundle, trust) {
       simHash: H('SIM', sim),
       policyHash: H('SignaturePolicy', policy),
     });
+  evaluationPhase(evaluation, 'authorization');
   for (const field of [
     'trustDomainID',
     'transactionID',
@@ -941,16 +972,21 @@ export function verifyMdocSignaturePackage(bundle, trust) {
           credential: v,
         },
         trust,
+        evaluation,
       ),
     authorityFailures,
   );
+  evaluated(evaluation, 'integrity', 'VALID', 'SELECTED_SIGNATURES_AND_BINDINGS_VALID');
+  evaluationPhase(evaluation, undefined);
   requireAuthorities(
     trust.authorityResolver,
     authorityQueries,
     v.statusAssessment.overall === 'VALID' ? [] : [v.statusAssessment.reason],
     authorityFailures,
     authorityQuorums,
+    evaluation,
   );
+  evaluated(evaluation, 'transparency', 'VALID', 'SELECTED_TRANSPARENCY_VALID');
   const missingTime = policy.requireTrustedTime && !policy.documentEvidence;
   requireThat(v.statusAssessment.overall === 'VALID', v.statusAssessment.reason);
   return {

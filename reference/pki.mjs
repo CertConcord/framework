@@ -1,5 +1,6 @@
 import { X509Certificate } from 'node:crypto';
 import registry from './registry.json' with { type: 'json' };
+import { VerificationError } from './verification-result.mjs';
 import {
   ALG,
   requireThat,
@@ -64,7 +65,13 @@ export const profiles = Object.freeze({
     kal: 2,
     sal: 1,
   },
-  'CERTCONCORD-PERSON-SIGN-v1': { ku: 128, eku: RRA['id-kp-certconcordDocumentSigning'], days: 90, kal: 1, sal: 1 },
+  'CERTCONCORD-PERSON-SIGN-v1': {
+    ku: 128,
+    eku: RRA['id-kp-certconcordDocumentSigning'],
+    days: 90,
+    kal: 1,
+    sal: 1,
+  },
   'CERTCONCORD-PERSON-COMMIT-v1': {
     ku: 64,
     eku: RRA['id-kp-certconcordDocumentSigning'],
@@ -72,8 +79,20 @@ export const profiles = Object.freeze({
     kal: 2,
     sal: 2,
   },
-  'CERTCONCORD-ORG-SEAL-v1': { ku: 64, eku: RRA['id-kp-certconcordOrganizationSeal'], days: 90, kal: 2, sal: 1 },
-  'CERTCONCORD-SERVICE-SIGN-v1': { ku: 128, eku: RRA['id-kp-certconcordServiceSigning'], days: 30, kal: 1, sal: 1 },
+  'CERTCONCORD-ORG-SEAL-v1': {
+    ku: 64,
+    eku: RRA['id-kp-certconcordOrganizationSeal'],
+    days: 90,
+    kal: 2,
+    sal: 1,
+  },
+  'CERTCONCORD-SERVICE-SIGN-v1': {
+    ku: 128,
+    eku: RRA['id-kp-certconcordServiceSigning'],
+    days: 30,
+    kal: 1,
+    sal: 1,
+  },
   'CERTCONCORD-EVIDENCE-SIGN-v1': {
     ku: 128,
     eku: RRA['id-kp-certconcordEvidenceSigning'],
@@ -81,12 +100,24 @@ export const profiles = Object.freeze({
     kal: 1,
     sal: 1,
   },
-  'CERTCONCORD-DOC-ENC-v1': { ku: 32, eku: RRA['id-kp-certconcordDocumentEncryption'], days: 90, kal: 1, sal: 0 },
+  'CERTCONCORD-DOC-ENC-v1': {
+    ku: 32,
+    eku: RRA['id-kp-certconcordDocumentEncryption'],
+    days: 90,
+    kal: 1,
+    sal: 0,
+  },
   'CERTCONCORD-TSA-v1': { ku: 128, eku: '1.3.6.1.5.5.7.3.8', days: 30, kal: 1, sal: 0 },
   'CERTCONCORD-MDOC-DS-v1': { ku: 128, eku: '1.0.18013.5.1.2', days: 90, kal: 1, sal: 0 },
   'CERTCONCORD-MDOC-READER-v1': { ku: 128, eku: '1.0.18013.5.1.6', days: 90, kal: 1, sal: 0 },
   'CERTCONCORD-MDOC-PID-DS-ARF14': { ku: 128, eku: '1.3.130.2.0.0.1.2', days: 90, kal: 1, sal: 0 },
-  'CERTCONCORD-MDOC-PID-READER-ARF14': { ku: 128, eku: '1.3.130.2.0.0.1.6', days: 90, kal: 1, sal: 0 },
+  'CERTCONCORD-MDOC-PID-READER-ARF14': {
+    ku: 128,
+    eku: '1.3.130.2.0.0.1.6',
+    days: 90,
+    kal: 1,
+    sal: 0,
+  },
 });
 export function tbsCertificate({
   publicKey,
@@ -323,6 +354,28 @@ function cmsSuite(cert) {
   );
   return { digestOID: OID.sha512, digest: sha512 };
 }
+const knownDigests = new Set([
+  '1.3.14.3.2.26',
+  ...['1', '2', '3', '4', '5', '6'].map((suffix) => `2.16.840.1.101.3.4.2.${suffix}`),
+]);
+const knownSignatures = new Set([
+  ...Object.values(ALG).map((algorithm) => algorithm.oid),
+  '1.2.840.113549.1.1.1',
+  '1.2.840.113549.1.1.10',
+  '1.2.840.113549.1.1.11',
+  '1.2.840.113549.1.1.12',
+  '1.2.840.113549.1.1.13',
+  '1.2.840.10045.4.3.3',
+  '1.2.840.10045.4.3.4',
+  '1.3.101.113',
+]);
+function cmsAlgorithmOID(node) {
+  requireThat(
+    node?.tag === 0x30 && [1, 2].includes(node.children?.length) && node.children[0].tag === 6,
+    'CMS_ALGORITHM_STRUCTURE',
+  );
+  return oidText(node.children[0]);
+}
 export function prepareCMS({
   content,
   certificate,
@@ -341,7 +394,9 @@ export function prepareCMS({
     attribute(OID.ess, seq(seq(seq(algID(OID.sha512), octet(sha512(certificate)))))),
   ];
   if (context)
-    attrs.push(attribute(RRA['id-aa-certconcordSignatureContext'], octet(D('SignatureContext', context))));
+    attrs.push(
+      attribute(RRA['id-aa-certconcordSignatureContext'], octet(D('SignatureContext', context))),
+    );
   if (simHash) attrs.push(attribute(RRA['id-aa-certconcordSigningIntent'], octet(simHash)));
   if (policyHash) attrs.push(attribute(RRA['id-aa-certconcordSignaturePolicy'], octet(policyHash)));
   attrs.push(...additionalAttributes);
@@ -448,16 +503,29 @@ export function verifyCMS(
     ? validateCertificate(certificate, issuerKey, { at, profileID })
     : parseCertificate(certificate);
   const { digestOID, digest } = cmsSuite(cert);
-  requireThat(equal(sd[1].children[0].raw, algID(digestOID)), 'CMS_DIGEST');
   const si = sd[4].children[0].children;
   requireThat(
     si && [6, 7].includes(si.length) && intValue(si[0]) === 1n && (!si[6] || si[6].tag === 0xa1),
     'CMS_SIGNER_STRUCTURE',
   );
   requireThat(
-    equal(si[1].raw, seq(cert.issuer, integer(cert.serial))) &&
-      equal(si[2].raw, algID(digestOID)) &&
-      equal(si[4].raw, algID(cert.publicKey.asymmetricKeyType)),
+    equal(si[1].raw, seq(cert.issuer, integer(cert.serial))),
+    'CMS_SIGNER_ID_OR_ALGORITHM',
+  );
+  const declaredDigest = cmsAlgorithmOID(sd[1].children[0]),
+    signerDigest = cmsAlgorithmOID(si[2]),
+    declaredSignature = cmsAlgorithmOID(si[4]),
+    expectedSignature = ALG[cert.publicKey.asymmetricKeyType].oid,
+    unsupportedDigest = declaredDigest !== digestOID && !knownDigests.has(declaredDigest),
+    unsupportedSignature =
+      declaredSignature !== expectedSignature && !knownSignatures.has(declaredSignature);
+  requireThat(
+    declaredDigest === signerDigest && equal(sd[1].children[0].raw, si[2].raw),
+    'CMS_DIGEST',
+  );
+  requireThat(unsupportedDigest || equal(si[2].raw, algID(digestOID)), 'CMS_DIGEST');
+  requireThat(
+    unsupportedSignature || equal(si[4].raw, algID(cert.publicKey.asymmetricKeyType)),
     'CMS_SIGNER_ID_OR_ALGORITHM',
   );
   requireThat(si[3].tag === 0xa0 && si[5].tag === 4, 'CMS_ATTRS_OR_SIGNATURE');
@@ -495,7 +563,7 @@ export function verifyCMS(
   );
   requireThat(
     attrs.get(OID.messageDigest)?.tag === 4 &&
-      equal(attrs.get(OID.messageDigest).value, digest(content)),
+      (unsupportedDigest || equal(attrs.get(OID.messageDigest).value, digest(content))),
     'CMS_CONTENT_DIGEST',
   );
   requireThat(
@@ -515,7 +583,12 @@ export function verifyCMS(
         attrs.get(id)?.tag === 4 && equal(attrs.get(id).value, expected),
         'CERTCONCORD_SIGNED_BINDING',
       );
-  requireThat(verify(tbs, si[5].value, cert.publicKey), 'CMS_SIGNATURE');
+  // A known signature suite can establish bad mathematics even when the content
+  // digest capability is unavailable. No alternate suite or rewritten TBS is used.
+  if (!unsupportedSignature) requireThat(verify(tbs, si[5].value, cert.publicKey), 'CMS_SIGNATURE');
+  if (unsupportedSignature)
+    throw new VerificationError('CMS_SIGNATURE_ALGORITHM_UNSUPPORTED', 'UNSUPPORTED');
+  if (unsupportedDigest) throw new VerificationError('CMS_DIGEST_UNSUPPORTED', 'UNSUPPORTED');
   return {
     content,
     certificate,

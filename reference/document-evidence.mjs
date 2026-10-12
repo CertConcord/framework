@@ -6,6 +6,7 @@ import { parseCertificate, RRA } from './pki.mjs';
 import { readControl, evaluateStatus } from './state.mjs';
 import { evidenceLeaf } from './evidence-plan.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
+import { evaluationPhase, evaluated, evaluatedCheck } from './verification-result.mjs';
 import {
   ORGANIZATION_PROFILE,
   ORGANIZATION_PLAN,
@@ -176,7 +177,9 @@ export function verifyDocumentEvidence(
     credential,
   },
   trust,
+  evaluation,
 ) {
+  evaluationPhase(evaluation, 'qualification');
   if (Object.hasOwn(policy, 'organizationDelegation')) {
     organizationEvidenceTypes(policy, format);
     throw orgError('ORG_CURRENT_VERIFIER_REQUIRED', 'UNSUPPORTED');
@@ -202,10 +205,12 @@ export function verifyDocumentEvidence(
       at: receipt.executedAt,
     });
   else {
-    registration = readControl(
-      values.RegistrationAuthorization,
-      'RegistrationAuthorization',
-      trust.raCertificate,
+    registration = evaluatedCheck(evaluation, 'integrity', () =>
+      readControl(
+        values.RegistrationAuthorization,
+        'RegistrationAuthorization',
+        trust.raCertificate,
+      ),
     );
     requireThat(
       registration.schemaVersion === 1 &&
@@ -241,20 +246,24 @@ export function verifyDocumentEvidence(
     'DOCUMENT_ORGANIZATION_PURPOSE',
   );
   if (!policy.documentEvidence) {
+    evaluationPhase(evaluation, undefined);
     requireAuthorities(trust.authorityResolver, authorityQueries);
     return { subjectBinding: 'REGISTRATION_AUTHORIZATION' };
   }
   let authorization, authority;
   if (org) {
+    evaluationPhase(evaluation, 'authorization');
     authority = trust.organizationAuthorities?.find((a) => equal(a.organizationID, sim.subjectID));
     requireThat(
       authority?.certificate && authority.statusCertificate,
       'DOCUMENT_ORGANIZATION_TRUST_REQUIRED',
     );
-    authorization = readControl(
-      values.OrganizationAuthorization,
-      'OrganizationAuthorization',
-      authority.certificate,
+    authorization = evaluatedCheck(evaluation, 'integrity', () =>
+      readControl(
+        values.OrganizationAuthorization,
+        'OrganizationAuthorization',
+        authority.certificate,
+      ),
     );
     fields(authorization, [
       'schemaVersion',
@@ -304,6 +313,7 @@ export function verifyDocumentEvidence(
     time = 'DECLARED_EXECUTION_TIME',
     timeResult;
   if (policy.requireTrustedTime) {
+    evaluationPhase(evaluation, 'time');
     requireThat(
       trust.timestamp?.certificate &&
         trust.timestamp.issuerKey &&
@@ -356,10 +366,12 @@ export function verifyDocumentEvidence(
     time = 'TRUSTED_PROOF_OF_EXISTENCE';
   }
   if (org) {
+    evaluationPhase(evaluation, 'authorization');
     requireThat(
       authorization.issuedAt <= stateTime && authorization.expiresAt > stateTime,
       'DOCUMENT_ORGANIZATION_WINDOW',
     );
+    evaluationPhase(evaluation, 'status');
     const status = readControl(
       values.OrganizationAuthorizationStatus,
       'OrganizationAuthorizationStatus',
@@ -396,6 +408,8 @@ export function verifyDocumentEvidence(
       knowledgeTime,
       scope: 'ORGANIZATION_AUTHORIZATION',
     });
+    if (result.overall !== 'VALID')
+      evaluated(evaluation, 'status', result.overall, 'DOCUMENT_ORGANIZATION_' + result.reason);
     if (result.overall === 'INDETERMINATE')
       unavailable.push('DOCUMENT_ORGANIZATION_' + result.reason);
     else if (result.overall !== 'VALID')
@@ -403,6 +417,7 @@ export function verifyDocumentEvidence(
         new AuthorityError({ ...result, reason: 'DOCUMENT_ORGANIZATION_' + result.reason }),
       );
   }
+  evaluationPhase(evaluation, undefined);
   requireAuthorities(trust.authorityResolver, authorityQueries, unavailable, authorityFailures);
   return {
     time,
