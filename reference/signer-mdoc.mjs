@@ -1,4 +1,5 @@
 import { documentKeyRelation } from './vendor/mdoc-signing/key-relation.mjs';
+import { prepareDocumentSignature, verifyDocumentSignature } from './vendor/mdoc-signing/base.mjs';
 import {
   D,
   spki,
@@ -13,7 +14,6 @@ import {
   keyID,
   publicFromDER,
   sign,
-  verify,
   dcbor,
   decodeCBOR,
   fields,
@@ -572,79 +572,48 @@ export function verifyPersonalMdoc(credential, trust) {
   return result;
 }
 
-const headers = [
-  'urn:certconcord:context:1',
-  'urn:certconcord:sim:1',
-  'urn:certconcord:policy:1',
-  'urn:certconcord:credential:1',
-];
-const coseAlgorithm = (key) =>
-  ({ 'ml-dsa-65': -49, 'ml-dsa-87': -50, ec: -7 })[key.asymmetricKeyType];
-export function prepareMdocDocument(
-  document,
-  { credential, publicKey, context, simHash, policyHash },
-) {
-  const algorithm = coseAlgorithm(publicKey);
+const headers = ['urn:certconcord:context:1', 'urn:certconcord:sim:1', 'urn:certconcord:policy:1'];
+function documentSignatureOptions({ credential, publicKey, context, simHash, policyHash }) {
+  // Application key-purpose restrictions remain here. The component owns the
+  // detached COSE encoding, critical-header order and signature mathematics.
+  const classical = publicKey.asymmetricKeyType === 'ec';
   requireThat(
-    algorithm &&
-      (algorithm === -7
-        ? [DEVICE_SIGN_PROFILE, PASSKEY_SIGN_PROFILE].includes(context.profileID) &&
+    classical
+      ? [DEVICE_SIGN_PROFILE, PASSKEY_SIGN_PROFILE].includes(context.profileID) &&
           publicKey.asymmetricKeyDetails.namedCurve === 'prime256v1'
-        : ![DEVICE_SIGN_PROFILE, PASSKEY_SIGN_PROFILE].includes(context.profileID)),
+      : ['ml-dsa-65', 'ml-dsa-87'].includes(publicKey.asymmetricKeyType) &&
+          ![DEVICE_SIGN_PROFILE, PASSKEY_SIGN_PROFILE].includes(context.profileID),
     'MDOC_DOCUMENT_ALGORITHM',
   );
-  const protectedBytes = encode(
-      new Map([
-        [1, algorithm],
-        [2, headers],
-        [3, 'application/certconcord-mdoc-document'],
-        [headers[0], D('SignatureContext', context)],
-        [headers[1], simHash],
-        [headers[2], policyHash],
-        [headers[3], sha512(credential)],
-      ]),
-    ),
-    tbs = encode(['Signature1', protectedBytes, Buffer.alloc(0), document]);
   return {
-    tbs,
+    credential,
+    publicKey,
+    requiredProtectedHeaders: new Map([
+      [headers[0], D('SignatureContext', context)],
+      [headers[1], simHash],
+      [headers[2], policyHash],
+    ]),
+  };
+}
+export function prepareMdocDocument(document, options) {
+  const prepared = prepareDocumentSignature(document, documentSignatureOptions(options)),
+    classical = options.publicKey.asymmetricKeyType === 'ec';
+  return {
+    tbs: prepared.tbs,
     finish(signature) {
-      requireThat(verify(tbs, signature, publicKey), 'MDOC_DOCUMENT_SIGNATURE');
-      return encode([
-        protectedBytes,
-        new Map(),
-        null,
-        algorithm === -7 ? derToP1363(signature) : signature,
-      ]);
+      return prepared.finish(classical ? derToP1363(signature) : signature);
     },
   };
 }
-export function verifyMdocDocument(
-  signature,
-  document,
-  { credential, publicKey, context, simHash, policyHash },
-) {
-  const a = decode(signature);
-  requireThat(
-    Array.isArray(a) &&
-      a.length === 4 &&
-      Buffer.isBuffer(a[0]) &&
-      a[1] instanceof Map &&
-      a[1].size === 0 &&
-      a[2] === null &&
-      Buffer.isBuffer(a[3]),
-    'MDOC_DOCUMENT_COSE',
-  );
-  const expected = prepareMdocDocument(document, {
-      credential,
-      publicKey,
-      context,
-      simHash,
-      policyHash,
-    }),
-    providerSignature = publicKey.asymmetricKeyType === 'ec' ? p1363ToDER(a[3]) : a[3],
-    canonical = decode(expected.finish(providerSignature));
-  requireThat(equal(a[0], canonical[0]), 'MDOC_DOCUMENT_PROTECTED_HEADERS');
-  return { tbs: expected.tbs, signature: providerSignature };
+export function verifyMdocDocument(signature, document, options) {
+  const verified = verifyDocumentSignature(signature, document, documentSignatureOptions(options));
+  return {
+    tbs: verified.tbs,
+    signature:
+      options.publicKey.asymmetricKeyType === 'ec'
+        ? p1363ToDER(verified.signature)
+        : verified.signature,
+  };
 }
 
 import {
