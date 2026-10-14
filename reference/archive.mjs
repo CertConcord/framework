@@ -2,6 +2,7 @@ import { assertPreservationLifetimes } from './vendor/mtc-document-validation/li
 import { DOMParser } from '@xmldom/xmldom';
 import { C14nCanonicalization } from 'xml-crypto';
 import {
+  ProtocolError,
   seq,
   oid,
   octet,
@@ -16,6 +17,8 @@ import {
   equal,
 } from './core.mjs';
 import { algID, OID, parseCertificate, verifyCMS } from './pki.mjs';
+import { requireStatusDecision } from './status-result.mjs';
+import { VerificationError, verificationOutcome } from './verification-result.mjs';
 
 const hashes = { [OID.sha256]: sha256, [OID.sha512]: sha512 };
 export {
@@ -199,43 +202,68 @@ export function verifyERSPreservation(
       typeof resolveTimestamp === 'function',
     'ERS_PRESERVATION_POLICY',
   );
-  const { chains, records } = walkERS(raw, data, (token, binding) => {
-    const trust = resolveTimestamp(Buffer.from(token));
-    requireThat(
-      trust?.certificate &&
-        trust.issuerKey &&
-        typeof trust.policy === 'string' &&
-        trust.policy.length > 0 &&
-        deadline(trust.validUntil) &&
-        typeof trust.status === 'function',
-      'ERS_TSA_TRUST_REQUIRED',
+  const failures = [];
+  let verified;
+  try {
+    verified = walkERS(raw, data, (token, binding) => {
+      const trust = resolveTimestamp(Buffer.from(token));
+      requireThat(
+        trust?.certificate &&
+          trust.issuerKey &&
+          typeof trust.policy === 'string' &&
+          trust.policy.length > 0 &&
+          deadline(trust.validUntil) &&
+          typeof trust.status === 'function',
+        'ERS_TSA_TRUST_REQUIRED',
+      );
+      const info = verifyTimestampToken(token, { ...trust, ...binding, at, maxFutureSkew: 0 }),
+        cert = parseCertificate(trust.certificate);
+      requireThat(
+        Number.isFinite(info.accuracy) && info.accuracy >= 0 && Number.isFinite(info.poeUpperBound),
+        'ERS_ACCURACY_REQUIRED',
+      );
+      requireThat(
+        info.genTime - info.accuracy >= cert.notBefore &&
+          info.poeUpperBound < cert.notAfter &&
+          info.poeUpperBound <= at,
+        'ERS_TIMESTAMP_INTERVAL',
+      );
+      try {
+        requireStatusDecision(
+          trust.status,
+          {
+            certificate: trust.certificate,
+            genTime: info.genTime,
+            stateTime: info.poeUpperBound,
+            knowledgeTime: at,
+          },
+          'ERS_TSA_STATUS',
+        );
+      } catch (error) {
+        // Continue checking the remaining signed tokens and protection intervals.
+        // Missing status cannot conceal an independently provable invalid record.
+        failures.push(error);
+      }
+      const validUntil = Math.min(cert.notAfter, trust.validUntil, trust.revokedAt ?? Infinity);
+      requireThat(info.poeUpperBound < validUntil, 'ERS_TIMESTAMP_LIFETIME');
+      return { ...info, validUntil };
+    });
+    assertPreservationLifetimes(verified.records, { at, dataValidUntil, hashValidUntil }, (code) =>
+      requireThat(false, code),
     );
-    const info = verifyTimestampToken(token, { ...trust, ...binding, at, maxFutureSkew: 0 }),
-      cert = parseCertificate(trust.certificate);
-    requireThat(
-      Number.isFinite(info.accuracy) && info.accuracy >= 0 && Number.isFinite(info.poeUpperBound),
-      'ERS_ACCURACY_REQUIRED',
-    );
-    requireThat(
-      info.genTime - info.accuracy >= cert.notBefore &&
-        info.poeUpperBound < cert.notAfter &&
-        info.poeUpperBound <= at,
-      'ERS_TIMESTAMP_INTERVAL',
-    );
-    requireThat(
-      trust.status({
-        certificate: trust.certificate,
-        genTime: info.genTime,
-        stateTime: info.poeUpperBound,
-        knowledgeTime: at,
-      }) === true,
-      'ERS_TSA_STATUS',
-    );
-    const validUntil = Math.min(cert.notAfter, trust.validUntil, trust.revokedAt ?? Infinity);
-    requireThat(info.poeUpperBound < validUntil, 'ERS_TIMESTAMP_LIFETIME');
-    return { ...info, validUntil };
-  });
-  assertPreservationLifetimes(records, { at, dataValidUntil, hashValidUntil }, (code) => requireThat(false, code));
+  } catch (error) {
+    const missing =
+      error instanceof ProtocolError &&
+      ['ERS_TSA_TRUST_REQUIRED', 'ERS_ACCURACY_REQUIRED', 'ERS_HASH_LIFETIME_REQUIRED'].includes(
+        error.code,
+      );
+    failures.unshift(missing ? new VerificationError(error.code, 'INDETERMINATE', 'time') : error);
+  }
+  for (const overall of ['INVALID', 'UNSUPPORTED', 'INDETERMINATE']) {
+    const failure = failures.find((error) => verificationOutcome(error).overall === overall);
+    if (failure) throw failure;
+  }
+  const { chains, records } = verified;
   return {
     chains,
     timestamps: records.length,

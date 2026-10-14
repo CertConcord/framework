@@ -266,16 +266,26 @@ function timestampStatus(certificate, record) {
         (record.compromiseStart === undefined || instant(record.compromiseStart)),
       'VECTOR_STATUS',
     );
-  return (query) =>
-    Buffer.isBuffer(query?.certificate) &&
-    certificate.equals(query.certificate) &&
-    Number.isFinite(query.stateTime) &&
-    Number.isFinite(query.knowledgeTime) &&
-    query.stateTime <= query.knowledgeTime &&
-    record.publishedAt <= query.knowledgeTime &&
-    query.knowledgeTime < record.nextUpdate &&
-    (record.status === 'GOOD' ||
-      query.stateTime < Math.min(record.effectiveTime, record.compromiseStart ?? Infinity));
+  return (query) => {
+    if (
+      !Buffer.isBuffer(query?.certificate) ||
+      !certificate.equals(query.certificate) ||
+      !Number.isFinite(query.stateTime) ||
+      !Number.isFinite(query.knowledgeTime) ||
+      query.stateTime > query.knowledgeTime
+    )
+      return { overall: 'INVALID', reason: 'TIMESTAMP_STATUS_BINDING' };
+    if (record.publishedAt > query.knowledgeTime)
+      return { overall: 'INDETERMINATE', reason: 'TIMESTAMP_STATUS_NOT_YET_KNOWN' };
+    if (
+      record.status === 'REVOKED' &&
+      query.stateTime >= Math.min(record.effectiveTime, record.compromiseStart ?? Infinity)
+    )
+      return { overall: 'INVALID', reason: 'TIMESTAMP_STATUS_REVOKED' };
+    if (query.knowledgeTime >= record.nextUpdate)
+      return { overall: 'INDETERMINATE', reason: 'TIMESTAMP_STATUS_STALE' };
+    return { overall: 'VALID', reason: 'TIMESTAMP_STATUS_GOOD' };
+  };
 }
 
 function loadTrust(corpus, name) {
@@ -380,7 +390,7 @@ function archivePolicy(input, resolver, domain) {
               scope: { trustDomainID: domain },
               stateTime,
               knowledgeTime,
-            }).overall === 'VALID'
+            })
         : timestampStatus(entry.certificate, entry.status),
     };
   });

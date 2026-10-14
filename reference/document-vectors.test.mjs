@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import { syncBuiltinESMExports } from 'node:module';
 import { createVerifier } from './sdk/index.mjs';
+import { dcbor, decodeCBOR } from './core.mjs';
 import {
   defaultVectorDirectory,
   loadVectorCorpus,
@@ -31,6 +32,24 @@ function changeManifest(directory, edit) {
     manifest = JSON.parse(readFileSync(path, 'utf8'));
   edit(manifest);
   writeFileSync(path, JSON.stringify(manifest, null, 2) + '\n');
+}
+
+function replaceMaterial(directory, name, bytes) {
+  const path = join(directory, name);
+  let stored;
+  changeManifest(directory, (manifest) => {
+    const descriptor = manifest.files.find((entry) => entry.path === name);
+    assert(descriptor, name);
+    stored =
+      descriptor.encoding === 'base64' ? Buffer.from(bytes.toString('base64') + '\n') : bytes;
+    Object.assign(descriptor, {
+      bytes: stored.length,
+      sha256: hash(stored),
+      decodedBytes: bytes.length,
+      decodedSHA256: hash(bytes),
+    });
+  });
+  writeFileSync(path, stored);
 }
 
 test('published CMS and native mdoc originals verify through the public SDK', () => {
@@ -163,6 +182,78 @@ test('published retained lifecycle separates preservation from current admissibi
     });
     assert.equal(incident.overall, 'INVALID');
   }
+});
+
+test('public timestamp status bridge preserves staleness and known revocation for CMS and mdoc', async (t) => {
+  for (const format of ['cms', 'mdoc']) {
+    for (const revoked of [false, true])
+      await t.test(`${format}: ${revoked ? 'revoked and stale' : 'stale'}`, (caseTest) => {
+        const directory = copyCorpus(caseTest);
+        const corpus = loadVectorCorpus(directory);
+        const entry = corpus.manifest.documents.find((value) => value.id === format + '-valid');
+        const input = JSON.parse(readFileSync(join(directory, entry.trust), 'utf8'));
+        input.timestampStatus.nextUpdate = input.trust.knowledgeTime;
+        assert(input.timestampStatus.publishedAt < input.timestampStatus.nextUpdate);
+        if (revoked) Object.assign(input.timestampStatus, { status: 'REVOKED', effectiveTime: 0 });
+        replaceMaterial(directory, entry.trust, Buffer.from(JSON.stringify(input) + '\n'));
+        const overall = revoked ? 'INVALID' : 'INDETERMINATE';
+        const reason = revoked ? 'TIMESTAMP_STATUS_REVOKED' : 'TIMESTAMP_STATUS_STALE';
+        const expected = {
+          ...entry.expected,
+          overall,
+          reason,
+          dimensions: { time: { overall, reason } },
+        };
+        changeManifest(directory, (manifest) => {
+          manifest.documents = [{ ...entry, expected }];
+        });
+        const actual = runDocumentVectors({ directory })[0].actual;
+        assert.equal(actual.overall, overall);
+        assert.equal(actual.reason, reason);
+        assert.deepEqual(actual.dimensions.time, { overall, reason });
+        assert.deepEqual(loadVectorCorpus(directory).read(entry.bytes), corpus.read(entry.bytes));
+      });
+  }
+});
+
+test('retained ERS bridge reports missing latest governance coverage without changing original bytes', async (t) => {
+  for (const format of ['cms', 'mdoc'])
+    await t.test(format, (caseTest) => {
+      const directory = copyCorpus(caseTest);
+      const corpus = loadVectorCorpus(directory);
+      const entry = corpus.manifest.retained.find(
+        (value) => value.id === format + '-retained-renewed',
+      );
+      const original = corpus.config(entry.options);
+      const encoded = JSON.parse(readFileSync(join(directory, entry.options), 'utf8'));
+      const history = decodeCBOR(original.history);
+      assert(history.length > 1);
+      replaceMaterial(directory, encoded.history.$file, dcbor([history[0]]));
+      const decision = { overall: 'INDETERMINATE', reason: 'HISTORY_KNOWLEDGE_COVERAGE' };
+      changeManifest(directory, (manifest) => {
+        manifest.retained = [
+          {
+            ...entry,
+            expected: {
+              ...entry.expected,
+              overall: 'INDETERMINATE',
+              preservation: decision,
+              currentAdmissibility: decision,
+            },
+          },
+        ];
+      });
+      const { actual, details } = runRetainedVectors({ directory })[0];
+      assert.equal(actual.overall, 'INDETERMINATE');
+      assert.deepEqual(actual.preservation, decision);
+      assert.equal(actual.historicalAuthorization.overall, 'VALID');
+      assert.deepEqual(actual.currentAdmissibility, decision);
+      assert.equal(details.historicalKnowledgeTime, original.historicalKnowledgeTime);
+      assert.equal(details.currentKnowledgeTime, original.currentKnowledgeTime);
+      const retained = loadVectorCorpus(directory).config(entry.options);
+      for (const name of ['originalBytes', 'currentBytes', 'evidenceRecord'])
+        assert.deepEqual(retained[name], original[name], name);
+    });
 });
 
 test('published corpus inventory contains only public material and exact hashes', () => {
