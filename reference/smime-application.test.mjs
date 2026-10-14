@@ -59,10 +59,17 @@ function fixture() {
   return f;
 }
 function rejected(result) {
+  envelope(result);
   assert.notEqual(result.overall, 'VALID', JSON.stringify(result));
   assert(['INVALID', 'UNSUPPORTED', 'INDETERMINATE'].includes(result.overall));
   noOutput(result);
   return result;
+}
+function envelope(result) {
+  assert.equal(result.coreRevision, 'draft-03');
+  assert.equal(result.profile, 'SMIME');
+  assert.deepEqual(result.dimensions, {});
+  assert(Object.isFrozen(result.dimensions));
 }
 function noPrivateAction(f) {
   assert.equal(f.count('sign'), 0);
@@ -78,6 +85,7 @@ for (const mode of ['SIGNED', 'SIGNED_AND_ENCRYPTED']) {
   test(`S/MIME application preserves the exact signed entity in ${mode} mode`, async () => {
     const f = fixture();
     const result = expectOverall(await f.app.protectSmimeMessage(f.protectInput(mode)), 'VALID');
+    envelope(result);
     assert.deepEqual(result.canonicalMimeHash, c.sha256(entity));
     assert.deepEqual(result.sender, identity(material.signer, 'alice@example.test'));
     assert.deepEqual(result.protection, { content: mode, outerHeaders: 'UNPROTECTED' });
@@ -94,6 +102,7 @@ for (const mode of ['SIGNED', 'SIGNED_AND_ENCRYPTED']) {
       }),
       'VALID',
     );
+    envelope(processed);
     assert.deepEqual(processed.content.mime, entity);
     assert.deepEqual(processed.content.parts[0].bytes, Buffer.from('Independent message.\r\n'));
     assert.deepEqual(processed.canonicalMimeHash, c.sha256(entity));

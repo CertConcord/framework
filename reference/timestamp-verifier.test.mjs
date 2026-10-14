@@ -21,11 +21,17 @@ before(() => {
   f = applicationFixture();
 });
 after(() => f?.close());
-const verify = (requestDER, responseDER, context = f.context()) =>
-  new TimestampResponseVerifier({ readContext: async () => context }).verify({
+const verify = async (requestDER, responseDER, context = f.context()) => {
+  const result = await new TimestampResponseVerifier({ readContext: async () => context }).verify({
     requestDER,
     responseDER,
   });
+  assert.equal(result.coreRevision, 'draft-03');
+  assert.equal(result.profile, 'RFC3161');
+  assert.deepEqual(result.dimensions, {});
+  assert(Object.isFrozen(result.dimensions));
+  return result;
+};
 const badSignature = (token) => {
   const signature = Buffer.from(cmsView(token).signature);
   signature[signature.length - 1] ^= 1;

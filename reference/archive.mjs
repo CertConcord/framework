@@ -187,6 +187,98 @@ export function verifyERS(raw, data, trust) {
   };
 }
 
+/** Authenticate only the original complete-data proof at its exact upper bound. */
+export function verifyERSOriginalProof(
+  raw,
+  data,
+  { dataValidUntil, hashValidUntil, resolveTimestamp },
+) {
+  const deadline = (value) => Number.isSafeInteger(value) && value > 0;
+  requireThat(
+    deadline(dataValidUntil) && hashValidUntil && typeof resolveTimestamp === 'function',
+    'ERS_PRESERVATION_POLICY',
+  );
+  const parsed = parseERS(raw),
+    first = parsed.chains[0].children[0],
+    parts = atsParts(first);
+  // This candidate only selects the evaluation instant. It is never exposed until
+  // the selected TSA, original imprint, complete interval and status all pass.
+  const candidate = parseTSTInfo(
+    verifyCMS(parts.token, { expectedContentType: OID.tstInfo }).content,
+  );
+  if (!Number.isFinite(candidate.poeUpperBound) || !Number.isFinite(candidate.accuracy))
+    throw new VerificationError('ERS_ACCURACY_REQUIRED', 'INDETERMINATE', 'time');
+  const P = candidate.poeUpperBound,
+    failures = [];
+  const { records } = walkERS(
+    ersEncode(parsed.algorithms, [seq(first.raw)]),
+    data,
+    (token, binding) => {
+      let trust;
+      try {
+        trust = resolveTimestamp(Buffer.from(token));
+      } catch {
+        throw new VerificationError('ERS_TSA_TRUST_UNAVAILABLE', 'INDETERMINATE', 'time');
+      }
+      if (!(
+        trust?.certificate &&
+        trust.issuerKey &&
+        typeof trust.policy === 'string' &&
+        trust.policy.length > 0 &&
+        deadline(trust.validUntil) &&
+        typeof trust.status === 'function'
+      ))
+        throw new VerificationError('ERS_TSA_TRUST_REQUIRED', 'INDETERMINATE', 'time');
+      const info = verifyTimestampToken(token, { ...trust, ...binding, at: P, maxFutureSkew: 0 });
+      const cert = parseCertificate(trust.certificate);
+      requireThat(
+        info.poeUpperBound === P &&
+          info.accuracy >= 0 &&
+          info.genTime - info.accuracy >= cert.notBefore &&
+          P < cert.notAfter,
+        'ERS_TIMESTAMP_INTERVAL',
+      );
+      try {
+        requireStatusDecision(
+          trust.status,
+          {
+            certificate: trust.certificate,
+            genTime: info.genTime,
+            stateTime: P,
+            knowledgeTime: P,
+          },
+          'ERS_TSA_STATUS',
+        );
+      } catch (error) {
+        failures.push(error);
+      }
+      for (const [condition, code] of [
+        [
+          P < Math.min(cert.notAfter, trust.validUntil, trust.revokedAt ?? Infinity),
+          'ERS_TIMESTAMP_LIFETIME',
+        ],
+        [P < dataValidUntil, 'ERS_INITIAL_PROOF_LATE'],
+      ])
+        if (!condition) failures.push(new ProtocolError(code));
+      if (!deadline(hashValidUntil[binding.hashOID]))
+        failures.push(new VerificationError('ERS_HASH_LIFETIME_REQUIRED', 'INDETERMINATE', 'time'));
+      else if (!(P < hashValidUntil[binding.hashOID]))
+        failures.push(new ProtocolError('ERS_HASH_EXPIRED'));
+      return info;
+    },
+  );
+  for (const overall of ['INVALID', 'UNSUPPORTED', 'INDETERMINATE']) {
+    const failure = failures.find((error) => verificationOutcome(error).overall === overall);
+    if (failure) throw failure;
+  }
+  return {
+    integrity: 'VALID',
+    proofOfExistenceUpperBound: records[0].poeUpperBound,
+    verifiedAt: P,
+    preservation: 'ORIGINAL_PROOF_ONLY',
+  };
+}
+
 /** Evaluate preservation under externally supplied authority and security lifetimes. */
 export function verifyERSPreservation(
   raw,

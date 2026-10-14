@@ -1,4 +1,5 @@
 import { X509Certificate, createHash, createPublicKey } from 'node:crypto';
+import { verificationResult } from './verification-result.mjs';
 import { ProtocolError, parseDER, intValue, equal, dcbor } from './core.mjs';
 import { OID } from './pki.mjs';
 import {
@@ -89,7 +90,9 @@ function result(checks, details = {}) {
   const selected = KINDS.map((kind) => checks.find((entry) => entry?.overall === kind)).find(
     Boolean,
   );
-  return Object.freeze(copy({ ...details, ...(selected ?? typed('VALID', 'TSP_VALID')), checks }));
+  return verificationResult(
+    copy({ ...details, ...(selected ?? typed('VALID', 'TSP_VALID')), profile: 'RFC3161', checks }),
+  );
 }
 function parseCertificate(certificate) {
   const x509 = new X509Certificate(certificate),

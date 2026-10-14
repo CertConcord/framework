@@ -101,8 +101,7 @@ export interface CommonTrust {
   executionStatus?: (binding: unknown, time: { at: number; knowledgeTime: number }) => boolean;
 }
 export type CMSTrust = CommonTrust & { statusCertificate: Buffer; issuerCertificate?: Buffer } & (
-    | { mtc: MTCTrust; issuerPublicKey?: never }
-    | { issuerPublicKey: KeyObject; mtc?: never }
+    { mtc: MTCTrust; issuerPublicKey?: never } | { issuerPublicKey: KeyObject; mtc?: never }
   );
 export interface MdocTrust extends CommonTrust {
   issuerCertificate: Buffer;
@@ -145,3 +144,89 @@ export function createVerifier(
     maxBytes?: number;
   },
 ): Readonly<{ verify(bytes: Uint8Array): Readonly<VerificationResult> }>;
+
+export interface OrganizationHistoryMaterial {
+  cms: Buffer;
+  issuerCertificate: Buffer;
+}
+export interface OrganizationHistoryKnowledge {
+  /** Latest authenticated relying-party knowledge; monotonic within this verifier instance. */
+  knowledgeTime: number;
+  /** Cumulative evidence must retain applicable incidents and same-epoch conflicts. */
+  statusMaterial: OrganizationHistoryMaterial[];
+  certificateStatusMaterial: OrganizationHistoryMaterial[];
+}
+export interface OrganizationHistoryTrust {
+  trustDomainID: Buffer;
+  organizationID: Buffer;
+  issuerID: string;
+  identityNamespace: string;
+  policy: SignaturePolicy;
+  controlTrust: {
+    purpose: string;
+    issuerID: string;
+    organizationID: Buffer;
+    identityNamespace: string;
+    certificate: Buffer;
+    objectTypes: ('GRANT' | 'APPROVER_REGISTRATION' | 'FINAL_AUTHORIZATION')[];
+  }[];
+  credentialTrust: {
+    certificate: Buffer;
+    registrationAuthorization: Buffer;
+    issuerCertificate: Buffer;
+    raCertificate: Buffer;
+    statusCertificate: Buffer;
+    issuanceScope: IssuanceScope;
+  };
+  algorithmDeadlines: Record<string, number>;
+  hashDeadlines: Record<string, number>;
+  keyDeadlines: Record<string, number>;
+}
+export interface OrganizationHistoryTimestampTrust {
+  certificate: Buffer;
+  issuerKey: KeyObject;
+  policy: string;
+  validUntil: number;
+  revokedAt?: number;
+  signatureProfile?: 'CERTCONCORD-PQ' | 'EXTERNAL-RFC3161';
+  status: (query: {
+    certificate: Buffer;
+    genTime: number;
+    stateTime: number;
+    knowledgeTime: number;
+  }) => boolean | AuthorityDecision;
+}
+export interface OrganizationHistoryView extends VerificationResult {
+  readonly scope: 'AS_KNOWN_AT_PROOF_TIME' | 'HISTORICAL_EVIDENCE_UNDER_CURRENT_KNOWLEDGE';
+  readonly stateTime: number | null;
+  readonly knowledgeTime: number | null;
+}
+export interface OrganizationHistoryResult extends VerificationResult {
+  readonly purpose: 'RETAINED_EVIDENCE_VERIFICATION';
+  readonly operationTime: number | null;
+  /** Exact first complete-package PoE upper bound, including fractional accuracy. */
+  readonly proofOfExistenceUpperBound: number | null;
+  readonly knowledgeTime: number | null;
+  readonly historicalAuthorization: OrganizationHistoryView;
+  readonly currentAdmissibility: OrganizationHistoryView;
+  readonly preservation: VerificationResult;
+  readonly originalProtectionDeadline?: number;
+  readonly limitations: readonly string[];
+}
+/** Offline evidence verification; it grants no current execution or recovery permission. */
+export function createOrganizationHistoryVerifier(options: {
+  trust: OrganizationHistoryTrust;
+  authorityResolver: (query: AuthorityQuery) => AuthorityDecision;
+  readKnowledge: () => OrganizationHistoryKnowledge;
+  preservationPolicy: {
+    hashValidUntil: Record<string, number>;
+    /** Optional tightening bound; it can never extend derived original protection. */
+    dataValidUntil?: number;
+    resolveTimestamp: (token: Buffer) => OrganizationHistoryTimestampTrust;
+  };
+}): Readonly<{
+  verify(input: {
+    originalBytes: Buffer;
+    evidenceRecord: Buffer;
+  }): Readonly<OrganizationHistoryResult>;
+}>;
