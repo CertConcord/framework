@@ -32,17 +32,17 @@
     "@xmldom/xmldom": "0.9.12",
     "@zone-eu/mailsplit": "5.4.20",
     "cbor-x": "1.6.6",
-    "koffi": "3.3.2",
-    "nodemailer": "10.0.16",
+    "koffi": "3.3.3",
+    "nodemailer": "10.1.0",
     "pdf-lib": "1.17.1",
     "pg": "8.23.1",
-    "xml-crypto": "6.3.2"
+    "xml-crypto": "6.3.3"
   },
   "devDependencies": {
     "@jazzer.js/core": "4.0.0",
     "esbuild": "0.28.2",
     "jose": "6.2.12",
-    "prettier": "3.9.9"
+    "prettier": "3.9.10"
   },
   "license": "Apache-2.0"
 }
