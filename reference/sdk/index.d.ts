@@ -213,6 +213,67 @@ export interface OrganizationHistoryResult extends VerificationResult {
   readonly originalProtectionDeadline?: number;
   readonly limitations: readonly string[];
 }
+export interface OrganizationHistoryTimestampPin {
+  certificate: Buffer;
+  /** Exact canonical public SPKI DER; private keys and KeyObject values are not accepted. */
+  issuerPublicKeyDER: Buffer;
+  policy: string;
+  validUntil: number;
+  revokedAt?: number;
+  signatureProfile: 'CERTCONCORD-PQ' | 'EXTERNAL-RFC3161';
+}
+export interface OrganizationHistorySourceConfiguration {
+  schemaVersion: 1;
+  trust: OrganizationHistoryTrust;
+  retainedAuthorities: {
+    governance: {
+      roots: { publicKeyDER: Buffer; validFrom: number; validUntil: number }[];
+      threshold: number;
+    };
+    algorithmDeadlines: Record<string, number>;
+    publication: {
+      format: 'RFC3161';
+      timestampAuthorities: (OrganizationHistoryTimestampPin & {
+        validFrom: number;
+        knowledgeValidUntil: number;
+      })[];
+      hashValidUntil: Record<string, number>;
+    };
+  };
+  preservation: {
+    hashValidUntil: Record<string, number>;
+    dataValidUntil?: number;
+    timestampAuthorities: OrganizationHistoryTimestampPin[];
+  };
+}
+export interface OrganizationHistorySourceKnowledge extends OrganizationHistoryKnowledge {
+  authorityHistory: {
+    /** Exact deterministic-CBOR RTM body, with no JSON reconstruction. */
+    manifest: Buffer;
+    signatures: { keyID: Buffer; signature: Buffer }[];
+    publicationProof: Buffer;
+  }[];
+}
+declare const organizationHistorySource: unique symbol;
+export interface OrganizationHistorySource {
+  readonly [organizationHistorySource]: true;
+  close(): void;
+  /** Memory sources do not retain exact artifacts. This never returns an authorization. */
+  readEvidence(evidenceID: string): undefined;
+}
+/** Bounded public-data adapter. Its reader supplies material, never decisions or outcomes. */
+export function createOrganizationHistorySource(options: {
+  configuration: OrganizationHistorySourceConfiguration;
+  readKnowledge: () => OrganizationHistorySourceKnowledge;
+}): OrganizationHistorySource;
+export function createOrganizationHistoryVerifier(options: {
+  source: OrganizationHistorySource;
+}): Readonly<{
+  verify(input: {
+    originalBytes: Buffer;
+    evidenceRecord: Buffer;
+  }): Readonly<OrganizationHistoryResult>;
+}>;
 /** Offline evidence verification; it grants no current execution or recovery permission. */
 export function createOrganizationHistoryVerifier(options: {
   trust: OrganizationHistoryTrust;

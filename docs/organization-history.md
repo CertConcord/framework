@@ -43,6 +43,8 @@ const verifier = createOrganizationHistoryVerifier({
 const result = verifier.verify({ originalBytes, evidenceRecord });
 ```
 
+The alternative [declarative source](organization-history-source.md) constructs these callbacks from closed public-data configuration and exact signed knowledge inputs. Use `createOrganizationHistorySource({configuration, readKnowledge})` and pass the returned opaque source to `createOrganizationHistoryVerifier({source})`. Its complete result is equivalent to the callback form under the same selected inputs. The [saved organization corpus](../reference/vectors/organization-history/README.md) uses this form for offline replay through source and installed SDK exports.
+
 `trust` contains `trustDomainID`, `organizationID`, `issuerID`, `identityNamespace`, the exact signed `policy`, `controlTrust`, `credentialTrust`, `algorithmDeadlines`, `hashDeadlines` and `keyDeadlines`. `credentialTrust` contains the selected original certificate, registration authorization, issuer certificate, RA certificate, original status certificate and issuance scope. `controlTrust` maps each exact control certificate to its admitted issuer, purpose and, for organizational status authorities, object types. The external resolver must independently establish the role and scope; a mapping or certificate pin cannot establish admission.
 
 Every role query carries explicit `stateTime` and `knowledgeTime`. Original role holders must be admitted at P and at their relevant original issuance/publication events. An authority history may include authenticated root or role succession. It must retain historical appointments, later incidents and current coverage. Current replacement identities never substitute for original signer admission.

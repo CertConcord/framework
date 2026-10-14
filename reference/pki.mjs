@@ -449,7 +449,7 @@ export function verifyCMS(
     simHash,
     policyHash,
     issuerKey,
-    at = now(),
+    at,
     profileID,
   } = {},
 ) {

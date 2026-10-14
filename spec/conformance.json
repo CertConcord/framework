@@ -530,6 +530,18 @@
         {
           "file": "reference/organization-history-independent.test.mjs",
           "name": "a loose caller data deadline cannot override the earliest raw approver key cutoff"
+        },
+        {
+          "file": "reference/organization-history-source.test.mjs",
+          "name": "declarative memory results preserve the legacy complete result and have no receipt"
+        },
+        {
+          "file": "reference/organization-history-source.test.mjs",
+          "name": "one memory source shares admitted incidents across verifier instances"
+        },
+        {
+          "file": "reference/organization-history-vectors.test.mjs",
+          "name": "saved organization history cases satisfy independently frozen semantics and complete results"
         }
       ],
       "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. A dedicated retained-evidence verifier adds complete-package ERS preservation, explicit proof-time and current-knowledge views, scoped successor status and retained incident precedence without granting current execution permission. Organizational mdoc, arbitrary graphs, per-object proofs for roles retired before the original package proof, separately preserved later status from retired signers, independently assessed identity/custody and a second complete implementation remain open."
@@ -723,6 +735,14 @@
         {
           "file": "reference/pades-security.test.mjs",
           "name": "current DSS appended after the last timestamp has no retroactive coverage"
+        },
+        {
+          "file": "reference/organization-history-source.test.mjs",
+          "name": "declarative source retains exact fractional P for scoped authority queries"
+        },
+        {
+          "file": "reference/organization-history-vectors.test.mjs",
+          "name": "saved organization replay is offline and independent of wall clock and working directory"
         }
       ],
       "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."

@@ -30,6 +30,7 @@ import {
 
 export const profiles = Object.freeze(['CMS', 'MDOC']);
 export { createOrganizationHistoryVerifier } from '../organization-history.mjs';
+export { createOrganizationHistorySource } from '../organization-history-source.mjs';
 const plans = Object.freeze({
   CMS: [
     'certconcord-ecp-cms-attested-draft-03',
