@@ -34,7 +34,12 @@ syncBuiltinESMExports();
 registerHooks({
   resolve(specifier, context, next) {
     const resolved = next(specifier, context);
-    if (/fixtures-|freeze-organization-vectors|vector-semantics|\.test\.mjs$/.test(resolved.url))
+    if (
+      resolved.url.includes('fixtures-') ||
+      resolved.url.includes('freeze-organization-vectors') ||
+      resolved.url.includes('vector-semantics') ||
+      resolved.url.endsWith('.test.mjs')
+    )
       forbidden();
     return resolved;
   },
@@ -103,7 +108,11 @@ try {
     }
     const result = createOrganizationHistoryVerifier({ source }).verify(request.input);
     let evidence, followup, retainedEvidence;
-    if (result.knowledgeReceipt?.state === 'COMMITTED' && result.knowledgeReceipt.evidenceID)
+    if (
+      !request.deferEvidence &&
+      result.knowledgeReceipt?.state === 'COMMITTED' &&
+      result.knowledgeReceipt.evidenceID
+    )
       evidence = source.readEvidence(result.knowledgeReceipt.evidenceID);
     if (request.seam === 'lost-commit-ack')
       followup = createOrganizationHistoryVerifier({ source }).verify(request.input);

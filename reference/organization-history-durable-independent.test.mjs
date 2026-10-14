@@ -542,7 +542,9 @@ test('independent durable concurrent writers retain both negative classes in eit
 test('independent durable stale positive reloads a concurrent negative commit', async (t) => {
   const f = await material(),
     a = area(t);
-  scoped(run(a, request(f, f.initial, f.first, { databasePath: a.databasePath })).result, 'VALID');
+  const initial = run(a, request(f, f.initial, f.first, { databasePath: a.databasePath }));
+  committed(initial, f.first);
+  scoped(initial.result, 'VALID');
   const positive = start(
     a,
     request(f, f.newerGood, f.first, { databasePath: a.databasePath }),
@@ -551,7 +553,10 @@ test('independent durable stale positive reloads a concurrent negative commit', 
   await positive.ready();
   const negative = start(
     a,
-    request(f, f.incidents.organization, f.first, { databasePath: a.databasePath }),
+    request(f, f.incidents.organization, f.first, {
+      databasePath: a.databasePath,
+      deferEvidence: true,
+    }),
     'before-commit',
   );
   const marker = await negative.ready();
@@ -562,9 +567,34 @@ test('independent durable stale positive reloads a concurrent negative commit', 
   negative.release();
   assert.deepEqual(await negative.exited, { code: 0, signal: null });
   assert.deepEqual(await positive.exited, { code: 0, signal: null });
+  const negativeResponse = negative.response();
+  assert.equal(negativeResponse.evidence, undefined);
+  scoped(negativeResponse.result, 'INVALID');
+  assert.deepEqual(
+    withoutReceipt(negativeResponse.result),
+    memory(f, [{ knowledge: f.initial }, { knowledge: f.incidents.organization }]).at(-1),
+  );
+  assert(
+    negativeResponse.result.knowledgeReceipt.revision > initial.result.knowledgeReceipt.revision,
+  );
+  const recovered = run(
+    a,
+    request(f, f.newerGood, f.first, {
+      databasePath: a.databasePath,
+      onlyReadEvidence: true,
+      readEvidenceID: negativeResponse.result.knowledgeReceipt.evidenceID,
+    }),
+  );
+  assert.notEqual(recovered.pid, negativeResponse.pid);
+  assert.equal(recovered.reads, 0);
+  assert.equal(recovered.clockReads, 0);
+  committed({ ...negativeResponse, evidence: recovered.retainedEvidence }, f.first);
   const response = positive.response();
   committed(response, f.first);
   scoped(response.result, 'INVALID');
+  assert(
+    response.result.knowledgeReceipt.revision > negativeResponse.result.knowledgeReceipt.revision,
+  );
   assert.deepEqual(
     withoutReceipt(response.result),
     memory(f, [
