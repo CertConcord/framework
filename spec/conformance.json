@@ -295,6 +295,14 @@
         {
           "file": "reference/document-vectors.test.mjs",
           "name": "public timestamp status bridge preserves staleness and known revocation for CMS and mdoc"
+        },
+        {
+          "file": "reference/verification-envelope.test.mjs",
+          "name": "shared verification envelope fixes revision and preserves only evaluated dimensions"
+        },
+        {
+          "file": "reference/verification-envelope.test.mjs",
+          "name": "shared verification envelope accepts four outcomes without fabricating positive checks"
         }
       ],
       "gap": "Selected CMS/MTC and native mdoc SDK paths provide stable identity/reason fields, bounded evaluated dimensions and explicit malformed, missing, unsupported and invalid precedence. This record covers the named selected boundaries, not all algorithms, containers or future extensions. Independent implementation, complete external parser assessment and stability review remain separate evidence."
@@ -361,6 +369,22 @@
         {
           "file": "reference/retained-document.test.mjs",
           "name": "retains offline authorization, renewed preservation and later admissibility separately"
+        },
+        {
+          "file": "reference/archive-original-proof.test.mjs",
+          "name": "original ERS proof authenticates the first whole-data bound independently of later renewal"
+        },
+        {
+          "file": "reference/archive-original-proof.test.mjs",
+          "name": "original ERS proof preserves fractional accuracy and exclusive protection boundaries"
+        },
+        {
+          "file": "reference/organization-history-independent.test.mjs",
+          "name": "missing latest retained authority coverage preserves an authenticated initial proof and historical view"
+        },
+        {
+          "file": "reference/organization-history-independent.test.mjs",
+          "name": "late archive renewal cannot restore an expired original protection interval"
         }
       ],
       "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
@@ -486,9 +510,29 @@
         {
           "file": "reference/organization-delegation-durability.test.mjs",
           "name": "organization final application admission withholds an already committed gateway result"
+        },
+        {
+          "file": "reference/organization-history-independent.test.mjs",
+          "name": "historical organization acceptance preserves original bytes after issuer expiry and scoped succession"
+        },
+        {
+          "file": "reference/organization-history-independent.test.mjs",
+          "name": "retrospective permission never releases a completed signature after current workload exit"
+        },
+        {
+          "file": "reference/organization-history-independent.test.mjs",
+          "name": "one verifier retains authenticated credential compromise after a later GOOD-only refresh"
+        },
+        {
+          "file": "reference/organization-history-independent.test.mjs",
+          "name": "an available bad original approval remains INVALID when another required original is missing"
+        },
+        {
+          "file": "reference/organization-history-independent.test.mjs",
+          "name": "a loose caller data deadline cannot override the earliest raw approver key cutoff"
         }
       ],
-      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. Organizational mdoc, arbitrary graphs, historical delegation proof, independently assessed identity/custody and a second complete implementation remain open."
+      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. A dedicated retained-evidence verifier adds complete-package ERS preservation, explicit proof-time and current-knowledge views, scoped successor status and retained incident precedence without granting current execution permission. Organizational mdoc, arbitrary graphs, per-object proofs for roles retired before the original package proof, separately preserved later status from retired signers, independently assessed identity/custody and a second complete implementation remain open."
     },
     {
       "id": "CC-DOC-03",
