@@ -286,6 +286,7 @@
   "reference/timestamp-revocation.test.mjs",
   "reference/timestamp-service.mjs",
   "reference/timestamp-service.test.mjs",
+  "reference/timestamp-status-independent.test.mjs",
   "reference/timestamp-verifier.test.mjs",
   "reference/timestamp.mjs",
   "reference/tpm-simulator-check.mjs",

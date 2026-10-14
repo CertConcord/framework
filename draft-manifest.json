@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 12282,
-      "sha256": "84d8743e6c5b9cf7584781a26f7d8685ce76a48a7e52ce03937e187e2b2f98da"
+      "bytes": 13488,
+      "sha256": "baa0c74eb17828bd12441d005a6f3cde8bf03fc8051761e8aacd1c2fb87c920b"
     },
     {
       "path": "docs/draft-acceptance.md",
@@ -270,8 +270,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 25376,
-      "sha256": "41fc0844a95183ac0c02e93a79c35549e2e291b226c77c1abfb855c2ac708d63"
+      "bytes": 25429,
+      "sha256": "e65d85deb78c425aeb7f218b684c76952b69ed757bb6ad6b318ef56e49cfaf1e"
     },
     {
       "path": "reference/README.md",
@@ -320,8 +320,8 @@
     },
     {
       "path": "reference/archive.mjs",
-      "bytes": 15998,
-      "sha256": "03f0470128c8e8c103060530c32299875f46b945eecb85d2d76e5ab86a3da050"
+      "bytes": 17106,
+      "sha256": "43039d63da97ac0a5cbcef3a16e76512d0b19a76fea06a316914b3d46419a0ca"
     },
     {
       "path": "reference/arkg.mjs",
@@ -520,8 +520,8 @@
     },
     {
       "path": "reference/document-evidence.mjs",
-      "bytes": 16674,
-      "sha256": "cce12676bcad69f4407b5f5313e0a3a050ad030cca3da48b9ebd851adcfab762"
+      "bytes": 16936,
+      "sha256": "575e9ef6912cf9dff782bf3f7fe326ee86a0698bc1b096762a788c6b53cb4505"
     },
     {
       "path": "reference/document-evidence.test.mjs",
@@ -530,8 +530,8 @@
     },
     {
       "path": "reference/document-vectors.test.mjs",
-      "bytes": 17520,
-      "sha256": "0ffd50fe4b8d85df0a66cd7d5be8f14a49b5eddb2422bccec07bf2ee758bdca9"
+      "bytes": 21691,
+      "sha256": "e2be5e68875eaddac70f83a6605f55e8e795b3533e77477d5bbfa37c145511f4"
     },
     {
       "path": "reference/draft-domain.test.mjs",
@@ -740,8 +740,8 @@
     },
     {
       "path": "reference/historical-validation.mjs",
-      "bytes": 2536,
-      "sha256": "fde6f1ff5979d44ee010f6a5d6800f6f8818fcb4ff9ee3a0bb691fbc1030094d"
+      "bytes": 2700,
+      "sha256": "ee10a29cdfe62fd0fdbe15a61d0a58657484954aff808560ccaa14b8daaca409"
     },
     {
       "path": "reference/http.mjs",
@@ -1145,8 +1145,8 @@
     },
     {
       "path": "reference/retained-document.test.mjs",
-      "bytes": 13226,
-      "sha256": "4f1ad4f837bc32278a35ab746ef6c26318954479fdf580aa6489256574773951"
+      "bytes": 13206,
+      "sha256": "3a75cbfae86906271e656e1a3b0f19d97ddb343bd89aadbabe9f194f5ed2f98d"
     },
     {
       "path": "reference/revocation.mjs",
@@ -1330,8 +1330,8 @@
     },
     {
       "path": "reference/status-result.mjs",
-      "bytes": 987,
-      "sha256": "5c3166074074037780034883aeaa4cba53d38b80b6673f5160df80535f394b2e"
+      "bytes": 3070,
+      "sha256": "0e58abdbb751d7c6eaaca10c9803e5a9520640bbaeca81db1750c8eabf4e3350"
     },
     {
       "path": "reference/status-results.test.mjs",
@@ -1437,6 +1437,11 @@
       "path": "reference/timestamp-service.test.mjs",
       "bytes": 21479,
       "sha256": "a40258b36f2f9938a21311470a2a40a590ec148d5bdab90ff931b39ca1ae97b8"
+    },
+    {
+      "path": "reference/timestamp-status-independent.test.mjs",
+      "bytes": 14468,
+      "sha256": "455ce74fb693beedefb2d527fdc97d3aed0d8129506bdc4bec274f646d9324cb"
     },
     {
       "path": "reference/timestamp-verifier.test.mjs",
@@ -2030,8 +2035,8 @@
     },
     {
       "path": "reference/verify-vectors.mjs",
-      "bytes": 17970,
-      "sha256": "5d615eb2d073ca4a218a835ddd059c5bcc90087dd5bed90b433cfbc6d31961bb"
+      "bytes": 18378,
+      "sha256": "21051204d173c3efae6c9e922f276bb86ccb28f397820c02d777559bb9db356f"
     },
     {
       "path": "reference/wallet.mjs",
@@ -2115,8 +2120,8 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 38970,
-      "sha256": "7781752a9115054e540360295d6a9beae77fde480cade2d5228398ba1e5a8a4e"
+      "bytes": 39746,
+      "sha256": "fe489540348b83680a609460dd797a878baa4770eda9948b4a593c94ddf6bed3"
     },
     {
       "path": "spec/conformance.md",
