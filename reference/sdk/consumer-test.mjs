@@ -34,6 +34,7 @@ const entry = cwd + '/load.mjs';
 await writeFile(entry, "export * from '@certconcord/verifier';\n");
 const sdk = await import(pathToFileURL(entry));
 assert.deepEqual(Object.keys(sdk).sort(), [
+  'createOrganizationHistorySource',
   'createOrganizationHistoryVerifier',
   'createVerifier',
   'profiles',
@@ -41,6 +42,20 @@ assert.deepEqual(Object.keys(sdk).sort(), [
 assert.throws(() => require.resolve('@certconcord/verifier/core.mjs'), /not defined|not exported/);
 assert.throws(() => sdk.createVerifier({ format: 'CMS', trust: {} }), /SDK_TRUST/);
 const publicVectors = runDocumentVectors({ createVerifier: sdk.createVerifier });
+const savedHistoryReplay = spawnSync(
+  process.execPath,
+  [
+    resolve('sdk/organization-consumer.mjs'),
+    entry,
+    cwd + '/node_modules/@certconcord/verifier/index.mjs',
+  ],
+  { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
+);
+assert.equal(savedHistoryReplay.status, 0, savedHistoryReplay.stderr || savedHistoryReplay.stdout);
+const savedHistory = JSON.parse(savedHistoryReplay.stdout);
+assert(savedHistory.cases > 0);
+assert.deepEqual(savedHistory.forbiddenCalls, []);
+console.log(JSON.stringify({ installedOrganizationCorpus: savedHistory }));
 for (const [format, executionBinding, trustedTime = false] of [
   ['CMS', false],
   ['MDOC', false],
@@ -115,5 +130,7 @@ try {
 console.log(
   'SDK archive install, export boundary, trust binding, document evidence, execution and organization history plans passed; ' +
     publicVectors.length +
-    ' public document vectors reproduced through the installed package',
+    ' public document vectors and ' +
+    savedHistory.cases +
+    ' saved organization history vectors reproduced through the installed package',
 );

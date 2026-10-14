@@ -18,7 +18,8 @@ import { verifyERSOriginalProof, verifyERSPreservation } from './archive.mjs';
 import { verifyRegistrationBinding } from './document-evidence.mjs';
 import { verifyOrganizationExecutionEvidence } from './execution-binding.mjs';
 import { verifyOrganizationHistoricalEvidence } from './organization-delegation-evidence.mjs';
-import { ORGANIZATION_PLAN, snapshot } from './organization-delegation-state.mjs';
+import { ORGANIZATION_PLAN, record, snapshot } from './organization-delegation-state.mjs';
+import { connectOrganizationHistorySource } from './organization-history-source.mjs';
 import {
   VerificationError,
   VerificationEvaluation,
@@ -568,12 +569,12 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
 }
 
 /** Offline historical verification; this API has no signing, recovery, or current-admission capability. */
-export function createOrganizationHistoryVerifier({
-  trust: inputTrust,
-  authorityResolver,
-  readKnowledge,
-  preservationPolicy,
-}) {
+export function createOrganizationHistoryVerifier(options) {
+  if (Object.hasOwn(options, 'source')) {
+    record(options, ['source']);
+    return connectOrganizationHistorySource(options.source, createOrganizationHistoryVerifier);
+  }
+  const { trust: inputTrust, authorityResolver, readKnowledge, preservationPolicy } = options;
   need(
     typeof authorityResolver === 'function' &&
       typeof readKnowledge === 'function' &&

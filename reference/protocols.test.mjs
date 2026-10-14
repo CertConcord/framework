@@ -51,6 +51,31 @@ test('RFC9881 X.509 and RFC9882 CMS encode/verify with OpenSSL certificate parse
   cms[cms.length - 2] ^= 1;
   assert.throws(() => p.verifyCMS(cms), /CMS_SIGNATURE/);
 });
+test('CMS reads current time only when certificate validation needs a default', (t) => {
+  const f = fixture(),
+    content = Buffer.from('CMS historical clock boundary'),
+    cms = p.signCMS({ content, certificate: f.certificate }, f.key.privateKey),
+    certificate = p.parseCertificate(f.certificate),
+    at = certificate.notBefore + 1;
+  const unavailable = t.mock.method(Date, 'now', () => {
+    throw Error('CLOCK_READ_FORBIDDEN');
+  });
+  const parsed = p.verifyCMS(cms);
+  assert.equal(parsed.cryptographicValidity, 'VALID');
+  assert.deepEqual(parsed.content, content);
+  assert.equal(
+    p.verifyCMS(cms, { issuerKey: f.root.publicKey, at }).cryptographicValidity,
+    'VALID',
+  );
+  assert.equal(unavailable.mock.callCount(), 0);
+  unavailable.mock.restore();
+  const current = t.mock.method(Date, 'now', () => at * 1000);
+  assert.equal(p.verifyCMS(cms, { issuerKey: f.root.publicKey }).cryptographicValidity, 'VALID');
+  assert.equal(current.mock.callCount(), 1);
+  current.mock.mockImplementation(() => certificate.notAfter * 1000);
+  assert.throws(() => p.verifyCMS(cms, { issuerKey: f.root.publicKey }), /CERTIFICATE_TIME/);
+  assert.equal(current.mock.callCount(), 2);
+});
 test('CMS detached content, ESS representation, signed SIM and policy substitution', () => {
   const f = fixture(),
     content = c.random(40),

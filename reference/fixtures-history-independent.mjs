@@ -168,10 +168,25 @@ export async function createIndependentOrganizationHistoryFixture({
     return renewERS(first, bytes, { tsa: renewalTSA.issue });
   }
   const evidenceRecord = await preserve(originalBytes);
+  // Public-only declarative inputs for the separately reviewed corpus authoring
+  // utility. No signing key or callback crosses this return-field boundary.
+  const publicPin = (identity) => ({ certificate: Buffer.from(identity.certificate),
+    issuerPublicKeyDER: c.spki(identity.issuerKey), policy: identity.policy,
+    validUntil: identity.validUntil, signatureProfile: 'CERTCONCORD-PQ' });
+  const publicSourceConfiguration = { schemaVersion: 1, trust: copy(trust),
+    retainedAuthorities: { governance: rootPolicy(root),
+      algorithmDeadlines: { 'ml-dsa-65': end, 'ml-dsa-87': end, ec: end },
+      publication: { format: 'RFC3161',
+        timestampAuthorities: [{ ...publicPin(publicationTSA), validFrom: at - 60, knowledgeValidUntil: end }],
+        hashValidUntil: { [p.OID.sha512]: end, [p.OID.sha256]: end } } },
+    preservation: { dataValidUntil: preservationPolicy.dataValidUntil,
+      hashValidUntil: copy(preservationPolicy.hashValidUntil),
+      timestampAuthorities: [publicPin(initialTSA), publicPin(renewalTSA)] } };
   return { source, app, completed, originalBytes, bundle, leaves, evidenceRecord, at, A: at, P, K, end,
     trust, knowledge, history, firstManifest, latestManifest, initialAuthorities, currentAuthorities,
     root, successorRoot, statusSuccessor, certificateStatusSuccessor, initialTSA, renewalTSA,
     queries, resolver, manifest, preserve, organizationStatus, certificateStatus, originalStatusMembers,
+    publicSourceConfiguration,
     options: { trust, authorityResolver, readKnowledge: () => copy(knowledge), preservationPolicy },
     input: { originalBytes, evidenceRecord },
     replaceLeaf(type, payload) {
