@@ -100,7 +100,7 @@ function certificateTuple(cert) {
 
 // Detach every message and trusted data record before calling external admission.
 // Functions are admitted only at the one explicitly captured resolver slot.
-function snapshot(value, budget = { nodes: 0, bytes: 0 }, depth = 0) {
+function snapshot(value, budget = { nodes: 0, bytes: 0 }, depth = 0, runtimeTime = false) {
   need(depth <= 32 && ++budget.nodes <= 200000, 'ORG_SNAPSHOT_LIMIT', 'UNSUPPORTED');
   if (Buffer.isBuffer(value)) {
     budget.bytes += value.length;
@@ -114,7 +114,7 @@ function snapshot(value, budget = { nodes: 0, bytes: 0 }, depth = 0) {
     return value;
   }
   if (typeof value === 'number') {
-    need(Number.isSafeInteger(value), 'ORG_NUMBER');
+    need(runtimeTime ? Number.isFinite(value) : Number.isSafeInteger(value), 'ORG_NUMBER');
     return value;
   }
   need(
@@ -134,13 +134,13 @@ function snapshot(value, budget = { nodes: 0, bytes: 0 }, depth = 0) {
     need(Object.keys(descriptors).length === value.length + 1, 'ORG_ARRAY_SHAPE');
     return Array.from({ length: value.length }, (_, i) => {
       need(own(descriptors, String(i)) && descriptors[i].enumerable, 'ORG_ARRAY_HOLE');
-      return snapshot(descriptors[i].value, budget, depth + 1);
+      return snapshot(descriptors[i].value, budget, depth + 1, runtimeTime);
     });
   }
   const out = Object.create(null);
   for (const [k, descriptor] of Object.entries(descriptors)) {
     need(descriptor.enumerable && /^[\x20-\x7e]+$/.test(k), 'ORG_DATA_PROPERTY');
-    out[k] = snapshot(descriptor.value, budget, depth + 1);
+    out[k] = snapshot(descriptor.value, budget, depth + 1, runtimeTime);
   }
   return out;
 }
@@ -175,7 +175,7 @@ function resolverResult(value) {
     need(integer(result.coverageUntil), 'ORG_AUTHORITY_DECISION', 'INDETERMINATE');
   return result;
 }
-function detach(input) {
+function detach(input, runtimeTime = false) {
   need(input && [Object.prototype, null].includes(Object.getPrototypeOf(input)), 'ORG_INPUT');
   const descriptors = Object.getOwnPropertyDescriptors(input);
   need(
@@ -206,11 +206,12 @@ function detach(input) {
   const data = Object.fromEntries(
     Object.entries(descriptors).map(([k, d]) => [k, k === 'context' ? plain : d.value]),
   );
-  return { data: snapshot(data), resolver };
+  return { data: snapshot(data, undefined, 0, runtimeTime), resolver };
 }
 
 class Evaluation {
-  constructor() {
+  constructor(history) {
+    this.history = history;
     this.checks = [];
     this.statusObservations = [];
     this.targetObservations = [];
@@ -222,6 +223,12 @@ class Evaluation {
     this.targets = [];
     this.usedKeys = new Set();
     this.validUntil = Number.MAX_SAFE_INTEGER;
+  }
+  get at() {
+    return this.history?.stateTime ?? this.K;
+  }
+  get operationTime() {
+    return this.history?.operationTime ?? this.K;
   }
   attempt(check, action) {
     try {
@@ -249,17 +256,23 @@ class Evaluation {
       .map((o) => this.checks.find((c) => c.overall === o))
       .find(Boolean);
     const overall = bad?.overall ?? (facts ? 'VALID' : 'INDETERMINATE');
-    return snapshot({
-      overall,
-      reason: bad?.reason ?? (facts ? 'ORG_EVIDENCE_VALID' : 'ORG_EVIDENCE_INCOMPLETE'),
-      checks: this.checks,
-      knowledgeTime: integer(this.K) ? this.K : null,
-      statusObservations: this.statusObservations,
-      targetObservations: this.targetObservations,
-      executionObservations: this.executionObservations,
-      counterFacts: overall === 'VALID' ? this.counterFacts : [],
-      ...(overall === 'VALID' ? { facts } : {}),
-    });
+    return snapshot(
+      {
+        overall,
+        reason: bad?.reason ?? (facts ? 'ORG_EVIDENCE_VALID' : 'ORG_EVIDENCE_INCOMPLETE'),
+        checks: this.checks,
+        knowledgeTime: Number.isFinite(this.K) ? this.K : null,
+        statusObservations: this.statusObservations,
+        targetObservations: this.targetObservations,
+        executionObservations: this.executionObservations,
+        counterFacts: overall === 'VALID' ? this.counterFacts : [],
+        ...(this.history ? { usedKeyIDs: [...this.usedKeys] } : {}),
+        ...(overall === 'VALID' ? { facts } : {}),
+      },
+      undefined,
+      0,
+      Boolean(this.history),
+    );
   }
   cert(raw) {
     sized(raw, 65536, 'ORG_CERTIFICATE');
@@ -296,42 +309,43 @@ class Evaluation {
     if (cached.error) throw cached.error;
     return cached.body;
   }
-  deadline(record, name, reason) {
+  deadline(record, name, reason, at = this.at) {
     need(own(record, name), reason + '_MISSING', 'INDETERMINATE');
-    need(this.K < record[name], reason + '_EXPIRED');
+    need(at < record[name], reason + '_EXPIRED');
     this.validUntil = Math.min(this.validUntil, record[name]);
   }
-  key(publicKey) {
+  key(publicKey, at = this.at) {
     const k = keyID(publicKey),
       key = hex(k);
     this.usedKeys.add(key);
-    this.deadline(this.context.keyDeadlines, key, 'ORG_KEY');
+    this.deadline(this.context.keyDeadlines, key, 'ORG_KEY', at);
     const algorithm = ALG[publicKey.asymmetricKeyType];
     need(algorithm, 'ORG_KEY_ALGORITHM', 'UNSUPPORTED');
-    this.deadline(this.context.algorithmDeadlines, algorithm.oid, 'ORG_ALGORITHM');
+    this.deadline(this.context.algorithmDeadlines, algorithm.oid, 'ORG_ALGORITHM', at);
     this.deadline(
       this.context.hashDeadlines,
       publicKey.asymmetricKeyType === 'ec' ? SHA256 : SHA512,
       'ORG_HASH',
+      at,
     );
     for (const incident of this.state.keyIncidents)
       if (
         equal(incident.trustDomainID, this.context.trustDomainID) &&
         equal(incident.keyID, k) &&
-        incident.compromiseStart <= this.K
+        incident.compromiseStart <= this.at
       )
         fail('ORG_KEY_COMPROMISED');
     return k;
   }
-  protection(raw) {
+  protection(raw, at = this.at) {
     const cert = this.cert(raw);
-    this.key(cert.publicKey);
-    this.deadline(this.context.algorithmDeadlines, cert.algorithm, 'ORG_CERTIFICATE_ALGORITHM');
-    need(cert.notBefore <= this.K && this.K < cert.notAfter, 'ORG_CERTIFICATE_TIME');
+    this.key(cert.publicKey, at);
+    this.deadline(this.context.algorithmDeadlines, cert.algorithm, 'ORG_CERTIFICATE_ALGORITHM', at);
+    need(cert.notBefore <= at && at < cert.notAfter, 'ORG_CERTIFICATE_TIME');
     this.validUntil = Math.min(this.validUntil, cert.notAfter);
     return cert;
   }
-  authority(raw, usage, at = this.K, objectType) {
+  authority(raw, usage, at = this.at, objectType) {
     const [role, purpose] = PURPOSES[usage];
     const entry = this.context.controlTrust.find(
       (e) =>
@@ -340,7 +354,7 @@ class Evaluation {
         (usage !== 'STATUS' || e.objectTypes.includes(objectType)),
     );
     need(entry, 'ORG_AUTHORITY_MAPPING', 'INDETERMINATE');
-    this.protection(raw);
+    this.protection(raw, this.history ? at : this.K);
     return this.authorityQuery(
       raw,
       role,
@@ -354,9 +368,21 @@ class Evaluation {
       at,
     );
   }
-  authorityQuery(certificate, role, scope, stateTime = this.K) {
+  authorityQuery(certificate, role, scope, stateTime = this.at) {
     const query = { certificate, role, scope, stateTime, knowledgeTime: this.K };
-    const k = hex(H('OrganizationAuthorityQuery', query));
+    // Runtime proof bounds may include subsecond accuracy; signed CBOR remains integral.
+    const k = hex(
+      H(
+        'OrganizationAuthorityQuery',
+        this.history
+          ? {
+              ...query,
+              stateTime: String(stateTime),
+              knowledgeTime: String(this.K),
+            }
+          : query,
+      ),
+    );
     if (this.admissions.has(k)) {
       const result = this.admissions.get(k);
       if (result.error) throw result.error;
@@ -366,12 +392,14 @@ class Evaluation {
       need(typeof this.resolver === 'function', 'AUTHORITY_RESOLVER_REQUIRED', 'INDETERMINATE');
       let value;
       try {
-        value = this.resolver(snapshot(query));
+        value = this.resolver(snapshot(query, undefined, 0, Boolean(this.history)));
       } catch (error) {
         if (['INVALID', 'UNSUPPORTED', 'INDETERMINATE'].includes(error?.overall)) throw error;
         fail('ORG_AUTHORITY_UNAVAILABLE', 'INDETERMINATE');
       }
       const result = resolverResult(value);
+      if (this.history)
+        need(result.coverageUntil !== undefined, 'ORG_AUTHORITY_COVERAGE', 'INDETERMINATE');
       if (result.coverageUntil !== undefined) {
         need(this.K < result.coverageUntil, 'ORG_AUTHORITY_COVERAGE', 'INDETERMINATE');
         this.validUntil = Math.min(this.validUntil, result.coverageUntil);
@@ -399,10 +427,10 @@ class Evaluation {
     times(body, ['issuedAt', 'knownAt', 'validFrom', 'validUntil']);
     need(
       body.issuedAt <= body.knownAt &&
-        body.knownAt <= this.K &&
+        body.knownAt <= this.operationTime &&
         body.issuedAt <= body.validFrom &&
-        body.validFrom <= this.K &&
-        this.K < body.validUntil,
+        body.validFrom <= this.operationTime &&
+        this.at < body.validUntil,
       'ORG_OBJECT_TIME',
     );
     need(body.validUntil - body.validFrom <= DAY30, 'ORG_OBJECT_LIFETIME', 'UNSUPPORTED');
@@ -493,7 +521,7 @@ function contextShape(e) {
     'organizationID',
     'issuerID',
     'identityNamespace',
-    'operator',
+    ...(!e.history ? ['operator'] : []),
     'policy',
     'controlTrust',
     'credentialTrust',
@@ -501,24 +529,35 @@ function contextShape(e) {
     'algorithmDeadlines',
     'hashDeadlines',
     'keyDeadlines',
-    'executionCurrent',
+    ...(!e.history ? ['executionCurrent'] : []),
   ]);
   need(c.knowledgeTime !== null, 'ORG_KNOWLEDGE_TIME_UNAVAILABLE', 'INDETERMINATE');
-  need(integer(c.knowledgeTime), 'ORG_KNOWLEDGE_TIME');
+  need(
+    e.history ? Number.isFinite(c.knowledgeTime) && c.knowledgeTime >= 0 : integer(c.knowledgeTime),
+    'ORG_KNOWLEDGE_TIME',
+  );
   e.K = c.knowledgeTime;
   id(c.trustDomainID);
   id(c.organizationID);
   text(c.issuerID);
   text(c.identityNamespace, 128);
   need(/^[\x21-\x7e]+$/.test(c.identityNamespace), 'ORG_IDENTITY_NAMESPACE');
-  fields(c.operator, ['type', 'id', 'active', 'knownAt', 'validFrom', 'validUntil']);
-  id(c.operator.id);
-  times(c.operator, ['knownAt', 'validFrom', 'validUntil']);
-  need(
-    typeof c.operator.active === 'boolean' && c.operator.validFrom < c.operator.validUntil,
-    'ORG_OPERATOR_SCHEMA',
-  );
-  need(c.operator.type === 'WORKLOAD', 'ORG_OPERATOR_TYPE', 'UNSUPPORTED');
+  if (!e.history) {
+    fields(c.operator, ['type', 'id', 'active', 'knownAt', 'validFrom', 'validUntil']);
+    id(c.operator.id);
+    times(c.operator, ['knownAt', 'validFrom', 'validUntil']);
+    need(
+      typeof c.operator.active === 'boolean' && c.operator.validFrom < c.operator.validUntil,
+      'ORG_OPERATOR_SCHEMA',
+    );
+    need(c.operator.type === 'WORKLOAD', 'ORG_OPERATOR_TYPE', 'UNSUPPORTED');
+    e.operator = c.operator;
+  } else {
+    const authorization = e.control(e.input.authorization, 'OrganizationAuthorization');
+    need(authorization.actorType === 'WORKLOAD', 'ORG_OPERATOR_TYPE', 'UNSUPPORTED');
+    id(authorization.actorID);
+    e.operator = { type: authorization.actorType, id: authorization.actorID };
+  }
   const p = c.policy;
   need(p && typeof p === 'object', 'ORG_POLICY');
   need(!own(p, 'documentEvidence'), 'ORG_PLAN_DOWNGRADE');
@@ -600,12 +639,12 @@ function contextShape(e) {
     'raCertificate',
     'statusCertificate',
     'issuanceScope',
-    'currentCertificateStatus',
+    ...(!e.history ? ['currentCertificateStatus'] : []),
   ]);
   for (const k of ['certificate', 'issuerCertificate', 'raCertificate', 'statusCertificate'])
     sized(t[k], 65536, 'ORG_CERTIFICATE');
   sized(t.registrationAuthorization, 128 * 1024, 'ORG_REGISTRATION_AUTHORIZATION');
-  if (t.currentCertificateStatus !== null)
+  if (!e.history && t.currentCertificateStatus !== null)
     sized(t.currentCertificateStatus, 128 * 1024, 'ORG_CERTIFICATE_STATUS');
   fields(t.issuanceScope, ['trustDomainID', 'issuerID', 'issuerKeyID', 'representation']);
   id(t.issuanceScope.trustDomainID);
@@ -732,6 +771,8 @@ function path(e, parsed) {
         'ORG_GRANT_KEY_BINDING',
       );
       e.authority(member.issuerCertificate, i === 0 ? 'ROOT' : 'ISSUE');
+      if (e.history)
+        e.authority(member.issuerCertificate, i === 0 ? 'ROOT' : 'ISSUE', body.issuedAt);
       e.target('GRANT', member, body, body.delegateAuthority.keyID);
       e.authority(member.delegateCertificate, i === parsed.grants.length - 1 ? 'FINAL' : 'ISSUE');
       e.lifetime(body);
@@ -841,6 +882,7 @@ function registration(e, member, index) {
   );
   need(equal(keyID(publicKey), body.keyID), 'ORG_REGISTRATION_KEY');
   e.authority(member.issuerCertificate, 'REGISTRATION');
+  if (e.history) e.authority(member.issuerCertificate, 'REGISTRATION', body.issuedAt);
   e.target('APPROVER_REGISTRATION', member, body, body.keyID);
   e.lifetime(body);
   e.key(publicKey);
@@ -1041,7 +1083,13 @@ function statuses(e, retained) {
       const target = candidates.find((t) => equal(t.objectHash, body.objectHash));
       need(target && equal(target.subjectKeyID, body.subjectKeyID), 'ORG_STATUS_TARGET_BINDING');
       e.authority(member.issuerCertificate, 'STATUS', body.publishedAt, body.objectType);
-      e.authority(member.issuerCertificate, 'STATUS', e.K, body.objectType);
+      const original = retained?.statements.some((value) => equal(value.cms, member.cms));
+      e.authority(
+        member.issuerCertificate,
+        'STATUS',
+        e.history && original ? e.at : e.K,
+        body.objectType,
+      );
       const observation = {
         trustDomainID: body.trustDomainID,
         organizationID: body.organizationID,
@@ -1082,7 +1130,7 @@ function statuses(e, retained) {
       for (const row of rows)
         if (row.status === 'REVOKED') {
           const cutoff = Math.min(row.effectiveTime ?? Infinity, row.compromiseStart ?? Infinity);
-          need(e.K < cutoff, 'ORG_STATUS_REVOKED');
+          need(e.at < cutoff, 'ORG_STATUS_REVOKED');
           e.validUntil = Math.min(e.validUntil, cutoff);
         }
       const presented = authenticated.filter(({ observation: s }) => sameTarget(s, target));
@@ -1113,7 +1161,7 @@ function statuses(e, retained) {
       need(original, 'ORG_STATUS_CURRENT_MATERIAL_MISSING', 'INDETERMINATE');
       const body = original.body;
       const decision = evaluateStatus(body, {
-        stateTime: e.K,
+        stateTime: e.at,
         knowledgeTime: e.K,
         scope: 'ORGANIZATION_DELEGATION',
       });
@@ -1129,7 +1177,7 @@ function statuses(e, retained) {
       row.publishedAt <= e.K &&
       row.status === 'REVOKED' &&
       row.compromiseStart !== null &&
-      row.compromiseStart <= e.K &&
+      row.compromiseStart <= e.at &&
       e.usedKeys.has(hex(row.subjectKeyID))
     )
       e.attempt('key-incident:' + hex(row.subjectKeyID), () => fail('ORG_KEY_COMPROMISED'));
@@ -1375,7 +1423,7 @@ function operation(e) {
     tbs,
     publicKey: seal.publicKey,
     audience: c.policy.audience,
-    at: e.K,
+    at: e.operationTime,
     maxLifetime: c.policy.maxActivationLifetime,
   });
   for (const name of [
@@ -1400,18 +1448,26 @@ function operation(e) {
   need(
     sim.issuedAt <= activation.issuedAt &&
       activation.expiresAt <= sim.expiresAt &&
-      sim.issuedAt <= e.K &&
-      e.K < sim.expiresAt,
+      sim.issuedAt <= e.operationTime &&
+      e.at < sim.expiresAt &&
+      activation.issuedAt <= e.at &&
+      e.at < activation.expiresAt,
     'ORG_SIM_TIME',
   );
-  need(
-    c.operator.active &&
-      c.operator.knownAt <= e.K &&
-      c.operator.validFrom <= e.K &&
-      e.K < c.operator.validUntil,
-    'ORG_WORKLOAD_INACTIVE',
+  if (!e.history)
+    need(
+      c.operator.active &&
+        c.operator.knownAt <= e.K &&
+        c.operator.validFrom <= e.K &&
+        e.K < c.operator.validUntil,
+      'ORG_WORKLOAD_INACTIVE',
+    );
+  e.validUntil = Math.min(
+    e.validUntil,
+    sim.expiresAt,
+    activation.expiresAt,
+    e.history ? Infinity : c.operator.validUntil,
   );
-  e.validUntil = Math.min(e.validUntil, sim.expiresAt, activation.expiresAt, c.operator.validUntil);
   e.authorityQuery(c.credentialTrust.certificate, 'DOCUMENT_SEAL', {
     trustDomainID: c.trustDomainID,
     profileID: PROFILE,
@@ -1448,7 +1504,7 @@ function pathOperation(e, info, operationInfo) {
   const { ent } = info,
     { context: c } = e;
   need(
-    included(ent.allowedOperatorIDs, c.operator.id) &&
+    included(ent.allowedOperatorIDs, e.operator.id) &&
       included(ent.sealKeys, operationInfo.tuple) &&
       included(ent.policyHashes, H('SignaturePolicy', c.policy)) &&
       ent.audiences.includes(c.policy.audience) &&
@@ -1485,7 +1541,7 @@ function requestExpected(e, info) {
       payload: e.input.delegationPath,
     }),
     approvalPolicyHash: policyHash(e, info),
-    operator: { type: 'WORKLOAD', id: e.context.operator.id },
+    operator: { type: 'WORKLOAD', id: e.operator.id },
   };
 }
 function checkRequest(e, request, info, regs) {
@@ -1495,8 +1551,8 @@ function checkRequest(e, request, info, regs) {
   times(request, ['issuedAt', 'expiresAt']);
   need(
     request.issuedAt === e.input.activation.issuedAt &&
-      request.issuedAt <= e.K &&
-      e.K < request.expiresAt &&
+      request.issuedAt <= e.operationTime &&
+      e.at < request.expiresAt &&
       request.expiresAt > request.issuedAt &&
       request.expiresAt <= e.input.activation.expiresAt &&
       request.expiresAt - request.issuedAt <= 120,
@@ -1726,10 +1782,11 @@ function finalAuthorization(e, info, setInfo, operationInfo) {
     'ORG_FINAL_SIGNER',
   );
   e.authority(member.issuerCertificate, 'FINAL');
+  if (e.history) e.authority(member.issuerCertificate, 'FINAL', body.issuedAt);
   e.target('FINAL_AUTHORIZATION', member, body, keyID(e.cert(member.issuerCertificate).publicKey));
   need(
     body.actorType === 'WORKLOAD' &&
-      equal(body.actorID, e.context.operator.id) &&
+      equal(body.actorID, e.operator.id) &&
       body.purpose === 'ORGANIZATION_SEAL' &&
       equal(body.authorizationID, e.input.sim.organizationAuthorizationID),
     'ORG_AUTHORIZATION_SCOPE',
@@ -1749,8 +1806,8 @@ function finalAuthorization(e, info, setInfo, operationInfo) {
   times(body, ['issuedAt', 'expiresAt']);
   need(
     body.issuedAt >= r.issuedAt &&
-      body.issuedAt <= e.K &&
-      e.K < body.expiresAt &&
+      body.issuedAt <= e.operationTime &&
+      e.at < body.expiresAt &&
       body.expiresAt <= r.expiresAt &&
       body.expiresAt > body.issuedAt &&
       body.expiresAt - body.issuedAt <= 30,
@@ -1773,7 +1830,9 @@ function finalExecution(e, oa, current) {
   hash(p.activationEvidenceHash);
   times(p, ['issuedAt', 'expiresAt']);
   e.authority(permit.issuerCertificate, 'PERMIT');
+  if (e.history) e.authority(permit.issuerCertificate, 'PERMIT', p.issuedAt);
   e.authority(receiptCertificate, 'RECEIPT');
+  if (e.history) e.authority(receiptCertificate, 'RECEIPT', e.operationTime);
   const b = bindingBody(e, binding);
   need(
     p.schemaVersion === 1 &&
@@ -1784,8 +1843,8 @@ function finalExecution(e, oa, current) {
   );
   need(
     p.issuedAt === oa.issuedAt &&
-      p.issuedAt <= e.K &&
-      e.K < p.expiresAt &&
+      p.issuedAt <= e.operationTime &&
+      e.at < p.expiresAt &&
       p.expiresAt > p.issuedAt &&
       p.expiresAt <= oa.expiresAt &&
       p.expiresAt - p.issuedAt <= 30,
@@ -1796,12 +1855,18 @@ function finalExecution(e, oa, current) {
       equal(b.receiptKeyID, keyID(e.cert(receiptCertificate).publicKey)),
     'ORG_EXECUTION_AUTHORITY_BINDING',
   );
-  need(current, 'ORG_EXECUTION_CURRENT_MISSING', 'INDETERMINATE');
+  if (!e.history) {
+    need(current, 'ORG_EXECUTION_CURRENT_MISSING', 'INDETERMINATE');
+    need(
+      equal(sha512(binding.cms), sha512(current.member.cms)) && b.epoch === current.body.epoch,
+      'ORG_EXECUTION_LEASE_CHANGED',
+    );
+  }
+  if (e.history) e.authority(binding.issuerCertificate, 'BINDING', b.issuedAt);
   need(
-    equal(sha512(binding.cms), sha512(current.member.cms)) && b.epoch === current.body.epoch,
-    'ORG_EXECUTION_LEASE_CHANGED',
+    b.issuedAt <= e.operationTime && e.at < b.expiresAt && b.status === 'ACTIVE',
+    'ORG_EXECUTION_INACTIVE',
   );
-  need(b.issuedAt <= e.K && e.K < b.expiresAt && b.status === 'ACTIVE', 'ORG_EXECUTION_INACTIVE');
   e.validUntil = Math.min(e.validUntil, p.expiresAt, b.expiresAt);
   return {
     authorizationHash: sha512(e.input.authorization.cms),
@@ -1931,13 +1996,22 @@ function preflight(e, mode) {
       return verifyCMS(e.context.executionCurrent.binding);
     });
 }
-function start(input, mode) {
-  const e = new Evaluation();
-  const detached = e.attempt('input-snapshot', () => detach(input));
+function start(input, mode, history) {
+  const e = new Evaluation(history);
+  const detached = e.attempt('input-snapshot', () => detach(input, Boolean(history)));
   if (!detached) return e;
   e.input = detached.data;
   e.context = e.input.context;
-  e.state = e.input.state;
+  e.state = history
+    ? {
+        knowledgeTime: null,
+        targets: [],
+        heads: [],
+        terminalObservations: [],
+        keyIncidents: [],
+        executions: [],
+      }
+    : e.input.state;
   e.resolver = detached.resolver;
   e.K = e.context.knowledgeTime;
   const extra = {
@@ -1957,7 +2031,7 @@ function start(input, mode) {
   e.attempt('input-fields', () =>
     fields(e.input, [
       'context',
-      'state',
+      ...(!history ? ['state'] : []),
       'sim',
       'activation',
       'tbs',
@@ -1993,7 +2067,7 @@ function start(input, mode) {
     e.attempt('entitlement', () => pathOperation(e, e.pathInfo, e.operation));
   if (e.regMembers)
     e.regs = e.attempt('registrations', () => registrations(e, e.regMembers, e.pathInfo));
-  e.current = e.attempt('current-execution', () => currentExecution(e));
+  if (!history) e.current = e.attempt('current-execution', () => currentExecution(e));
   e.ready = true;
   return e;
 }
@@ -2077,7 +2151,22 @@ export function verifyOrganizationApprovalSet(input) {
 
 /** Verify organization closure only; document, credential/RAR and receipt checks compose separately. */
 export function verifyOrganizationEvidence(input) {
-  const e = start(input, 'evidence');
+  return completeEvidence(start(input, 'evidence'));
+}
+
+/** Retrospective semantic facts only; the caller must authenticate the complete ERS and receipt. */
+export function verifyOrganizationHistoricalEvidence(input, { stateTime, operationTime }) {
+  need(
+    Number.isFinite(stateTime) &&
+      integer(operationTime) &&
+      operationTime <= stateTime &&
+      stateTime <= input.context.knowledgeTime,
+    'ORG_HISTORY_TIME',
+  );
+  return completeEvidence(start(input, 'evidence', { stateTime, operationTime }));
+}
+
+function completeEvidence(e) {
   let facts, setInfo, oa, execution;
   if (e.ready) {
     if (e.pathInfo && e.regs && e.operation && e.approvalCollection) {

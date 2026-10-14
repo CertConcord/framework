@@ -24,10 +24,12 @@ import { snapshotIssuanceScope } from '../enrollment-scope.mjs';
 import {
   VerificationEvaluation,
   verificationOutcome,
+  verificationResult,
   evaluatedCheck,
 } from '../verification-result.mjs';
 
 export const profiles = Object.freeze(['CMS', 'MDOC']);
+export { createOrganizationHistoryVerifier } from '../organization-history.mjs';
 const plans = Object.freeze({
   CMS: [
     'certconcord-ecp-cms-attested-draft-03',
@@ -466,10 +468,9 @@ export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
           result.reason === 'TRUSTED_TIME_EVIDENCE_REQUIRED' ? 'INDETERMINATE' : 'VALID',
           result.reason === 'TRUSTED_TIME_EVIDENCE_REQUIRED' ? result.reason : result.time,
         );
-        return Object.freeze({
+        return verificationResult({
           ...result,
           overall: result.overall === 'VALID_UNDER_POLICY' ? 'VALID' : result.overall,
-          coreRevision: 'draft-03',
           profile,
           dimensions: evaluation.result(),
         });
@@ -496,10 +497,9 @@ export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
             error;
         }
         const { overall, reason } = verificationOutcome(failure);
-        return Object.freeze({
+        return verificationResult({
           overall,
           reason,
-          coreRevision: 'draft-03',
           profile,
           dimensions: evaluation.result(),
         });

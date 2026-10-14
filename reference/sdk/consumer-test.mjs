@@ -9,6 +9,7 @@ import { runFoundationDemo } from '../foundation-demo.mjs';
 import { runDocumentDemo } from '../document-demo.mjs';
 import { dcbor, decodeCBOR } from '../core.mjs';
 import { runDocumentVectors } from '../verify-vectors.mjs';
+import { createIndependentOrganizationHistoryFixture } from '../fixtures-history-independent.mjs';
 const cwd = resolve('.runtime/sdk-consumer');
 const sdkPackage = JSON.parse(await readFile('sdk/package.json'));
 assert.equal(sdkPackage.private, true);
@@ -32,7 +33,11 @@ const require = createRequire(cwd + '/package.json');
 const entry = cwd + '/load.mjs';
 await writeFile(entry, "export * from '@certconcord/verifier';\n");
 const sdk = await import(pathToFileURL(entry));
-assert.deepEqual(Object.keys(sdk).sort(), ['createVerifier', 'profiles']);
+assert.deepEqual(Object.keys(sdk).sort(), [
+  'createOrganizationHistoryVerifier',
+  'createVerifier',
+  'profiles',
+]);
 assert.throws(() => require.resolve('@certconcord/verifier/core.mjs'), /not defined|not exported/);
 assert.throws(() => sdk.createVerifier({ format: 'CMS', trust: {} }), /SDK_TRUST/);
 const publicVectors = runDocumentVectors({ createVerifier: sdk.createVerifier });
@@ -78,8 +83,37 @@ assert.equal(
     .organizationAuthorization,
   'AUTHORITY_ATTESTED_OPERATION',
 );
+const history = await createIndependentOrganizationHistoryFixture({ firstAccuracyMillis: 500 });
+try {
+  const verifier = sdk.createOrganizationHistoryVerifier(history.options);
+  const result = verifier.verify(history.input);
+  assert.equal(result.overall, 'VALID', JSON.stringify(result));
+  assert.equal(result.coreRevision, 'draft-03');
+  assert.equal(result.purpose, 'RETAINED_EVIDENCE_VERIFICATION');
+  assert.equal(result.proofOfExistenceUpperBound, history.P);
+  assert.equal(result.historicalAuthorization.scope, 'AS_KNOWN_AT_PROOF_TIME');
+  assert.equal(result.historicalAuthorization.knowledgeTime, history.P);
+  assert.equal(result.currentAdmissibility.scope, 'HISTORICAL_EVIDENCE_UNDER_CURRENT_KNOWLEDGE');
+  assert.equal(result.currentAdmissibility.knowledgeTime, history.K);
+  assert.equal(result.preservation.overall, 'VALID');
+  history.knowledge.statusMaterial[0] = history.organizationStatus(
+    history.originalStatusMembers[0],
+    {
+      status: 'REVOKED',
+      effectiveTime: history.A,
+    },
+  );
+  const revoked = verifier.verify(history.input);
+  assert.equal(revoked.overall, 'INVALID', revoked.reason);
+  assert.equal(revoked.historicalAuthorization.overall, 'VALID');
+  assert.equal(revoked.currentAdmissibility.overall, 'INVALID');
+  assert.equal(history.source.calls.sign, 1);
+  assert.notEqual(verifier.verify({ ...history.input, overall: 'VALID' }).overall, 'VALID');
+} finally {
+  history.close();
+}
 console.log(
-  'SDK archive install, export boundary, trust binding, document evidence and execution plans passed; ' +
+  'SDK archive install, export boundary, trust binding, document evidence, execution and organization history plans passed; ' +
     publicVectors.length +
     ' public document vectors reproduced through the installed package',
 );

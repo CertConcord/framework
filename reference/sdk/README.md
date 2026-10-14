@@ -1,6 +1,6 @@
 # CertConcord draft verifier
 
-Package: @certconcord/verifier, version 0.3.0-draft.1. The experimental API exports createVerifier and profiles. It evaluates the selected CMS/MTC/X.509 or native signer-mdoc/COSE evidence plan, including supported Passkey and execution-binding candidates. It is not a stable API or a complete independent conformance assessment.
+Package: @certconcord/verifier, version 0.3.0-draft.1. The experimental API exports `createVerifier`, `createOrganizationHistoryVerifier` and `profiles`. The generic verifier evaluates the selected CMS/MTC/X.509 or native signer-mdoc/COSE evidence plan, including supported Passkey and execution-binding candidates. The dedicated organization export evaluates retained complete-package evidence and ERS preservation. It is not a stable API or a complete independent conformance assessment.
 
 This package demonstrates protocol semantics and supports interoperability testing. Its bundle includes custom DER, CBOR and CMS parsing from the reference implementation. It is not a recommended production verifier or parser security boundary. Production implementations SHOULD use mature, independently evaluated parser and cryptographic stacks for the enabled formats and algorithms, while enforcing CertConcord's additional semantic checks: exact original bytes, duplicate/critical-field handling, algorithm and key purpose, external trust, operation authorization, lifecycle, time and evidence completeness. See [the parser contract](../../spec/bindings/SEP-draft-03.md#2-parser-and-execution-boundaries). Worker isolation and passing the test suite do not replace that evaluation.
 
@@ -18,6 +18,8 @@ The trust argument comes from authenticated relying-party configuration. Every C
 Selecting the [document evidence binding](../../spec/bindings/DOCUMENT-draft-03.md) adds the required timestamp and any independent organizational grant. Organizational seals require an externally configured organization-to-authority mapping. Required trusted time needs a TSA certificate, issuer key, policy OID and a status callback receiving generation time, proof upper bound and knowledge time. That callback must evaluate relying-party-authorized status information; an unconditional callback is appropriate only to an explicitly synthetic fixture.
 
 ## Results
+
+The [organization history contract](../../docs/organization-history.md) defines the dedicated `{trust, authorityResolver, readKnowledge, preservationPolicy}` constructor and `verify({originalBytes, evidenceRecord})` method. It returns `historicalAuthorization` at the first exact PoE bound P under P knowledge, `currentAdmissibility` at P under latest K knowledge, and continuous `preservation` through K. All three must succeed. Its original workload claim is authority-attested; it consumes no live operator or execution snapshot and grants no current signing, recovery or output-release permission. Latest knowledge must retain incidents and conflicts. The generic `createVerifier` does not route this plan.
 
 | overall       | Meaning                                                                                                                                         |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |

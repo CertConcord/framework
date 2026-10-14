@@ -13,6 +13,43 @@ export const verificationDimensions = Object.freeze([
   'transparency',
 ]);
 const outcomes = ['VALID', 'INDETERMINATE', 'UNSUPPORTED', 'INVALID'];
+export const coreRevision = 'draft-03';
+
+/** Fixed result identity shared by independently selected verification operations. */
+export function verificationResult({
+  overall,
+  reason,
+  profile = null,
+  dimensions = {},
+  ...details
+}) {
+  if (
+    !outcomes.includes(overall) ||
+    typeof reason !== 'string' ||
+    !reason.length ||
+    !(profile === null || (typeof profile === 'string' && profile.length > 0))
+  )
+    throw new ProtocolError('VERIFICATION_RESULT_SHAPE');
+  const evaluated = {};
+  for (const [name, value] of Object.entries(dimensions)) {
+    if (
+      !verificationDimensions.includes(name) ||
+      !outcomes.includes(value?.overall) ||
+      typeof value.reason !== 'string' ||
+      !value.reason.length
+    )
+      throw new ProtocolError('VERIFICATION_RESULT_DIMENSION');
+    evaluated[name] = Object.freeze({ overall: value.overall, reason: value.reason });
+  }
+  return Object.freeze({
+    ...details,
+    overall,
+    reason,
+    coreRevision,
+    profile,
+    dimensions: Object.freeze(evaluated),
+  });
+}
 const unavailable = new Set([
   'ECP_MISSING_OBJECT',
   'ECP_STATUS_STALE',

@@ -1,4 +1,5 @@
 import { ProtocolError, dcbor, equal, integer, keyID, seq, sha256 } from './core.mjs';
+import { verificationResult } from './verification-result.mjs';
 import { types } from 'node:util';
 import { parseCertificate } from './pki.mjs';
 import { validateSmimeMaterial } from './cades-validation.mjs';
@@ -158,11 +159,12 @@ function requireAccepted(run) {
 }
 function result(run, details = {}) {
   const rejected = aggregate(run.checks);
-  return Object.freeze(
+  return verificationResult(
     snapshot({
       ...(rejected ? {} : details),
       overall: rejected?.overall ?? 'VALID',
       reason: rejected?.reason ?? 'SMIME_VALID',
+      profile: 'SMIME',
       knowledgeTime: run.knowledgeTime,
       ...(rejected ? { effectMayHaveOccurred: run.effectMayHaveOccurred } : {}),
       checks: run.checks,

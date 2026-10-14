@@ -10,6 +10,9 @@ const result = await build({
   format: 'esm',
   platform: 'node',
   target: 'node24',
+  banner: {
+    js: "import { createRequire as createNodeRequire } from 'node:module'; const require = createNodeRequire(import.meta.url);",
+  },
   outfile: dir + '/index.mjs',
   metafile: true,
   legalComments: 'inline',
