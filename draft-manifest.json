@@ -170,8 +170,8 @@
     },
     {
       "path": "docs/draft-acceptance.md",
-      "bytes": 3802,
-      "sha256": "3636d6256ae6d686987f2b6c8109022bf159e29b27bfa23d469f5d89564ecb49"
+      "bytes": 5163,
+      "sha256": "bd0705e356c9f2400c0d4c077ace18857c5a758d30481d6e77ba34d0deae40ed"
     },
     {
       "path": "docs/ecosystem.md",
@@ -2155,8 +2155,8 @@
     },
     {
       "path": "spec/conformance.md",
-      "bytes": 9088,
-      "sha256": "7da7ffc44476a7de4530a2cab9ae69b94dc3237c317a926bd63a5b6dfe3b5e0f"
+      "bytes": 9649,
+      "sha256": "c79507d8be14be39d3177b9520724af2ea40387294d84b92a05d9f00c8ef96d3"
     },
     {
       "path": "spec/document-baseline.md",
