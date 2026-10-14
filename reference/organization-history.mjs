@@ -9,6 +9,7 @@ import {
   keyID,
   publicFromDER,
   sha256,
+  sha512,
   verify,
 } from './core.mjs';
 import { parseCertificate, validateCertificate, verifyCMS } from './pki.mjs';
@@ -17,7 +18,10 @@ import { inspectEvidencePackage } from './evidence-plan.mjs';
 import { verifyERSOriginalProof, verifyERSPreservation } from './archive.mjs';
 import { verifyRegistrationBinding } from './document-evidence.mjs';
 import { verifyOrganizationExecutionEvidence } from './execution-binding.mjs';
-import { verifyOrganizationHistoricalEvidence } from './organization-delegation-evidence.mjs';
+import {
+  verifyOrganizationHistoricalEvidence,
+  authenticateOrganizationHistoryMaterial,
+} from './organization-delegation-evidence.mjs';
 import { ORGANIZATION_PLAN, record, snapshot } from './organization-delegation-state.mjs';
 import { connectOrganizationHistorySource } from './organization-history-source.mjs';
 import {
@@ -358,11 +362,12 @@ function admit(authorityResolver, raw, role, scope, stateTime, knowledgeTime) {
 // These are authenticated negative/rollback observations, never positive status
 // substitutes, a live journal projection, or permission to execute an operation.
 class HistoricalKnowledge {
-  constructor() {
+  constructor(durable = false) {
     this.targets = new Map();
     this.statuses = new Map();
     this.certificates = new Map();
     this.full = false;
+    this.durable = durable;
   }
   keep(map, id, value) {
     if (map.has(id)) return;
@@ -372,11 +377,22 @@ class HistoricalKnowledge {
     }
     map.set(id, snapshot(value));
   }
-  organization(result, P, checks) {
+  matchingTargets(original) {
+    if (!this.durable) return [];
+    const raw = [
+      original.controls.OrganizationAuthorization?.cms,
+      ...(original.parsed.OrganizationDelegationPath?.grants ?? []).map((v) => v.cms),
+      ...(original.parsed.OrganizationApprovalSet?.approvals ?? []).map((v) => v.registrationCMS),
+    ].filter(Buffer.isBuffer);
+    const hashes = new Set(raw.map((v) => sha512(v).toString('hex')));
+    return [...this.targets.values()].filter((v) => hashes.has(v.objectHash.toString('hex')));
+  }
+  organization(result, P, checks, retainedTargets = []) {
     const targetID = (v) => v.objectType + ':' + v.objectID.toString('hex');
     const usedKeys = new Set(result.usedKeyIDs ?? []);
     const targets = result.targetObservations ?? [],
       incoming = result.statusObservations ?? [];
+    for (const target of retainedTargets) usedKeys.add(target.subjectKeyID.toString('hex'));
     for (const value of targets)
       this.keep(this.targets, targetID(value) + ':' + value.semanticHash.toString('hex'), value);
     for (const value of incoming)
@@ -392,7 +408,9 @@ class HistoricalKnowledge {
         const id = targetID(row) + ':' + row.epoch;
         need(!epochs.has(id) || equal(epochs.get(id), row.semanticHash), 'ORG_STATUS_CONFLICT');
         epochs.set(id, row.semanticHash);
-        const relevant = targets.some((target) => targetID(target) === targetID(row));
+        const relevant = [...targets, ...retainedTargets].some(
+          (target) => targetID(target) === targetID(row),
+        );
         if (row.status === 'REVOKED') {
           need(
             !relevant ||
@@ -416,7 +434,9 @@ class HistoricalKnowledge {
             'ORG_TARGET_CONFLICT',
           );
         const prior = rows.filter((row) => targetID(row) === targetID(target));
-        const presented = incoming.filter((row) => targetID(row) === targetID(target));
+        const presented = (
+          this.durable ? (result.currentStatusObservations ?? []) : incoming
+        ).filter((row) => targetID(row) === targetID(target));
         if (prior.length && presented.length)
           need(
             Math.max(...presented.map((row) => row.epoch)) >=
@@ -431,10 +451,28 @@ class HistoricalKnowledge {
         reason: 'ORG_HISTORY_KNOWLEDGE_LIMIT',
       });
   }
-  certificate(statements, P, K, checks) {
+  certificate(statements, P, K, checks, currentStatements = statements) {
+    let publicationRollback = false;
+    if (this.durable) {
+      for (const body of currentStatements) {
+        const incoming = currentStatements.filter((v) =>
+          equal(v.certificateID, body.certificateID),
+        );
+        const old = [...this.certificates.values()].filter((v) =>
+          equal(v.certificateID, body.certificateID),
+        );
+        if (
+          old.length &&
+          Math.max(...incoming.map((v) => v.publishedAt)) <
+            Math.max(...old.map((v) => v.publishedAt))
+        )
+          publicationRollback = true;
+      }
+    }
     for (const body of statements)
       this.keep(this.certificates, H('CertificateStatus', body).toString('hex'), body);
     checks.add('retained-certificate-incidents', 'status', () => {
+      need(!publicationRollback, 'ORG_CERTIFICATE_STATUS_ROLLBACK');
       const publications = new Map();
       for (const body of this.certificates.values()) {
         const id = body.certificateID.toString('hex') + ':' + body.publishedAt;
@@ -460,7 +498,7 @@ class HistoricalKnowledge {
   }
 }
 
-function credentialView(original, trust, knowledge, P, authorityResolver, checks) {
+function credentialView(original, trust, knowledge, P, authorityResolver, checks, onAdmission) {
   const { values, A } = original,
     t = trust.credentialTrust,
     K = knowledge.knowledgeTime;
@@ -471,6 +509,7 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
     representation: 'X509',
   };
   checks.add('original-credential', 'qualification', () => {
+    need(integer(A), 'ORG_HISTORY_TIME_UNAVAILABLE', 'INDETERMINATE');
     need(
       Buffer.isBuffer(values.Certificate) && Buffer.isBuffer(values.RegistrationAuthorization),
       'ORG_HISTORY_ORIGINAL_MISSING',
@@ -510,10 +549,27 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
       : []),
     ...knowledge.certificateStatusMaterial.map((m) => ({ ...m, original: false })),
   ];
-  const statements = [];
+  const statements = [],
+    currentStatements = [];
   for (const [i, member] of members.entries())
     checks.add('certificate-status:' + i, 'status', () => {
       const body = readControl(member.cms, 'CertificateStatus', member.issuerCertificate);
+      if (onAdmission) {
+        fields(
+          body,
+          [
+            'schemaVersion',
+            'trustDomainID',
+            'certificateID',
+            'scope',
+            'status',
+            'publishedAt',
+            'nextUpdate',
+          ],
+          ['effectiveTime', 'compromiseStart', 'critical'],
+        );
+        need(body.schemaVersion === 1, 'ORG_CERTIFICATE_STATUS_SCHEMA', 'UNSUPPORTED');
+      }
       const cert = parseCertificate(t.certificate);
       need(
         equal(body.certificateID, cert.certificateID) &&
@@ -536,7 +592,29 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
           need(at < map[id], 'ORG_PROTECTION_DEADLINE');
         }
       }
+      const decision = evaluateStatus(body, {
+        stateTime: Number.isFinite(P) ? P : K,
+        knowledgeTime: K,
+        scope: 'CERTIFICATE',
+      });
+      if (onAdmission)
+        need(
+          decision.overall !== 'INVALID' || decision.reason === 'STATUS_REVOKED',
+          decision.reason,
+          decision.overall,
+        );
       statements.push(body);
+      if (!member.original) currentStatements.push(body);
+      if (decision.overall !== 'INVALID' || decision.reason === 'STATUS_REVOKED')
+        onAdmission?.({
+          kind: 'certificate-status',
+          material: {
+            cms: Buffer.from(member.cms),
+            issuerCertificate: Buffer.from(member.issuerCertificate),
+          },
+          body: snapshot(body),
+          original: member.original,
+        });
     });
   checks.add('certificate-status-closure', 'status', () => {
     for (const body of statements) {
@@ -565,15 +643,21 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
       decision.overall,
     );
   });
-  return statements;
+  return { statements, currentStatements };
 }
 
 /** Offline historical verification; this API has no signing, recovery, or current-admission capability. */
 export function createOrganizationHistoryVerifier(options) {
   if (Object.hasOwn(options, 'source')) {
     record(options, ['source']);
-    return connectOrganizationHistorySource(options.source, createOrganizationHistoryVerifier);
+    return connectOrganizationHistorySource(options.source, createHistoryVerifier);
   }
+  return createHistoryVerifier(options);
+}
+
+// The admission observer is supplied only by the opaque source implementation.
+// It reports authenticated raw material; it cannot supply an authorization.
+function createHistoryVerifier(options, onAdmission) {
   const { trust: inputTrust, authorityResolver, readKnowledge, preservationPolicy } = options;
   need(
     typeof authorityResolver === 'function' &&
@@ -602,7 +686,7 @@ export function createOrganizationHistoryVerifier(options) {
   const preservation = snapshot(preservationData);
   fields(preservation, ['hashValidUntil'], ['dataValidUntil']);
   let lastKnowledge;
-  const retainedKnowledge = new HistoricalKnowledge();
+  const retainedKnowledge = new HistoricalKnowledge(Boolean(onAdmission));
   return Object.freeze({
     verify(input) {
       const checks = new Checks();
@@ -664,8 +748,88 @@ export function createOrganizationHistoryVerifier(options) {
       const P = initialProof?.proofOfExistenceUpperBound,
         A = original?.A,
         K = knowledge?.knowledgeTime;
+      let independent, independentCertificates;
+      if (onAdmission && original && knowledge && Number.isFinite(P) && P <= K) {
+        const values = original.values,
+          authorization = original.controls.OrganizationAuthorization;
+        independent = authenticateOrganizationHistoryMaterial(
+          {
+            context: {
+              ...trust,
+              knowledgeTime: K,
+              statusMaterial: knowledge.statusMaterial,
+              authorityResolver: resolve,
+            },
+            ...(values.OrganizationDelegationPath
+              ? { delegationPath: values.OrganizationDelegationPath }
+              : {}),
+            ...(values.OrganizationApprovalSet
+              ? { approvalSet: values.OrganizationApprovalSet }
+              : {}),
+            ...(values.OrganizationDelegationStatus
+              ? { statusCollection: values.OrganizationDelegationStatus }
+              : {}),
+            ...(authorization
+              ? {
+                  authorization: {
+                    cms: authorization.cms,
+                    issuerCertificate: authorization.issuerCertificate,
+                  },
+                }
+              : {}),
+          },
+          P,
+          onAdmission,
+        );
+      }
+      if (onAdmission && knowledge) {
+        // External credential status binds directly to the selected certificate.
+        // Its S/K signer admission does not require a successful execution tuple
+        // or an original PoE. Original status still requires an established P.
+        const candidate = original && Number.isFinite(P) ? original : { values: {}, A: undefined };
+        independentCertificates = credentialView(
+          candidate,
+          trust,
+          knowledge,
+          P,
+          resolve,
+          new Checks(),
+          onAdmission,
+        );
+        if (!Number.isFinite(P))
+          for (const body of independentCertificates.statements)
+            retainedKnowledge.keep(
+              retainedKnowledge.certificates,
+              H('CertificateStatus', body).toString('hex'),
+              body,
+            );
+      }
       const view = (latest) => {
         const run = new Checks();
+        let admissionChecks,
+          organizationKnowledgeChecked = false;
+        const includeIndependentFailures = () => {
+          if (!organizationKnowledgeChecked)
+            for (const check of admissionChecks?.checks ?? [])
+              if (check.overall !== 'VALID') run.absorb(check.check, 'status', check);
+        };
+        if (latest && independent) {
+          admissionChecks = new Checks();
+          retainedKnowledge.organization(
+            independent,
+            P,
+            admissionChecks,
+            retainedKnowledge.matchingTargets(original),
+          );
+        }
+        if (latest && independentCertificates && Number.isFinite(P) && !integer(A))
+          retainedKnowledge.certificate(
+            independentCertificates.statements,
+            P,
+            K,
+            run,
+            independentCertificates.currentStatements,
+          );
         for (const row of checks.checks)
           if (row.overall !== 'VALID' && (latest || row.check !== 'knowledge'))
             run.absorb(row.check, undefined, row);
@@ -674,6 +838,7 @@ export function createOrganizationHistoryVerifier(options) {
           ? 'HISTORICAL_EVIDENCE_UNDER_CURRENT_KNOWLEDGE'
           : 'AS_KNOWN_AT_PROOF_TIME';
         if (!(Number.isFinite(P) && integer(A))) {
+          includeIndependentFailures();
           run.absorb('time-binding', 'time', {
             overall: 'INDETERMINATE',
             reason: 'ORG_HISTORY_TIME_UNAVAILABLE',
@@ -690,6 +855,7 @@ export function createOrganizationHistoryVerifier(options) {
             reason: 'ORG_HISTORY_TIME_BINDING',
           });
         if (latest && !knowledge) {
+          includeIndependentFailures();
           run.absorb('knowledge', 'status', {
             overall: 'INDETERMINATE',
             reason: 'ORG_HISTORY_KNOWLEDGE_UNAVAILABLE',
@@ -748,14 +914,45 @@ export function createOrganizationHistoryVerifier(options) {
             { stateTime: P, operationTime: A },
           );
           run.absorb('organization-semantics', 'authorization', result);
-          if (latest) retainedKnowledge.organization(result, P, run);
+          if (latest) {
+            const admitted = onAdmission
+              ? {
+                  ...result,
+                  targetObservations: independent?.targetObservations ?? [],
+                  statusObservations: independent?.statusObservations ?? [],
+                  currentStatusObservations: independent?.currentStatusObservations ?? [],
+                }
+              : result;
+            retainedKnowledge.organization(
+              admitted,
+              P,
+              run,
+              retainedKnowledge.matchingTargets(original),
+            );
+            organizationKnowledgeChecked = true;
+          }
         });
+        includeIndependentFailures();
         const certificateStatements = run.add('credential-view', 'status', () =>
-          credentialView(original, trust, selected, P, resolve, run),
+          credentialView(
+            original,
+            trust,
+            selected,
+            P,
+            resolve,
+            run,
+            latest ? onAdmission : undefined,
+          ),
         );
         if (latest && certificateStatements)
           run.add('retained-certificate-knowledge', 'status', () =>
-            retainedKnowledge.certificate(certificateStatements, P, K, run),
+            retainedKnowledge.certificate(
+              certificateStatements.statements,
+              P,
+              K,
+              run,
+              certificateStatements.currentStatements,
+            ),
           );
         return run.result('ORG_HISTORY_AUTHORIZED', { scope, stateTime: P, knowledgeTime: time });
       };

@@ -542,9 +542,61 @@
         {
           "file": "reference/organization-history-vectors.test.mjs",
           "name": "saved organization history cases satisfy independently frozen semantics and complete results"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "durable source commits exact originals and preserves the complete fresh assessment"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "a different original target sharing the subject key inherits a committed compromise"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "failed commit acknowledgement poisons the source and a new source reauthenticates the commit"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "genuinely separate processes retain a committed incident and recover exact public originals"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "overlapping writer processes reload the committed incident before returning a verdict"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "a changed artifact map cannot return another retained pair under the original evidence ID"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "sticky capacity replays a genuine retained compromise and advances only selected K"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "complete database rollback demonstrates the documented local-storage limitation"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable invalid target bindings cannot poison a different original"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable crashes respect transaction boundaries"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable concurrent writers retain both negative classes in either order"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable stale positive reloads a concurrent negative commit"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable malformed knowledge never advances the selected time"
         }
       ],
-      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. A dedicated retained-evidence verifier adds complete-package ERS preservation, explicit proof-time and current-knowledge views, scoped successor status and retained incident precedence without granting current execution permission. Organizational mdoc, arbitrary graphs, per-object proofs for roles retired before the original package proof, separately preserved later status from retired signers, independently assessed identity/custody and a second complete implementation remain open."
+      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. The retained-evidence verifier adds complete-package ERS preservation, explicit proof-time and current-knowledge views, scoped successor status and cumulative authenticated negative knowledge. Its dedicated SQLite source reauthenticates retained raw material across process restarts and returns a receipt only for the documented storage outcome; retained bytes and historical results grant no current execution permission. Whole-database rollback cannot be detected without an external anchor. Organizational mdoc, arbitrary graphs, per-object proofs for roles retired before the original package proof, separately preserved later status from retired signers, independently assessed identity/custody and a second complete implementation remain open."
     },
     {
       "id": "CC-DOC-03",

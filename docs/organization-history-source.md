@@ -1,6 +1,6 @@
 # Declarative organization history source
 
-`createOrganizationHistorySource` adapts declared public trust and retained material to the existing organization history verifier. It is synchronous and offline. It returns the same complete result as equivalent callback-based verification and grants no current execution permission.
+`createOrganizationHistorySource` adapts declared public trust and retained material to the existing organization history verifier. It is synchronous and offline. In memory mode it returns the same complete result as equivalent callback-based verification. Durable mode adds the storage receipt described below. Neither mode grants current execution permission.
 
 ```js
 import {
@@ -22,7 +22,7 @@ try {
 
 The reader returns material, never authority decisions or verification outcomes. The implementation copies the configuration at construction and the reader's snapshot on each verification. Functions, accessors, private key fields, KeyObject values and unknown fields are not accepted in the descriptor. The verifier input cannot replace K or its selected source. An asynchronous or throwing reader produces a typed non-VALID result.
 
-The source is opaque. Multiple verifiers attached to the same source share its instance-local admitted negative observations and monotonic selected K. Closing it prevents further positive verification. A new source starts with new memory. This version has no durable storage: `databasePath` is rejected, `readEvidence` returns undefined, and results contain no storage receipt. The existing callback constructor remains available.
+The source is opaque. Multiple verifiers attached to the same source share its admitted negative observations and monotonic selected K. Closing it prevents further positive verification. Without `databasePath`, a new source starts with new memory, `readEvidence` returns undefined, and results contain no storage receipt. The existing callback constructor also remains memory-only. Durable storage is an explicit option described below.
 
 ## Configuration
 
@@ -74,3 +74,62 @@ The historical view uses exact P, including fractional accuracy, as both state a
 Configuration is bounded to 4 MiB, each reader snapshot to 16 MiB, RTM history to 256 entries, each status list to 64 members, and root/TSA lists to 64 members. Existing tighter certificate, signature, profile, nesting and item bounds apply. These are capability limits, not retention guarantees. A memory source cannot preserve incidents across process restart or detect rollback of a separate external data store.
 
 Frozen-byte replay uses the same descriptor and factories. A loader may resolve bounded file references into Buffer values, but must not supply a second interpretation of authority, timestamp, role or status semantics. Replay requires no private signing key, fixture generator, network request or live execution journal.
+
+## Durable source
+
+Pass `databasePath` to use a dedicated local SQLite database. `:memory:` and existing live operation journals are rejected. A database is bound to the selected trust domain, organization, issuer and identity namespace, and to the complete immutable configuration and implementation capability revision. Pins use the exact public DER bytes above. All selected policies, governance quorum, algorithm/key/hash deadlines and timestamp protection/coverage bounds participate in configuration identity. A changed configuration is rejected for that database; advancing K, adding signed status or extending authority history does not create a new namespace. Different originals in the same scope share key-wide incidents.
+
+```js
+const source = createOrganizationHistorySource({
+  configuration,
+  readKnowledge: () => latestKnowledge,
+  databasePath: './organization-history.sqlite',
+});
+try {
+  const result = createOrganizationHistoryVerifier({ source }).verify({
+    originalBytes,
+    evidenceRecord,
+  });
+  if (result.knowledgeReceipt.state === 'COMMITTED') {
+    const retained =
+      result.knowledgeReceipt.evidenceID && source.readEvidence(result.knowledgeReceipt.evidenceID);
+    // Retained bytes have classification "UNVERIFIED_BYTES". Verify them anew.
+  }
+} finally {
+  source.close();
+}
+```
+
+Each verification copies the caller's knowledge once before entering a `BEGIN IMMEDIATE` transaction. Under that transaction it reloads all committed frames, reauthenticates exact raw RTM bodies, root signatures, publication timestamps and admitted status at each frame's original K, evaluates the new input, appends independently authenticated material and commits before exposing the result. SQLite uses WAL, `synchronous=FULL` and a 5-second busy timeout. Concurrent instances and processes reload after acquiring the write lock; they cannot overwrite a competing observation from a stale in-memory view. The database contains no cached positive authorization, imported verdict or live execution permission.
+
+Raw replay retains each original ECP and ERS exactly, together with the authority history and externally admitted CMS/certificate pairs needed to reconstruct knowledge. Original bytes are opaque evidence storage: a malformed or unadmitted leaf is not a trusted observation. Original target admission requires an authenticated package proof and the target's own signature, schema, scope, interval and applicable delegation-path checks. An unrelated missing execution leaf does not discard a separately authenticated negative. External status must bind an admitted target or the selected credential and pass its own signature, schema, time and S/K signer authorization. A globally INVALID, UNSUPPORTED or INDETERMINATE assessment can therefore commit authenticated negative material, while its unauthenticated siblings remain excluded from trusted frames.
+
+Replaying old frames at their original K reconstructs terminal revocations, compromises, same-epoch conflicts and freshness heads even when the new reader supplies only newer GOOD status. Retained raw authority predecessors can authenticate a new successor suffix. Known RTM forks and authority revocations remain negative constraints. Retained knowledge never supplies a positive authority/status decision at current K: current coverage and preservation are evaluated again. Historical authorization remains a distinct P/P view. Recovery needs no signing, operation dispatch, reconciliation, nonce update or execution re-run.
+
+The selected relying-party K is persisted monotonically. Equality is accepted; rollback is rejected. A well-formed selection may advance K despite failed evidence authentication, while malformed or unavailable reader input does not advance it. Authenticated evidence admission and K selection are separate facts. A failed transaction adds neither; uncertain commit acknowledgement requires closing and reopening the source before further use.
+
+Every durable verification includes:
+
+```text
+knowledgeReceipt:
+  mode: "SQLITE"
+  state: "COMMITTED" | "NOT_COMMITTED" | "UNKNOWN"
+  scopeID: lowercase hexadecimal scope identifier
+  configurationID: lowercase hexadecimal complete-configuration identifier
+  revision: committed head revision, or null
+  evidenceID: exact original/ERS pair identifier, or null
+```
+
+`COMMITTED` reports that the transaction completed, including a transaction that recorded an INVALID result's authenticated negative material or sticky capacity failure. It does not certify the original bytes or grant an operation. An idempotent replay can return the same revision. `NOT_COMMITTED` means no current transaction was confirmed and cannot expose a positive durable verdict. `UNKNOWN` means the transaction body completed but COMMIT acknowledgement was unavailable; the source refuses subsequent verification and evidence reads until reopened. A process killed after COMMIT but before returning has the same recovery path: reopen, retrieve exact evidence when its identifier is known, and verify again. No saved result is trusted during recovery.
+
+`readEvidence(evidenceID)` returns `undefined` for an unknown identifier, or independent Buffer copies `{ classification: 'UNVERIFIED_BYTES', originalBytes, evidenceRecord }`. It validates chunk identities, lengths and the identifier's binding to that exact original/ERS pair, but does not perform historical authorization. Invalid identifiers, corrupt storage and reads after closure fail; returned bytes must be submitted to verification before relying on them.
+
+## Durable bounds and recovery limits
+
+Durable mode additionally bounds an original to 64 MiB, its ERS to 16 MiB, committed replay frames to 256, semantic observations to 4,096, distinct authenticated RTM bodies to 256, exact original/ERS pairs to 1,024 and distinct exact stored content to 256 MiB. Content uses chunks no larger than 1 MiB; the frame, chunk references, evidence identity, selected K and observation metadata commit atomically. Existing decoder and retained-resolver bounds still apply. A result is never authorized by omitted or truncated replay material.
+
+Duplicate exact content and identical frames are deduplicated. There is no eviction or automatic compaction. Exceeding a cumulative limit records a sticky overflow flag in the same transaction, preserves previously committed material and returns non-VALID. Reopening still reauthenticates the retained frames: an established INVALID remains stronger than the UNSUPPORTED capacity result. Once overflow is sticky, a well-formed newer K can commit only the selected-K metadata, with `COMMITTED`, the actual persisted revision and `evidenceID: null`. The frames, artifacts, observations, authority-history identities and exact content remain unchanged. An equal-K transaction may confirm the same revision; a lower K is rollback and returns `NOT_COMMITTED`. Old incidents are never replaced by an empty cache. Per-read oversized or malformed input is rejected before admission and cannot erase older observations. Applications must provision and retain this bounded store as part of their evidence policy.
+
+The database is local persistence, not an external monotonic anchor. Missing, changed, reordered or truncated referenced chunks and inconsistent replay metadata fail closed. An attacker or administrator who restores an entire older, internally consistent database and its required WAL state can also restore its old K and incident set; this implementation cannot detect that complete rollback. Replacing the database or selecting a different configuration/database starts a different knowledge context and must not be represented as continuity. Durable storage also assumes the filesystem and SQLite durability guarantees hold. No remote checkpoint service or new signed archive format is introduced.
+
+Organizational mdoc, per-object proofs predating the first complete-package proof, and separately preserved external status from signers already retired at its new admission time remain outside this source contract.

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdir, writeFile, readFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
@@ -56,6 +56,44 @@ const savedHistory = JSON.parse(savedHistoryReplay.stdout);
 assert(savedHistory.cases > 0);
 assert.deepEqual(savedHistory.forbiddenCalls, []);
 console.log(JSON.stringify({ installedOrganizationCorpus: savedHistory }));
+
+const durableDirectory = await mkdtemp(cwd + '/organization-durable-');
+const durableReplay = [];
+for (const [phase, database] of [
+  ['record-compromise', 'compromise.sqlite'],
+  ['reopen-compromise', 'compromise.sqlite'],
+  ['record-positive', 'positive.sqlite'],
+  ['reopen-missing', 'positive.sqlite'],
+]) {
+  const child = spawnSync(
+    process.execPath,
+    [
+      resolve('sdk/organization-durable-consumer.mjs'),
+      entry,
+      cwd + '/node_modules/@certconcord/verifier/index.mjs',
+      durableDirectory + '/' + database,
+      phase,
+    ],
+    { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
+  );
+  assert.equal(child.status, 0, child.stderr || child.stdout);
+  const observed = JSON.parse(child.stdout);
+  assert.equal(observed.phase, phase);
+  assert.deepEqual(observed.forbiddenCalls, []);
+  assert.equal(observed.installedBundleSHA256, savedHistory.installedBundleSHA256);
+  assert.equal(observed.unchangedFiles, 201);
+  durableReplay.push(observed);
+}
+assert.equal(new Set(durableReplay.map((row) => row.pid)).size, 4);
+for (const first of [0, 2]) {
+  const old = durableReplay[first].receipt,
+    reopened = durableReplay[first + 1].receipt;
+  for (const field of ['scopeID', 'configurationID', 'evidenceID'])
+    assert.equal(reopened[field], old[field]);
+  assert(reopened.revision >= old.revision);
+}
+console.log(JSON.stringify({ installedOrganizationDurableReplay: durableReplay }));
+
 for (const [format, executionBinding, trustedTime = false] of [
   ['CMS', false],
   ['MDOC', false],

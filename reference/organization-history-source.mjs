@@ -1,10 +1,28 @@
 import { types } from 'node:util';
-import { dcbor, decodeCBOR, equal, fields, keyID, parseDER, publicFromDER, spki } from './core.mjs';
+import {
+  dcbor,
+  decodeCBOR,
+  equal,
+  fields,
+  keyID,
+  parseDER,
+  publicFromDER,
+  spki,
+  sha256,
+} from './core.mjs';
 import { parseCertificate } from './pki.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
-import { createRetainedAuthorityResolver } from './retained-authorities.mjs';
+import {
+  createRetainedAuthorityResolver,
+  authenticateRetainedAuthorityEntry,
+} from './retained-authorities.mjs';
+import { OrganizationHistoryKnowledgeStore } from './organization-history-knowledge.mjs';
 import { record, snapshot } from './organization-delegation-state.mjs';
-import { VerificationError, verificationOutcome } from './verification-result.mjs';
+import {
+  VerificationError,
+  verificationOutcome,
+  verificationResult,
+} from './verification-result.mjs';
 
 const MiB = 1024 * 1024;
 const sources = new WeakMap();
@@ -283,18 +301,43 @@ function publicationProof(proof, imprint, at, knowledgeTime, selected) {
 
 /** Public-data source for the existing offline organization history verifier. */
 export function createOrganizationHistorySource(options) {
-  record(options, ['configuration', 'readKnowledge']);
+  record(options, ['configuration', 'readKnowledge'], ['databasePath']);
   need(typeof options.readKnowledge === 'function', 'ORG_HISTORY_SOURCE_READER');
   const selected = configuration(options.configuration),
     read = options.readKnowledge;
-  const state = { selected, read, closed: false, active: null, verifier: null };
+  if (Object.hasOwn(options, 'databasePath'))
+    need(
+      typeof options.databasePath === 'string' &&
+        options.databasePath.length > 0 &&
+        options.databasePath !== ':memory:' &&
+        !options.databasePath.includes('\0'),
+      'ORG_HISTORY_DATABASE_PATH',
+    );
+  const store =
+    options.databasePath === undefined
+      ? null
+      : new OrganizationHistoryKnowledgeStore(options.databasePath, selected.value);
+  const state = {
+    selected,
+    read,
+    store,
+    closed: false,
+    active: null,
+    verifier: null,
+    ledger: null,
+    poisoned: false,
+  };
   const source = Object.freeze({
     close() {
+      if (state.closed) return;
       state.closed = true;
       state.active = null;
+      state.store?.close();
     },
-    readEvidence() {
-      return undefined;
+    readEvidence(evidenceID) {
+      if (!state.store) return undefined;
+      need(!state.closed && !state.poisoned, 'ORG_HISTORY_SOURCE_UNAVAILABLE', 'INDETERMINATE');
+      return state.store.readEvidence(evidenceID);
     },
   });
   sources.set(source, state);
@@ -306,11 +349,42 @@ export function connectOrganizationHistorySource(source, createVerifier) {
   const state = sources.get(source);
   need(state, 'ORG_HISTORY_SOURCE_REQUIRED');
   if (state.verifier) return state.verifier;
+  if (state.store) {
+    state.verifier = durableVerifier(state, createVerifier);
+    return state.verifier;
+  }
+  state.verifier = createVerifier(
+    verifierOptions(state, () => {
+      state.active = null;
+      need(!state.closed, 'ORG_HISTORY_SOURCE_CLOSED', 'INDETERMINATE');
+      state.active = readSnapshot(state);
+      const { authorityHistory: ignored, ...current } = state.active.value;
+      return current;
+    }),
+  );
+  return state.verifier;
+}
+function readSnapshot(state) {
+  let raw;
+  try {
+    raw = state.read();
+  } catch {
+    throw new VerificationError('ORG_HISTORY_SOURCE_READER_UNAVAILABLE', 'INDETERMINATE');
+  }
+  if (types.isPromise(raw)) {
+    Promise.prototype.then.call(raw, undefined, () => {});
+    throw new VerificationError('ORG_HISTORY_SOURCE_ASYNC', 'INDETERMINATE');
+  }
+  return knowledge(raw);
+}
+function verifierOptions(state, readKnowledge) {
   const { selected } = state,
     config = selected.value;
   const resolve = (query) => {
     try {
       need(!state.closed && state.active, 'ORG_HISTORY_SOURCE_UNAVAILABLE', 'INDETERMINATE');
+      const negative = state.ledger?.negative(query);
+      if (negative) return negative;
       const { value, history } = state.active;
       return createRetainedAuthorityResolver({
         trustDomainID: config.trust.trustDomainID,
@@ -331,22 +405,10 @@ export function connectOrganizationHistorySource(source, createVerifier) {
     }
   };
   const { timestampAuthorities: ignored, ...preservation } = config.preservation;
-  state.verifier = createVerifier({
+  return {
     trust: config.trust,
     authorityResolver: resolve,
-    readKnowledge() {
-      state.active = null;
-      need(!state.closed, 'ORG_HISTORY_SOURCE_CLOSED', 'INDETERMINATE');
-      const raw = state.read();
-      if (types.isPromise(raw)) {
-        Promise.prototype.then.call(raw, undefined, () => {});
-        throw new VerificationError('ORG_HISTORY_SOURCE_ASYNC', 'INDETERMINATE');
-      }
-      const active = knowledge(raw);
-      state.active = active;
-      const { authorityHistory: ignored, ...current } = active.value;
-      return current;
-    },
+    readKnowledge,
     preservationPolicy: {
       ...preservation,
       resolveTimestamp(token) {
@@ -364,6 +426,295 @@ export function connectOrganizationHistorySource(source, createVerifier) {
         };
       },
     },
+  };
+}
+
+const rawID = (value) => sha256(dcbor(value)).toString('hex');
+class RetainedHistory {
+  constructor(selected) {
+    this.selected = selected;
+    this.nodes = new Map();
+  }
+  add(entries, K) {
+    const admitted = [],
+      failures = [],
+      config = this.selected.value;
+    for (const raw of entries) {
+      try {
+        const manifest = decodeCBOR(raw.manifest);
+        need(equal(dcbor(manifest), raw.manifest), 'ORG_HISTORY_SOURCE_MANIFEST_CANONICAL');
+        const previous =
+          manifest.previousHash === null
+            ? undefined
+            : this.nodes.get(manifest.previousHash?.toString('hex'));
+        need(manifest.serial === 0 || previous, 'HISTORY_PREDECESSOR_MISSING', 'INDETERMINATE');
+        const checkpoint = authenticateRetainedAuthorityEntry({
+          trustDomainID: config.trust.trustDomainID,
+          governance: config.retainedAuthorities.governance,
+          algorithmDeadlines: config.retainedAuthorities.algorithmDeadlines,
+          entry: { ...raw, manifest },
+          previous: previous?.checkpoint,
+          validationTime: K,
+          knowledgeTime: K,
+          strictRecords: true,
+          verifyPublication: ({ proof, imprint, at }) =>
+            publicationProof(proof, imprint, at, K, this.selected),
+        });
+        if (!checkpoint) continue;
+        const id = checkpoint.hash.toString('hex'),
+          old = this.nodes.get(id);
+        if (!old || checkpoint.published < old.checkpoint.published)
+          this.nodes.set(id, { raw, manifest, checkpoint });
+        admitted.push(raw);
+      } catch (error) {
+        failures.push(verificationOutcome(error));
+      }
+    }
+    return { admitted, failures };
+  }
+  chain() {
+    let node = [...this.nodes.values()].sort((a, b) => b.manifest.serial - a.manifest.serial)[0];
+    const entries = [];
+    while (node) {
+      entries.unshift({ ...node.raw, manifest: node.manifest });
+      node =
+        node.manifest.previousHash === null
+          ? undefined
+          : this.nodes.get(node.manifest.previousHash.toString('hex'));
+    }
+    return entries;
+  }
+  negative(query) {
+    const nodes = [...this.nodes.values()]
+      .filter((n) => n.checkpoint.published <= query.knowledgeTime)
+      .sort((a, b) => a.manifest.serial - b.manifest.serial);
+    const serials = new Map(),
+      statuses = new Map();
+    let requested;
+    try {
+      requested = keyID(
+        query.certificate
+          ? parseCertificate(query.certificate).publicKey
+          : publicFromDER(query.publicKeyDER),
+      ).toString('hex');
+    } catch {
+      return { overall: 'INVALID', reason: 'AUTHORITY_IDENTITY' };
+    }
+    for (const node of nodes) {
+      const serial = node.manifest.serial,
+        id = node.checkpoint.hash.toString('hex');
+      if (serials.has(serial) && serials.get(serial) !== id)
+        return { overall: 'INVALID', reason: 'HISTORY_FORK' };
+      serials.set(serial, id);
+      for (const record of node.manifest.authorities) {
+        const status = record.status,
+          key = status.authorityID.toString('hex');
+        const previous = statuses.get(key);
+        if (
+          previous &&
+          (status.publishedAt < previous.publishedAt ||
+            (status.publishedAt === previous.publishedAt && !equal(dcbor(status), dcbor(previous))))
+        )
+          return {
+            overall: 'INVALID',
+            reason:
+              status.publishedAt < previous.publishedAt
+                ? 'HISTORY_STATUS_ROLLBACK'
+                : 'HISTORY_STATUS_CONFLICT',
+          };
+        statuses.set(key, status);
+        if (
+          key === requested &&
+          status.status === 'REVOKED' &&
+          Math.min(status.effectiveTime, status.compromiseStart ?? Infinity) <= query.stateTime
+        )
+          return { overall: 'INVALID', reason: 'AUTHORITY_REVOKED' };
+      }
+    }
+    return null;
+  }
+}
+function collector() {
+  const status = new Map(),
+    certificate = new Map(),
+    observations = new Set();
+  return {
+    observe(event) {
+      const semantic =
+        event.kind === 'certificate-status' ? event.body : event.observation.semanticHash;
+      observations.add(rawID({ kind: event.kind, semantic }));
+      if (event.original || !event.material) return;
+      const map = event.kind === 'organization-status' ? status : certificate;
+      map.set(rawID(event.material), event.material);
+    },
+    get statusMaterial() {
+      return [...status.values()];
+    },
+    get certificateStatusMaterial() {
+      return [...certificate.values()];
+    },
+    get observations() {
+      return [...observations];
+    },
+  };
+}
+function addFailure(result, decision) {
+  const order = ['VALID', 'INDETERMINATE', 'UNSUPPORTED', 'INVALID'];
+  const stronger = order.indexOf(decision.overall) > order.indexOf(result.overall);
+  const old = result.dimensions.status;
+  return verificationResult({
+    ...result,
+    ...(stronger ? { overall: decision.overall, reason: decision.reason } : {}),
+    dimensions: {
+      ...result.dimensions,
+      ...(!old || order.indexOf(decision.overall) > order.indexOf(old.overall)
+        ? { status: decision }
+        : {}),
+    },
+    checks: [...result.checks, { check: 'durable-knowledge', ...decision }],
   });
-  return state.verifier;
+}
+function durableVerifier(state, createVerifier) {
+  const store = state.store;
+  const receipt = (status, revision = null, evidenceID = null) => ({
+    mode: 'SQLITE',
+    state: status,
+    scopeID: store.scopeID,
+    configurationID: store.configurationID,
+    revision,
+    evidenceID,
+  });
+  const failed = (input, error, base) => {
+    const decision = verificationOutcome(error);
+    const result =
+      base ??
+      createVerifier(
+        verifierOptions(state, () => {
+          throw error;
+        }),
+      ).verify(input);
+    return verificationResult({
+      ...addFailure(result, decision),
+      knowledgeReceipt: receipt(error.commitState ?? 'NOT_COMMITTED'),
+    });
+  };
+  return Object.freeze({
+    verify(input) {
+      let result,
+        captured,
+        knownOverflow = false;
+      state.active = null;
+      state.ledger = null;
+      try {
+        need(!state.closed && !state.poisoned, 'ORG_HISTORY_SOURCE_UNAVAILABLE', 'INDETERMINATE');
+        record(input, ['originalBytes', 'evidenceRecord']);
+        binary(input.originalBytes, 64 * MiB);
+        binary(input.evidenceRecord, 16 * MiB);
+        input = {
+          originalBytes: Buffer.from(input.originalBytes),
+          evidenceRecord: Buffer.from(input.evidenceRecord),
+        };
+        captured = readSnapshot(state); // The only caller read, before BEGIN IMMEDIATE.
+        const commit = store.transact((row) => {
+          const head = row.value,
+            K = captured.value.knowledgeTime;
+          knownOverflow = head.overflow;
+          need(
+            head.selectedKnowledge === null || K >= head.selectedKnowledge,
+            'ORG_KNOWLEDGE_ROLLBACK',
+          );
+          const ledger = new RetainedHistory(state.selected);
+          state.ledger = ledger;
+          const replayedObservations = new Set();
+          let observed = collector();
+          const verifier = createVerifier(
+            verifierOptions(state, () => {
+              const { authorityHistory: ignored, ...current } = state.active.value;
+              return current;
+            }),
+            (event) => observed.observe(event),
+          );
+          let previousK = 0;
+          for (const id of head.frames) {
+            const frame = store.frame(id, head);
+            need(frame.knowledgeTime >= previousK, 'ORG_HISTORY_STORAGE_CORRUPT', 'INDETERMINATE');
+            previousK = frame.knowledgeTime;
+            const authenticated = ledger.add(frame.authorityHistory, frame.knowledgeTime);
+            need(
+              !authenticated.failures.length &&
+                authenticated.admitted.length === frame.authorityHistory.length,
+              'ORG_HISTORY_REPLAY_AUTHENTICATION',
+              'INDETERMINATE',
+            );
+            need(ledger.nodes.size <= 256, 'ORG_HISTORY_STORAGE_CORRUPT', 'INDETERMINATE');
+            state.active = {
+              value: {
+                knowledgeTime: frame.knowledgeTime,
+                statusMaterial: frame.statusMaterial,
+                certificateStatusMaterial: frame.certificateStatusMaterial,
+              },
+              history: ledger.chain(),
+            };
+            observed = collector();
+            const artifact = store.evidence(head, frame.evidenceID);
+            verifier.verify({
+              originalBytes: artifact.originalBytes,
+              evidenceRecord: artifact.evidenceRecord,
+            });
+            for (const id of observed.observations) replayedObservations.add(id);
+            need(replayedObservations.size <= 4096, 'ORG_HISTORY_STORAGE_CORRUPT', 'INDETERMINATE');
+            for (const name of ['statusMaterial', 'certificateStatusMaterial']) {
+              const admitted = new Set(observed[name].map(rawID));
+              need(
+                frame[name].every((m) => admitted.has(rawID(m))),
+                'ORG_HISTORY_REPLAY_AUTHENTICATION',
+                'INDETERMINATE',
+              );
+            }
+          }
+          const replayedHistory = new Set([...ledger.nodes.values()].map((n) => rawID(n.manifest)));
+          need(
+            replayedObservations.size === head.observations.length &&
+              head.observations.every((id) => replayedObservations.has(id)) &&
+              replayedHistory.size === head.historySemantics.length &&
+              head.historySemantics.every((id) => replayedHistory.has(id)),
+            'ORG_HISTORY_STORAGE_CORRUPT',
+            'INDETERMINATE',
+          );
+          const authenticated = ledger.add(captured.value.authorityHistory, K);
+          state.active = { value: captured.value, history: ledger.chain() };
+          observed = collector();
+          result = verifier.verify(input);
+          for (const failure of authenticated.failures) result = addFailure(result, failure);
+          const commit = store.append(row, input, K, {
+            authorityHistory: authenticated.admitted,
+            statusMaterial: observed.statusMaterial,
+            certificateStatusMaterial: observed.certificateStatusMaterial,
+            observations: observed.observations,
+            historySemantics: [...ledger.nodes.values()].map((n) => rawID(n.manifest)),
+          });
+          if (commit.overflow)
+            result = addFailure(result, {
+              overall: 'UNSUPPORTED',
+              reason: 'ORG_HISTORY_KNOWLEDGE_LIMIT',
+            });
+          return commit;
+        });
+        return verificationResult({
+          ...result,
+          knowledgeReceipt: receipt('COMMITTED', commit.revision, commit.evidenceID),
+        });
+      } catch (error) {
+        if (error.commitState === 'UNKNOWN') state.poisoned = true;
+        const failure = failed(input, error, result);
+        return knownOverflow &&
+          !failure.checks.some((c) => c.reason === 'ORG_HISTORY_KNOWLEDGE_LIMIT')
+          ? addFailure(failure, { overall: 'UNSUPPORTED', reason: 'ORG_HISTORY_KNOWLEDGE_LIMIT' })
+          : failure;
+      } finally {
+        state.active = null;
+        state.ledger = null;
+      }
+    },
+  });
 }
