@@ -150,7 +150,7 @@ export interface OrganizationHistoryMaterial {
   issuerCertificate: Buffer;
 }
 export interface OrganizationHistoryKnowledge {
-  /** Latest authenticated relying-party knowledge; monotonic within this verifier instance. */
+  /** Latest selected relying-party knowledge time; monotonic within its knowledge context. */
   knowledgeTime: number;
   /** Cumulative evidence must retain applicable incidents and same-epoch conflicts. */
   statusMaterial: OrganizationHistoryMaterial[];
@@ -212,6 +212,14 @@ export interface OrganizationHistoryResult extends VerificationResult {
   readonly preservation: VerificationResult;
   readonly originalProtectionDeadline?: number;
   readonly limitations: readonly string[];
+  readonly knowledgeReceipt?: Readonly<{
+    mode: 'SQLITE';
+    state: 'COMMITTED' | 'NOT_COMMITTED' | 'UNKNOWN';
+    scopeID: string;
+    configurationID: string;
+    revision: number | null;
+    evidenceID: string | null;
+  }>;
 }
 export interface OrganizationHistoryTimestampPin {
   certificate: Buffer;
@@ -258,13 +266,21 @@ declare const organizationHistorySource: unique symbol;
 export interface OrganizationHistorySource {
   readonly [organizationHistorySource]: true;
   close(): void;
-  /** Memory sources do not retain exact artifacts. This never returns an authorization. */
-  readEvidence(evidenceID: string): undefined;
+  /** Exact candidate bytes, never an authorization. Memory sources return undefined. */
+  readEvidence(evidenceID: string):
+    | undefined
+    | Readonly<{
+        classification: 'UNVERIFIED_BYTES';
+        originalBytes: Buffer;
+        evidenceRecord: Buffer;
+      }>;
 }
 /** Bounded public-data adapter. Its reader supplies material, never decisions or outcomes. */
 export function createOrganizationHistorySource(options: {
   configuration: OrganizationHistorySourceConfiguration;
   readKnowledge: () => OrganizationHistorySourceKnowledge;
+  /** Dedicated immutable-configuration SQLite store; ':memory:' is not durable. */
+  databasePath?: string;
 }): OrganizationHistorySource;
 export function createOrganizationHistoryVerifier(options: {
   source: OrganizationHistorySource;

@@ -256,9 +256,9 @@ test('mutating descriptor buffers after construction does not change selected tr
 
 for (const [name, mutate] of [
   [
-    'databasePath before durable support',
+    'an in-memory database path claiming durability',
     (value) => {
-      value.databasePath = 'unimplemented.sqlite';
+      value.databasePath = ':memory:';
     },
   ],
   [
@@ -388,6 +388,7 @@ test('closed memory source never returns a cached positive or an artifact', () =
   assert.equal(source.readEvidence('candidate'), undefined);
   source.close();
   source.close();
+  assert.equal(source.readEvidence('candidate'), undefined);
   const result = verifier.verify(fixture.input);
   assert.notEqual(result.overall, 'VALID');
   assert.notEqual(result.currentAdmissibility.overall, 'VALID');

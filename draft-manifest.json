@@ -170,8 +170,8 @@
     },
     {
       "path": "docs/draft-acceptance.md",
-      "bytes": 5511,
-      "sha256": "ec35949a045e8b21af5bd3f7f63e1e26f27a95f3a97fcbad61e942533e490442"
+      "bytes": 8019,
+      "sha256": "f32268c71a4fe75dd16abd0024ed8070c4d897d3acc988495314bd7cb76176d4"
     },
     {
       "path": "docs/ecosystem.md",
@@ -210,13 +210,13 @@
     },
     {
       "path": "docs/organization-history-source.md",
-      "bytes": 5526,
-      "sha256": "0a8731136687587af556ddde18771d9d80f72b359a073dc00b78761f86937578"
+      "bytes": 13657,
+      "sha256": "10be51309c0343d527d70ec6c041ee073985935239c5931eb1d6502dd65c43ea"
     },
     {
       "path": "docs/organization-history.md",
-      "bytes": 9821,
-      "sha256": "103181de7210891f14839183d3249f3829fcdf55c998b6e007b17b6cfbb08bc7"
+      "bytes": 10440,
+      "sha256": "04917de69b41d07bde0b3ee72a9a68bddbfe35a25ad23df6e92585fe0d7c0c9c"
     },
     {
       "path": "docs/pades-preservation.md",
@@ -280,8 +280,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 50728,
-      "sha256": "92b978c8f8aaf578caa76c62aafff7a893a60eaa72b57aa07f6bfaad2396e595"
+      "bytes": 51129,
+      "sha256": "bf34973691d0cadb498b99de9a714a213f30802f4e48ad51c684d79f4dd5c32d"
     },
     {
       "path": "reference/README.md",
@@ -644,6 +644,11 @@
       "sha256": "4fbbce78006e4379633cc453f2e23f07506c48c41fe111a6a194e29111d4da88"
     },
     {
+      "path": "reference/fixtures-history-durable-independent.mjs",
+      "bytes": 16521,
+      "sha256": "f9d3adef8aee24a2175bc557fa40a3fcb378b5cfc654a54b260679da51463a2d"
+    },
+    {
       "path": "reference/fixtures-history-independent.mjs",
       "bytes": 12861,
       "sha256": "8fb451a68794bede1dde354123347bc3cc76835cfa1c75fe7d4f45a066cc1651"
@@ -965,8 +970,8 @@
     },
     {
       "path": "reference/organization-delegation-evidence.mjs",
-      "bytes": 76788,
-      "sha256": "bc58c742e52b209786870e4993fdf729406e0192281189b1644b08d628e5b8d7"
+      "bytes": 80398,
+      "sha256": "05a69f055a2a057d31ad0856821f546c7d29e809b5ed3205a6d37580644942c3"
     },
     {
       "path": "reference/organization-delegation-evidence.test.mjs",
@@ -994,19 +999,44 @@
       "sha256": "66da89299a35b1d911130be866605a40db139b3b5b6a27b3ebe9a1018c4b49df"
     },
     {
+      "path": "reference/organization-history-durable-independent-child.mjs",
+      "bytes": 5220,
+      "sha256": "2902da7e3e56a6b7bb06836d0eb824b4b9e47fb263ab2a6edc23c06f4b82780a"
+    },
+    {
+      "path": "reference/organization-history-durable-independent.test.mjs",
+      "bytes": 38725,
+      "sha256": "40ed70c057bc8daf597f0304ba1bdf3aaadb7c1a37f7fc3226d4738621afbd95"
+    },
+    {
       "path": "reference/organization-history-independent.test.mjs",
       "bytes": 22050,
       "sha256": "2822fc518e6031413fcd61c4c7cfd3c2390a95f053476a9ca9b3be55f9993d09"
     },
     {
+      "path": "reference/organization-history-knowledge-child.mjs",
+      "bytes": 2218,
+      "sha256": "cade97ef1eb35f7b4527c889f0e17a40b83e2ad17866eaea9055fe7ba8d1d846"
+    },
+    {
+      "path": "reference/organization-history-knowledge.mjs",
+      "bytes": 11183,
+      "sha256": "28736c718deac202351b98b4ae816fdd32e80c6ab73e269aa788a1f2d32e6da2"
+    },
+    {
+      "path": "reference/organization-history-knowledge.test.mjs",
+      "bytes": 50193,
+      "sha256": "ea4e74842f8ff5d0f63acc1bd9c912041e393e977c365fbcad59b48b15311ee0"
+    },
+    {
       "path": "reference/organization-history-source.mjs",
-      "bytes": 13627,
-      "sha256": "8b259bf6f2b03ac70bfe33b4c069060c82626a9064a0b4c08da4f3e4a9bffe99"
+      "bytes": 26262,
+      "sha256": "5c230c5be48a8b9b89c6179d83e16c9a711fc2675f50c0bb3ab36568c5ac8760"
     },
     {
       "path": "reference/organization-history-source.test.mjs",
-      "bytes": 17120,
-      "sha256": "28b2d1993e9b4667a64bfd37fbdfdc6dffc8ea2bfaed53e7d868ba31ce7f1902"
+      "bytes": 17180,
+      "sha256": "f9ced4dc88f470bf25d7b0c41041063e77a75b1d44501696182e83b5a5d0d3f3"
     },
     {
       "path": "reference/organization-history-vector-semantics.mjs",
@@ -1020,8 +1050,8 @@
     },
     {
       "path": "reference/organization-history.mjs",
-      "bytes": 30374,
-      "sha256": "b18d779966d67539cb4be5552bd871b0eaa402b5651edc1ecd515318c20dc780"
+      "bytes": 37484,
+      "sha256": "b0e3e80e6cb84c551b1c1f2e43367991bf07bd1925d48bfc95ced9d318c6e216"
     },
     {
       "path": "reference/organization-vector-corpus.mjs",
@@ -1195,8 +1225,8 @@
     },
     {
       "path": "reference/retained-authorities.mjs",
-      "bytes": 14912,
-      "sha256": "4644f8d15b869b5ffcb99015906dd97f5ebad0c047db80fbf55829157610d4eb"
+      "bytes": 16232,
+      "sha256": "2a270368933837b937a3c078eef47b8f2bc76082d95cd94a980590600893f018"
     },
     {
       "path": "reference/retained-authorities.test.mjs",
@@ -1230,8 +1260,8 @@
     },
     {
       "path": "reference/sdk/README.md",
-      "bytes": 9111,
-      "sha256": "ba2e84467dc7b8982fb00b3d47a377eaa5d729ff5536b40640505514ce56806a"
+      "bytes": 9875,
+      "sha256": "4920d6990b6af0924089027c06249868fecb032df22f92fa58f6ec6d0aaaa89f"
     },
     {
       "path": "reference/sdk/build.mjs",
@@ -1240,13 +1270,13 @@
     },
     {
       "path": "reference/sdk/consumer-test.mjs",
-      "bytes": 5954,
-      "sha256": "c340cbf9cb9e0015d84792114ca0e8c078eed15d86e2dd12d9652d9f246c0482"
+      "bytes": 7385,
+      "sha256": "dba1dfa1a4fd56eba96948c542170086670f38f751e82ca5ab3a4224db50eac5"
     },
     {
       "path": "reference/sdk/index.d.ts",
-      "bytes": 9654,
-      "sha256": "8ddfc9168dc4cee03545d7a831590e406c14102f989984294f1a69c7bb3ba57a"
+      "bytes": 10129,
+      "sha256": "25f724f740d09676a33ca92faf4daed57a741576d0660aa4dd14c4f96968885b"
     },
     {
       "path": "reference/sdk/index.mjs",
@@ -1257,6 +1287,11 @@
       "path": "reference/sdk/organization-consumer.mjs",
       "bytes": 4378,
       "sha256": "6fc3affe41643476c021a3126fc74dd552a0b598c244a6e80ba9d4bba49a62a7"
+    },
+    {
+      "path": "reference/sdk/organization-durable-consumer.mjs",
+      "bytes": 6904,
+      "sha256": "e07c7978a96c44fd053b5b58682beb7bdcce5239fb98ae1cade1f81bf70f286b"
     },
     {
       "path": "reference/sdk/package.json",
@@ -3210,13 +3245,13 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 43228,
-      "sha256": "ce7adb8c07f3a2ea4511cada214b3f8f90059438c07fbef8811cbb4e5e71ae16"
+      "bytes": 46054,
+      "sha256": "5e8b3305225b631aebb486628b25c6954849fe3806acf5fae7da9fd65520b779"
     },
     {
       "path": "spec/conformance.md",
-      "bytes": 10003,
-      "sha256": "d054deb48a9c976fd6aaa4de1926b151de3b32d319024e9ed06dc19a73f502cf"
+      "bytes": 10258,
+      "sha256": "296dcd89c2ced1d9eff324b5648ed6b64c2816887f2885aaa24cd82681d36f38"
     },
     {
       "path": "spec/document-baseline.md",
