@@ -283,6 +283,18 @@
         {
           "file": "reference/mdoc-document-boundary.test.mjs",
           "name": "credential log checkpoint and mirror checks share explicit knowledge time"
+        },
+        {
+          "file": "reference/timestamp-status-independent.test.mjs",
+          "name": "timestamp status boundary preserves explicit typed decisions and legacy booleans"
+        },
+        {
+          "file": "reference/timestamp-status-independent.test.mjs",
+          "name": "real ERS later corrupted mathematics remains INVALID when an earlier TSA status is unavailable"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "public timestamp status bridge preserves staleness and known revocation for CMS and mdoc"
         }
       ],
       "gap": "Selected CMS/MTC and native mdoc SDK paths provide stable identity/reason fields, bounded evaluated dimensions and explicit malformed, missing, unsupported and invalid precedence. This record covers the named selected boundaries, not all algorithms, containers or future extensions. Independent implementation, complete external parser assessment and stability review remain separate evidence."
@@ -734,6 +746,10 @@
         {
           "file": "reference/document-vectors.test.mjs",
           "name": "vector loader closes descriptors after successful loading"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "retained ERS bridge reports missing latest governance coverage without changing original bytes"
         }
       ],
       "gap": "The public original-byte corpus, external trust schema, fixed knowledge times and offline runner reproduce selected CMS/MTC and native mdoc document results, ERS renewal and separate historical/current decisions. The installed SDK replays the document cases through its public export. This is draft acceptance evidence; a second independently developed complete implementation and recorded interoperability remain later stability requirements."

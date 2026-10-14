@@ -94,7 +94,7 @@ export interface CommonTrust {
       genTime: number;
       stateTime: number;
       knowledgeTime: number;
-    }) => boolean;
+    }) => boolean | AuthorityDecision;
   };
   passkeyStatus?: (binding: unknown, time: { at: number; knowledgeTime: number }) => boolean;
   executionBindingCertificate?: Buffer;

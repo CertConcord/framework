@@ -109,7 +109,7 @@ async function fixture(r, format) {
       const selectedTSA = [initialTSA, renewalTSA].find((value) => c.equal(value.certificate, cert));
       return selectedTSA && { ...selectedTSA, status: ({ stateTime, knowledgeTime }) => authorityResolver({
         certificate: cert, role: 'TIMESTAMP_AUTHORITY', scope: { trustDomainID: domain },
-        stateTime, knowledgeTime }).overall === 'VALID' };
+        stateTime, knowledgeTime }) };
     } };
   let payload;
   const statusType = format === 'CMS' ? 'CertificateStatus' : 'CredentialStatusList';

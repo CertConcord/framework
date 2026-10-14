@@ -7,6 +7,7 @@ import { readControl, evaluateStatus } from './state.mjs';
 import { evidenceLeaf } from './evidence-plan.mjs';
 import { verifyTimestampToken } from './timestamp.mjs';
 import { evaluationPhase, evaluated, evaluatedCheck } from './verification-result.mjs';
+import { requireStatusDecision } from './status-result.mjs';
 import {
   ORGANIZATION_PROFILE,
   ORGANIZATION_PLAN,
@@ -348,15 +349,24 @@ export function verifyDocumentEvidence(
       Number.isFinite(timeResult.poeUpperBound) &&
         timeResult.poeUpperBound <= knowledgeTime &&
         tsa.notBefore <= timeResult.genTime - timeResult.accuracy &&
-        tsa.notAfter > timeResult.poeUpperBound &&
-        trust.timestamp.status({
+        tsa.notAfter > timeResult.poeUpperBound,
+      'DOCUMENT_TIMESTAMP_INTERVAL',
+    );
+    try {
+      requireStatusDecision(
+        trust.timestamp.status,
+        {
           certificate: trust.timestamp.certificate,
           genTime: timeResult.genTime,
           stateTime: timeResult.poeUpperBound,
           knowledgeTime,
-        }) === true,
-      'DOCUMENT_TIMESTAMP_STATUS_OR_ACCURACY',
-    );
+        },
+        'DOCUMENT_TIMESTAMP_STATUS',
+      );
+    } catch (error) {
+      evaluated(evaluation, 'time', error.overall, error.code);
+      authorityFailures.push(error);
+    }
     stateTime = timeResult.poeUpperBound;
     for (const time of [timeResult.genTime - timeResult.accuracy, stateTime])
       authorityQueries.push({
