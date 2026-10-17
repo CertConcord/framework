@@ -520,3 +520,37 @@ for (const [name, mutate] of [
     assert.equal(result.overall, 'INVALID', JSON.stringify(result));
     assert.notEqual(result.historicalAuthorization.overall, 'VALID');
   });
+
+test('future delegation publication excludes its proof and cannot retain an incident', () => {
+  const value = descriptor(),
+    f = fixture,
+    future = f.organizationStatus(f.originalStatusMembers[0], {
+      epoch: 90,
+      status: 'REVOKED',
+      effectiveTime: f.A,
+      compromiseStart: f.A,
+      publishedAt: f.K + 1,
+      nextUpdate: f.K + 200,
+    });
+  future.evidenceRecord = Buffer.from([0xff]);
+  value.knowledge.statusMaterial.push(future);
+  const source = sourceFor(value);
+  try {
+    const verifier = createOrganizationHistoryVerifier({ source });
+    assert.equal(verifier.verify(f.input).overall, 'VALID');
+    value.knowledge.statusMaterial.pop();
+    assert.equal(verifier.verify(f.input).overall, 'VALID');
+  } finally {
+    source.close();
+  }
+  // At the selected knowledge time the same malformed proof must be checked.
+  const present = f.organizationStatus(f.originalStatusMembers[0], {
+    epoch: 90,
+    publishedAt: f.K,
+    nextUpdate: f.K + 200,
+  });
+  value.knowledge.statusMaterial.push({ ...present, evidenceRecord: Buffer.from([0xff]) });
+  const rejected = verify(value);
+  assert.equal(rejected.historicalAuthorization.overall, 'VALID');
+  assert.equal(rejected.currentAdmissibility.overall, 'INVALID');
+});

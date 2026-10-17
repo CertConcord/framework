@@ -834,3 +834,22 @@ test('organization incomplete quorum cannot conceal the final authorization bind
     f.close();
   }
 });
+
+for (const location of ['external-status', 'retained-status', 'authorization'])
+  test('online evidence rejects an ERS field on ' + location, () => {
+    const f = createOrganizationFixture();
+    try {
+      const input = evidenceInput(f);
+      verdict(verifyOrganizationEvidence(input), 'VALID');
+      if (location === 'external-status')
+        input.context.statusMaterial[0].evidenceRecord = Buffer.from([1]);
+      else if (location === 'retained-status') {
+        const collection = c.decodeCBOR(input.statusCollection);
+        collection.statements[0].evidenceRecord = Buffer.from([1]);
+        input.statusCollection = c.dcbor(collection);
+      } else input.authorization.evidenceRecord = Buffer.from([1]);
+      verdict(verifyOrganizationEvidence(input), 'INVALID');
+    } finally {
+      f.close();
+    }
+  });

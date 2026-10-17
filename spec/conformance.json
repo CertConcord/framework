@@ -605,10 +605,26 @@
         },
         {
           "file": "reference/preserved-certificate-status.test.mjs",
-          "name": "the declarative source permits ERS only on certificate status and rejects extra fields"
+          "name": "a certificate-status ERS cannot substitute for a delegation-status CMS proof"
+        },
+        {
+          "file": "reference/preserved-delegation-status.test.mjs",
+          "name": "saved preserved delegation status vectors satisfy the frozen full-result matrix"
+        },
+        {
+          "file": "reference/preserved-delegation-status.test.mjs",
+          "name": "original-matching CMS needs both the attached proof and package-P authority"
+        },
+        {
+          "file": "reference/preserved-delegation-status.test.mjs",
+          "name": "preserved compromise retains its original and exact proof across fresh processes"
+        },
+        {
+          "file": "reference/preserved-delegation-status.test.mjs",
+          "name": "hash-consistent altered ERS bytes are reauthenticated during durable replay"
         }
       ],
-      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. The retained-evidence verifier adds complete-package ERS preservation, explicit proof-time and current-knowledge views, scoped successor status and cumulative authenticated negative knowledge. Its dedicated SQLite source reauthenticates retained raw material across process restarts and returns a receipt only for the documented storage outcome; retained bytes and historical results grant no current execution permission. Whole-database rollback cannot be detected without an external anchor. Selected credential CertificateStatus may carry its own RFC 4998 proof over the complete CMS. Its status authority is admitted at publication S and first status proof P_status under knowledge K, with S <= P_status <= K and continuous protection through K. This does not replace original-package status or authority evidence, current positive-acceptance coverage, or retained negative knowledge. Organizational mdoc, arbitrary graphs, per-object proofs for original-package roles retired before the first complete-package proof, separately preserved organization/delegation status from retired signers, independently assessed identity/custody and a second complete implementation remain open."
+      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. The retained-evidence verifier adds complete-package ERS preservation, explicit proof-time and current-knowledge views, scoped successor status and cumulative authenticated negative knowledge. Its dedicated SQLite source reauthenticates retained raw material across process restarts and returns a receipt only for the documented storage outcome; retained bytes and historical results grant no current execution permission. Whole-database rollback cannot be detected without an external anchor. Selected credential CertificateStatus and external OrganizationDelegationStatus may each carry an RFC 4998 proof over the exact complete CMS. Their exact status authority is admitted at publication S and first status proof P_status under knowledge K, with S <= P_status <= K and continuous protection through K. Organization status retains exact typed-target admission, original-package P obligations and original-dependent raw replay; duplicate CMS bytes do not waive an attached proof or P admission. These proofs do not replace current positive coverage or retained negative knowledge. Organizational mdoc, arbitrary graphs, per-object proofs for original-package roles retired before the first complete-package proof, independently assessed identity/custody and a second complete implementation remain open."
     },
     {
       "id": "CC-DOC-03",

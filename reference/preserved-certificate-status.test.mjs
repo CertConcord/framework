@@ -261,15 +261,19 @@ test('unverified status proofs never enter a durable independent replay frame', 
   assert(retained.frames.every((frame) => frame.certificateStatusMaterial.length === 0));
 });
 
-test('the declarative source permits ERS only on certificate status and rejects extra fields', () => {
-  for (const kind of ['organization-proof', 'unknown-certificate-field']) {
-    const entry = saved('preserved-good');
-    if (kind === 'organization-proof')
-      entry.knowledge.statusMaterial[0].evidenceRecord =
-        entry.knowledge.certificateStatusMaterial[0].evidenceRecord;
-    else entry.knowledge.certificateStatusMaterial[0].accepted = true;
-    const actual = memory(entry);
-    assert.equal(actual.overall, 'INDETERMINATE', kind);
-    assert.equal(actual.reason, 'ORG_HISTORY_KNOWLEDGE_UNAVAILABLE', kind);
-  }
+test('a certificate-status ERS cannot substitute for a delegation-status CMS proof', () => {
+  const entry = saved('preserved-good');
+  entry.knowledge.statusMaterial[0].evidenceRecord =
+    entry.knowledge.certificateStatusMaterial[0].evidenceRecord;
+  const actual = memory(entry);
+  assert.equal(actual.overall, 'INVALID');
+  assert.equal(actual.reason, 'TSA_REQUEST_BINDING');
+});
+
+test('the declarative source rejects unknown certificate status fields', () => {
+  const entry = saved('preserved-good');
+  entry.knowledge.certificateStatusMaterial[0].accepted = true;
+  const actual = memory(entry);
+  assert.equal(actual.overall, 'INDETERMINATE');
+  assert.equal(actual.reason, 'ORG_HISTORY_KNOWLEDGE_UNAVAILABLE');
 });

@@ -56,7 +56,7 @@ registerHooks({
     const resolved = nextResolve(specifier, context);
     if (
       resolved.url.startsWith('file:') &&
-      /(?:fixture|freeze-.*vectors|(?:history-vector|certificate-status)-semantics)/i.test(
+      /(?:fixture|freeze-.*vectors|(?:history-vector|certificate-status|delegation-status)-semantics)/i.test(
         basename(fileURLToPath(resolved.url)),
       )
     )

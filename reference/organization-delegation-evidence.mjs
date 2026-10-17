@@ -19,6 +19,7 @@ import { parseCertificate, verifyCMS } from './pki.mjs';
 import { readControl, validateActivation, evaluateStatus } from './state.mjs';
 import { verifyAssertion } from './webauthn.mjs';
 import { executionRequirement, EXECUTION_BINDING_PROFILE } from './execution-binding.mjs';
+import { verifyStatusPreservation } from './status-preservation.mjs';
 
 const PROFILE = 'certconcord-organization-delegation-v1';
 const SEAL_PROFILE = 'CERTCONCORD-ORG-SEAL-v1';
@@ -287,7 +288,9 @@ class Evaluation {
       label === LABELS.GRANT
         ? ['cms', 'issuerCertificate', 'delegateCertificate']
         : ['cms', 'issuerCertificate'],
+      this.history && label === 'OrganizationDelegationStatus' ? ['evidenceRecord'] : [],
     );
+    if (own(member, 'evidenceRecord')) sized(member.evidenceRecord, 16 * MiB, 'ORG_STATUS_PROOF');
     sized(member.cms, max, 'ORG_CONTROL');
     const certificate = this.cert(member.issuerCertificate);
     const k = label + ':' + hex(sha512(member.cms)) + ':' + hex(sha512(member.issuerCertificate));
@@ -1075,16 +1078,18 @@ function statuses(e, retained) {
         prior = body;
       });
   }
-  const incoming = [...e.context.statusMaterial, ...(retained?.statements ?? [])],
+  const incoming = [
+      ...e.context.statusMaterial.map((member) => ({ member, external: true })),
+      ...(retained?.statements ?? []).map((member) => ({ member, external: false })),
+    ],
     authenticated = [];
   const seen = new Set();
-  for (const [i, member] of incoming.entries())
+  for (const [i, { member, external }] of incoming.entries())
     e.attempt('status:' + i, () => {
+      fields(member, ['cms', 'issuerCertificate'], external && e.history ? ['evidenceRecord'] : []);
       const body = statusBody(e, member),
         rawHash = sha512(member.cms),
         k = hex(rawHash);
-      if (seen.has(k)) return;
-      seen.add(k);
       // A future statement cannot establish a current epoch, conflict or key incident.
       if (body.publishedAt > e.K) return;
       const candidates = [...e.targets, ...e.state.targets].filter((t) => sameTarget(t, body));
@@ -1093,12 +1098,28 @@ function statuses(e, retained) {
       need(target && equal(target.subjectKeyID, body.subjectKeyID), 'ORG_STATUS_TARGET_BINDING');
       e.authority(member.issuerCertificate, 'STATUS', body.publishedAt, body.objectType);
       const original = retained?.statements.some((value) => equal(value.cms, member.cms));
+      let proofTime;
+      if (external && own(member, 'evidenceRecord')) {
+        proofTime = verifyStatusPreservation(
+          member,
+          body.publishedAt,
+          e.context,
+          e.K,
+          e.history.statusPreservation,
+          'ORG_STATUS',
+        );
+        e.authority(member.issuerCertificate, 'STATUS', proofTime, body.objectType);
+      }
       e.authority(
         member.issuerCertificate,
         'STATUS',
-        e.history && original ? e.at : e.K,
+        e.history && original ? e.at : (proofTime ?? e.K),
         body.objectType,
       );
+      // A supplied proof is checked even on duplicate bytes. Original-matching
+      // bytes still need P admission; a separate status proof never replaces it.
+      if (seen.has(k)) return;
+      seen.add(k);
       const observation = {
         trustDomainID: body.trustDomainID,
         organizationID: body.organizationID,
@@ -1855,12 +1876,18 @@ function authorizationTarget(e, member, info) {
 // Authenticate negative-knowledge bindings independently of the execution tuple.
 // An established package proof is still required for original target admission.
 // This routine never produces permission or a successful operation result.
-export function authenticateOrganizationHistoryMaterial(input, stateTime, onAdmission) {
+export function authenticateOrganizationHistoryMaterial(
+  input,
+  stateTime,
+  onAdmission,
+  statusPreservation,
+) {
   const e = new Evaluation({
     stateTime,
     operationTime: stateTime,
     materialOnly: true,
     onAdmission,
+    statusPreservation,
   });
   const detached = e.attempt('input-snapshot', () => detach(input, true));
   if (!detached) return e.complete();
@@ -2039,7 +2066,11 @@ function preflight(e, mode) {
     if (Array.isArray(members) && members.length <= 64)
       for (const [i, m] of members.entries())
         e.attempt('status-math:' + label + ':' + i, () => {
-          fields(m, ['cms', 'issuerCertificate']);
+          fields(
+            m,
+            ['cms', 'issuerCertificate'],
+            label === 'source' && e.history ? ['evidenceRecord'] : [],
+          );
           return e.control(m, 'OrganizationDelegationStatus');
         });
   if (mode === 'approval' && Array.isArray(e.regMembers)) {
@@ -2257,7 +2288,7 @@ export function verifyOrganizationEvidence(input) {
 /** Retrospective semantic facts only; the caller must authenticate the complete ERS and receipt. */
 export function verifyOrganizationHistoricalEvidence(
   input,
-  { stateTime, operationTime },
+  { stateTime, operationTime, statusPreservation },
   onAdmission,
 ) {
   need(
@@ -2267,7 +2298,9 @@ export function verifyOrganizationHistoricalEvidence(
       stateTime <= input.context.knowledgeTime,
     'ORG_HISTORY_TIME',
   );
-  return completeEvidence(start(input, 'evidence', { stateTime, operationTime, onAdmission }));
+  return completeEvidence(
+    start(input, 'evidence', { stateTime, operationTime, onAdmission, statusPreservation }),
+  );
 }
 
 function completeEvidence(e) {

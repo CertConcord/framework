@@ -16,6 +16,7 @@ import { parseCertificate, validateCertificate, verifyCMS } from './pki.mjs';
 import { readControl, evaluateStatus } from './state.mjs';
 import { inspectEvidencePackage } from './evidence-plan.mjs';
 import { verifyERSOriginalProof, verifyERSPreservation } from './archive.mjs';
+import { verifyStatusPreservation } from './status-preservation.mjs';
 import { verifyRegistrationBinding } from './document-evidence.mjs';
 import { verifyOrganizationExecutionEvidence } from './execution-binding.mjs';
 import {
@@ -498,38 +499,6 @@ class HistoricalKnowledge {
   }
 }
 
-function certificateStatusProof(member, body, trust, K, preservation) {
-  need(
-    Buffer.isBuffer(member.evidenceRecord) &&
-      member.evidenceRecord.length > 0 &&
-      member.evidenceRecord.length <= 16 * 1024 * 1024,
-    'ORG_CERTIFICATE_STATUS_PROOF',
-  );
-  const signer = parseCertificate(member.issuerCertificate),
-    algorithm = ALG[signer.publicKey.asymmetricKeyType],
-    bounds = [signer.notAfter];
-  for (const [map, id] of [
-    [trust.keyDeadlines, keyID(signer.publicKey).toString('hex')],
-    [trust.algorithmDeadlines, algorithm?.oid],
-    [trust.algorithmDeadlines, signer.algorithm],
-    [trust.hashDeadlines, signer.publicKey.asymmetricKeyType === 'ec' ? SHA256 : SHA512],
-  ]) {
-    need(integer(map?.[id]), 'ORG_PROTECTION_DEADLINE_MISSING', 'INDETERMINATE');
-    bounds.push(map[id]);
-  }
-  // The CMS contains the exact signer certificate. Its proof protects those
-  // complete bytes, independently of the original document's proof deadline.
-  const policy = { ...preservation, dataValidUntil: Math.min(...bounds) },
-    first = verifyERSOriginalProof(member.evidenceRecord, member.cms, policy),
-    proofTime = first.proofOfExistenceUpperBound;
-  need(
-    integer(body.publishedAt) && body.publishedAt <= proofTime && proofTime <= K,
-    'ORG_CERTIFICATE_STATUS_PROOF_TIME',
-  );
-  verifyERSPreservation(member.evidenceRecord, member.cms, { ...policy, at: K });
-  return proofTime;
-}
-
 function credentialView(
   original,
   trust,
@@ -642,7 +611,14 @@ function credentialView(
         member.original
           ? P
           : separatelyPreserved
-            ? certificateStatusProof(member, body, trust, K, preservation)
+            ? verifyStatusPreservation(
+                member,
+                body.publishedAt,
+                trust,
+                K,
+                preservation,
+                'ORG_CERTIFICATE_STATUS',
+              )
             : K,
       );
       const decision = evaluateStatus(body, {
@@ -838,6 +814,7 @@ function createHistoryVerifier(options, onAdmission) {
           },
           P,
           onAdmission,
+          statusPreservation,
         );
       }
       if (onAdmission && knowledge) {
@@ -970,7 +947,7 @@ function createHistoryVerifier(options, onAdmission) {
               receiptCertificate: control.ExecutionReceipt?.issuerCertificate,
               counterBaselines: { kind: 'RETAINED_REGISTRATION' },
             },
-            { stateTime: P, operationTime: A },
+            { stateTime: P, operationTime: A, statusPreservation },
           );
           run.absorb('organization-semantics', 'authorization', result);
           if (latest) {
