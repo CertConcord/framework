@@ -836,7 +836,7 @@ for (const damage of ['changed', 'missing', 'truncated'])
     assert.equal(rejected.knowledgeReceipt.state, 'NOT_COMMITTED');
   });
 
-test('storage frame capacity commits its final slot and persists overflow without eviction', (t) => {
+test('storage frame capacity counts repeated replay positions and persists overflow without eviction', (t) => {
   // This is a storage-mechanism boundary test. It does not assert that arbitrary
   // inputs below passed cryptographic admission; that boundary has separate tests.
   const h = harness(t),
@@ -851,15 +851,19 @@ test('storage frame capacity commits its final slot and persists overflow withou
     certificateStatusMaterial: [],
     observations: [c.sha256(Buffer.from('mechanism observation')).toString('hex')],
     historySemantics: [],
+    originalRequired: true,
   };
   let last;
   for (let i = 0; i < 256; i++) {
-    last = store.transact((row) => store.append(row, input, fixture.K + i, admitted));
+    admitted.observations = [c.sha256(Buffer.from('mechanism observation ' + i)).toString('hex')];
+    last = store.transact((row) => store.append(row, input, fixture.K, admitted));
     assert.equal(last.overflow, false);
   }
   const before = store.head().value;
   assert.equal(before.frames.length, 256);
-  const overflow = store.transact((row) => store.append(row, input, fixture.K + 256, admitted));
+  assert.equal(new Set(before.frames).size, 1);
+  admitted.observations = [c.sha256(Buffer.from('mechanism observation 256')).toString('hex')];
+  const overflow = store.transact((row) => store.append(row, input, fixture.K, admitted));
   assert.equal(overflow.overflow, true);
   assert.equal(overflow.evidenceID, null);
   assert.deepEqual(store.head().value.frames, before.frames);
@@ -888,6 +892,7 @@ for (const [name, limit] of [
       certificateStatusMaterial: [],
       observations: [],
       historySemantics: [],
+      originalRequired: true,
     };
     admitted[name] = Array.from({ length: limit }, (_, i) =>
       c.sha256(Buffer.from(name + i)).toString('hex'),
@@ -909,33 +914,56 @@ for (const [name, limit] of [
     assert.equal(source.verifier.verify(fixture.input).reason, 'ORG_HISTORY_KNOWLEDGE_LIMIT');
   });
 
-test('storage artifact capacity retains all pairs and rejects the next pair atomically', (t) => {
+test('storage artifact count bound handles legacy unreferenced entries atomically', (t) => {
   const h = harness(t),
     store = new OrganizationHistoryKnowledgeStore(h.databasePath, h.value.configuration);
   const admitted = {
     authorityHistory: [],
     statusMaterial: [],
     certificateStatusMaterial: [],
-    observations: [],
+    observations: [c.sha256(Buffer.from('last legacy slot')).toString('hex')],
     historySemantics: [],
+    originalRequired: true,
   };
-  for (let i = 0; i < 1024; i++) {
-    const input = { originalBytes: c.dcbor(i), evidenceRecord: Buffer.from('opaque ERS') };
-    assert.equal(
-      store.transact((row) => store.append(row, input, fixture.K, admitted)).overflow,
-      false,
-    );
-  }
-  const old = store.head().value;
-  assert.equal(old.artifacts.length, 1024);
-  const input = { originalBytes: c.dcbor(1024), evidenceRecord: Buffer.from('opaque ERS') };
+  // Isolate the count mechanism: legacy databases can contain artifact entries
+  // without replay frames. Exact content/readEvidence integrity is tested above.
+  const row = store.head(),
+    original = c.sha256(Buffer.from('legacy original')).toString('hex'),
+    record = c.sha256(Buffer.from('legacy record')).toString('hex');
+  const artifacts = Array.from({ length: 1023 }, (_, i) => ({
+    id: c.sha256(c.dcbor(['legacy pair', i])).toString('hex'),
+    original,
+    record,
+  }));
+  store.journal.put('organization-history-v1', 'head', { ...row.value, artifacts }, row.revision);
+  const last = {
+    originalBytes: Buffer.from('last pair'),
+    evidenceRecord: Buffer.from('opaque ERS'),
+  };
   assert.equal(
-    store.transact((row) => store.append(row, input, fixture.K, admitted)).overflow,
-    true,
+    store.transact((head) => store.append(head, last, fixture.K, admitted)).overflow,
+    false,
   );
-  assert.deepEqual(store.head().value.artifacts, old.artifacts);
+  const before = store.head().value;
+  assert.equal(before.artifacts.length, 1024);
+  const next = {
+    originalBytes: Buffer.from('one pair beyond'),
+    evidenceRecord: last.evidenceRecord,
+  };
+  admitted.observations = [c.sha256(Buffer.from('next legacy slot')).toString('hex')];
+  const overflow = store.transact((head) => store.append(head, next, fixture.K, admitted));
+  assert.equal(overflow.overflow, true);
+  assert.equal(overflow.evidenceID, null);
+  before.overflow = true;
+  assert.deepEqual(store.head().value, before);
+  assert.equal(
+    store.journal.get(
+      'organization-history-v1',
+      'blob:' + c.sha256(next.originalBytes).toString('hex'),
+    ),
+    undefined,
+  );
   store.close();
-  assert.equal(h.open().verifier.verify(fixture.input).reason, 'ORG_HISTORY_KNOWLEDGE_LIMIT');
 });
 
 test('storage exact-content byte capacity accepts 256 MiB and atomically rejects one more byte', (t) => {
@@ -947,16 +975,22 @@ test('storage exact-content byte capacity accepts 256 MiB and atomically rejects
     certificateStatusMaterial: [],
     observations: [],
     historySemantics: [],
+    originalRequired: true,
   };
   const record = Buffer.from('opaque ERS');
   for (let i = 0; i < 3; i++) {
+    admitted.observations = [c.sha256(Buffer.from('content observation ' + i)).toString('hex')];
     const input = { originalBytes: Buffer.alloc(64 * 1024 * 1024, i + 1), evidenceRecord: record };
     assert.equal(
       store.transact((row) => store.append(row, input, fixture.K, admitted)).overflow,
       false,
     );
   }
-  const remaining = 256 * 1024 * 1024 - store.head().value.bytes;
+  const head = store.head().value;
+  const frameBytes = store.journal.get('organization-history-v1', 'blob:' + head.frames.at(-1))
+    .value.length;
+  const remaining = 256 * 1024 * 1024 - head.bytes - frameBytes;
+  admitted.observations = [c.sha256(Buffer.from('content observation 3')).toString('hex')];
   assert(remaining > 0 && remaining <= 64 * 1024 * 1024);
   const boundary = { originalBytes: Buffer.alloc(remaining, 4), evidenceRecord: record };
   assert.equal(
@@ -964,6 +998,7 @@ test('storage exact-content byte capacity accepts 256 MiB and atomically rejects
     false,
   );
   assert.equal(store.head().value.bytes, 256 * 1024 * 1024);
+  admitted.observations = [c.sha256(Buffer.from('content observation 4')).toString('hex')];
   const overflow = { originalBytes: Buffer.from([5]), evidenceRecord: record };
   assert.equal(
     store.transact((row) => store.append(row, overflow, fixture.K, admitted)).overflow,
@@ -1210,13 +1245,18 @@ test('a changed artifact map cannot return another retained pair under the origi
   const h = harness(t),
     first = h.open();
   const original = first.verifier.verify(fixture.input);
+  assert.equal(original.overall, 'VALID');
+  assert.match(original.knowledgeReceipt.evidenceID, /^[a-f0-9]{64}$/);
   const originalBytes = fixture.replaceLeaf(
     'Document',
     Buffer.from('a different retained candidate'),
   );
   const evidenceRecord = await fixture.preserve(originalBytes);
+  h.value.knowledge.statusMaterial.push(revoke());
   const other = first.verifier.verify({ originalBytes, evidenceRecord });
+  assert.equal(other.overall, 'INVALID');
   assert.equal(other.knowledgeReceipt.state, 'COMMITTED');
+  assert.match(other.knowledgeReceipt.evidenceID, /^[a-f0-9]{64}$/);
   assert.notEqual(original.knowledgeReceipt.evidenceID, other.knowledgeReceipt.evidenceID);
   first.source.close();
   const db = new Journal(h.databasePath);
@@ -1247,24 +1287,16 @@ test('sticky capacity replays a genuine retained compromise and advances only se
   assert.equal(initial.overall, 'INVALID');
   assert.equal(initial.knowledgeReceipt.state, 'COMMITTED');
   first.source.close();
-  // Fill the byte mechanism with explicitly opaque candidates and no claimed
-  // admissions. The incident and replay frame above are genuinely authenticated.
+  // Inject only the sticky capacity flag. Exact capacity accounting is tested
+  // separately; this test retains the genuinely authenticated replay material.
   const store = new OrganizationHistoryKnowledgeStore(h.databasePath, h.value.configuration);
-  const admitted = {
-    authorityHistory: [],
-    statusMaterial: [],
-    certificateStatusMaterial: [],
-    observations: [],
-    historySemantics: [],
-  };
-  for (let i = 0; i < 4; i++) {
-    const input = {
-      originalBytes: Buffer.alloc(64 * 1024 * 1024, i + 1),
-      evidenceRecord: Buffer.from('opaque ERS'),
-    };
-    const committed = store.transact((row) => store.append(row, input, fixture.K, admitted));
-    assert.equal(committed.overflow, i === 3);
-  }
+  const row = store.head();
+  store.journal.put(
+    'organization-history-v1',
+    'head',
+    { ...row.value, overflow: true },
+    row.revision,
+  );
   const before = store.head();
   assert.equal(before.value.overflow, true);
   store.close();

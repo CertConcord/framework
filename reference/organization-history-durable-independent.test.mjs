@@ -708,8 +708,25 @@ test('independent durable RTM quota failure is sticky across reopen without evic
   const admitted = run(a, request(f, f.firstKnowledge, f.first, { databasePath: a.databasePath }));
   committed(admitted, f.first);
   scoped(admitted.result, 'INVALID');
+  const admittedState = persisted();
   const full = run(a, request(f, f.atLimit, f.unverifiableInput, { databasePath: a.databasePath }));
-  committed(full, f.unverifiableInput);
+  assert.equal(full.result.knowledgeReceipt.mode, 'SQLITE');
+  assert.equal(full.result.knowledgeReceipt.state, 'COMMITTED');
+  assert.equal(full.result.knowledgeReceipt.evidenceID, null);
+  assert.equal(full.result.knowledgeReceipt.scopeID, admitted.result.knowledgeReceipt.scopeID);
+  assert.equal(
+    full.result.knowledgeReceipt.configurationID,
+    admitted.result.knowledgeReceipt.configurationID,
+  );
+  assert(full.result.knowledgeReceipt.revision > admitted.result.knowledgeReceipt.revision);
+  assert.equal(full.reads, 1);
+  assert.equal(full.clockReads, 0);
+  assert.equal(full.forbiddenActions, 0);
+  assert.equal(full.evidence, undefined);
+  const atLimit = persisted();
+  assert.deepEqual(atLimit.head.artifacts, admittedState.head.artifacts);
+  assert.equal(atLimit.head.historySemantics.length, 256);
+  assert.equal(atLimit.head.overflow, false);
   assert.notEqual(full.result.overall, 'VALID');
   assert(!full.result.checks.some((item) => item.reason === 'ORG_HISTORY_KNOWLEDGE_LIMIT'));
   const overflow = run(

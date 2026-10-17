@@ -501,7 +501,8 @@ class HistoricalKnowledge {
 function credentialView(original, trust, knowledge, P, authorityResolver, checks, onAdmission) {
   const { values, A } = original,
     t = trust.credentialTrust,
-    K = knowledge.knowledgeTime;
+    K = knowledge.knowledgeTime,
+    statusTime = Number.isFinite(P) ? P : K;
   const scope = {
     trustDomainID: trust.trustDomainID,
     profileID: SEAL,
@@ -593,7 +594,7 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
         }
       }
       const decision = evaluateStatus(body, {
-        stateTime: Number.isFinite(P) ? P : K,
+        stateTime: statusTime,
         knowledgeTime: K,
         scope: 'CERTIFICATE',
       });
@@ -619,7 +620,7 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
   checks.add('certificate-status-closure', 'status', () => {
     for (const body of statements) {
       const decision = evaluateStatus(body, {
-        stateTime: P,
+        stateTime: statusTime,
         knowledgeTime: K,
         scope: 'CERTIFICATE',
       });
@@ -633,7 +634,7 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
     need(statements.length > 0, 'ORG_CERTIFICATE_STATUS_MISSING', 'INDETERMINATE');
     const current = statements.reduce((a, b) => (a.publishedAt >= b.publishedAt ? a : b));
     const decision = evaluateStatus(current, {
-      stateTime: P,
+      stateTime: statusTime,
       knowledgeTime: K,
       scope: 'CERTIFICATE',
     });
