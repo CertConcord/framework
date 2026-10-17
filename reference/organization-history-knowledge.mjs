@@ -11,6 +11,15 @@ const need = (value, code = 'ORG_HISTORY_STORAGE_CORRUPT') => {
   if (!value) throw new VerificationError(code, 'INDETERMINATE');
 };
 const digest = (bytes) => sha256(bytes).toString('hex');
+const pairID = (input) =>
+  digest(
+    dcbor({
+      original: digest(input.originalBytes),
+      record: digest(input.evidenceRecord),
+      originalLength: input.originalBytes.length,
+      recordLength: input.evidenceRecord.length,
+    }),
+  );
 const ids = (values, maximum) => {
   need(
     Array.isArray(values) &&
@@ -185,7 +194,7 @@ export class OrganizationHistoryKnowledgeStore {
     need(
       integer(frame.knowledgeTime) &&
         frame.knowledgeTime <= head.selectedKnowledge &&
-        head.artifacts.some((a) => a.id === frame.evidenceID),
+        (frame.evidenceID === null || head.artifacts.some((a) => a.id === frame.evidenceID)),
     );
     for (const [name, max] of [
       ['authorityHistory', 256],
@@ -195,6 +204,7 @@ export class OrganizationHistoryKnowledgeStore {
       ids(frame[name], max);
       frame[name] = frame[name].map((ref) => decodeCBOR(this.blob(ref)));
     }
+    need(frame.evidenceID !== null || frame.statusMaterial.length === 0);
     return frame;
   }
   transact(action) {
@@ -221,13 +231,22 @@ export class OrganizationHistoryKnowledgeStore {
   }
   append(row, input, knowledgeTime, admitted) {
     const old = row.value;
-    if (old.overflow) {
+    const hasNewKnowledge =
+      admitted.authorityHistory.length ||
+      admitted.observations.some((id) => !old.observations.includes(id)) ||
+      admitted.historySemantics.some((id) => !old.historySemantics.includes(id));
+    if (old.overflow || !hasNewKnowledge) {
       const selectedKnowledge = Math.max(old.selectedKnowledge ?? 0, knowledgeTime);
       const revision =
         selectedKnowledge === old.selectedKnowledge
           ? row.revision
           : this.journal.put(namespace, 'head', { ...old, selectedKnowledge }, row.revision);
-      return { revision, evidenceID: null, overflow: true };
+      const existing = !old.overflow && old.artifacts.length ? pairID(input) : null;
+      return {
+        revision,
+        evidenceID: old.artifacts.some((a) => a.id === existing) ? existing : null,
+        overflow: old.overflow,
+      };
     }
     const planned = new Map();
     const blob = (bytes) => {
@@ -237,16 +256,11 @@ export class OrganizationHistoryKnowledgeStore {
       else need(equal(this.blob(id), bytes));
       return id;
     };
-    const original = blob(input.originalBytes),
-      record = blob(input.evidenceRecord);
-    const evidenceID = digest(
-      dcbor({
-        original,
-        record,
-        originalLength: input.originalBytes.length,
-        recordLength: input.evidenceRecord.length,
-      }),
-    );
+    need(typeof admitted.originalRequired === 'boolean');
+    const requestedID = pairID(input),
+      evidenceID = admitted.originalRequired ? requestedID : null;
+    const original = evidenceID ? blob(input.originalBytes) : null,
+      record = evidenceID ? blob(input.evidenceRecord) : null;
     const frame = {
       knowledgeTime,
       evidenceID,
@@ -266,9 +280,10 @@ export class OrganizationHistoryKnowledgeStore {
       ...old,
       selectedKnowledge: Math.max(old.selectedKnowledge ?? 0, knowledgeTime),
       frames: [...new Set([...old.frames, ...(frameID ? [frameID] : [])])],
-      artifacts: old.artifacts.some((a) => a.id === evidenceID)
-        ? old.artifacts
-        : [...old.artifacts, { id: evidenceID, original, record }],
+      artifacts:
+        !evidenceID || old.artifacts.some((a) => a.id === evidenceID)
+          ? old.artifacts
+          : [...old.artifacts, { id: evidenceID, original, record }],
       observations: [...new Set([...old.observations, ...admitted.observations])],
       historySemantics: [...new Set([...old.historySemantics, ...admitted.historySemantics])],
       bytes: old.bytes + [...planned.values()].reduce((sum, bytes) => sum + bytes.length, 0),
@@ -308,7 +323,11 @@ export class OrganizationHistoryKnowledgeStore {
     const revision = equal(dcbor(head), dcbor(old))
       ? row.revision
       : this.journal.put(namespace, 'head', head, row.revision);
-    return { revision, evidenceID, overflow: false };
+    return {
+      revision,
+      evidenceID: head.artifacts.some((a) => a.id === requestedID) ? requestedID : null,
+      overflow: false,
+    };
   }
   close() {
     this.journal.close();

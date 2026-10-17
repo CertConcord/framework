@@ -437,6 +437,7 @@ class RetainedHistory {
   }
   add(entries, K) {
     const admitted = [],
+      updates = [],
       failures = [],
       config = this.selected.value;
     for (const raw of entries) {
@@ -463,14 +464,16 @@ class RetainedHistory {
         if (!checkpoint) continue;
         const id = checkpoint.hash.toString('hex'),
           old = this.nodes.get(id);
-        if (!old || checkpoint.published < old.checkpoint.published)
+        if (!old || checkpoint.published < old.checkpoint.published) {
           this.nodes.set(id, { raw, manifest, checkpoint });
+          updates.push(raw);
+        }
         admitted.push(raw);
       } catch (error) {
         failures.push(verificationOutcome(error));
       }
     }
-    return { admitted, failures };
+    return { admitted, updates, failures };
   }
   chain() {
     let node = [...this.nodes.values()].sort((a, b) => b.manifest.serial - a.manifest.serial)[0];
@@ -537,12 +540,15 @@ class RetainedHistory {
 function collector() {
   const status = new Map(),
     certificate = new Map(),
-    observations = new Set();
+    observations = new Set(),
+    independent = new Set();
   return {
     observe(event) {
       const semantic =
         event.kind === 'certificate-status' ? event.body : event.observation.semanticHash;
-      observations.add(rawID({ kind: event.kind, semantic }));
+      const id = rawID({ kind: event.kind, semantic });
+      observations.add(id);
+      if (event.kind === 'certificate-status' && !event.original) independent.add(id);
       if (event.original || !event.material) return;
       const map = event.kind === 'organization-status' ? status : certificate;
       map.set(rawID(event.material), event.material);
@@ -555,6 +561,9 @@ function collector() {
     },
     get observations() {
       return [...observations];
+    },
+    originalRequired(previous) {
+      return [...observations].some((id) => !previous.includes(id) && !independent.has(id));
     },
   };
 }
@@ -656,7 +665,11 @@ function durableVerifier(state, createVerifier) {
               history: ledger.chain(),
             };
             observed = collector();
-            const artifact = store.evidence(head, frame.evidenceID);
+            // An authority/selected-credential-only frame has no original to
+            // replay. Empty input cannot admit an original target or status.
+            const artifact = frame.evidenceID
+              ? store.evidence(head, frame.evidenceID)
+              : { originalBytes: Buffer.alloc(0), evidenceRecord: Buffer.alloc(0) };
             verifier.verify({
               originalBytes: artifact.originalBytes,
               evidenceRecord: artifact.evidenceRecord,
@@ -686,12 +699,14 @@ function durableVerifier(state, createVerifier) {
           observed = collector();
           result = verifier.verify(input);
           for (const failure of authenticated.failures) result = addFailure(result, failure);
+          const originalRequired = observed.originalRequired(head.observations);
           const commit = store.append(row, input, K, {
-            authorityHistory: authenticated.admitted,
-            statusMaterial: observed.statusMaterial,
+            authorityHistory: authenticated.updates,
+            statusMaterial: originalRequired ? observed.statusMaterial : [],
             certificateStatusMaterial: observed.certificateStatusMaterial,
             observations: observed.observations,
             historySemantics: [...ledger.nodes.values()].map((n) => rawID(n.manifest)),
+            originalRequired,
           });
           if (commit.overflow)
             result = addFailure(result, {

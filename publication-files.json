@@ -198,6 +198,7 @@
   "reference/organization-delegation-fixtures.test.mjs",
   "reference/organization-delegation-state.mjs",
   "reference/organization-delegation.mjs",
+  "reference/organization-history-admission.test.mjs",
   "reference/organization-history-durable-independent-child.mjs",
   "reference/organization-history-durable-independent.test.mjs",
   "reference/organization-history-independent.test.mjs",
