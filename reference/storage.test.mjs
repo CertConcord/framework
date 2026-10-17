@@ -1,8 +1,109 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { tmpdir } from 'node:os';
+import { basename, dirname, join, resolve } from 'node:path';
+import { spawn } from 'node:child_process';
+import { DatabaseSync } from 'node:sqlite';
 import { Journal } from './state.mjs';
 import { IndexedMerkleLog, migrateArrayLog, migrateMirrorLog } from './storage/merkle.mjs';
 import { treeHash, inclusionProof, consistencyProof, verifyConsistency } from './mtc.mjs';
+
+test(
+  'journal initialization waits for a transient lock before configuring WAL',
+  { timeout: 15000 },
+  async (t) => {
+    const artifactRoot = process.env.CERTCONCORD_STORAGE_ARTIFACT_DIR;
+    const parent = resolve(artifactRoot ?? tmpdir());
+    const directory = fs.mkdtempSync(join(parent, 'certconcord-journal-open-'));
+    const databasePath = join(directory, 'journal.sqlite');
+    const initial = new Journal(databasePath);
+    initial.put('startup', 'row', { retained: 'exact' });
+    initial.close();
+    const holder = spawn(
+      process.execPath,
+      [
+        '-e',
+        `
+    const { DatabaseSync } = require('node:sqlite');
+    const db = new DatabaseSync(process.argv[1]);
+    db.exec("PRAGMA locking_mode=EXCLUSIVE; BEGIN EXCLUSIVE; UPDATE state SET revision=revision+1 WHERE namespace='startup' AND id='row';");
+    process.on('message', (message) => {
+      if (message !== 'open-attempt') throw Error('Unexpected lock release signal');
+      setTimeout(() => {
+        db.exec('COMMIT');
+        db.close();
+        process.disconnect();
+      }, 500);
+    });
+    process.send({ locked: true });
+  `,
+        databasePath,
+      ],
+      { windowsHide: true, stdio: ['ignore', 'ignore', 'pipe', 'ipc'] },
+    );
+    let diagnostics = '';
+    holder.stderr.on('data', (chunk) => {
+      diagnostics += chunk;
+    });
+    const exited = new Promise((resolveExit, rejectExit) => {
+      holder.once('error', rejectExit);
+      holder.once('close', (code, signal) => resolveExit({ code, signal }));
+    });
+    t.after(async () => {
+      if (holder.exitCode === null && holder.signalCode === null) holder.kill('SIGKILL');
+      await exited;
+      assert.equal(dirname(resolve(directory)), parent);
+      assert(basename(directory).startsWith('certconcord-journal-open-'));
+      if (!artifactRoot) fs.rmSync(directory, { recursive: true, force: true });
+    });
+    const marker = await Promise.race([
+      new Promise((resolveMarker) => holder.once('message', resolveMarker)),
+      exited.then((exit) => assert.fail(JSON.stringify({ exit, diagnostics }))),
+    ]);
+    assert.deepEqual(marker, { locked: true });
+    holder.send('open-attempt');
+    const opened = new Journal(databasePath);
+    try {
+      const retained = opened.get('startup', 'row');
+      assert.equal(retained.revision, 1);
+      assert.deepEqual({ ...retained.value }, { retained: 'exact' });
+      assert.equal(opened.db.prepare('PRAGMA journal_mode').get().journal_mode, 'wal');
+      assert.equal(opened.db.prepare('PRAGMA synchronous').get().synchronous, 2);
+      assert.equal(opened.db.prepare('PRAGMA busy_timeout').get().timeout, 5000);
+      assert.deepEqual(await exited, { code: 0, signal: null }, diagnostics);
+    } finally {
+      opened.close();
+    }
+  },
+);
+
+test('journal initialization closes its connection after a native database error', (t) => {
+  const artifactRoot = process.env.CERTCONCORD_STORAGE_ARTIFACT_DIR;
+  const parent = resolve(artifactRoot ?? tmpdir());
+  const directory = fs.mkdtempSync(join(parent, 'certconcord-journal-failure-'));
+  const databasePath = join(directory, 'invalid.sqlite');
+  fs.writeFileSync(databasePath, Buffer.alloc(4096, 0x61));
+  const originalExec = DatabaseSync.prototype.exec;
+  let connection;
+  t.mock.method(DatabaseSync.prototype, 'exec', function (...args) {
+    connection = this;
+    return originalExec.apply(this, args);
+  });
+  try {
+    assert.throws(
+      () => new Journal(databasePath),
+      (error) => error.code === 'ERR_SQLITE_ERROR' && error.errcode === 26,
+    );
+    assert(connection instanceof DatabaseSync);
+    assert.equal(connection.isOpen, false);
+  } finally {
+    if (connection?.isOpen) connection.close();
+    assert.equal(dirname(resolve(directory)), parent);
+    assert(basename(directory).startsWith('certconcord-journal-failure-'));
+    if (!artifactRoot) fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
 
 test('indexed Merkle storage matches independent recursive proofs at power and tile boundaries', () => {
   const journal = new Journal(),

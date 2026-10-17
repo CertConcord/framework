@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "profile": "certconcord-organization-history-vectors-draft-03",
   "description": "Selected credential CertificateStatus with independent RFC 4998 preservation, public trust and explicit knowledge.",
-  "provenance": "files/694b5e60968774e2799d8e809768a179dfeed3890979c8a7d0e02b338dc7088d.json",
+  "provenance": "files/2a731e74c033bcad824e621c0b2176034b10ec5e126ae6e8058a1c6fc8c8591b.json",
   "files": [
     {
       "path": "files/0200ab8cfe2d884070818cd94f02461c015b8d05c20e4f556cce06b3c8415d7d.bin.b64",
@@ -345,6 +345,15 @@
       "encoding": "base64",
       "decodedBytes": 7508,
       "decodedSHA256": "2a61ebbfa19d3684ae17c420ee0c757c5866a2c41ea4e3abd9642884d4cc7d6f"
+    },
+    {
+      "path": "files/2a731e74c033bcad824e621c0b2176034b10ec5e126ae6e8058a1c6fc8c8591b.json",
+      "bytes": 3580,
+      "sha256": "2a731e74c033bcad824e621c0b2176034b10ec5e126ae6e8058a1c6fc8c8591b",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3580,
+      "decodedSHA256": "2a731e74c033bcad824e621c0b2176034b10ec5e126ae6e8058a1c6fc8c8591b"
     },
     {
       "path": "files/2bbe9a4f2812efd1b2b0dabe7c69e4b8cbfd8cb78f3bb51b1857a8aa18276340.bin.b64",
@@ -750,15 +759,6 @@
       "encoding": "base64",
       "decodedBytes": 25407,
       "decodedSHA256": "66ffbf87f1bb0483da8eec3c8475a635f1da3f9665740c1f7f153e5339e794b7"
-    },
-    {
-      "path": "files/694b5e60968774e2799d8e809768a179dfeed3890979c8a7d0e02b338dc7088d.json",
-      "bytes": 3580,
-      "sha256": "694b5e60968774e2799d8e809768a179dfeed3890979c8a7d0e02b338dc7088d",
-      "mediaType": "application/json",
-      "encoding": "utf8",
-      "decodedBytes": 3580,
-      "decodedSHA256": "694b5e60968774e2799d8e809768a179dfeed3890979c8a7d0e02b338dc7088d"
     },
     {
       "path": "files/69e601ad8fa32aa3651f1221eb8041c05c50d1f347ec2f57a755c2b9846c3662.json",

@@ -281,7 +281,7 @@
     {
       "path": "publication-files.json",
       "bytes": 78327,
-      "sha256": "397cf05dd4eb1a653c67e0c05b0da78231840b666b87563bcd1195f1bc7170cf"
+      "sha256": "fd3a1ea00ecd4f556ffb6c1462b7417ede8190039376b81e3532e33620c83e81"
     },
     {
       "path": "reference/README.md",
@@ -1010,8 +1010,8 @@
     },
     {
       "path": "reference/organization-history-durable-independent.test.mjs",
-      "bytes": 39586,
-      "sha256": "53937e12e43d6490e203b55c18faa8b54c190a2781a5b9e373e9983c40c2b549"
+      "bytes": 40047,
+      "sha256": "4d8252460df651837a6b95ae33d39ddf37eeeb4c6f9d0d8b243293340db21aa3"
     },
     {
       "path": "reference/organization-history-independent.test.mjs",
@@ -1440,8 +1440,8 @@
     },
     {
       "path": "reference/state.mjs",
-      "bytes": 16743,
-      "sha256": "ac0d9ac7fe9280fc4bdc06d59a69eb31a9d8eb60ebd3be2fff06a9f7748737e5"
+      "bytes": 16908,
+      "sha256": "73a5fba99277fc34472f6e673c6e360767a62b1176accd88271580f99c985f98"
     },
     {
       "path": "reference/status-list.test.mjs",
@@ -1460,8 +1460,8 @@
     },
     {
       "path": "reference/storage.test.mjs",
-      "bytes": 3829,
-      "sha256": "f2404ed13b72963f135bc67d81efc49fc5a0a7def7b2f0cc8b1eac7bef0b1919"
+      "bytes": 7968,
+      "sha256": "eb5f7e2271dbf49d54d404a35936a75d3c5d4afa517fdf73795378af8879f894"
     },
     {
       "path": "reference/storage/concurrency-worker.mjs",
@@ -3324,6 +3324,11 @@
       "sha256": "61388ef657f693e414c4185e609b11ca05ebde62f08f2f186cbf58f5bc0b25d4"
     },
     {
+      "path": "reference/vectors/preserved-certificate-status/files/2a731e74c033bcad824e621c0b2176034b10ec5e126ae6e8058a1c6fc8c8591b.json",
+      "bytes": 3580,
+      "sha256": "2a731e74c033bcad824e621c0b2176034b10ec5e126ae6e8058a1c6fc8c8591b"
+    },
+    {
       "path": "reference/vectors/preserved-certificate-status/files/2bbe9a4f2812efd1b2b0dabe7c69e4b8cbfd8cb78f3bb51b1857a8aa18276340.bin.b64",
       "bytes": 16901,
       "sha256": "f00d040bc6e97d48eaf7b0af5df20a70cc4a60f23d93c7df163a2b54bddb769f"
@@ -3547,11 +3552,6 @@
       "path": "reference/vectors/preserved-certificate-status/files/66ffbf87f1bb0483da8eec3c8475a635f1da3f9665740c1f7f153e5339e794b7.bin.b64",
       "bytes": 33877,
       "sha256": "193f648d201608f2d1a78272621379bd8d029a9dd8afed742df128aaa9087f15"
-    },
-    {
-      "path": "reference/vectors/preserved-certificate-status/files/694b5e60968774e2799d8e809768a179dfeed3890979c8a7d0e02b338dc7088d.json",
-      "bytes": 3580,
-      "sha256": "694b5e60968774e2799d8e809768a179dfeed3890979c8a7d0e02b338dc7088d"
     },
     {
       "path": "reference/vectors/preserved-certificate-status/files/69e601ad8fa32aa3651f1221eb8041c05c50d1f347ec2f57a755c2b9846c3662.json",
@@ -4166,7 +4166,7 @@
     {
       "path": "reference/vectors/preserved-certificate-status/manifest.json",
       "bytes": 108495,
-      "sha256": "3fa7d0622f6c161f35c380d7774d0572a774643205621e6c6701bc6bd0991229"
+      "sha256": "1607baacca4c7fadc1501d47c33b63b6bdc2111116a97b7c3f6408a4eec7c0d4"
     },
     {
       "path": "reference/vendor/mdoc-signing/base.mjs",

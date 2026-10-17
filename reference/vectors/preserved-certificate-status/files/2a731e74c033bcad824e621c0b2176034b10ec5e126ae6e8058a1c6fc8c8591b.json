@@ -81,7 +81,7 @@
     },
     {
       "path": "reference/state.mjs",
-      "sha256": "ac0d9ac7fe9280fc4bdc06d59a69eb31a9d8eb60ebd3be2fff06a9f7748737e5"
+      "sha256": "73a5fba99277fc34472f6e673c6e360767a62b1176accd88271580f99c985f98"
     },
     {
       "path": "reference/verification-result.mjs",
