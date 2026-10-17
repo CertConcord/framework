@@ -289,11 +289,17 @@ export function loadOrganizationHistoryVectorCorpus(
     for (const name of ['statusMaterial', 'certificateStatusMaterial']) {
       need(Array.isArray(knowledge[name]) && knowledge[name].length <= 64, 'ORG_VECTOR_KNOWLEDGE');
       for (const member of knowledge[name]) {
-        keys(member, ['cms', 'issuerCertificate']);
+        keys(
+          member,
+          ['cms', 'issuerCertificate'],
+          name === 'certificateStatusMaterial' ? ['evidenceRecord'] : [],
+        );
         need(
           Buffer.isBuffer(member.cms) && Buffer.isBuffer(member.issuerCertificate),
           'ORG_VECTOR_KNOWLEDGE',
         );
+        if (Object.hasOwn(member, 'evidenceRecord'))
+          need(Buffer.isBuffer(member.evidenceRecord), 'ORG_VECTOR_KNOWLEDGE');
       }
     }
     need(Array.isArray(knowledge.authorityHistory), 'ORG_VECTOR_KNOWLEDGE');

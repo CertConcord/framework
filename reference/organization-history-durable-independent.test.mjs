@@ -171,6 +171,27 @@ function start(a, value, seam) {
     child.once('close', (code, signal) => resolveExit({ code, signal }));
   });
   const response = () => deserialize(fs.readFileSync(paths.responsePath));
+  const assertRunning = () => {
+    if (child.exitCode === null && child.signalCode === null) return;
+    let saved;
+    try {
+      saved = response();
+    } catch (error) {
+      saved = { error: { name: 'ResponseReadError', message: error.message } };
+    }
+    assert.fail(
+      JSON.stringify({
+        pid: child.pid,
+        exitCode: child.exitCode,
+        signalCode: child.signalCode,
+        error: saved.error,
+        reads: saved.reads,
+        clockReads: saved.clockReads,
+        forbiddenActions: saved.forbiddenActions,
+        diagnostics,
+      }),
+    );
+  };
   return {
     child,
     paths,
@@ -179,8 +200,7 @@ function start(a, value, seam) {
     async ready() {
       const deadline = performance.now() + 60000;
       while (!fs.existsSync(paths.readyPath)) {
-        assert.equal(child.exitCode, null, diagnostics);
-        assert.equal(child.signalCode, null, diagnostics);
+        assertRunning();
         assert(performance.now() < deadline, 'Child did not reach boundary: ' + diagnostics);
         await new Promise((resolveWait) => setTimeout(resolveWait, 20));
       }
@@ -193,7 +213,7 @@ function start(a, value, seam) {
     async beginning() {
       const deadline = performance.now() + 60000;
       while (!fs.existsSync(paths.beginPath)) {
-        assert.equal(child.exitCode, null, diagnostics);
+        assertRunning();
         assert(performance.now() < deadline, diagnostics);
         await new Promise((resolveWait) => setTimeout(resolveWait, 20));
       }

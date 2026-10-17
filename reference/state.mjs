@@ -20,11 +20,17 @@ import { signCMS, verifyCMS } from './pki.mjs';
 export class Journal {
   constructor(path = ':memory:') {
     this.db = new DatabaseSync(path);
-    this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000;');
-    this.db
-      .exec(`CREATE TABLE IF NOT EXISTS state (namespace TEXT NOT NULL, id TEXT NOT NULL, revision INTEGER NOT NULL, value BLOB NOT NULL, PRIMARY KEY(namespace,id));
+    try {
+      // WAL initialization can encounter a lock before the first transaction.
+      this.db.exec('PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;');
+      this.db
+        .exec(`CREATE TABLE IF NOT EXISTS state (namespace TEXT NOT NULL, id TEXT NOT NULL, revision INTEGER NOT NULL, value BLOB NOT NULL, PRIMARY KEY(namespace,id));
       CREATE TABLE IF NOT EXISTS operations (id TEXT PRIMARY KEY, digest BLOB NOT NULL, status TEXT NOT NULL, result BLOB, updated INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS nonce (scope TEXT NOT NULL, value TEXT NOT NULL, expires INTEGER NOT NULL, consumed INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(scope,value));`);
+    } catch (error) {
+      this.db.close();
+      throw error;
+    }
   }
   close() {
     this.db.close();

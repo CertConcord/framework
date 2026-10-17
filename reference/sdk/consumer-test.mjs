@@ -57,6 +57,27 @@ assert(savedHistory.cases > 0);
 assert.deepEqual(savedHistory.forbiddenCalls, []);
 console.log(JSON.stringify({ installedOrganizationCorpus: savedHistory }));
 
+const preservedStatusReplay = spawnSync(
+  process.execPath,
+  [
+    resolve('sdk/organization-consumer.mjs'),
+    entry,
+    cwd + '/node_modules/@certconcord/verifier/index.mjs',
+    resolve('vectors/preserved-certificate-status'),
+  ],
+  { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, windowsHide: true },
+);
+assert.equal(
+  preservedStatusReplay.status,
+  0,
+  preservedStatusReplay.stderr || preservedStatusReplay.stdout,
+);
+const preservedStatus = JSON.parse(preservedStatusReplay.stdout);
+assert(preservedStatus.cases > 0);
+assert.deepEqual(preservedStatus.forbiddenCalls, []);
+assert.equal(preservedStatus.installedBundleSHA256, savedHistory.installedBundleSHA256);
+console.log(JSON.stringify({ installedPreservedCertificateStatusCorpus: preservedStatus }));
+
 const durableDirectory = await mkdtemp(cwd + '/organization-durable-');
 const durableReplay = [];
 for (const [phase, database] of [
@@ -93,6 +114,49 @@ for (const first of [0, 2]) {
   assert(reopened.revision >= old.revision);
 }
 console.log(JSON.stringify({ installedOrganizationDurableReplay: durableReplay }));
+
+const preservedDurableDirectory = await mkdtemp(cwd + '/preserved-certificate-status-');
+const preservedDurableReplay = [];
+for (const [phase, database] of [
+  ['record-compromise', 'compromise.sqlite'],
+  ['reopen-compromise', 'compromise.sqlite'],
+  ['record-positive', 'positive.sqlite'],
+  ['reopen-missing', 'positive.sqlite'],
+]) {
+  const child = spawnSync(
+    process.execPath,
+    [
+      resolve('sdk/preserved-certificate-status-consumer.mjs'),
+      entry,
+      cwd + '/node_modules/@certconcord/verifier/index.mjs',
+      preservedDurableDirectory + '/' + database,
+      phase,
+    ],
+    { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, windowsHide: true },
+  );
+  assert.equal(child.status, 0, child.stderr || child.stdout);
+  const observed = JSON.parse(child.stdout);
+  assert.equal(observed.phase, phase);
+  assert.deepEqual(observed.forbiddenCalls, []);
+  assert.equal(observed.installedBundleSHA256, preservedStatus.installedBundleSHA256);
+  assert.equal(observed.unchangedFiles, preservedStatus.unchangedFiles);
+  preservedDurableReplay.push(observed);
+}
+assert.equal(new Set(preservedDurableReplay.map((row) => row.pid)).size, 4);
+for (const first of [0, 2]) {
+  const old = preservedDurableReplay[first].receipt,
+    reopened = preservedDurableReplay[first + 1].receipt;
+  for (const field of ['scopeID', 'configurationID']) assert.equal(reopened[field], old[field]);
+  assert(reopened.revision >= old.revision);
+}
+assert.equal(preservedDurableReplay[0].receipt.evidenceID, null);
+assert.equal(
+  preservedDurableReplay[3].receipt.evidenceID,
+  preservedDurableReplay[2].receipt.evidenceID,
+);
+console.log(
+  JSON.stringify({ installedPreservedCertificateStatusDurableReplay: preservedDurableReplay }),
+);
 
 for (const [format, executionBinding, trustedTime = false] of [
   ['CMS', false],

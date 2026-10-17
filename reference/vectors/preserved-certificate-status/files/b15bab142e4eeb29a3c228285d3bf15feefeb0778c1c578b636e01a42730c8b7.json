@@ -1,0 +1,849 @@
+{
+  "purpose": "RETAINED_EVIDENCE_VERIFICATION",
+  "operationTime": 1800000000,
+  "proofOfExistenceUpperBound": 1800000001,
+  "knowledgeTime": 1800007200,
+  "historicalAuthorization": {
+    "scope": "AS_KNOWN_AT_PROOF_TIME",
+    "stateTime": 1800000001,
+    "knowledgeTime": 1800000001,
+    "checks": [
+      {
+        "check": "organization-semantics",
+        "overall": "VALID",
+        "reason": "ORG_EVIDENCE_VALID"
+      },
+      {
+        "check": "organization",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "original-credential",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status:0",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status-closure",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "credential-view",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      }
+    ],
+    "overall": "VALID",
+    "reason": "ORG_HISTORY_AUTHORIZED",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {
+      "authorization": {
+        "overall": "VALID",
+        "reason": "ORG_EVIDENCE_VALID"
+      }
+    }
+  },
+  "currentAdmissibility": {
+    "scope": "HISTORICAL_EVIDENCE_UNDER_CURRENT_KNOWLEDGE",
+    "stateTime": 1800000001,
+    "knowledgeTime": 1800007200,
+    "checks": [
+      {
+        "check": "organization-semantics",
+        "overall": "VALID",
+        "reason": "ORG_EVIDENCE_VALID"
+      },
+      {
+        "check": "retained-organization-incidents",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "organization",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "original-credential",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status:0",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status:1",
+        "overall": "INVALID",
+        "reason": "AUTHORITY_REVOKED"
+      },
+      {
+        "check": "certificate-status-closure",
+        "overall": "INDETERMINATE",
+        "reason": "STATUS_STALE"
+      },
+      {
+        "check": "credential-view",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "retained-certificate-incidents",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "retained-certificate-knowledge",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      }
+    ],
+    "overall": "INVALID",
+    "reason": "AUTHORITY_REVOKED",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {
+      "authorization": {
+        "overall": "VALID",
+        "reason": "ORG_EVIDENCE_VALID"
+      },
+      "status": {
+        "overall": "INVALID",
+        "reason": "AUTHORITY_REVOKED"
+      }
+    }
+  },
+  "preservation": {
+    "chains": 1,
+    "timestamps": 2,
+    "integrity": "VALID",
+    "preservation": "VALID",
+    "proofOfExistenceUpperBound": 1800000001,
+    "latestRenewalUpperBound": 1800000050,
+    "verifiedAt": 1800007200,
+    "checks": [
+      {
+        "check": "preservation",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      }
+    ],
+    "overall": "VALID",
+    "reason": "ORG_HISTORY_PRESERVED",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {}
+  },
+  "originalProtectionDeadline": 1800003600,
+  "protectionLedger": [
+    {
+      "kind": "KEY",
+      "id": "6150456622e3c4ef224295f77395e0f1ad2135535dda194c93467b7fd6ef3c0e42555f227eb7b21f69393d7a16917207c24393caea3e41668bde25a9fa940af3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "796f1ba73842c271b26b6a1771c6bcbd9bd615c944fc06b5082afea9324a49efe770a278b17385cdf7ac4a246a64d832bc770cec66057183829372ef36d71955",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "f4d7809569485725ef5320f2662f727d8fa787e752c89167c07bac67a0bd903b3e3c3335ff5d6cc35e8202c0469ac4c5499a5715952e0d6649dd1785d760f083",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "19fbefa28878a7244356735e42481270da73e9c9c8228da13ef473b9777c59e95a2d0dd8fef584e6cbb77f7942ea3daec273b96187a739784cc06e2bd2db8667",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "601d22896a8f8e22637a15a8e80fb8f61534845f9b9613468d0bd4a4c0d27cdb1fcf4c99025fb5fca1f3b9950a293464faa73a85102a89cadcd31d490a5f2a68",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "f1b57836fd65ad75056f4d33dba8baa959ed0ee9beeead691ba80e3883211af855bf7c615ded3c0cd6ce0bdfa3e5b901fa33b35ccfd03f65e853ed8d60ea42c3",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "8985aa8a83bf6fd9cd87394dee6c83f14c2bd9eece0bcc3eda4c25b31361d11e6021d19e2862f9b885cb50556c5e5d6543a408fa3d247336db1855de9ac29fa0",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "87407de4a02e8c766dc659b24c4efa6a945cc08adb01e4256d4bc1a521017a0c3eccfe8d3b19152a2eeca24dc80596df92c9fc32740ce359453e247e09b3e904",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "1b397de4f8f28a95150d51b02e6ed8e3d9dfae9220377c81145af7472168c29b5efd34115f8e2ba6fc059ec7b4c7d4f1f69258484e381d6c9f8ccb1b16cd3175",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "8487f0675eaca8c971442d1d9e03d5a8a8e24a94b86adcf6904537e6aa7e2ef9dcc38c6b48c38bde0c36f3c37099aaa32042945ba11f7f022975db4b82d69a28",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "c69d0bbf35c01777118b1cbe3fa8206cab8e9111a12e8c9421e0a6863efc845593cc37b0a4c70bf67588cec6103a8c8b43b7af92695bf7114f7c849058a0d080",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "1483acd6d9b0de00cb49fac9874e6bcf310be742d5dd030478702aec47db98ab7c358cb2e4b4f075a0a42ac6a88c750c5e20b0aaf4ea74ae90ee2bb5906b1aa1",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "8cdf8b02b6cf39b4b519fc80c3240366e65d01444c1144423f7f4fda51b70ceb8694a129c64a608475c850d8876ae246841b690c4706048a4e12fb1e4ec67490",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "76418dc94c85494de7504549977a57972edbe4f5e35e9fa086efe82b7f12a149efbd628057d468710ca6b0f8046d554d39977cdbfe6cac9a8e4da2dc0bc61c4f",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "c6ebf46308b727fcd5b4ca89ba51c9be3f17bd6f8b0609720e33132bc730680b96c8772cffacd7d9ebf5f9ae29f67a7cee6efcac935acb252ae3c1598cee6996",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "3d552b6f772446b29ee4f60fc200b94eabb23e71eb1a9ee71a9bdf6197f16a69f86cd0dec62adc6cfc5519d4603758fbaa389a13faea4a7f39c4604fa0740104",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "d2e2397209177463439c53f81ac49af3b298284892e9475df26d851101e1842864fff0e6bca9ed51bf3d60278e065e8318312de333abc8fa75f60cc9f1368324",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "6018ba164093373a3aac2f237a7dbd9deb64fad2012a0f4d7ca79f4775a444f42c5d3c21da1d44d7cad3d0b248c6efb658e221816d663fcd79fcd309001cda6a",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "dd36e761e58c2f300421f3415bc53d40ef3822deb1b48862062a8d0e896f9d9ac95eb1cff974884864ae8545c581a7e3e6e683461ec8558047d2ecac24441f06",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "f2719d792e19293a8c6588185bb0e3aaa04f34c89eb8f22f3fde56c8f0daa7fc2d364fd18abba7dfbb2e8075c233efd2cca7c4c8c5848f5deb94561d06f0749c",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "dd36e761e58c2f300421f3415bc53d40ef3822deb1b48862062a8d0e896f9d9ac95eb1cff974884864ae8545c581a7e3e6e683461ec8558047d2ecac24441f06",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "f2719d792e19293a8c6588185bb0e3aaa04f34c89eb8f22f3fde56c8f0daa7fc2d364fd18abba7dfbb2e8075c233efd2cca7c4c8c5848f5deb94561d06f0749c",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "1b397de4f8f28a95150d51b02e6ed8e3d9dfae9220377c81145af7472168c29b5efd34115f8e2ba6fc059ec7b4c7d4f1f69258484e381d6c9f8ccb1b16cd3175",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "8487f0675eaca8c971442d1d9e03d5a8a8e24a94b86adcf6904537e6aa7e2ef9dcc38c6b48c38bde0c36f3c37099aaa32042945ba11f7f022975db4b82d69a28",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "11913b94e5318bdae4ec124069bb4505a53241874cce162cb6b6e64672d5b6a66764fdc8bf94604f4323ea361600dec461715c054ae07018a5de890044f04102",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "a24a01083ebee567ab000638864b3410b45828284f965861baaff8dfbccfde4d65bf020e7e5faaea7319baa5aa176f4bca148078d4e15eac9be80e10e1762d1f",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "11913b94e5318bdae4ec124069bb4505a53241874cce162cb6b6e64672d5b6a66764fdc8bf94604f4323ea361600dec461715c054ae07018a5de890044f04102",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "a24a01083ebee567ab000638864b3410b45828284f965861baaff8dfbccfde4d65bf020e7e5faaea7319baa5aa176f4bca148078d4e15eac9be80e10e1762d1f",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "3b2d4dbb4a6673b1dbd5ff985c485ca5f0b0843713915ff6da8749da2b18d27ec360353c653207a154e60eb2374f340c45f9416566f133ecd8e3b3ea316912cb",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "a432890ab56d9a96a77dc2d43caeabc94d7c67f92ae6efcfdb4cf35e2d64958c7fd21e18369ef0c56d2b510575624cb574c1c9ae71a03b54a371f70afc644615",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "3b2d4dbb4a6673b1dbd5ff985c485ca5f0b0843713915ff6da8749da2b18d27ec360353c653207a154e60eb2374f340c45f9416566f133ecd8e3b3ea316912cb",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "a432890ab56d9a96a77dc2d43caeabc94d7c67f92ae6efcfdb4cf35e2d64958c7fd21e18369ef0c56d2b510575624cb574c1c9ae71a03b54a371f70afc644615",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "3b2d4dbb4a6673b1dbd5ff985c485ca5f0b0843713915ff6da8749da2b18d27ec360353c653207a154e60eb2374f340c45f9416566f133ecd8e3b3ea316912cb",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "a432890ab56d9a96a77dc2d43caeabc94d7c67f92ae6efcfdb4cf35e2d64958c7fd21e18369ef0c56d2b510575624cb574c1c9ae71a03b54a371f70afc644615",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "3b2d4dbb4a6673b1dbd5ff985c485ca5f0b0843713915ff6da8749da2b18d27ec360353c653207a154e60eb2374f340c45f9416566f133ecd8e3b3ea316912cb",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "a432890ab56d9a96a77dc2d43caeabc94d7c67f92ae6efcfdb4cf35e2d64958c7fd21e18369ef0c56d2b510575624cb574c1c9ae71a03b54a371f70afc644615",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "3b2d4dbb4a6673b1dbd5ff985c485ca5f0b0843713915ff6da8749da2b18d27ec360353c653207a154e60eb2374f340c45f9416566f133ecd8e3b3ea316912cb",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "a432890ab56d9a96a77dc2d43caeabc94d7c67f92ae6efcfdb4cf35e2d64958c7fd21e18369ef0c56d2b510575624cb574c1c9ae71a03b54a371f70afc644615",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "82fabc43285e22efb9211fec137141dfb79714a4932a9833331b2724cc1abde75b39009db32b5fafac5fcee94fb09f9064e2f66272f857fe4cdc6ee4aa0bfd17",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "1.2.840.10045.4.3.2",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.1",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "KEY",
+      "id": "e16f16b39aa5295c894950fceae6ad000189af8910ca79319e0561a6e2db5d0bf7178525e96bff75d934c7d372970f6f41a489f10cea8064fbbf3234ed09a972",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "1.2.840.10045.4.3.2",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.1",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    }
+  ],
+  "limitations": [
+    "AUTHORITY_ATTESTED_WORKLOAD_PERMISSION",
+    "SIGNED_REGISTRATION_COUNTER_BASELINE_ONLY",
+    "NO_CURRENT_EXECUTION_PERMISSION"
+  ],
+  "checks": [
+    {
+      "check": "plan",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "sim",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "policy",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "document",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationAuthorization",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OperationPermit",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "ExecutionReceipt",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-leaf",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-binding",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationDelegationPath",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationApprovalSet",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationDelegationStatus",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationDelegationPath",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationApprovalSet",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationDelegationStatus",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "grant-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "grant-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "registration-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "assertion-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "registration-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "assertion-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:2",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:3",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:4",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-tuple",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "input",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "knowledge",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "original-protection",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "original-proof",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "preservation",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_PRESERVED"
+    },
+    {
+      "check": "historical-authorization",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_AUTHORIZED"
+    },
+    {
+      "check": "current-admissibility",
+      "overall": "INVALID",
+      "reason": "AUTHORITY_REVOKED"
+    }
+  ],
+  "overall": "INVALID",
+  "reason": "AUTHORITY_REVOKED",
+  "coreRevision": "draft-03",
+  "profile": "certconcord-ecp-cms-organization-delegation-v1",
+  "dimensions": {
+    "time": {
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_PRESERVED"
+    },
+    "authorization": {
+      "overall": "INVALID",
+      "reason": "AUTHORITY_REVOKED"
+    }
+  }
+}
