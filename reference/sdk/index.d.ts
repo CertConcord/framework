@@ -150,6 +150,10 @@ export interface OrganizationHistoryMaterial {
   cms: Buffer;
   issuerCertificate: Buffer;
 }
+export interface OrganizationDelegationStatusMaterial extends OrganizationHistoryMaterial {
+  /** Optional complete-CMS RFC 4998 proof. Statements published after selected K are excluded. */
+  evidenceRecord?: Buffer;
+}
 export interface OrganizationCertificateStatusMaterial extends OrganizationHistoryMaterial {
   /** Optional RFC 4998 record covering the exact complete CMS bytes. No fallback on failure. */
   evidenceRecord?: Buffer;
@@ -158,7 +162,7 @@ export interface OrganizationHistoryKnowledge {
   /** Latest selected relying-party knowledge time; monotonic within its knowledge context. */
   knowledgeTime: number;
   /** Cumulative evidence must retain applicable incidents and same-epoch conflicts. */
-  statusMaterial: OrganizationHistoryMaterial[];
+  statusMaterial: OrganizationDelegationStatusMaterial[];
   certificateStatusMaterial: OrganizationCertificateStatusMaterial[];
 }
 export interface OrganizationHistoryTrust {

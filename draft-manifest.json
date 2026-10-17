@@ -1300,8 +1300,8 @@
     },
     {
       "path": "reference/sdk/index.d.ts",
-      "bytes": 10364,
-      "sha256": "06c604389322967b0980d47dda5e3ec1e9aff24fc9d18caf8e192dcebd558e7c"
+      "bytes": 10593,
+      "sha256": "f2b12c863266553b4041f67341f4347fa5758a857806de5997a5c0b10aa2be22"
     },
     {
       "path": "reference/sdk/index.mjs",
