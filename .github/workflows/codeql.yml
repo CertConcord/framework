@@ -38,12 +38,12 @@ jobs:
       packages: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2
+      - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build }}
           queries: security-extended
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
         if: matrix.language == 'java-kotlin'
         with:
           distribution: temurin
@@ -59,6 +59,6 @@ jobs:
         run: |
           swiftc reference/native/apple/AppleSecureEnclave.swift reference/native/apple/main.swift -o "$RUNNER_TEMP/certconcord-holder"
           xcodebuild -project reference/native/apple/CertConcordHolder.xcodeproj -target CertConcordHolder -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO build
-      - uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2
+      - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d
         with:
           category: /language:${{ matrix.language }}
