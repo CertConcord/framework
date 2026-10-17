@@ -349,3 +349,59 @@ test('same-time replay retains new observations after an earlier publication upd
   assert.deepEqual(raw.originalBytes, f.input.originalBytes);
   assert.deepEqual(raw.evidenceRecord, f.input.evidenceRecord);
 });
+
+test('independent certificate status replay uses selected K without reading the wall clock', async (t) => {
+  function offline(verifier, input) {
+    const originalNow = Date.now;
+    let clockReads = 0;
+    Date.now = () => {
+      clockReads++;
+      throw new Error('WALL_CLOCK_READ_DURING_HISTORY_REPLAY');
+    };
+    let result;
+    try {
+      result = verifier.verify(input);
+    } finally {
+      Date.now = originalNow;
+    }
+    assert.equal(clockReads, 0);
+    return result;
+  }
+  for (const [id, expected] of [
+    ['expired-issuer-scoped-successor', 'VALID'],
+    ['credential-compromise', 'INVALID'],
+  ])
+    await t.test(id, (t) => {
+      const value = saved(id),
+        h = harness(t, value),
+        first = h.open();
+      const learned = offline(first.verifier, malformed(0));
+      assert.equal(learned.knowledgeReceipt.state, 'COMMITTED');
+      assert.equal(learned.knowledgeReceipt.evidenceID, null);
+      const retainedHead = h.head();
+      assert.equal(retainedHead.value.artifacts.length, 0);
+      assert.equal(retainedHead.value.frames.length, 1);
+      first.source.close();
+      const good = valid();
+      value.knowledge = {
+        knowledgeTime: good.knowledge.knowledgeTime,
+        authorityHistory: [],
+        statusMaterial: [],
+        certificateStatusMaterial: [],
+      };
+      const reopened = h.open();
+      const recovered = offline(reopened.verifier, malformed(1));
+      assert.equal(recovered.knowledgeReceipt.state, 'COMMITTED');
+      assert.equal(recovered.knowledgeReceipt.evidenceID, null);
+      assert.deepEqual(h.head(), retainedHead);
+      value.knowledge = good.knowledge;
+      const assessed = offline(reopened.verifier, {
+        originalBytes: good.originalBytes,
+        evidenceRecord: good.evidenceRecord,
+      });
+      assert.equal(assessed.overall, expected);
+      assert.equal(assessed.historicalAuthorization.overall, 'VALID');
+      assert.equal(assessed.currentAdmissibility.overall, expected);
+      assert.equal(assessed.knowledgeReceipt.state, 'COMMITTED');
+    });
+});

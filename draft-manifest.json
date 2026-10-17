@@ -1000,8 +1000,8 @@
     },
     {
       "path": "reference/organization-history-admission.test.mjs",
-      "bytes": 14948,
-      "sha256": "65bcf52321ef9fcd3ae4a3f86c79fc845ab3fca445c1da4af6bdcab24743701d"
+      "bytes": 17007,
+      "sha256": "9e01159737962c112062ef977a0bbfe771e47841d25d7beb00053ed7664a4448"
     },
     {
       "path": "reference/organization-history-durable-independent-child.mjs",
@@ -1010,8 +1010,8 @@
     },
     {
       "path": "reference/organization-history-durable-independent.test.mjs",
-      "bytes": 38725,
-      "sha256": "40ed70c057bc8daf597f0304ba1bdf3aaadb7c1a37f7fc3226d4738621afbd95"
+      "bytes": 39586,
+      "sha256": "53937e12e43d6490e203b55c18faa8b54c190a2781a5b9e373e9983c40c2b549"
     },
     {
       "path": "reference/organization-history-independent.test.mjs",
@@ -1055,8 +1055,8 @@
     },
     {
       "path": "reference/organization-history.mjs",
-      "bytes": 37484,
-      "sha256": "b0e3e80e6cb84c551b1c1f2e43367991bf07bd1925d48bfc95ced9d318c6e216"
+      "bytes": 37531,
+      "sha256": "dac4ea0010d030753d50d03b08e6d9a4c5b3fa8692ba1d6ffedac62969772259"
     },
     {
       "path": "reference/organization-vector-corpus.mjs",
