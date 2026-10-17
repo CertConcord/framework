@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "baselineCommit": "96110c038c9babe41d21f0f5d4c8911bdc8e1c8f",
+  "baselineTree": "a55ebf6a48f05c19fa802ea738af05b10c6e9d24",
+  "description": "Synthetic public inputs and complete results. Source digests describe construction; they do not attest an executing implementation or establish authority.",
+  "inputSHA256": "bbe505779f1a37d39cdf22939c4399847910eb0bba7cb70b91db3e209c4e54bc",
+  "inputBytes": 44329130,
+  "semanticSHA256": "6002813f72f6f7edc054d23e5ba40dae5cf4f8381374e7de75fb0fd56c3ce3dd",
+  "runtime": {
+    "node": "v24.15.0",
+    "openssl": "3.5.5"
+  },
+  "dependencyLock": {
+    "path": "package-lock.json",
+    "sha256": "345f504da6b9e9697c7ba9ce5000d01df55471d1664b36cc846a53efb3a21001"
+  },
+  "sources": [
+    {
+      "path": "tools/freeze-preserved-delegation-status-vectors.mjs",
+      "sha256": "b4c0c7dc1b669f5286bea8bf5c571fd25cf107c86fa4e4e3f3016984dcbb00f3"
+    },
+    {
+      "path": "reference/preserved-delegation-status-semantics.mjs",
+      "sha256": "6002813f72f6f7edc054d23e5ba40dae5cf4f8381374e7de75fb0fd56c3ce3dd"
+    },
+    {
+      "path": "reference/fixtures-history-independent.mjs",
+      "sha256": "8fb451a68794bede1dde354123347bc3cc76835cfa1c75fe7d4f45a066cc1651"
+    },
+    {
+      "path": "reference/organization-delegation-fixtures.mjs",
+      "sha256": "af74f3f307f821abe1690e5268117e624a2b25d9564b787d75d4f78fa23495df"
+    },
+    {
+      "path": "reference/fixtures-history-durable-independent.mjs",
+      "sha256": "f9d3adef8aee24a2175bc557fa40a3fcb378b5cfc654a54b260679da51463a2d"
+    },
+    {
+      "path": "reference/organization-history.mjs",
+      "sha256": "864404a7ddabc850d3066560507086d04388d58069c6a18783a8f15c64618256"
+    },
+    {
+      "path": "reference/organization-delegation-evidence.mjs",
+      "sha256": "59a9257400e49d0357d013e001067440c2c1827c614e5d2375cb0f2b9a494979"
+    },
+    {
+      "path": "reference/status-preservation.mjs",
+      "sha256": "090ef71d504c1aa24aae0315d04b47ddae7ad2d238b8efbea3906bb590f2721a"
+    },
+    {
+      "path": "reference/organization-history-source.mjs",
+      "sha256": "738f4bb2e2cc13d2e8d094c8882e370ca10e28e49d4db8b461574aad2f25385f"
+    },
+    {
+      "path": "reference/organization-history-knowledge.mjs",
+      "sha256": "7585d9b3fdc34bd977cde67d3824098dfe4e8d9b522ab32915af9c9a0a3e1c18"
+    },
+    {
+      "path": "reference/organization-vector-corpus.mjs",
+      "sha256": "62febfec09994d9ae7ddfdd9076955cfb23fd68c4efdb7bbfab421347d6b102a"
+    },
+    {
+      "path": "reference/verify-organization-vectors.mjs",
+      "sha256": "82d121e66c80fa6bf369854d6ba7e068493e0e3fcb47a7c610e423c5f9294dbc"
+    },
+    {
+      "path": "reference/archive.mjs",
+      "sha256": "9cbb871edcf4780fe151e2aa95f97965a09bea4a6df1e5b6ea264a7b7f2e277d"
+    },
+    {
+      "path": "reference/timestamp.mjs",
+      "sha256": "37110292938c084a2229c74966d20285724477eef6daedac4f6f931ac0a79fa8"
+    },
+    {
+      "path": "reference/retained-authorities.mjs",
+      "sha256": "2a270368933837b937a3c078eef47b8f2bc76082d95cd94a980590600893f018"
+    },
+    {
+      "path": "reference/authority-history.mjs",
+      "sha256": "73677188f19cb0a8511aa0cf602b1763a6afc6fd4bb9caee6af85e1e71356253"
+    },
+    {
+      "path": "reference/pki.mjs",
+      "sha256": "70a9f39eec23e887f2f765fbbcd611a6d33fd04118f589018a0d8320e3f7ba13"
+    },
+    {
+      "path": "reference/core.mjs",
+      "sha256": "a0b946cb1212d982b58c74d6bfd73b9f2829816c8192633dffd74eba1e1c7f5c"
+    },
+    {
+      "path": "reference/state.mjs",
+      "sha256": "73a5fba99277fc34472f6e673c6e360767a62b1176accd88271580f99c985f98"
+    },
+    {
+      "path": "reference/verification-result.mjs",
+      "sha256": "4b1d2b11ec00f63a86133ddf747c509ec17ea893ae7ac6dccff10745d4d6a71e"
+    },
+    {
+      "path": "reference/sdk/index.mjs",
+      "sha256": "c7244ace6a7e38b090c5eb47b5c5533c95598bb73aa7f85615d58ac6b9da3c0f"
+    }
+  ]
+}

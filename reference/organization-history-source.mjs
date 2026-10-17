@@ -217,13 +217,12 @@ function configuration(input) {
     archive: timestampPins(value.preservation.timestampAuthorities, false),
   };
 }
-function material(values, preservedCertificate = false) {
+function material(values) {
   for (const member of list(values, 64)) {
-    fields(member, ['cms', 'issuerCertificate'], preservedCertificate ? ['evidenceRecord'] : []);
+    fields(member, ['cms', 'issuerCertificate'], ['evidenceRecord']);
     binary(member.cms, 131072);
     binary(member.issuerCertificate, 65536);
-    if (preservedCertificate && Object.hasOwn(member, 'evidenceRecord'))
-      binary(member.evidenceRecord, 16 * MiB);
+    if (Object.hasOwn(member, 'evidenceRecord')) binary(member.evidenceRecord, 16 * MiB);
   }
 }
 function knowledge(input) {
@@ -236,7 +235,7 @@ function knowledge(input) {
   ]);
   need(instant(value.knowledgeTime), 'ORG_KNOWLEDGE_TIME');
   material(value.statusMaterial);
-  material(value.certificateStatusMaterial, true);
+  material(value.certificateStatusMaterial);
   const history = list(value.authorityHistory, 256).map((entry) => {
     fields(entry, ['manifest', 'signatures', 'publicationProof']);
     binary(entry.manifest, 16 * MiB);

@@ -158,6 +158,65 @@ console.log(
   JSON.stringify({ installedPreservedCertificateStatusDurableReplay: preservedDurableReplay }),
 );
 
+const preservedDelegationReplay = spawnSync(
+  process.execPath,
+  [
+    resolve('sdk/organization-consumer.mjs'),
+    entry,
+    cwd + '/node_modules/@certconcord/verifier/index.mjs',
+    resolve('vectors/preserved-delegation-status'),
+  ],
+  { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, windowsHide: true },
+);
+assert.equal(
+  preservedDelegationReplay.status,
+  0,
+  preservedDelegationReplay.stderr || preservedDelegationReplay.stdout,
+);
+const preservedDelegation = JSON.parse(preservedDelegationReplay.stdout);
+assert.equal(preservedDelegation.cases, 50);
+assert.deepEqual(preservedDelegation.forbiddenCalls, []);
+assert.equal(preservedDelegation.installedBundleSHA256, savedHistory.installedBundleSHA256);
+console.log(JSON.stringify({ installedPreservedDelegationStatusCorpus: preservedDelegation }));
+const delegationDurableDirectory = await mkdtemp(cwd + '/preserved-delegation-status-');
+const delegationDurableReplay = [];
+for (const [phase, database] of [
+  ['record-compromise', 'compromise.sqlite'],
+  ['reopen-compromise', 'compromise.sqlite'],
+  ['record-positive', 'positive.sqlite'],
+  ['reopen-missing', 'positive.sqlite'],
+]) {
+  const child = spawnSync(
+    process.execPath,
+    [
+      resolve('sdk/preserved-delegation-status-consumer.mjs'),
+      entry,
+      cwd + '/node_modules/@certconcord/verifier/index.mjs',
+      delegationDurableDirectory + '/' + database,
+      phase,
+    ],
+    { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, windowsHide: true },
+  );
+  assert.equal(child.status, 0, child.stderr || child.stdout);
+  const observed = JSON.parse(child.stdout);
+  assert.equal(observed.phase, phase);
+  assert.deepEqual(observed.forbiddenCalls, []);
+  assert.equal(observed.installedBundleSHA256, preservedDelegation.installedBundleSHA256);
+  assert.equal(observed.unchangedFiles, preservedDelegation.unchangedFiles);
+  delegationDurableReplay.push(observed);
+}
+assert.equal(new Set(delegationDurableReplay.map((row) => row.pid)).size, 4);
+for (const first of [0, 2]) {
+  const old = delegationDurableReplay[first].receipt,
+    reopened = delegationDurableReplay[first + 1].receipt;
+  for (const field of ['scopeID', 'configurationID', 'evidenceID'])
+    assert.equal(reopened[field], old[field]);
+  assert(reopened.revision >= old.revision);
+}
+console.log(
+  JSON.stringify({ installedPreservedDelegationStatusDurableReplay: delegationDurableReplay }),
+);
+
 for (const [format, executionBinding, trustedTime = false] of [
   ['CMS', false],
   ['MDOC', false],

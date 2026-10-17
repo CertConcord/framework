@@ -34,8 +34,8 @@ export class OrganizationHistoryKnowledgeStore {
   constructor(path, configuration) {
     const trust = configuration.trust;
     this.configurationID = H('OrganizationHistoryConfiguration', {
-      revision: 1,
-      capability: 'organization-history-sqlite-v1',
+      revision: 2,
+      capability: 'organization-history-sqlite-v2',
       configuration,
     }).toString('hex');
     this.scopeID = H('OrganizationHistoryScope', {
