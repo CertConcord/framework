@@ -836,7 +836,7 @@ for (const damage of ['changed', 'missing', 'truncated'])
     assert.equal(rejected.knowledgeReceipt.state, 'NOT_COMMITTED');
   });
 
-test('storage frame capacity commits its final slot and persists overflow without eviction', (t) => {
+test('storage frame capacity counts repeated replay positions and persists overflow without eviction', (t) => {
   // This is a storage-mechanism boundary test. It does not assert that arbitrary
   // inputs below passed cryptographic admission; that boundary has separate tests.
   const h = harness(t),
@@ -856,13 +856,14 @@ test('storage frame capacity commits its final slot and persists overflow withou
   let last;
   for (let i = 0; i < 256; i++) {
     admitted.observations = [c.sha256(Buffer.from('mechanism observation ' + i)).toString('hex')];
-    last = store.transact((row) => store.append(row, input, fixture.K + i, admitted));
+    last = store.transact((row) => store.append(row, input, fixture.K, admitted));
     assert.equal(last.overflow, false);
   }
   const before = store.head().value;
   assert.equal(before.frames.length, 256);
+  assert.equal(new Set(before.frames).size, 1);
   admitted.observations = [c.sha256(Buffer.from('mechanism observation 256')).toString('hex')];
-  const overflow = store.transact((row) => store.append(row, input, fixture.K + 256, admitted));
+  const overflow = store.transact((row) => store.append(row, input, fixture.K, admitted));
   assert.equal(overflow.overflow, true);
   assert.equal(overflow.evidenceID, null);
   assert.deepEqual(store.head().value.frames, before.frames);
@@ -953,7 +954,8 @@ test('storage artifact count bound handles legacy unreferenced entries atomicall
   const overflow = store.transact((head) => store.append(head, next, fixture.K, admitted));
   assert.equal(overflow.overflow, true);
   assert.equal(overflow.evidenceID, null);
-  assert.deepEqual(store.head().value, { ...before, overflow: true });
+  before.overflow = true;
+  assert.deepEqual(store.head().value, before);
   assert.equal(
     store.journal.get(
       'organization-history-v1',
@@ -1243,13 +1245,18 @@ test('a changed artifact map cannot return another retained pair under the origi
   const h = harness(t),
     first = h.open();
   const original = first.verifier.verify(fixture.input);
+  assert.equal(original.overall, 'VALID');
+  assert.match(original.knowledgeReceipt.evidenceID, /^[a-f0-9]{64}$/);
   const originalBytes = fixture.replaceLeaf(
     'Document',
     Buffer.from('a different retained candidate'),
   );
   const evidenceRecord = await fixture.preserve(originalBytes);
+  h.value.knowledge.statusMaterial.push(revoke());
   const other = first.verifier.verify({ originalBytes, evidenceRecord });
+  assert.equal(other.overall, 'INVALID');
   assert.equal(other.knowledgeReceipt.state, 'COMMITTED');
+  assert.match(other.knowledgeReceipt.evidenceID, /^[a-f0-9]{64}$/);
   assert.notEqual(original.knowledgeReceipt.evidenceID, other.knowledgeReceipt.evidenceID);
   first.source.close();
   const db = new Journal(h.databasePath);

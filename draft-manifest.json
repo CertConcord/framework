@@ -210,8 +210,8 @@
     },
     {
       "path": "docs/organization-history-source.md",
-      "bytes": 14729,
-      "sha256": "172d986a1ae3ffdaf8f8ba0af1882f3b87219f2014fff95a43c8b76887ec801e"
+      "bytes": 14940,
+      "sha256": "e1e2e286ad32c9281ca39f7e24e964681ea2c3d8f7c3f9e6df22c9e73f57bd83"
     },
     {
       "path": "docs/organization-history.md",
@@ -1000,8 +1000,8 @@
     },
     {
       "path": "reference/organization-history-admission.test.mjs",
-      "bytes": 10948,
-      "sha256": "77080b51277f30dcde3178d8a29db2d7a069e0397c2bb38f97c74e51c103daad"
+      "bytes": 14948,
+      "sha256": "65bcf52321ef9fcd3ae4a3f86c79fc845ab3fca445c1da4af6bdcab24743701d"
     },
     {
       "path": "reference/organization-history-durable-independent-child.mjs",
@@ -1025,13 +1025,13 @@
     },
     {
       "path": "reference/organization-history-knowledge.mjs",
-      "bytes": 12093,
-      "sha256": "affcea656d0fd659e1eb9f8f87051947e05e1bde733b8c8c86af561d30f6d25a"
+      "bytes": 12281,
+      "sha256": "49eb60124dce6ac36af5bbcff90f05588fc03e9cc3941345406e1337ba1d94f3"
     },
     {
       "path": "reference/organization-history-knowledge.test.mjs",
-      "bytes": 51475,
-      "sha256": "151595a3b268d607ca5ebcfe9c0cff61cf8b3c63197e62e9fecc860cf1c88064"
+      "bytes": 51803,
+      "sha256": "fd78c588d2c3c0b464c0720548534db35ff259991ee57a64c317f7458df0bfa9"
     },
     {
       "path": "reference/organization-history-source.mjs",

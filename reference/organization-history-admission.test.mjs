@@ -259,3 +259,93 @@ test('earlier authenticated RTM publication is retained while later duplicate pr
   assert.equal(restored.historicalAuthorization.overall, 'VALID');
   assert.equal(restored.knowledgeReceipt.state, 'COMMITTED');
 });
+
+test('same-time replay retains new observations after an earlier publication update', async (t) => {
+  const f = await createIndependentOrganizationHistoryFixture();
+  t.after(() => f.close());
+  const configuration = c.decodeCBOR(c.dcbor(f.publicSourceConfiguration));
+  configuration.retainedAuthorities.publication.timestampAuthorities = [
+    {
+      ...configuration.preservation.timestampAuthorities[1],
+      validFrom: f.A - 60,
+      knowledgeValidUntil: f.end,
+    },
+  ];
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let publicationTime;
+  const tsa = new TimestampAuthority({
+    certificate: f.renewalTSA.certificate,
+    privateKey: f.renewalTSA.privateKey,
+    policy: f.renewalTSA.policy,
+    journal,
+    clock: () => publicationTime,
+    accuracySeconds: 0,
+  });
+  const proof = (entry, at) => {
+    publicationTime = at;
+    return tokenFromResponse(
+      tsa.issue(
+        timestampRequest(manifestPublicationImprint(entry), { policy: f.renewalTSA.policy }).der,
+      ),
+    );
+  };
+  const initialAuthorities = f.initialAuthorities.filter(
+    (record) => !c.equal(record.certificate, f.source.keys.terminal.certificate),
+  );
+  assert.equal(initialAuthorities.length, f.initialAuthorities.length - 1);
+  const genesis = f.manifest(initialAuthorities, f.A - 30);
+  genesis.publicationProof = proof(genesis, f.A - 30);
+  const next = f.manifest(f.initialAuthorities, f.A - 20, genesis);
+  const earlier = proof(next, f.A - 20);
+  next.publicationProof = proof(next, f.A + 5);
+  const knowledge = {
+    knowledgeTime: f.A + 10,
+    authorityHistory: [genesis, next].map((entry) => ({
+      ...entry,
+      manifest: c.dcbor(entry.manifest),
+    })),
+    statusMaterial: [],
+    certificateStatusMaterial: [],
+  };
+  const h = harness(t, { configuration, knowledge, ...f.input }),
+    first = h.open();
+  const bootstrap = first.verifier.verify(malformed(0));
+  assert.equal(bootstrap.knowledgeReceipt.state, 'COMMITTED');
+  assert.equal(bootstrap.knowledgeReceipt.evidenceID, null);
+  const before = first.verifier.verify(f.input);
+  assert.equal(before.historicalAuthorization.overall, 'INDETERMINATE');
+  assert.equal(before.historicalAuthorization.reason, 'AUTHORITY_MISSING');
+  assert.equal(before.knowledgeReceipt.state, 'COMMITTED');
+  assert.match(before.knowledgeReceipt.evidenceID, /^[a-f0-9]{64}$/);
+  const oldHead = h.head();
+  assert.equal(oldHead.value.frames.length, 2);
+  knowledge.authorityHistory[1].publicationProof = earlier;
+  const learned = first.verifier.verify(malformed(1));
+  assert.equal(learned.knowledgeReceipt.state, 'COMMITTED');
+  assert.equal(learned.knowledgeReceipt.evidenceID, null);
+  const updatedHead = h.head();
+  assert.equal(updatedHead.value.frames.length, 3);
+  const after = first.verifier.verify(f.input);
+  assert.equal(after.historicalAuthorization.overall, 'VALID');
+  assert.equal(after.currentAdmissibility.overall, 'VALID');
+  assert.equal(after.knowledgeReceipt.state, 'COMMITTED');
+  assert.equal(after.knowledgeReceipt.evidenceID, before.knowledgeReceipt.evidenceID);
+  const retainedHead = h.head();
+  assert(retainedHead.value.observations.length > oldHead.value.observations.length);
+  assert.equal(retainedHead.value.frames.length, 4);
+  assert.equal(retainedHead.value.frames[3], retainedHead.value.frames[1]);
+  assert.equal(retainedHead.value.bytes, updatedHead.value.bytes);
+  assert.equal(retainedHead.value.artifacts.length, 1);
+  first.source.close();
+  knowledge.authorityHistory = [];
+  const reopened = h.open();
+  const restored = reopened.verifier.verify(f.input);
+  assert.deepEqual(restored, after);
+  assert.deepEqual(reopened.verifier.verify(f.input), restored);
+  assert.deepEqual(h.head(), retainedHead);
+  const raw = reopened.source.readEvidence(restored.knowledgeReceipt.evidenceID);
+  assert.equal(raw.classification, 'UNVERIFIED_BYTES');
+  assert.deepEqual(raw.originalBytes, f.input.originalBytes);
+  assert.deepEqual(raw.evidenceRecord, f.input.evidenceRecord);
+});

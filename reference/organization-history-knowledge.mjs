@@ -20,12 +20,12 @@ const pairID = (input) =>
       recordLength: input.evidenceRecord.length,
     }),
   );
-const ids = (values, maximum) => {
+const ids = (values, maximum, allowRepeats = false) => {
   need(
     Array.isArray(values) &&
       values.length <= maximum &&
       values.every((v) => hex.test(v)) &&
-      new Set(values).size === values.length,
+      (allowRepeats || new Set(values).size === values.length),
   );
 };
 
@@ -116,7 +116,9 @@ export class OrganizationHistoryKnowledgeStore {
         integer(h.bytes) &&
         h.bytes <= 256 * MiB,
     );
-    ids(h.frames, 256);
+    // Identical raw frames can admit new observations after an intervening
+    // history update, so their chronological replay positions are significant.
+    ids(h.frames, 256, true);
     ids(h.observations, 4096);
     ids(h.historySemantics, 256);
     need(Array.isArray(h.artifacts) && h.artifacts.length <= 1024);
@@ -279,7 +281,7 @@ export class OrganizationHistoryKnowledgeStore {
     const head = {
       ...old,
       selectedKnowledge: Math.max(old.selectedKnowledge ?? 0, knowledgeTime),
-      frames: [...new Set([...old.frames, ...(frameID ? [frameID] : [])])],
+      frames: [...old.frames, ...(frameID ? [frameID] : [])],
       artifacts:
         !evidenceID || old.artifacts.some((a) => a.id === evidenceID)
           ? old.artifacts
