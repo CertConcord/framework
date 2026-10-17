@@ -170,8 +170,8 @@
     },
     {
       "path": "docs/draft-acceptance.md",
-      "bytes": 8019,
-      "sha256": "f32268c71a4fe75dd16abd0024ed8070c4d897d3acc988495314bd7cb76176d4"
+      "bytes": 8869,
+      "sha256": "001c0984327f002c739b9b5f52d0fc6c4d7023a0b68aa2740db194624e6f1e2b"
     },
     {
       "path": "docs/ecosystem.md",
@@ -210,8 +210,8 @@
     },
     {
       "path": "docs/organization-history-source.md",
-      "bytes": 15622,
-      "sha256": "8ed80488031559368cf767d32a2344665fb43276d009d0bb3366d697088df7e5"
+      "bytes": 16043,
+      "sha256": "348d1a95f4745aa41237fe6b620f32de2d177914673f481d70c806edd4f4d719"
     },
     {
       "path": "docs/organization-history.md",
@@ -4305,13 +4305,13 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 46054,
-      "sha256": "5e8b3305225b631aebb486628b25c6954849fe3806acf5fae7da9fd65520b779"
+      "bytes": 47088,
+      "sha256": "90baf786bf428785edbb71ce971b96b4079fe12ff06c206537ef6370a8a9b5e7"
     },
     {
       "path": "spec/conformance.md",
-      "bytes": 10258,
-      "sha256": "296dcd89c2ced1d9eff324b5648ed6b64c2816887f2885aaa24cd82681d36f38"
+      "bytes": 10694,
+      "sha256": "6616455d4e512a59527c231c5126513230ac4e8df74689684031e233ce60f913"
     },
     {
       "path": "spec/document-baseline.md",
