@@ -498,7 +498,48 @@ class HistoricalKnowledge {
   }
 }
 
-function credentialView(original, trust, knowledge, P, authorityResolver, checks, onAdmission) {
+function certificateStatusProof(member, body, trust, K, preservation) {
+  need(
+    Buffer.isBuffer(member.evidenceRecord) &&
+      member.evidenceRecord.length > 0 &&
+      member.evidenceRecord.length <= 16 * 1024 * 1024,
+    'ORG_CERTIFICATE_STATUS_PROOF',
+  );
+  const signer = parseCertificate(member.issuerCertificate),
+    algorithm = ALG[signer.publicKey.asymmetricKeyType],
+    bounds = [signer.notAfter];
+  for (const [map, id] of [
+    [trust.keyDeadlines, keyID(signer.publicKey).toString('hex')],
+    [trust.algorithmDeadlines, algorithm?.oid],
+    [trust.algorithmDeadlines, signer.algorithm],
+    [trust.hashDeadlines, signer.publicKey.asymmetricKeyType === 'ec' ? SHA256 : SHA512],
+  ]) {
+    need(integer(map?.[id]), 'ORG_PROTECTION_DEADLINE_MISSING', 'INDETERMINATE');
+    bounds.push(map[id]);
+  }
+  // The CMS contains the exact signer certificate. Its proof protects those
+  // complete bytes, independently of the original document's proof deadline.
+  const policy = { ...preservation, dataValidUntil: Math.min(...bounds) },
+    first = verifyERSOriginalProof(member.evidenceRecord, member.cms, policy),
+    proofTime = first.proofOfExistenceUpperBound;
+  need(
+    integer(body.publishedAt) && body.publishedAt <= proofTime && proofTime <= K,
+    'ORG_CERTIFICATE_STATUS_PROOF_TIME',
+  );
+  verifyERSPreservation(member.evidenceRecord, member.cms, { ...policy, at: K });
+  return proofTime;
+}
+
+function credentialView(
+  original,
+  trust,
+  knowledge,
+  P,
+  authorityResolver,
+  checks,
+  onAdmission,
+  preservation,
+) {
   const { values, A } = original,
     t = trust.credentialTrust,
     K = knowledge.knowledgeTime,
@@ -578,7 +619,7 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
         'ORG_CERTIFICATE_STATUS_BINDING',
       );
       if (body.publishedAt > K) return;
-      for (const at of [body.publishedAt, member.original ? P : K]) {
+      const admitAt = (at) => {
         admit(authorityResolver, member.issuerCertificate, 'STATUS_AUTHORITY', scope, at, K);
         const signer = parseCertificate(member.issuerCertificate),
           alg = ALG[signer.publicKey.asymmetricKeyType];
@@ -592,7 +633,18 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
           need(integer(map?.[id]), 'ORG_PROTECTION_DEADLINE_MISSING', 'INDETERMINATE');
           need(at < map[id], 'ORG_PROTECTION_DEADLINE');
         }
-      }
+      };
+      // A known publication-time authority failure remains applicable even if
+      // the separately supplied preservation material is unavailable.
+      admitAt(body.publishedAt);
+      const separatelyPreserved = !member.original && Object.hasOwn(member, 'evidenceRecord');
+      admitAt(
+        member.original
+          ? P
+          : separatelyPreserved
+            ? certificateStatusProof(member, body, trust, K, preservation)
+            : K,
+      );
       const decision = evaluateStatus(body, {
         stateTime: statusTime,
         knowledgeTime: K,
@@ -612,6 +664,7 @@ function credentialView(original, trust, knowledge, P, authorityResolver, checks
           material: {
             cms: Buffer.from(member.cms),
             issuerCertificate: Buffer.from(member.issuerCertificate),
+            ...(separatelyPreserved ? { evidenceRecord: Buffer.from(member.evidenceRecord) } : {}),
           },
           body: snapshot(body),
           original: member.original,
@@ -686,6 +739,10 @@ function createHistoryVerifier(options, onAdmission) {
     sync(() => resolveTimestamp(Buffer.from(token)), 'ORG_TIMESTAMP_TRUST_UNAVAILABLE');
   const preservation = snapshot(preservationData);
   fields(preservation, ['hashValidUntil'], ['dataValidUntil']);
+  const statusPreservation = {
+    hashValidUntil: preservation.hashValidUntil,
+    resolveTimestamp: timestampResolver,
+  };
   let lastKnowledge;
   const retainedKnowledge = new HistoricalKnowledge(Boolean(onAdmission));
   return Object.freeze({
@@ -785,8 +842,8 @@ function createHistoryVerifier(options, onAdmission) {
       }
       if (onAdmission && knowledge) {
         // External credential status binds directly to the selected certificate.
-        // Its S/K signer admission does not require a successful execution tuple
-        // or an original PoE. Original status still requires an established P.
+        // Its signer admission uses S/K, or S/P_status with independent ERS.
+        // Neither path needs an original PoE; original status still requires P.
         const candidate = original && Number.isFinite(P) ? original : { values: {}, A: undefined };
         independentCertificates = credentialView(
           candidate,
@@ -796,6 +853,7 @@ function createHistoryVerifier(options, onAdmission) {
           resolve,
           new Checks(),
           onAdmission,
+          statusPreservation,
         );
         if (!Number.isFinite(P))
           for (const body of independentCertificates.statements)
@@ -943,6 +1001,7 @@ function createHistoryVerifier(options, onAdmission) {
             resolve,
             run,
             latest ? onAdmission : undefined,
+            statusPreservation,
           ),
         );
         if (latest && certificateStatements)

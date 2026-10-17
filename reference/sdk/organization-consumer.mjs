@@ -8,12 +8,14 @@ import dgram from 'node:dgram';
 import childProcess from 'node:child_process';
 import { registerHooks, syncBuiltinESMExports } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { basename } from 'node:path';
+import { basename, resolve, sep } from 'node:path';
 
-const [publicEntry, installedBundle] = process.argv.slice(2);
-assert(publicEntry && installedBundle && process.argv.length === 4);
+const [publicEntry, installedBundle, vectorDirectory] = process.argv.slice(2);
+assert(publicEntry && installedBundle && [4, 5].includes(process.argv.length));
 const hash = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
-const corpus = new URL('../vectors/organization-history/', import.meta.url);
+const corpus = vectorDirectory
+  ? pathToFileURL(resolve(vectorDirectory) + sep)
+  : new URL('../vectors/organization-history/', import.meta.url);
 const manifestBytes = readFileSync(new URL('manifest.json', corpus));
 const manifest = JSON.parse(manifestBytes);
 assert(Array.isArray(manifest.files) && manifest.files.length <= 512);
@@ -54,7 +56,7 @@ registerHooks({
     const resolved = nextResolve(specifier, context);
     if (
       resolved.url.startsWith('file:') &&
-      /(?:fixture|freeze-organization-vectors|organization-history-vector-semantics)/i.test(
+      /(?:fixture|freeze-.*vectors|(?:history-vector|certificate-status)-semantics)/i.test(
         basename(fileURLToPath(resolved.url)),
       )
     )
@@ -68,6 +70,7 @@ const { runOrganizationHistoryVectors } = await import('../verify-organization-v
 const sources = new WeakSet();
 const calls = { source: 0, verifier: 0, verify: 0 };
 const results = runOrganizationHistoryVectors({
+  directory: fileURLToPath(corpus),
   createOrganizationHistorySource(options) {
     assert.deepEqual(Object.keys(options).sort(), ['configuration', 'readKnowledge']);
     const source = sdk.createOrganizationHistorySource(options);

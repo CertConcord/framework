@@ -101,7 +101,8 @@ export interface CommonTrust {
   executionStatus?: (binding: unknown, time: { at: number; knowledgeTime: number }) => boolean;
 }
 export type CMSTrust = CommonTrust & { statusCertificate: Buffer; issuerCertificate?: Buffer } & (
-    { mtc: MTCTrust; issuerPublicKey?: never } | { issuerPublicKey: KeyObject; mtc?: never }
+    | { mtc: MTCTrust; issuerPublicKey?: never }
+    | { issuerPublicKey: KeyObject; mtc?: never }
   );
 export interface MdocTrust extends CommonTrust {
   issuerCertificate: Buffer;
@@ -149,12 +150,16 @@ export interface OrganizationHistoryMaterial {
   cms: Buffer;
   issuerCertificate: Buffer;
 }
+export interface OrganizationCertificateStatusMaterial extends OrganizationHistoryMaterial {
+  /** Optional RFC 4998 record covering the exact complete CMS bytes. No fallback on failure. */
+  evidenceRecord?: Buffer;
+}
 export interface OrganizationHistoryKnowledge {
   /** Latest selected relying-party knowledge time; monotonic within its knowledge context. */
   knowledgeTime: number;
   /** Cumulative evidence must retain applicable incidents and same-epoch conflicts. */
   statusMaterial: OrganizationHistoryMaterial[];
-  certificateStatusMaterial: OrganizationHistoryMaterial[];
+  certificateStatusMaterial: OrganizationCertificateStatusMaterial[];
 }
 export interface OrganizationHistoryTrust {
   trustDomainID: Buffer;
