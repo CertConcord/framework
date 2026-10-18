@@ -16,27 +16,27 @@
     {
       "path": ".github/workflows/ci.yml",
       "bytes": 3655,
-      "sha256": "4439cacd42b93d6a6768c5fe9dcda993e80b2bb51f4033c4d224a5f4dc21dedd"
+      "sha256": "4e3af36878c943c334d26ba88a8417758201176cce01a38d6f01e4d7500265d1"
     },
     {
       "path": ".github/workflows/codeql.yml",
       "bytes": 2194,
-      "sha256": "ba5d8a870df8d6e72ed81822be69a20434caa47d067892d2223eed76a2394c4b"
+      "sha256": "4913303aeb8d3a03de5ccfab9dd6971cf9651e67fab8c598373fe8334dbe7a0f"
     },
     {
       "path": ".github/workflows/contributions.yml",
       "bytes": 1057,
-      "sha256": "7481803770e9b644a10a3a1867fed4cac3e85259cb6effb908b950df93a275f1"
+      "sha256": "1f5e6a951f2b3a155358ed151250cd4b31c0b39aef9daa0718252bc1f8cd4d4e"
     },
     {
       "path": ".github/workflows/draft-artifacts.yml",
       "bytes": 850,
-      "sha256": "0ea645221cae2cf9e65b5545999459856f41608d9e8f370769d8c9d45dc07589"
+      "sha256": "38c441fa785685b66e77fea046c0e0560911be0c939e726279b8cca73c8a69cc"
     },
     {
       "path": ".github/workflows/security.yml",
       "bytes": 3806,
-      "sha256": "c083bf50b8943a11c98233ba5d98398e3c0792b74624e531861ba3ead86c5812"
+      "sha256": "171927b0ed0cac2702c2d1064336a01a10c3066d3771ad7b2d736a79f6255952"
     },
     {
       "path": ".gitignore",
