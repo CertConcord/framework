@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "baselineCommit": "47cca52081e31f1aae69dc33a951852ff79bfcb3",
+  "baselineTree": "368a218a0ed2d9cf222490e8379d52b052c3a693",
+  "description": "Synthetic public bytes authored from the named baseline plus the separately hashed reviewed sources. These declarations and inventory hashes are not authority signatures or executing-code attestation.",
+  "runtime": {
+    "node": "v24.15.0",
+    "openssl": "3.5.5"
+  },
+  "dependencyLock": {
+    "path": "package-lock.json",
+    "sha256": "345f504da6b9e9697c7ba9ce5000d01df55471d1664b36cc846a53efb3a21001"
+  },
+  "semanticSHA256": "9ea41d36329a068f509352bd60458aee078f1ab1a0daac10e2de6ed12dcc3eac",
+  "sources": [
+    {
+      "path": "tools/freeze-organization-vectors.mjs",
+      "sha256": "e3556400cebb533cd8263fe21e0c41c13e18410c0ba162fd517450c0a7cac72a"
+    },
+    {
+      "path": "reference/organization-history-vector-semantics.mjs",
+      "sha256": "9ea41d36329a068f509352bd60458aee078f1ab1a0daac10e2de6ed12dcc3eac"
+    },
+    {
+      "path": "reference/fixtures-history-independent.mjs",
+      "sha256": "8fb451a68794bede1dde354123347bc3cc76835cfa1c75fe7d4f45a066cc1651"
+    },
+    {
+      "path": "reference/organization-delegation-fixtures.mjs",
+      "sha256": "af74f3f307f821abe1690e5268117e624a2b25d9564b787d75d4f78fa23495df"
+    },
+    {
+      "path": "reference/organization-vector-corpus.mjs",
+      "sha256": "4f8cc5d3e75131b48a286143d86877cd2aee4626bb938399019d4d94cdbd1d2f"
+    },
+    {
+      "path": "reference/vector-corpus.mjs",
+      "sha256": "b78041f2ee023d067c0f243d5b1dcb7e8c277b3ed04dab32d9c8f31f7ed5fab0"
+    },
+    {
+      "path": "reference/verify-organization-vectors.mjs",
+      "sha256": "82d121e66c80fa6bf369854d6ba7e068493e0e3fcb47a7c610e423c5f9294dbc"
+    },
+    {
+      "path": "reference/organization-history.mjs",
+      "sha256": "b18d779966d67539cb4be5552bd871b0eaa402b5651edc1ecd515318c20dc780"
+    },
+    {
+      "path": "reference/organization-history-source.mjs",
+      "sha256": "8b259bf6f2b03ac70bfe33b4c069060c82626a9064a0b4c08da4f3e4a9bffe99"
+    },
+    {
+      "path": "reference/organization-delegation-evidence.mjs",
+      "sha256": "bc58c742e52b209786870e4993fdf729406e0192281189b1644b08d628e5b8d7"
+    },
+    {
+      "path": "reference/retained-authorities.mjs",
+      "sha256": "4644f8d15b869b5ffcb99015906dd97f5ebad0c047db80fbf55829157610d4eb"
+    },
+    {
+      "path": "reference/authority-history.mjs",
+      "sha256": "73677188f19cb0a8511aa0cf602b1763a6afc6fd4bb9caee6af85e1e71356253"
+    },
+    {
+      "path": "reference/archive.mjs",
+      "sha256": "9cbb871edcf4780fe151e2aa95f97965a09bea4a6df1e5b6ea264a7b7f2e277d"
+    },
+    {
+      "path": "reference/timestamp.mjs",
+      "sha256": "37110292938c084a2229c74966d20285724477eef6daedac4f6f931ac0a79fa8"
+    },
+    {
+      "path": "reference/pki.mjs",
+      "sha256": "7c9801e0aa0b98195513d71ebeb3489824b89d991086a1ad6ece9c9a727fd48b"
+    },
+    {
+      "path": "reference/core.mjs",
+      "sha256": "a0b946cb1212d982b58c74d6bfd73b9f2829816c8192633dffd74eba1e1c7f5c"
+    },
+    {
+      "path": "reference/state.mjs",
+      "sha256": "ac0d9ac7fe9280fc4bdc06d59a69eb31a9d8eb60ebd3be2fff06a9f7748737e5"
+    },
+    {
+      "path": "reference/verification-result.mjs",
+      "sha256": "4b1d2b11ec00f63a86133ddf747c509ec17ea893ae7ac6dccff10745d4d6a71e"
+    },
+    {
+      "path": "reference/sdk/index.mjs",
+      "sha256": "c7244ace6a7e38b090c5eb47b5c5533c95598bb73aa7f85615d58ac6b9da3c0f"
+    }
+  ],
+  "command": "node tools/freeze-organization-vectors.mjs --write --approved-semantic-sha256 9ea41d36329a068f509352bd60458aee078f1ab1a0daac10e2de6ed12dcc3eac"
+}

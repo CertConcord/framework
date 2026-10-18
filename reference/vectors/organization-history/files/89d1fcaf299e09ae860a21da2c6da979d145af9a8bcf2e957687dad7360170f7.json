@@ -1,0 +1,279 @@
+{
+  "purpose": "RETAINED_EVIDENCE_VERIFICATION",
+  "operationTime": 1800000000,
+  "proofOfExistenceUpperBound": null,
+  "knowledgeTime": 1800007200,
+  "historicalAuthorization": {
+    "scope": "AS_KNOWN_AT_PROOF_TIME",
+    "stateTime": null,
+    "knowledgeTime": null,
+    "checks": [
+      {
+        "check": "plan",
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+      },
+      {
+        "check": "original-protection",
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+      },
+      {
+        "check": "time-binding",
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_TIME_UNAVAILABLE"
+      }
+    ],
+    "overall": "INDETERMINATE",
+    "reason": "ORG_HISTORY_ORIGINAL_MISSING",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {
+      "time": {
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_TIME_UNAVAILABLE"
+      }
+    }
+  },
+  "currentAdmissibility": {
+    "scope": "HISTORICAL_EVIDENCE_UNDER_CURRENT_KNOWLEDGE",
+    "stateTime": null,
+    "knowledgeTime": 1800007200,
+    "checks": [
+      {
+        "check": "plan",
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+      },
+      {
+        "check": "original-protection",
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+      },
+      {
+        "check": "time-binding",
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_TIME_UNAVAILABLE"
+      }
+    ],
+    "overall": "INDETERMINATE",
+    "reason": "ORG_HISTORY_ORIGINAL_MISSING",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {
+      "time": {
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_TIME_UNAVAILABLE"
+      }
+    }
+  },
+  "preservation": {
+    "checks": [
+      {
+        "check": "preservation",
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_PROOF_UNAVAILABLE"
+      }
+    ],
+    "overall": "INDETERMINATE",
+    "reason": "ORG_HISTORY_PROOF_UNAVAILABLE",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {
+      "time": {
+        "overall": "INDETERMINATE",
+        "reason": "ORG_HISTORY_PROOF_UNAVAILABLE"
+      }
+    }
+  },
+  "limitations": [
+    "AUTHORITY_ATTESTED_WORKLOAD_PERMISSION",
+    "SIGNED_REGISTRATION_COUNTER_BASELINE_ONLY",
+    "NO_CURRENT_EXECUTION_PERMISSION"
+  ],
+  "checks": [
+    {
+      "check": "plan",
+      "overall": "INDETERMINATE",
+      "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+    },
+    {
+      "check": "sim",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "policy",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "document",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationAuthorization",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OperationPermit",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "ExecutionReceipt",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-leaf",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-binding",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationDelegationPath",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationApprovalSet",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationDelegationStatus",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationDelegationPath",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationApprovalSet",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationDelegationStatus",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "grant-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "grant-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "registration-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "assertion-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "registration-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "assertion-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:2",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:3",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:4",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-tuple",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "input",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "knowledge",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "original-protection",
+      "overall": "INDETERMINATE",
+      "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+    },
+    {
+      "check": "preservation",
+      "overall": "INDETERMINATE",
+      "reason": "ORG_HISTORY_PROOF_UNAVAILABLE"
+    },
+    {
+      "check": "historical-authorization",
+      "overall": "INDETERMINATE",
+      "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+    },
+    {
+      "check": "current-admissibility",
+      "overall": "INDETERMINATE",
+      "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+    }
+  ],
+  "overall": "INDETERMINATE",
+  "reason": "ORG_HISTORY_ORIGINAL_MISSING",
+  "coreRevision": "draft-03",
+  "profile": "certconcord-ecp-cms-organization-delegation-v1",
+  "dimensions": {
+    "integrity": {
+      "overall": "INDETERMINATE",
+      "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+    },
+    "time": {
+      "overall": "INDETERMINATE",
+      "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+    },
+    "authorization": {
+      "overall": "INDETERMINATE",
+      "reason": "ORG_HISTORY_ORIGINAL_MISSING"
+    }
+  }
+}

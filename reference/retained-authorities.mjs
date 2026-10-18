@@ -3,7 +3,7 @@ import {
   requireThat, fields, b64u,
 } from './core.mjs';
 import { parseCertificate } from './pki.mjs';
-import { createAuthorityResolver, AuthorityError, requireAuthority } from './authority-history.mjs';
+import { createAuthorityResolver, authorityStatus, AuthorityError, requireAuthority } from './authority-history.mjs';
 import { parseTimestampRequest, verifyTimestampToken } from './timestamp.mjs';
 
 const copy = (value) => decodeCBOR(dcbor(value));
@@ -42,6 +42,51 @@ function threshold(manifest, signatures, policy, at, deadlines) {
 export const manifestPublicationImprint = ({ manifest, signatures }) =>
   H('RootTrustManifestPublication', { manifest, signatures });
 
+// Shared raw-entry authentication. The durable source replays this function at
+// each entry's recorded admission time; no serialized appointment is imported.
+export function authenticateRetainedAuthorityEntry({ trustDomainID, governance, algorithmDeadlines,
+  entry, previous, validationTime, knowledgeTime, verifyPublication, strictRecords = false }) {
+  fields(entry, ['manifest', 'signatures', 'publicationProof']);
+  const { manifest, signatures } = entry;
+  const publication = verifyPublication({ imprint: manifestPublicationImprint(entry),
+    proof: Buffer.from(entry.publicationProof), at: validationTime });
+  if (publication?.overall !== 'VALID' || !Number.isFinite(publication.poeUpperBound))
+    fail(publication?.overall ?? 'INDETERMINATE', publication?.reason ?? 'HISTORY_PUBLICATION_PROOF_REQUIRED');
+  const published = publication.poeUpperBound;
+  if (published > knowledgeTime) return null;
+  fields(manifest, ['schemaVersion', 'trustDomainID', 'serial', 'previousHash', 'issuedAt',
+    'notBefore', 'notAfter', 'coverageUntil', 'authorities'], ['successor']);
+  requireThat(manifest.schemaVersion === 2 && equal(manifest.trustDomainID, trustDomainID) &&
+    validTime(manifest.serial) && manifest.serial === (previous?.serial ?? -1) + 1 &&
+    (previous ? equal(manifest.previousHash, previous.hash) : manifest.previousHash === null) &&
+    [manifest.issuedAt, manifest.notBefore, manifest.notAfter, manifest.coverageUntil].every(validTime) &&
+    manifest.issuedAt <= published && manifest.notBefore <= published && published < manifest.notAfter &&
+    published < manifest.coverageUntil && published >= (previous?.published ?? -1) &&
+    Array.isArray(manifest.authorities), 'HISTORY_MANIFEST_CHAIN');
+  let policy = previous?.policy ?? governance;
+  threshold(manifest, signatures, rootPolicy(policy), published, algorithmDeadlines);
+  if (manifest.successor) {
+    threshold(manifest, signatures, rootPolicy(manifest.successor), published, algorithmDeadlines);
+    policy = manifest.successor;
+  }
+  if (strictRecords) {
+    createAuthorityResolver({ trustDomainID, authorities: manifest.authorities });
+    for (const record of manifest.authorities) {
+      const publicKey = record.mode === 'CERTIFICATE'
+        ? parseCertificate(record.certificate).publicKey : publicFromDER(record.publicKeyDER);
+      const status = authorityStatus(record.status, { authorityID: keyID(publicKey), trustDomainID,
+        stateTime: published, knowledgeTime: published });
+      requireThat(status.overall !== 'INVALID' || status.reason === 'AUTHORITY_REVOKED', 'HISTORY_STATUS_BINDING');
+      requireThat(record.status && record.status.publishedAt <= published &&
+        record.status.nextUpdate <= manifest.coverageUntil, 'HISTORY_STATUS_BINDING');
+      if (!validTime(algorithmDeadlines[publicKey.asymmetricKeyType]))
+        fail('INDETERMINATE', 'HISTORY_ALGORITHM_DEADLINE_REQUIRED');
+    }
+  }
+  return { hash: H('RootTrustManifest', manifest), serial: manifest.serial, published,
+    policy: copy(policy) };
+}
+
 /**
  * Resolve retained RTM snapshots with authenticated publication time and explicit
  * root succession. verifyPublication verifies an existing RFC 3161/ERS proof;
@@ -57,36 +102,16 @@ export function createRetainedAuthorityResolver({ trustDomainID, governance, his
     try {
       requireThat(Number.isFinite(query.knowledgeTime) && query.stateTime <= query.knowledgeTime &&
         query.knowledgeTime <= validationTime, 'HISTORY_TIME');
-      let policy = rootPolicy(initial), previousHash = null, serial = -1, previousPublication = -1, selected, atState;
+      let previous, selected, atState;
       const appointments = new Map();
       const incidents = new Map();
       const currentStatus = new Map();
       for (const entry of retained) {
-        fields(entry, ['manifest', 'signatures', 'publicationProof']);
-        const { manifest, signatures } = entry;
-        const publication = verifyPublication({ imprint: manifestPublicationImprint(entry),
-          proof: Buffer.from(entry.publicationProof), at: validationTime });
-        if (publication?.overall !== 'VALID' || !Number.isFinite(publication.poeUpperBound))
-          fail(publication?.overall ?? 'INDETERMINATE', publication?.reason ?? 'HISTORY_PUBLICATION_PROOF_REQUIRED');
-        const published = publication.poeUpperBound;
-        // A valid future proof is not admissible at the selected knowledge time.
-        if (published > query.knowledgeTime) break;
-        fields(manifest, ['schemaVersion', 'trustDomainID', 'serial', 'previousHash', 'issuedAt',
-          'notBefore', 'notAfter', 'coverageUntil', 'authorities'], ['successor']);
-        requireThat(manifest.schemaVersion === 2 && equal(manifest.trustDomainID, domain) &&
-          validTime(manifest.serial) && manifest.serial === serial + 1 &&
-          (previousHash === null ? manifest.previousHash === null : equal(manifest.previousHash, previousHash)) &&
-          [manifest.issuedAt, manifest.notBefore, manifest.notAfter, manifest.coverageUntil].every(validTime) &&
-          manifest.issuedAt <= published && manifest.notBefore <= published && published < manifest.notAfter &&
-          published < manifest.coverageUntil && published >= previousPublication && Array.isArray(manifest.authorities),
-        'HISTORY_MANIFEST_CHAIN');
-        threshold(manifest, signatures, policy, published, deadlines);
-        if (manifest.successor) {
-          const successor = rootPolicy(manifest.successor);
-          // Both governments authorize the identical RTM, including its predecessor.
-          threshold(manifest, signatures, successor, published, deadlines);
-          policy = successor;
-        }
+        const checkpoint = authenticateRetainedAuthorityEntry({ trustDomainID: domain,
+          governance: initial, algorithmDeadlines: deadlines, entry, previous, validationTime,
+          knowledgeTime: query.knowledgeTime, verifyPublication });
+        if (!checkpoint) break;
+        const { manifest } = entry, { published } = checkpoint;
         const records = manifest.authorities.map((record) => {
           const { status, knownAt, ...appointment } = record;
           const appointmentHash = b64u(H('AuthorityAppointment', appointment));
@@ -119,9 +144,7 @@ export function createRetainedAuthorityResolver({ trustDomainID, governance, his
         selected = { manifest, records };
         // Select appointments at the operation time; use subsequently learned status below.
         if (published <= query.stateTime) atState = selected;
-        previousHash = H('RootTrustManifest', manifest);
-        serial = manifest.serial;
-        previousPublication = published;
+        previous = checkpoint;
       }
       if (!selected) fail('INDETERMINATE', 'HISTORY_MISSING');
       const requestedKey = query.certificate ? parseCertificate(query.certificate).publicKey : publicFromDER(query.publicKeyDER);

@@ -530,9 +530,101 @@
         {
           "file": "reference/organization-history-independent.test.mjs",
           "name": "a loose caller data deadline cannot override the earliest raw approver key cutoff"
+        },
+        {
+          "file": "reference/organization-history-source.test.mjs",
+          "name": "declarative memory results preserve the legacy complete result and have no receipt"
+        },
+        {
+          "file": "reference/organization-history-source.test.mjs",
+          "name": "one memory source shares admitted incidents across verifier instances"
+        },
+        {
+          "file": "reference/organization-history-vectors.test.mjs",
+          "name": "saved organization history cases satisfy independently frozen semantics and complete results"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "durable source commits exact originals and preserves the complete fresh assessment"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "a different original target sharing the subject key inherits a committed compromise"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "failed commit acknowledgement poisons the source and a new source reauthenticates the commit"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "genuinely separate processes retain a committed incident and recover exact public originals"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "overlapping writer processes reload the committed incident before returning a verdict"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "a changed artifact map cannot return another retained pair under the original evidence ID"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "sticky capacity replays a genuine retained compromise and advances only selected K"
+        },
+        {
+          "file": "reference/organization-history-knowledge.test.mjs",
+          "name": "complete database rollback demonstrates the documented local-storage limitation"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable invalid target bindings cannot poison a different original"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable crashes respect transaction boundaries"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable concurrent writers retain both negative classes in either order"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable stale positive reloads a concurrent negative commit"
+        },
+        {
+          "file": "reference/organization-history-durable-independent.test.mjs",
+          "name": "independent durable malformed knowledge never advances the selected time"
+        },
+        {
+          "file": "reference/preserved-certificate-status.test.mjs",
+          "name": "saved CMS and ERS distinguish status proof time from document proof and incident time"
+        },
+        {
+          "file": "reference/preserved-certificate-status.test.mjs",
+          "name": "independently preserved compromise admits without an original and remains sticky after restart"
+        },
+        {
+          "file": "reference/preserved-certificate-status.test.mjs",
+          "name": "a certificate-status ERS cannot substitute for a delegation-status CMS proof"
+        },
+        {
+          "file": "reference/preserved-delegation-status.test.mjs",
+          "name": "saved preserved delegation status vectors satisfy the frozen full-result matrix"
+        },
+        {
+          "file": "reference/preserved-delegation-status.test.mjs",
+          "name": "original-matching CMS needs both the attached proof and package-P authority"
+        },
+        {
+          "file": "reference/preserved-delegation-status.test.mjs",
+          "name": "preserved compromise retains its original and exact proof across fresh processes"
+        },
+        {
+          "file": "reference/preserved-delegation-status.test.mjs",
+          "name": "hash-consistent altered ERS bytes are reauthenticated during durable replay"
         }
       ],
-      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. A dedicated retained-evidence verifier adds complete-package ERS preservation, explicit proof-time and current-knowledge views, scoped successor status and retained incident precedence without granting current execution permission. Organizational mdoc, arbitrary graphs, per-object proofs for roles retired before the original package proof, separately preserved later status from retired signers, independently assessed identity/custody and a second complete implementation remain open."
+      "gap": "Direct organization seals and the separately selected current X509/CMS delegation application exercise scoped authority, an attenuating path, raw independent approvals and durable execution/recovery. The retained-evidence verifier adds complete-package ERS preservation, explicit proof-time and current-knowledge views, scoped successor status and cumulative authenticated negative knowledge. Its dedicated SQLite source reauthenticates retained raw material across process restarts and returns a receipt only for the documented storage outcome; retained bytes and historical results grant no current execution permission. Whole-database rollback cannot be detected without an external anchor. Selected credential CertificateStatus and external OrganizationDelegationStatus may each carry an RFC 4998 proof over the exact complete CMS. Their exact status authority is admitted at publication S and first status proof P_status under knowledge K, with S <= P_status <= K and continuous protection through K. Organization status retains exact typed-target admission, original-package P obligations and original-dependent raw replay; duplicate CMS bytes do not waive an attached proof or P admission. These proofs do not replace current positive coverage or retained negative knowledge. Organizational mdoc, arbitrary graphs, per-object proofs for original-package roles retired before the first complete-package proof, independently assessed identity/custody and a second complete implementation remain open."
     },
     {
       "id": "CC-DOC-03",
@@ -723,6 +815,14 @@
         {
           "file": "reference/pades-security.test.mjs",
           "name": "current DSS appended after the last timestamp has no retroactive coverage"
+        },
+        {
+          "file": "reference/organization-history-source.test.mjs",
+          "name": "declarative source retains exact fractional P for scoped authority queries"
+        },
+        {
+          "file": "reference/organization-history-vectors.test.mjs",
+          "name": "saved organization replay is offline and independent of wall clock and working directory"
         }
       ],
       "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
