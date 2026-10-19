@@ -160,6 +160,19 @@ encryption-recovery-request = {
   targetRootID: id32, subjectID: id32, recipientKeyID: hash64,
   purpose: "ENCRYPTION_VAULT_WRAP", issuedAt: time, expiresAt: time
 }
+; CMS controls contain D(label, body), with the labels specified in DOCUMENT.
+encryption-recovery-approval = {
+  requestHash: hash64, approved: true, expiresAt: time
+}
+encryption-recovery-result-receipt = {
+  trustDomainID: id32, requestHash: hash64, ciphertextHash: hash64,
+  operatorIDs: [2* tstr], issuedAt: time
+}
+encryption-recovery-result = {encrypted: bstr, receipt: bstr}
+; This plaintext contains a secret encryption-only root; it is not public evidence.
+encryption-recovery-root = {
+  schemaVersion: 1, trustDomainID: id32, requestHash: hash64, root: bstr .size 32
+}
 
 document-evidence-selection = {
   profile: "certconcord-document-evidence-draft-03", organizationAuthorization: bool

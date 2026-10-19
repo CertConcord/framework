@@ -1275,8 +1275,8 @@
     },
     {
       "path": "reference/schemas.cddl",
-      "bytes": 19495,
-      "sha256": "f6b1cf0adaff1c8b0cb5327b98195c11e99d38d9b3207cc4e05820b611f72274"
+      "bytes": 20072,
+      "sha256": "03aa86f7fd73132a2171e11399d30404bfcd78c43d0cfe4a30fbed60e900650f"
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
@@ -5860,8 +5860,8 @@
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
-      "bytes": 19639,
-      "sha256": "28baf47fdf5ff760d7805af12214f3f6c4dabb196215102371f9fbc67f63d9a7"
+      "bytes": 27100,
+      "sha256": "10fe38d5d699a9dc733f577250b33353c29d75d64cc1316491ff440e172282af"
     },
     {
       "path": "spec/bindings/DSCP-draft-03.md",
