@@ -850,8 +850,8 @@
     },
     {
       "path": "reference/lifecycle.mjs",
-      "bytes": 13952,
-      "sha256": "c12becbf5402dfb01bd7023342a5c40c3c0522f1c37de46600bc8e99f22da17e"
+      "bytes": 13970,
+      "sha256": "e6802e77622803fc720a76bfb69e980fcb09c0da78664d4eb5281c2adca32567"
     },
     {
       "path": "reference/lifecycle.test.mjs",
@@ -1240,8 +1240,8 @@
     },
     {
       "path": "reference/recovery-security.test.mjs",
-      "bytes": 15871,
-      "sha256": "7c7e65bef7542e680702dad3fe6990eba6fb562d7252923d80726d01a6682cd9"
+      "bytes": 17428,
+      "sha256": "1c32b81878c4a8f204b5602ede4acbb8f411f75fb379b6db2eb227e09a2ccd8d"
     },
     {
       "path": "reference/registry.json",
@@ -1275,8 +1275,8 @@
     },
     {
       "path": "reference/schemas.cddl",
-      "bytes": 19495,
-      "sha256": "f6b1cf0adaff1c8b0cb5327b98195c11e99d38d9b3207cc4e05820b611f72274"
+      "bytes": 20072,
+      "sha256": "03aa86f7fd73132a2171e11399d30404bfcd78c43d0cfe4a30fbed60e900650f"
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
@@ -5860,8 +5860,8 @@
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
-      "bytes": 19639,
-      "sha256": "28baf47fdf5ff760d7805af12214f3f6c4dabb196215102371f9fbc67f63d9a7"
+      "bytes": 28270,
+      "sha256": "2559cf21a0e776a492ba88b9567b4f06a5c6d7fc7786677741fe7a7ff7bb94b5"
     },
     {
       "path": "spec/bindings/DSCP-draft-03.md",
@@ -5900,8 +5900,8 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 47947,
-      "sha256": "36c96b791e61fe4bff97b2c6288f07844ca0663149b23b7b47e90a03a3930fe2"
+      "bytes": 48119,
+      "sha256": "a58dc231f79b72c94859e6ef75e98e99b34bd310b1238566b7340a4817b98d21"
     },
     {
       "path": "spec/conformance.md",

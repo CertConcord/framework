@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { generateKeyPairSync } from 'node:crypto';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -28,13 +29,13 @@ function control() {
   };
 }
 
-function fixture(t, { durable = false } = {}) {
+function fixture(t, { durable = false, recipientAlgorithm = 'ml-kem-768' } = {}) {
   const directory = durable ? mkdtempSync(join(tmpdir(), 'certconcord-recovery-')) : undefined,
     path = directory ? join(directory, 'recovery.sqlite') : ':memory:',
     journals = [],
     authorities = [control(), control()],
     receipt = control(),
-    recipient = c.generate('ml-kem-768'),
+    recipient = c.generate(recipientAlgorithm),
     root = c.random(),
     trustDomainID = c.random(),
     authorityResolver = exampleAuthorityResolver({
@@ -173,6 +174,41 @@ function revokedStatus(f, authority) {
     compromiseStart: f.request.issuedAt - 1,
   };
 }
+
+test('recovery rejects ML-KEM-512 before reserving a request or loading a root', async (t) => {
+  const f = fixture(t),
+    recipient = generateKeyPairSync('ml-kem-512'),
+    request = { ...f.request, recipientKeyID: c.keyID(recipient.publicKey) },
+    approvals = approveRequest(f, request),
+    failures = [];
+  let rootLoads = 0;
+  const service = f.open(async () => {
+    rootLoads++;
+    return Buffer.from(f.root);
+  });
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      await service.recover(request, approvals, recipient.publicKey);
+      failures.push('ACCEPTED');
+    } catch (error) {
+      failures.push(error.code);
+    }
+  }
+  assert.deepEqual(failures, ['RECOVERY_REQUEST', 'RECOVERY_REQUEST']);
+  assert.equal(rootLoads, 0, 'An unsupported suite must not load secret root material');
+  assert.equal(f.journal().result(f.operationID), undefined, 'No operation may be reserved');
+});
+
+for (const recipientAlgorithm of ['ml-kem-768', 'ml-kem-1024'])
+  test(`recovery wraps the root for the selected ${recipientAlgorithm} suite`, async (t) => {
+    const f = fixture(t, { recipientAlgorithm }),
+      result = await f.recover(f.open()),
+      opened = f.unpack(result);
+    assert.deepEqual(opened.plaintext.root, f.root);
+    assert.deepEqual(opened.plaintext.requestHash, f.approvedHash);
+    assert.deepEqual(opened.receipt.requestHash, f.approvedHash);
+    assert.equal(f.journal().result(f.operationID).status, 'COMPLETED');
+  });
 
 test('recovery snapshots the approved caller request before asynchronous root loading', async (t) => {
   const f = fixture(t),

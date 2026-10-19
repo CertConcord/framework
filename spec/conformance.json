@@ -653,6 +653,10 @@
         {
           "file": "reference/recovery-security.test.mjs",
           "name": "recovery requests and saved results stay isolated across trust domains sharing a journal"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "recovery rejects ML-KEM-512 before reserving a request or loading a root"
         }
       ],
       "gap": "Certified recipient delivery and two-operator encryption-key recovery are exercised; external recovery services and hardware key import remain unassessed."
