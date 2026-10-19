@@ -5860,8 +5860,8 @@
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
-      "bytes": 27100,
-      "sha256": "10fe38d5d699a9dc733f577250b33353c29d75d64cc1316491ff440e172282af"
+      "bytes": 28030,
+      "sha256": "cf7d7408b06435382dcf0fe8df4f211b0cdf1cc9527d96ea0b5b98962673098a"
     },
     {
       "path": "spec/bindings/DSCP-draft-03.md",
