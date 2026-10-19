@@ -305,7 +305,7 @@ export class EncryptionRecoveryService {
         request.expiresAt > now() &&
         request.expiresAt - request.issuedAt <= 300 &&
         equal(request.recipientKeyID, keyID(recipientPublicKey)) &&
-        recipientPublicKey.asymmetricKeyType.startsWith('ml-kem-'),
+        ['ml-kem-768', 'ml-kem-1024'].includes(recipientPublicKey.asymmetricKeyType),
       'RECOVERY_REQUEST',
     );
     assertRecoverySeparation(this.graph, this.attackerRoots, this.signingTargets);
