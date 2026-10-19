@@ -49,30 +49,36 @@ export function verifyPreservedDocument({
     }),
   }));
   const timestampStatuses = [];
-  const originalProof = evaluate(() => ({
-    overall: 'VALID',
-    ...verifyERSOriginalProof(evidenceRecord, originalBytes, {
-      ...preservationPolicy,
-      resolveTimestamp(token) {
-        const selected = preservationPolicy.resolveTimestamp(token);
-        if (typeof selected?.status !== 'function') return selected;
-        return {
-          ...selected,
-          status(query) {
-            timestampStatuses.push({
-              evaluate: selected.status,
-              query: { ...query, certificate: Buffer.from(query.certificate) },
-            });
-            return selected.status(query);
-          },
-        };
-      },
-    }),
-  }));
+  const originalProof = evaluate(() => {
+    if (
+      evidenceRecord == null ||
+      (evidenceRecord instanceof Uint8Array && evidenceRecord.length === 0)
+    )
+      throw new VerificationError('HISTORICAL_BYTES_UNPROVEN', 'INDETERMINATE', 'time');
+    return {
+      overall: 'VALID',
+      ...verifyERSOriginalProof(evidenceRecord, originalBytes, {
+        ...preservationPolicy,
+        resolveTimestamp(token) {
+          const selected = preservationPolicy.resolveTimestamp(token);
+          if (typeof selected?.status !== 'function') return selected;
+          return {
+            ...selected,
+            status(query) {
+              timestampStatuses.push({
+                evaluate: selected.status,
+                query: { ...query, certificate: Buffer.from(query.certificate) },
+              });
+              return selected.status(query);
+            },
+          };
+        },
+      }),
+    };
+  });
   const P = originalProof.proofOfExistenceUpperBound;
   const historicalBytesVisibility = evaluate(() => {
-    if (originalProof.overall !== 'VALID')
-      throw new VerificationError('HISTORICAL_BYTES_UNPROVEN', 'INDETERMINATE', 'time');
+    if (originalProof.overall !== 'VALID') return originalProof;
     if (P > historicalKnowledgeTime)
       throw new VerificationError('HISTORICAL_BYTES_NOT_YET_PROVEN', 'INDETERMINATE', 'time');
     // Initial mathematics and its P-based admission remain independent of later

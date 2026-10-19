@@ -210,6 +210,48 @@ for (const [label, format, type, demo] of variants)
               assert.equal(result.currentAdmissibility.overall, 'VALID');
             },
           );
+        for (const overall of ['INVALID', 'INDETERMINATE', 'UNSUPPORTED'])
+          await t.test(
+            label + ' retains initial ' + overall + ' TSA status despite later GOOD status',
+            () => {
+              const reason = 'TEST_INITIAL_TSA_' + overall;
+              const result = verifyPreservedDocument({
+                ...options,
+                evidenceRecord: records.get(-1),
+                preservationPolicy: {
+                  ...options.preservationPolicy,
+                  resolveTimestamp: () => ({
+                    ...r.timestamp.trust,
+                    validUntil: H + 60,
+                    status: (query) =>
+                      query.knowledgeTime < H
+                        ? { overall, reason }
+                        : { overall: 'VALID', reason: 'TEST_TSA_LATER_GOOD' },
+                  }),
+                },
+              });
+              assert.equal(result.preservation.overall, 'VALID');
+              assert.equal(result.originalProof.overall, overall);
+              assert.equal(result.originalProof.reason, reason);
+              assert.equal(result.historicalBytesVisibility.overall, overall);
+              assert.equal(result.historicalAuthorization.overall, overall);
+              assert.equal(result.historicalAuthorization.reason, reason);
+              assert.equal(result.currentAdmissibility.overall, 'VALID');
+              assert.equal(result.overall, overall);
+            },
+          );
+        await t.test(label + ' invalid initial proof signature remains invalid', () => {
+          const broken = Buffer.from(records.get(0));
+          broken[broken.length - 1] ^= 1;
+          const result = verifyPreservedDocument({ ...options, evidenceRecord: broken });
+          assert.equal(result.originalProof.overall, 'INVALID');
+          assert.equal(result.originalProof.reason, 'CMS_SIGNATURE');
+          assert.equal(result.historicalBytesVisibility.overall, 'INVALID');
+          assert.equal(result.historicalAuthorization.overall, 'INVALID');
+          assert.equal(result.historicalAuthorization.reason, 'CMS_SIGNATURE');
+          assert.equal(result.currentAdmissibility.overall, 'VALID');
+          assert.equal(result.overall, 'INVALID');
+        });
         await t.test(
           label + ' invalid original mathematics dominate unavailable visibility',
           () => {
@@ -246,15 +288,20 @@ for (const [label, format, type, demo] of variants)
             assert.equal(result.overall, 'INVALID');
           },
         );
-        await t.test(
-          label + ' missing original proof leaves positive history indeterminate',
-          () => {
-            const result = verifyPreservedDocument({ ...options, evidenceRecord: Buffer.alloc(0) });
-            assert.equal(result.historicalAuthorization.overall, 'INDETERMINATE');
-            assert.equal(result.historicalAuthorization.reason, 'HISTORICAL_BYTES_UNPROVEN');
-            assert.equal(result.currentAdmissibility.overall, 'VALID');
-          },
-        );
+        for (const [absence, evidenceRecord] of [
+          ['empty', Buffer.alloc(0)],
+          ['null', null],
+          ['undefined', undefined],
+        ])
+          await t.test(
+            label + ' ' + absence + ' original proof leaves positive history indeterminate',
+            () => {
+              const result = verifyPreservedDocument({ ...options, evidenceRecord });
+              assert.equal(result.historicalAuthorization.overall, 'INDETERMINATE');
+              assert.equal(result.historicalAuthorization.reason, 'HISTORICAL_BYTES_UNPROVEN');
+              assert.equal(result.currentAdmissibility.overall, 'VALID');
+            },
+          );
       },
     });
   });

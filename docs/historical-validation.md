@@ -11,7 +11,10 @@ Historical acceptance requires the authenticated first ERS proof of the exact
 complete `originalBytes` at an upper bound P no later than
 `historicalKnowledgeTime` H. A missing or later proof leaves historical byte
 visibility INDETERMINATE, while independently invalid original mathematics remain
-INVALID. Signed `publishedAt` and `iat` fields alone cannot establish that the
+INVALID. Typed INVALID and UNSUPPORTED failures of a supplied initial proof retain
+their outcome and reason, even when a later TSA status callback returns GOOD.
+Absent proof and unavailable trust remain distinct INDETERMINATE outcomes.
+Signed `publishedAt` and `iat` fields alone cannot establish that the
 status bytes were available by H. The earlier document timestamp excludes those
 refreshable leaves. This selected interface has no separate per-status publication
 proof input; a later full-package archive cannot backfill an earlier history view,

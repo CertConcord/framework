@@ -190,8 +190,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 5540,
-      "sha256": "3457f3bccb4ebad7c0f861683ad2428d017b0b8c8eef8cd48fd895b4cdbe9788"
+      "bytes": 5767,
+      "sha256": "29eecb8a78fc8ccf97464f222c733f320eaf58646424acc895d4f38b8d0ea326"
     },
     {
       "path": "docs/implementation.md",
@@ -765,13 +765,13 @@
     },
     {
       "path": "reference/historical-status-visibility.test.mjs",
-      "bytes": 11975,
-      "sha256": "ccb1473b63be01b458b9fcf4a5c9f09f5710f517eec74d0953dc7aecea92edf3"
+      "bytes": 14391,
+      "sha256": "1056a9e224a686c4499a03ddf4147605346287a830a1fd987a5e906cb4356804"
     },
     {
       "path": "reference/historical-validation.mjs",
-      "bytes": 5966,
-      "sha256": "5ae7ddaba969b743547e2ce79e28cd96aa470ab54decb8a6ffad9ad083546c9e"
+      "bytes": 6165,
+      "sha256": "64424a98fcaa9e9a3f8b90ca30f4f2475711c0bdb2e0ec9eab89facfab7d3d06"
     },
     {
       "path": "reference/http.mjs",
