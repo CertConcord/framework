@@ -151,6 +151,7 @@
   "reference/governance/registry.json",
   "reference/governance/registry.mjs",
   "reference/hardware-check.mjs",
+  "reference/historical-status-visibility.test.mjs",
   "reference/historical-validation.mjs",
   "reference/http.mjs",
   "reference/identity-profiles.mjs",

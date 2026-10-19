@@ -7,6 +7,29 @@ overall acceptance. A later discovered compromise can invalidate current
 admissibility while the historical result and the integrity of the preserved
 original bytes remain valid. Fresh status cannot change the signed operation.
 
+Historical acceptance requires the authenticated first ERS proof of the exact
+complete `originalBytes` at an upper bound P no later than
+`historicalKnowledgeTime` H. A missing or later proof leaves historical byte
+visibility INDETERMINATE, while independently invalid original mathematics remain
+INVALID. Typed INVALID and UNSUPPORTED failures of a supplied initial proof retain
+their outcome and reason, even when a later TSA status callback returns GOOD.
+Absent proof and unavailable trust remain distinct INDETERMINATE outcomes.
+Signed `publishedAt` and `iat` fields alone cannot establish that the
+status bytes were available by H. The earlier document timestamp excludes those
+refreshable leaves. This selected interface has no separate per-status publication
+proof input; a later full-package archive cannot backfill an earlier history view,
+even when an application holds additional evidence outside this interface.
+
+Original status authority is checked at its claimed publication time and at P,
+with H knowledge in both queries. P is an existence upper bound, not an exact
+signing time. A claimed publication after P is rejected, and a known key incident
+or authority retirement by P cannot be bypassed with an earlier claimed time.
+The initial TSA is checked under both P and H knowledge. The result exposes
+`originalProof` and `historicalBytesVisibility` separately from preservation
+through the current knowledge time. A later renewal signature failure does not
+erase an independently authenticated initial proof. Later status remains eligible
+for the separate current-admissibility decision.
+
 The original evidence bytes are preserved by RFC 4998 ERS using RFC 3161
 timestamps. Status and other refreshable evidence may be supplied separately for
 current evaluation, but the immutable document-operation commitment must match.
