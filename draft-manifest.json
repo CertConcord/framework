@@ -240,8 +240,8 @@
     },
     {
       "path": "docs/smime-application.md",
-      "bytes": 13891,
-      "sha256": "d5e9cca16c9fef6d1797948a7331a577b9215743fe57b97e425b1ae02f796177"
+      "bytes": 14738,
+      "sha256": "15b8cd46cd137b8724e58f8c9f40b81e91f09fc30f07ff9823add2f62f2dc978"
     },
     {
       "path": "docs/storage.md",
@@ -270,8 +270,8 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 94020,
-      "sha256": "2795d488ad4a1dd458c16bc2cd5bcb8807acbb93d80f040ae46ae32ac006886a"
+      "bytes": 94048,
+      "sha256": "5c1779d8cdc2514eeaee86e1cffd76c1b13473c1e2adc027b4fecb31389238cd"
     },
     {
       "path": "package.json",
@@ -280,8 +280,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 118893,
-      "sha256": "df4e1375ec892e443b4d30336bf7def7dd209fc0f4471cd6740860e2bc6f892d"
+      "bytes": 118928,
+      "sha256": "bfcb62435efbd5e2b39493192093851362ba55097565d55df64f3f8bcf58cfae"
     },
     {
       "path": "reference/README.md",
@@ -300,8 +300,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46119,
-      "sha256": "a9a50e9cf5d6550e7b2072ac3e2854b4e4728ef089eaf28440d26f8bbeee79c7"
+      "bytes": 46203,
+      "sha256": "14c505d78b820a0f0c7b267293a8152d368850ca0a2b52c1c9c5d51fe0759a5b"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1070,8 +1070,8 @@
     },
     {
       "path": "reference/package.json",
-      "bytes": 1464,
-      "sha256": "9a319532368c53ad910ae73ecabe6898aea17efea00f8341578932b7c9f5709f"
+      "bytes": 1488,
+      "sha256": "7abcf6715b42160cc2a7a04c055b4efd1c6df54e71e953ba3fd2fa2f0f40397e"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
@@ -1420,13 +1420,18 @@
     },
     {
       "path": "reference/smime-mime-worker.mjs",
-      "bytes": 20848,
-      "sha256": "13cfeb4b4b6527666b4cde547dfc3dbfd962c9e6fbf9b7f1e747dd6949ad55c6"
+      "bytes": 22100,
+      "sha256": "8acd3ebea3d8816489015a6a52801148282ee150c87afa8bb3b8c3fe932e5ad0"
     },
     {
       "path": "reference/smime-mime.mjs",
       "bytes": 1535,
       "sha256": "fe00a3bd5342d80df8b87aea0170b84c5f6a376de93e1a836dfbf797f1541bfb"
+    },
+    {
+      "path": "reference/smime-mime.test.mjs",
+      "bytes": 6838,
+      "sha256": "7c1b43fc12e63024088ad486e45af11835222e418489746739cab8d494177179"
     },
     {
       "path": "reference/smime.mjs",
@@ -1440,13 +1445,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 41927,
-      "sha256": "55f78d191e3e7378a94aa8479d7f6164c943aada9e6d6ca4c6a7dd17480e7b5b"
+      "bytes": 42429,
+      "sha256": "e350d090362c4c12aef324475e481ffac0a4d1702329344ec4ff436e888dc6be"
     },
     {
       "path": "reference/sources.mjs",
-      "bytes": 16705,
-      "sha256": "61b85c1871eb77483729f5ccf9c320bf2dd749f5e7db3467acc4cfad92c198f4"
+      "bytes": 16819,
+      "sha256": "e8e8c8c7e3938a979cc47fb1e45e753b64ffc30858db888245486b0b0f29c5da"
     },
     {
       "path": "reference/state-security.test.mjs",

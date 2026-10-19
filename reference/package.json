@@ -33,7 +33,8 @@
     "@zone-eu/mailsplit": "5.4.20",
     "cbor-x": "1.6.6",
     "koffi": "3.3.3",
-    "nodemailer": "10.1.0",
+    "libmime": "5.4.7",
+    "nodemailer": "10.1.7",
     "pdf-lib": "1.17.1",
     "pg": "8.23.1",
     "xml-crypto": "6.3.3"
