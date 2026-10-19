@@ -492,6 +492,7 @@
         "smime-material.test.mjs",
         "smime-application.test.mjs",
         "smime-callbacks.test.mjs",
+        "smime-mime.test.mjs",
         "smime-backend.test.mjs",
         "smime-backend-boundaries.test.mjs",
         "smime.test.mjs"
@@ -503,6 +504,8 @@
         "rfc5322",
         "rfc2045",
         "rfc2046",
+        "rfc2047",
+        "rfc2231",
         "rfc3560",
         "rfc4055",
         "rfc5083",
@@ -512,7 +515,7 @@
         "rfc5280",
         "openssl365",
         "mailsplit5420",
-        "nodemailer10016",
+        "nodemailer1017",
         "encodingJapanese240",
         "iconvLite073",
         "libbase64132",
@@ -521,7 +524,7 @@
         "saferBuffer212"
       ],
       "inputSemantics": "Complete immutable RFC5322 message bytes; exact finalized SignedData MIME content; explicit sender and recipients; constructor-fixed synchronous context, roots and resolver identities; current certificate/key/mailbox/purpose admission before private use and release",
-      "environment": "Node.js 24.15+; explicit OpenSSL 3.6.5 executable/configuration and fixed local key map; POSIX private-file isolation for sign/decrypt; mailsplit 5.4.20 and Nodemailer 10.0.16; direct-root/full-CRL trust and finite cryptographic deadlines",
+      "environment": "Node.js 24.15+; explicit OpenSSL 3.6.5 executable/configuration and fixed local key map; POSIX private-file isolation for sign/decrypt; mailsplit 5.4.20, libmime 5.4.7 and Nodemailer 10.1.7; direct-root/full-CRL trust and finite cryptographic deadlines",
       "limits": "docs/smime-application.md; 32 MiB input, separate 16 MiB complete CMS DER and canonical/decoded MIME ceilings, 128 nodes, depth16, 128 headers/64 KiB per entity, 32 certificates/CRLs/recipients, two security layers; 10-second workers and OpenSSL operations; no SMTP, historical preservation, durable replay service or full S/MIME receiving claim",
       "downgradeForbidden": true
     },

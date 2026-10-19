@@ -2,6 +2,7 @@ import { parentPort, workerData } from 'node:worker_threads';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import mailsplit from '@zone-eu/mailsplit';
+import libmime from 'libmime';
 import MimeNode from 'nodemailer/lib/mime-node';
 import { bytes, check, copy, failure, hash, LIMITS } from './smime-adapter-common.mjs';
 import { headerMailbox, hasMultipleHeaderMailboxes } from './smime-address.mjs';
@@ -105,9 +106,26 @@ function parameterized(value) {
     while (at < value.length && /[ \t]/.test(value[at])) at++;
     check(at === value.length || value[at] === ';', 'SMIME_PARAMETER_SYNTAX');
     const base = name.replace(/\*.*$/, '');
+    const encodedZero = /^(?:name|filename)\*0\*$/.test(name);
+    check(
+      !/\*\d/.test(name) || encodedZero,
+      'SMIME_PARAMETER_CONTINUATION_UNSUPPORTED',
+      'UNSUPPORTED',
+    );
     check(!params.has(name) && !logical.has(base), 'SMIME_DUPLICATE_PARAMETER');
-    check(!/\*\d/.test(name), 'SMIME_PARAMETER_CONTINUATION_UNSUPPORTED', 'UNSUPPORTED');
-    params.set(name, content);
+    const selectedName = encodedZero ? `${base}*` : name;
+    if (['name*', 'filename*'].includes(selectedName)) {
+      const extended = /^([^']*)'([^']*)'((?:[!#$&+\-.0-9A-Z^_`a-z{|}~]|%[0-9A-Fa-f]{2})*)$/.exec(
+        content,
+      );
+      check(
+        extended &&
+          (!extended[1] || token.test(extended[1])) &&
+          /^[A-Za-z0-9-]*$/.test(extended[2]),
+        'SMIME_PARAMETER_SYNTAX',
+      );
+    }
+    params.set(selectedName, content);
     logical.add(base);
   }
   return { main, params };
@@ -150,7 +168,12 @@ function metadata(node, records) {
   if (ct !== undefined) check(node.contentType === parsed.main, 'SMIME_CONTENT_TYPE_AMBIGUOUS');
   const isText = parsed.main.startsWith('text/'),
     charset = isText ? (parsed.params.get('charset') ?? 'us-ascii').toLowerCase() : null;
-  const filename = node.filename || null;
+  // The parameter parser decodes RFC 2231 once. The node's filename convenience
+  // field also decodes RFC 2047 words, which would change literal parameter text.
+  const filename =
+    libmime.parseHeaderValue(cd ?? '').params.filename ||
+    libmime.parseHeaderValue(ct ?? '').params.name ||
+    null;
   if (filename) check(!/[\x00-\x1f\x7f]/.test(filename), 'SMIME_FILENAME');
   const contentID = field(records, 'content-id') ?? null;
   if (contentID) check(/^<[^<>\s]+>$/.test(contentID), 'SMIME_CONTENT_ID');
@@ -443,6 +466,16 @@ async function prepare({ message }) {
     return node;
   }
   const mime = await collect(build(parsed.root).createReadStream(), LIMITS.content);
+  // A writer may choose continuation forms outside this profile. Do not return
+  // content for signing unless the same selected receiver can inspect it.
+  const written = await parse(mime, 'ENTITY');
+  check(
+    written.nodes.length === parsed.nodes.length &&
+      written.nodes.every(
+        (item, index) => item.meta.filename === parsed.nodes[index].meta.filename,
+      ),
+    'SMIME_FILENAME_SERIALIZATION',
+  );
   return {
     mime,
     outerHeaders: parsed.outerHeaders,

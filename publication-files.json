@@ -284,6 +284,7 @@
   "reference/smime-message-fixtures.mjs",
   "reference/smime-mime-worker.mjs",
   "reference/smime-mime.mjs",
+  "reference/smime-mime.test.mjs",
   "reference/smime.mjs",
   "reference/smime.test.mjs",
   "reference/source-lock.json",
