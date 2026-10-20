@@ -49,6 +49,8 @@ Existing Passkeys can authorize selected operations. Research may also define ce
 
 The specification defines trust semantics and interoperable behavior. The reference code, wallet/provider examples and conformance materials make those contracts testable. Product UX, commercial operation, jurisdictional recognition and operational service deployment are separate responsibilities. An implementation MAY adopt the framework with independently operated infrastructure.
 
+Cross-standard interoperability and composition experiments test whether the additional contract is necessary and implementable. They do not redefine the framework as a single production CA, wallet, log, HSM or document-parser product. A claimed gap in an existing standard requires a concrete counterexample against its actual selected edition and extension points; resemblance or a feature matrix alone does not establish novelty or incompatibility. [Composition benchmarks](../docs/ecosystem-comparison.md) and [conformance](conformance.md) separate comparative evidence from implemented and independently assessed behavior.
+
 The first baseline includes necessary time evidence and historical verification, while a general timestamp issuing service is a separate application track. Email security likewise has separate message and address-binding rules. Both tracks reuse the same core instead of redefining it.
 
 ## 6. Evolution

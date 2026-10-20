@@ -90,8 +90,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 10750,
-      "sha256": "739fd030647653a27e025b677c3cb266fedea9e1a9396d06a8ddc205f25147a9"
+      "bytes": 10906,
+      "sha256": "bd665d002a41042df343b60665a6de6f4de0b21c3cdcd57a91cce4143b413112"
     },
     {
       "path": "SECURITY.md",
@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/composition-review.md",
-      "bytes": 25050,
-      "sha256": "8338d8ff0842cf472135a4baeb0310a3418b7e554a85804df8a3f235db2618da"
+      "bytes": 25980,
+      "sha256": "7f9f2a460f472513e14678dbf98ca0e75207f2b888074bb3e78a6869ed0ff5f8"
     },
     {
       "path": "docs/conformance-marks.md",
@@ -172,6 +172,11 @@
       "path": "docs/draft-acceptance.md",
       "bytes": 9462,
       "sha256": "a7e5e53bbee499008e08ae990cbbc7ce77d91960b950c5a93255fc01648e38b5"
+    },
+    {
+      "path": "docs/ecosystem-comparison.md",
+      "bytes": 12691,
+      "sha256": "114e102e79617f481ee6d5d254dcb9e170f0d89d35b0121b9ed5d822c7794401"
     },
     {
       "path": "docs/ecosystem.md",
@@ -255,8 +260,8 @@
     },
     {
       "path": "docs/upstream-baseline.md",
-      "bytes": 37302,
-      "sha256": "5199718f6782600aa74a1c5485b7ae2fd013bb1fc17e81210d5d74b3208711e6"
+      "bytes": 38699,
+      "sha256": "983e314278a0fd9bdf984fc905ef72725f723d61e3788d78e7b58ea99a8cc44e"
     },
     {
       "path": "docs/webauthn-evolution.md",
@@ -280,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 132021,
-      "sha256": "fc7c6cb91bd5f01fa897e01f2dc6af3a0c579af590f5083a25bb14ad243a0757"
+      "bytes": 132055,
+      "sha256": "3eb707b45887e51c661946be560d64cc43710bed7a126c818e63d68da1d640d0"
     },
     {
       "path": "reference/README.md",
@@ -1460,13 +1465,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 42727,
-      "sha256": "c3a5e97a67aff96180439d4d244866d7072e4489e670f85c221a5972ea1ffc4c"
+      "bytes": 43513,
+      "sha256": "42e0e592a082a51da577c72981134cb7ed04f69ecf707e23f449b2553a488e9f"
     },
     {
       "path": "reference/sources.mjs",
-      "bytes": 16826,
-      "sha256": "be17abb8fdd2e0c452b8125da904d72be3fe87b620d1e6c24fe5be5079bd6de7"
+      "bytes": 17051,
+      "sha256": "29af329bb064770a14c711287c9cd739804916331cf64ca27657c08b1b2ca377"
     },
     {
       "path": "reference/state-security.test.mjs",
@@ -6365,8 +6370,8 @@
     },
     {
       "path": "spec/architecture.md",
-      "bytes": 6176,
-      "sha256": "e2a267db9d8b15285380ab693624249b4bf6c2f2e1349758b61efc522bad1f03"
+      "bytes": 6805,
+      "sha256": "897956de02b1b0cb2016e67a7701e55c10d55218946a94e67b9882deda943580"
     },
     {
       "path": "spec/bindings/COMMON-draft-03.md",

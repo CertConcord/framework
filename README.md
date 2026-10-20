@@ -38,6 +38,7 @@ EUDI, government mDL and photoID are optional interoperability environments and 
 | [Passkey credentials](spec/passkey-credentials.md)         | Authentication, signing extensions and experimental execution bindings                     |
 | [Profiles and maturity](spec/profiles.md)                  | Which candidate bindings and external standards are selected                               |
 | [Composition review](docs/composition-review.md)           | Standard reuse, additional semantics, dependency order and reductions                      |
+| [Composition benchmarks](docs/ecosystem-comparison.md)     | Comparable external systems, trust-claim boundaries and interoperability tests             |
 | [Conformance and gaps](spec/conformance.md)                | Requirement-level evidence and work needed before stability                                |
 | [Research and evolution](docs/research.md)                 | Private experiments, public proposals, review and version transitions                      |
 | [Reference implementation](reference/README.md)            | Executable flows, tests, SDK and optional platform integrations                            |
