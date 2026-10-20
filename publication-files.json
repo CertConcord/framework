@@ -154,6 +154,7 @@
   "reference/historical-status-visibility.test.mjs",
   "reference/historical-validation.mjs",
   "reference/http.mjs",
+  "reference/identity-crl-usage.test.mjs",
   "reference/identity-profiles.mjs",
   "reference/identity-profiles.test.mjs",
   "reference/identity.mjs",
