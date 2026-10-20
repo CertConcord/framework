@@ -13,7 +13,7 @@ import { verifyERSPreservation } from './archive.mjs';
 import { verifyPreservedDocument } from './historical-validation.mjs';
 
 export const defaultVectorDirectory = fileURLToPath(
-  new URL('./vectors/document-acceptance/', import.meta.url),
+  new URL('./vectors/document-acceptance-mtc07/', import.meta.url),
 );
 const outcomes = new Set(['VALID', 'INVALID', 'INDETERMINATE', 'UNSUPPORTED']);
 const dimensions = new Set([
@@ -67,7 +67,7 @@ export function loadVectorCorpus(directory = defaultVectorDirectory) {
   ]);
   need(
     manifest.schemaVersion === 1 &&
-      manifest.profile === 'certconcord-document-acceptance-vectors-draft-03',
+      manifest.profile === 'certconcord-document-acceptance-vectors-draft-03-mtc07',
     'VECTOR_VERSION',
   );
   need(

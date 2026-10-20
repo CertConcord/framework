@@ -52,6 +52,15 @@ function replaceMaterial(directory, name, bytes) {
   writeFileSync(path, stored);
 }
 
+test('draft-06 document corpus requires its original verifier', () => {
+  const legacy = resolve(defaultVectorDirectory, '..', 'document-acceptance');
+  assert.equal(
+    JSON.parse(readFileSync(join(legacy, 'manifest.json'), 'utf8')).profile,
+    'certconcord-document-acceptance-vectors-draft-03',
+  );
+  assert.throws(() => loadVectorCorpus(legacy), { code: 'VECTOR_VERSION' });
+});
+
 test('published CMS and native mdoc originals verify through the public SDK', () => {
   const results = runDocumentVectors();
   for (const format of ['cms', 'mdoc']) {
@@ -392,7 +401,7 @@ function smallCorpus(t) {
   const name = 'files/object.b64';
   const manifest = {
     schemaVersion: 1,
-    profile: 'certconcord-document-acceptance-vectors-draft-03',
+    profile: 'certconcord-document-acceptance-vectors-draft-03-mtc07',
     description: 'Original fixture',
     files: [
       {

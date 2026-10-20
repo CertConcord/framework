@@ -56,7 +56,7 @@ This catalog supplies concrete bindings for the `certconcord-governed-draft-03` 
 
 ### MTC and transparency
 
-The MTC cryptographic certificate profile selects published draft-07, including its Appendix C tree vectors and assigned PKIX OIDs. `mtc-version.test.mjs` consumes fixed original certificates assembled separately from the runtime encoder. Its positive and negative cases cover standalone and historical landmark verification, GREASE, quorum, malformed proofs, unknown extensions and explicit rejection of draft-06 identifiers. The selected C2SP transport revision is independently locked.
+The MTC cryptographic certificate profile selects published draft-07, including its Appendix C tree vectors and assigned PKIX OIDs. `mtc-version.test.mjs` consumes fixed original certificates assembled separately from the runtime encoder. Its positive and negative cases cover standalone and historical landmark verification, GREASE, quorum, malformed proofs, unknown extensions and explicit rejection of draft-06 identifiers. The selected C2SP transport revision is independently locked. The assigned `id-pe-mtcCA` OID is recorded, but this adapter takes an externally admitted CA public key; MTC CA certificate-extension admission is not implemented by that key-based verifier.
 
 The [upstream baseline](upstream-baseline.md) identifies the reviewed publication and editor revisions. C2SP cosignatures retain the selected editor snapshot. Comparison with the subsequent v1.1.0 release found versioned reference-link changes only; the signature inputs and wire bytes are unchanged. The pinned snapshot and the published release remain separately identified.
 
