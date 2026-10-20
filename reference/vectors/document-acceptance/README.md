@@ -1,5 +1,7 @@
 # Original-byte document acceptance vectors
 
+This is the historical MTC revision-06 corpus. Its manifest, original bytes and expected results are retained unchanged and correspond to Framework commit `9923c17f03d0a93e770b91f39183bad474889e36`. Replay the commands below from that revision. The current runtime selects the separate [MTC revision-07 corpus](../document-acceptance-mtc07/README.md) and rejects this older corpus profile.
+
 This corpus contains synthetic CMS with standalone MTC certificates and native mdoc document signatures. Both complete document paths use ordinary WebAuthn activation and a trusted document timestamp. The files contain public material only.
 
 Run from the repository root with the selected Node runtime and installed reference dependencies:

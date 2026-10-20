@@ -4,19 +4,19 @@
     {
       "name": "mtc-document-validation",
       "repository": "https://github.com/CertConcord/mtc-document-validation",
-      "commit": "4634abae861dfc4c08bc3424867cf8392628f87e",
+      "commit": "17f9a5bde8e3bfccb382129b0afed80341b301c6",
       "edition": "draft-01",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mtc-document-validation/draft.md",
-          "sha256": "4df426bd52076d83e08ff8f43021a15b41993ee9a9e047bd1589a048cbf4a5f4"
+          "sha256": "dbce7be934de9348ad6aa1b17cd0a39a29aeec665a46424627135b24a270e0f0"
         },
         {
           "source": "sources.json",
           "path": "spec/external/mtc-document-validation/sources.json",
-          "sha256": "83de90f3e932ddc5a8cd08eda8629672f2ea304c6796b291539284f31700745d"
+          "sha256": "5f48dbd4ef8732c67c0df6b6505810fd947cfc056a7cba297f4fc50c248ea725"
         },
         {
           "source": "cases.json",
@@ -117,19 +117,19 @@
     {
       "name": "tlog-cosignature-ml-dsa",
       "repository": "https://github.com/CertConcord/tlog-cosignature-ml-dsa",
-      "commit": "c25847fe4f9ebe8df92e9e7f37d78241868c0cae",
+      "commit": "c5266dfe267e028b36b0e5aec14cf91193651ffa",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/tlog-cosignature-ml-dsa/draft.md",
-          "sha256": "927fd602099d85ae6b06f0c14c81951d0e8b171d5800c8f8c7b4f7c6e9d4d91a"
+          "sha256": "4efdf9f5d117ded475e0cd5897a2fe158bd0b535bd8c2b8999b0792d5ea34f94"
         },
         {
           "source": "sources.json",
           "path": "spec/external/tlog-cosignature-ml-dsa/sources.json",
-          "sha256": "d76ed348c4d4f11a6ddbad8abac5149b2f5bd0d3f48563aea7b1bf2ef56a3f0d"
+          "sha256": "676d7a3aea4314e49056a004e8bc32c608d07aa07a810ac1294df7a5d91b5e99"
         },
         {
           "source": "cases.json",

@@ -4,9 +4,9 @@ Each component repository owns its draft. The framework selects the immutable co
 
 | Component               | Canonical source                                                                                                 | Framework role     |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------ |
-| mtc-document-validation | [4634abae](https://github.com/CertConcord/mtc-document-validation/tree/4634abae861dfc4c08bc3424867cf8392628f87e) | selected-draft     |
+| mtc-document-validation | [17f9a5bd](https://github.com/CertConcord/mtc-document-validation/tree/17f9a5bde8e3bfccb382129b0afed80341b301c6) | selected-draft     |
 | mdoc-signing            | [f9ce29a2](https://github.com/CertConcord/mdoc-signing/tree/f9ce29a24bbfd093803884fd089b4c19eaeb8ded)            | selected draft-02  |
-| tlog-cosignature-ml-dsa | [c25847fe](https://github.com/CertConcord/tlog-cosignature-ml-dsa/tree/c25847fe4f9ebe8df92e9e7f37d78241868c0cae) | selected draft-02  |
+| tlog-cosignature-ml-dsa | [c5266dfe](https://github.com/CertConcord/tlog-cosignature-ml-dsa/tree/c5266dfe267e028b36b0e5aec14cf91193651ffa) | selected draft-02  |
 | signing-context         | [a1e23354](https://github.com/CertConcord/signing-context/tree/a1e233542e927a878ceb8eacf78f4d443cb2f19a)         | proposed-amendment |
 | passsign-evidence       | [38c8dbc9](https://github.com/CertConcord/passsign-evidence/tree/38c8dbc9ec95dcce4b55e209cd6b9dee9a00265a)       | proposed-amendment |
 
