@@ -6366,7 +6366,7 @@
     {
       "path": "spec/bindings/COMMON-draft-03.md",
       "bytes": 30675,
-      "sha256": "c773171d342bc255febf823571805bb83f0168da54900d58c95c1259f74c59d1"
+      "sha256": "7b4ec8a7601f5c449cea17a8ffaad380811ae52f2b66bf0d0c1ace617c92931c"
     },
     {
       "path": "spec/bindings/CONFORMANCE-draft-03.md",
