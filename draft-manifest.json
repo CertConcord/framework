@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/upstream-baseline.md",
-      "bytes": 34367,
-      "sha256": "6b57225ab1d6efa6c0777a64ef6152c8a710e5457bdb71863b70924d0fafcdff"
+      "bytes": 37302,
+      "sha256": "5199718f6782600aa74a1c5485b7ae2fd013bb1fc17e81210d5d74b3208711e6"
     },
     {
       "path": "docs/webauthn-evolution.md",
