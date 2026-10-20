@@ -162,7 +162,8 @@ test('RA-authorized MTC issuance requires independent durable mirrors; landmark 
         }),
       /REVOKED/,
     );
-    assert.throws(() => parseLandmarks('1\n1 9999999999\n0 0\n', { draft06Strict: true }), /COUNT/);
+    assert.equal(parseLandmarks('1\n1 9999999999\n0 0\n').length, 2);
+    assert.throws(() => parseLandmarks('1\n2 9999999999\n1 9999999999\n0 0\n'), /COUNT/);
   } finally {
     journal.close();
   }

@@ -1,11 +1,12 @@
 {
-  "reviewDate": "2026-10-05",
+  "reviewDate": "2026-10-20",
   "sources": [
     {
       "id": "mtc",
-      "url": "https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-06.txt",
-      "sha256": "9a15490077423ad0cc1986b84d3c63ab97479dcdfd902ec1f95922961152ea94",
-      "bytes": 227864
+      "url": "https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-07.txt",
+      "sha256": "adb411d371dc3474d7cd8c6fc3555bba3e4d6f7b1333cbaa7b0bf86c8925ca74",
+      "bytes": 234288,
+      "retrievedAt": "2026-10-20T21:12:29.223Z"
     },
     {
       "id": "mtcEditor",
@@ -67,5 +68,9 @@
       "bytes": 1695899,
       "retrievedAt": "2026-10-05T22:08:27.915Z"
     }
+  ],
+  "reviewNotes": [
+    "MTC revision 07 was published on 7 October 2026 as an active Internet-Draft, not an RFC. Its assigned OIDs change certificate bytes; preserved evidence requires its original exact verifier.",
+    "The retained mtcEditor snapshot is a historical comparison, not the latest published baseline."
   ]
 }

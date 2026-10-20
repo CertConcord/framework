@@ -94,6 +94,10 @@
         {
           "file": "reference/quorum-authorities.test.mjs",
           "name": "accepts only a quorum of independently authorized signing members"
+        },
+        {
+          "file": "reference/mtc-version.test.mjs",
+          "name": "MTC wire profiles: ${row.name}"
         }
       ],
       "gap": "Operator independence, privacy and deployment failure assumptions require assessed evidence."
@@ -827,6 +831,10 @@
         {
           "file": "reference/organization-history-vectors.test.mjs",
           "name": "saved organization replay is offline and independent of wall clock and working directory"
+        },
+        {
+          "file": "reference/mtc-version.test.mjs",
+          "name": "MTC wire profiles: ${row.name}"
         }
       ],
       "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."

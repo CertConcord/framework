@@ -5,7 +5,7 @@ import { readControl } from './state.mjs';
 import { coverInterval, treeHash, cosignedMessage } from './mtc.mjs';
 import { landmarkRelativeCertificate } from './transparency.mjs';
 
-export function parseLandmarks(text, { at = now(), draft06Strict = false, maxActive = 1024 } = {}) {
+export function parseLandmarks(text, { at = now(), maxActive = 1024 } = {}) {
   requireThat(
     typeof text === 'string' &&
       text.length <= 128 * 1024 &&
@@ -17,7 +17,7 @@ export function parseLandmarks(text, { at = now(), draft06Strict = false, maxAct
   requireThat(
     latest < 1n << 48n &&
       lines.length <= maxActive + 1 &&
-      BigInt(lines.length) <= latest + (draft06Strict ? 0n : 1n),
+      BigInt(lines.length) <= latest + 1n,
     'LANDMARK_COUNT',
   );
   const values = lines.map((l, i) => {

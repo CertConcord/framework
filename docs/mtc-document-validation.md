@@ -4,7 +4,7 @@ The independent [MTC Document Validation draft](../spec/external/mtc-document-va
 
 ## Framework selection
 
-CertConcord selects standalone MTC before document signing, the published draft-06 verifier and separately admitted issuer/cosigner policy. The latest MTC editor is a research comparison, not an advertised replacement wire profile. MTC, C2SP and Root Registration Authority governance remain separately sourced mechanisms in this composition.
+CertConcord selects standalone MTC before document signing, the published draft-07 verifier and separately admitted issuer/cosigner policy. The [revision transition](evolution.md#mtc-revision-07-selection) preserves exact evidence interpretation and rejects revision-06 placeholder certificates. MTC, C2SP and Root Registration Authority governance remain separately sourced mechanisms in this composition.
 
 The framework adds subject qualification, signing purpose, exact intent, activation, one-use authorization, organizational grants when required, and operation evidence. Those checks belong to the shared trust core and selected document binding. An issuance proof does not establish a later signing operation, and identity-source acceptance does not appoint a signing issuer.
 

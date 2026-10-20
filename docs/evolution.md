@@ -37,3 +37,11 @@ Enabling a Passkey signing profile requires its exact-key admission, possession 
 ## Stable versions
 
 A stable release requires the shared core and complete document baseline to satisfy the [stability gates](../spec/conformance.md). Draft artifact builds remain manually invoked CI artifacts. Packages stay private and no npm publishing or GitHub stable-release workflow is configured.
+
+## MTC revision 07 selection
+
+The `mtc-draft07` adapter replaces the revision-06 experimental OIDs with the assigned PKIX OIDs in COMMON. This is a research cutover within draft 03, with no deployed clients or production evidence requiring a second runtime. Certificate generation, leaf reconstruction, ordinary verification and retained-evidence verification all select revision 07. The verifier rejects revision-06 certificates, mixed issuer/algorithm identifiers, parameters on mtcProof, unknown critical X.509 extensions and malformed proof encodings; it does not retry an older parser.
+
+The issuer name is part of the logged leaf, so changing its OID changes the leaf and subtree root. Replacing certificate identifiers or carrying forward an old cached root cannot migrate evidence. Existing research artifacts retain their original bytes, source commit and verifier selection. A future deployment transition must provide an explicit archival verification policy; renewal does not authorize reinterpretation of old bytes. The fixed revision-06 certificates in `reference/vectors/mtc-versions.json` are rejection vectors.
+
+Unknown, canonically ordered cosigners are ignored and never satisfy CA or independent-operator quorum requirements. Known signatures still require verification. Unknown log-entry extensions are preserved verbatim in leaf reconstruction, so any modification invalidates the commitment; they are distinct from critical X.509 extensions. A trusted historical subtree still requires matching CA, log, range, policy, membership, mode, root and validity interval. These rules apply before any positive historical result.

@@ -20,7 +20,7 @@ BCP 14 applies. Cryptographic validity, authority, subject identity, user intent
 
 ## 3. Standards baseline
 
-The baseline includes RFC 5280, CMS, ML-DSA RFC 9881/9882, ML-KEM RFC 9935/9936, RFC 9629, MTC draft-06, WebAuthn Level 3, OpenID4VCI/VP 1.0 and the declared timestamp/archive adapters. Raw-signing proposals, C2SP extensions, Remote CryptoKey and enrollment profiles use explicitly versioned adapters. Each adapter identifies its source revision, wire semantics and compatibility requirements.
+The baseline includes RFC 5280, CMS, ML-DSA RFC 9881/9882, ML-KEM RFC 9935/9936, RFC 9629, MTC draft-07, WebAuthn Level 3, OpenID4VCI/VP 1.0 and the declared timestamp/archive adapters. Raw-signing proposals, C2SP extensions, Remote CryptoKey and enrollment profiles use explicitly versioned adapters. Each adapter identifies its source revision, wire semantics and compatibility requirements.
 
 ## 4. Architecture
 
@@ -106,7 +106,7 @@ The CAID is a valid Trust Anchor ID within a legitimately controlled namespace. 
 
 ## 9. Certificate serial number
 
-`serial = (logNumber << 48) | leafIndex`. Both arithmetic and DER INTEGER encoding preserve the complete value without floating-point conversion. Leaf indices and exclusive proof endpoints obey draft-06's 48-bit bounds. Overflow, invalid log number, negative serial and ambiguous encodings are rejected. Serial reuse under an issuer is forbidden.
+`serial = (logNumber << 48) | leafIndex`. Both arithmetic and DER INTEGER encoding preserve the complete value without floating-point conversion. Leaf indices and exclusive proof endpoints obey draft-07's 48-bit bounds. Overflow, invalid log number, negative serial and ambiguous encodings are rejected. Serial reuse under an issuer is forbidden.
 
 ## 10. Cryptographic suites
 
@@ -132,7 +132,7 @@ The direct KEM challenge adapter encapsulates to the requested SPKI. The respons
 
 ## 15. Issuance log
 
-Native personal mdoc issuance follows DCP section 12 and its separate entry domain. The following draft-06 rules apply to the X.509/MTC representation. Log entries use exact draft-06 MTCLogEntry/TBSCertificateLogEntry encoding. The serial/signature fields and SPKI commitment are reconstructed exactly as prescribed. RRA metadata uses registered extensions or committed private evidence references; it MUST NOT alter the Merkle leaf construction. Public log commitments are minimized, but authorized monitors can obtain the underlying issuance approval evidence.
+Native personal mdoc issuance follows DCP section 12 and its separate entry domain. The following draft-07 rules apply to the X.509/MTC representation. Log entries use exact draft-07 MTCLogEntry/TBSCertificateLogEntry encoding. The serial/signature fields and SPKI commitment are reconstructed exactly as prescribed. RRA metadata uses registered extensions or committed private evidence references; it MUST NOT alter the Merkle leaf construction. Public log commitments are minimized, but authorized monitors can obtain the underlying issuance approval evidence.
 
 ## 16. Issuance transaction
 
@@ -152,7 +152,7 @@ Root, RA, issuing CA, CA cosigner, each mirror, status responder, activation aut
 
 ## 20. Standalone MTC
 
-A standalone certificate contains its exact TBS and draft-06 proof. Verification reconstructs the leaf, verifies subtree inclusion, CA cosignature and mirror quorum under the applicable policy. Unknown cosigners do not count. Repeated operators, duplicate public keys, a mirror using the CA key, malformed TLS vectors and unrecognized required extensions cause rejection.
+A standalone certificate contains its exact TBS and draft-07 proof. Verification reconstructs the leaf, verifies subtree inclusion, CA cosignature and mirror quorum under the applicable policy. Unknown cosigners do not count. Repeated operators, duplicate public keys, a mirror using the CA key, malformed TLS vectors and unrecognized required extensions cause rejection.
 
 ## 21. Landmark-relative MTC
 
@@ -281,7 +281,7 @@ Classes identify trust governance, MTC standalone, landmark, document signing, e
 
 ## 50. Mandatory composition services
 
-A complete trust-domain deployment MUST provide offline root governance, a signed RTM, scoped RA/RAR/PoP, transparent issuance with independent mirrors and explicit MQ23 or MQ34 policy, current key/authority status, DSCP SIM/ACB enforcement and semantic evidence validation. MTC issuance MUST implement the selected draft-06 certificate profile, durable allocation and complete CRLs. Personal native credentials MUST additionally implement DCP issuance/presentation, PQ credential seals, native issuance transparency, current DeviceBinding/admission status and QTB when HUMAN_MDOC is used.
+A complete trust-domain deployment MUST provide offline root governance, a signed RTM, scoped RA/RAR/PoP, transparent issuance with independent mirrors and explicit MQ23 or MQ34 policy, current key/authority status, DSCP SIM/ACB enforcement and semantic evidence validation. MTC issuance MUST implement the selected draft-07 certificate profile, durable allocation and complete CRLs. Personal native credentials MUST additionally implement DCP issuance/presentation, PQ credential seals, native issuance transparency, current DeviceBinding/admission status and QTB when HUMAN_MDOC is used.
 
 Personal signing MUST support the independent ML-DSA profile. DEVICE_KEY and PASSKEY_KEY are additional explicitly selected ES256 profiles; PASSKEY_KEY MUST satisfy PSCP. HUMAN_WEBAUTHN activation MUST satisfy DSCP section 18; HUMAN_MDOC MUST satisfy DCP section 8. A deployment supporting PRF-protected roots or local keys MUST implement PRF-KPP, including wrapper integrity, rotation and recovery evaluation. Document encryption MUST use separate enrollment, keys and recovery authority. A policy promising long-term historical validity MUST additionally require validated trusted time and retained archive evidence.
 

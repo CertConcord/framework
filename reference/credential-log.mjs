@@ -4,7 +4,7 @@ import { witnessRequest, verifyNote } from './transparency.mjs';
 import { IndexedMerkleLog } from './storage/merkle.mjs';
 import { checkpointBody, noteSignature, indexedMirrorUpload } from './transparency.mjs';
 
-// Native mdoc entries have their own domain; they are not draft-06 TBSCertificateLogEntry values.
+// Native mdoc entries have their own domain; they are not draft-07 TBSCertificateLogEntry values.
 export class CredentialLog {
   constructor({ journal, log, mirrors, maxEntries = 2 ** 40, maxBytes = Number.MAX_SAFE_INTEGER }) {
     Object.assign(this, { journal, log, mirrors, maxEntries, maxBytes });

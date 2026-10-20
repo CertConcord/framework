@@ -57,7 +57,7 @@ Every adapter lock MUST identify the specification URI, immutable revision, cont
 
 `registry.json` is the unique RRA OID registry. UUID-derived 2.25 OIDs follow X.667 and may contain an arc larger than uint64. They are RRA assignments, not IETF or IANA endorsements. DER implementations MUST preserve every arc exactly.
 
-MTC draft-06 identifiers remain `1.3.6.1.4.1.44363.47.0` for mtcProof, `.47.3` for trustAnchorID and `.47.4` for mtcCertificationAuthority-SHA256. MTCProof is TLS presentation syntax, not ASN.1. The issuer trustAnchorID value is a RELATIVE-OID as specified by that adapter. CA namespaces require actual administrative ownership; an example enterprise arc is not an allocation.
+MTC draft-07 assigns `1.3.6.1.5.5.7.6.67` to mtcProof, `1.3.6.1.5.5.7.25.3` to trustAnchorID and `1.3.6.1.5.5.7.1.38` to mtcCertificationAuthority-SHA256. Both certificate AlgorithmIdentifiers MUST match exactly and omit parameters. The issuer trustAnchorID value is a RELATIVE-OID; MTCProof uses TLS presentation syntax, not ASN.1. Revision-06 placeholder identifiers and mixed-revision encodings MUST be rejected. CA namespaces require actual administrative ownership; an example enterprise arc is not an allocation.
 
 Signed RRA controls use CMS SignedData with id-data content containing D(label, payload), SHA-512, an authorized ML-DSA control key and signingCertificateV2 binding the full original certificate. Controls do not recursively require document signing intent. RTM bootstrap signatures may instead use directly pinned root SPKIs. Control labels include RootTrustManifest, RegistrationAuthorization, OrganizationalEndorsement, OperationPermit, ExecutionReceipt, DeviceRegistrationAuthorization and DeviceBindingRevocation.
 

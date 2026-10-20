@@ -36,9 +36,9 @@ export const OID = {
   ess: '1.2.840.113549.1.9.16.2.47',
   timestamp: '1.2.840.113549.1.9.16.2.14',
   tstInfo: '1.2.840.113549.1.9.16.1.4',
-  mtc: '1.3.6.1.4.1.44363.47.0',
-  trustAnchorID: '1.3.6.1.4.1.44363.47.3',
-  mtcCA: '1.3.6.1.4.1.44363.47.4',
+  mtc: '1.3.6.1.5.5.7.6.67',
+  trustAnchorID: '1.3.6.1.5.5.7.25.3',
+  mtcCA: '1.3.6.1.5.5.7.1.38',
 };
 export const RRA = Object.fromEntries(registry.entries.map((e) => [e.name, e.oid]));
 export const algID = (name) => seq(oid(ALG[name]?.oid ?? name));

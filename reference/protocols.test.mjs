@@ -2,7 +2,7 @@ import test from 'node:test';
 import { exampleAuthorityResolver } from './example-authorities.mjs';
 import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
-test('MTC draft06 independent C.1.4 covering-subtree aggregate vector', () => {
+test('MTC draft07 independent C.1.4 covering-subtree aggregate vector', () => {
   const h = createHash('sha256');
   for (let end = 0; end <= 130; end++)
     for (let start = 0; start <= end; start++) {
@@ -94,7 +94,7 @@ test('CMS detached content, ESS representation, signed SIM and policy substituti
     /REPRESENTATION/,
   );
 });
-test('MTC draft06 Appendix C.1.1 independent rolling hash vector', () => {
+test('MTC draft07 Appendix C.1.1 independent rolling hash vector', () => {
   const data = Array.from({ length: 130 }, (_, i) => Buffer.from([i])),
     h = createHash('sha256');
   for (let end = 0; end <= 130; end++)
