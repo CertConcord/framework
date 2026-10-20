@@ -50,6 +50,13 @@ for (const s of sources.sources) {
   assert(/^[a-f0-9]{64}$/.test(s.sha256));
   assert(s.bytes > 0);
   assert(Number.isFinite(Date.parse(s.retrievedAt ?? sources.retrievedAt)));
+  if (s.url.startsWith('https://registry.npmjs.org/')) {
+    const installed = Object.entries(lock.packages).filter(
+      ([path, item]) => path.startsWith('node_modules/') && item.resolved === s.url,
+    );
+    assert.equal(installed.length, 1, 'Selected npm source differs from installation lock: ' + s.id);
+    assert.equal(installed[0][1].integrity, s.integrity, 'Selected npm integrity differs: ' + s.id);
+  }
 }
 assert.equal(adapters.release, pkg.version);
 assert.equal(new Set(adapters.adapters.map((a) => a.id)).size, adapters.adapters.length);
