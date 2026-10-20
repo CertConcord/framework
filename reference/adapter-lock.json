@@ -5,14 +5,15 @@
     {
       "id": "certconcord-identity-mdoc-v1",
       "name": "Identity mdoc admission",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "wireProfile": "Approved mDL/photo ID/PID/custom rulebooks; typed multi-namespace disclosure; profile commitment; native holder proof, status and enrollment/session/CSR binding",
       "modules": ["identity.mjs", "openid.mjs", "annex-verifier.mjs", "identity-profiles.mjs"],
-      "tests": ["foundation-security.test.mjs", "identity-profiles.test.mjs"],
+      "tests": ["foundation-security.test.mjs", "identity-profiles.test.mjs", "identity-crl-usage.test.mjs"],
       "sources": [
         "oid4vp",
         "multipazAnnexC",
         "rfc5280",
+        "rfc10007",
         "multipazPhotoID",
         "eudiARF14",
         "eudiPID14",

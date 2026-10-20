@@ -129,6 +129,13 @@
       "bytes": 352580
     },
     {
+      "id": "rfc10007",
+      "url": "https://www.rfc-editor.org/rfc/rfc10007.txt",
+      "sha256": "db490bb4765aad4fc2a0c12855d22b33ed37adc8e0e44cf42bcbfabbde88dbeb",
+      "bytes": 11372,
+      "retrievedAt": "2026-10-20T21:44:20Z"
+    },
+    {
       "id": "rfc5652",
       "url": "https://www.rfc-editor.org/rfc/rfc5652.txt",
       "sha256": "dbd209ae7844031f51722c4d9e2d1fa3fff3081319851d581f914f5f0147f918",

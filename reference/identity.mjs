@@ -2,7 +2,7 @@ import { H, sha512, equal, random, now, b64u, requireThat } from './core.mjs';
 import { verifyCSR, issueRAR } from './enrollment.mjs';
 import { snapshotIssuanceScope } from './enrollment-scope.mjs';
 import { verifyCRL } from './revocation.mjs';
-import { parseCertificate } from './pki.mjs';
+import { parseCertificate, validateKeyUsage } from './pki.mjs';
 
 // External identity credentials use the issuer's own schema and status mechanism.
 export function identityCRLValidator({
@@ -13,6 +13,14 @@ export function identityCRLValidator({
   maxPublicationAge = 86400,
 }) {
   const issuer = parseCertificate(issuerCertificate);
+  // This adapter consumes an externally admitted issuer and complete direct CRLs.
+  // Its v3 certificate must authorize CRL signing (RFC 10007, section 4).
+  const usage = validateKeyUsage(
+    issuer.extensions.get('2.5.29.15'),
+    undefined,
+    'IDENTITY_CRL_KEY_USAGE',
+  );
+  requireThat((usage[0] & 0x02) !== 0, 'IDENTITY_CRL_KEY_USAGE');
   requireThat(journal, 'IDENTITY_STATUS_JOURNAL_REQUIRED');
   const watermarkID = b64u(sha512(issuerCertificate));
   return async ({ certificate, at }) => {
