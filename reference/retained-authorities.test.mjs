@@ -8,9 +8,9 @@ import { fileURLToPath } from 'node:url';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import { Journal } from './state.mjs';
-import { createAuthorityResolver } from './authority-history.mjs';
+import { createAuthorityResolver, requireAuthority } from './authority-history.mjs';
 import { TimestampAuthority, timestampRequest, tokenFromResponse, verifyTimestampToken } from './timestamp.mjs';
-import { createRetainedAuthorityResolver, manifestPublicationImprint, ArchivePublicationStore, ArchiveRenewalCoordinator } from './retained-authorities.mjs';
+import { createRetainedAuthorityResolver, authenticateRetainedAuthorityEntry, manifestPublicationImprint, ArchivePublicationStore, ArchiveRenewalCoordinator } from './retained-authorities.mjs';
 
 function fixture(t) {
   const start = 1800000000, journal = new Journal();
@@ -55,6 +55,147 @@ function fixture(t) {
         status: { ...record.status, authorityID: c.keyID(tsaKey.publicKey), nextUpdate: start + 1000 } }] }) },
     resolver: (history, overrides = {}) => createRetainedAuthorityResolver({ ...configuration, history, ...overrides }) };
 }
+
+test('retained publication accepts authenticated data decisions and exact fractional knowledge bounds', (t) => {
+  const f = fixture(t), entry = f.snapshot(), published = f.start + 0.5;
+  for (const prototype of [Object.prototype, null]) {
+    const verifyPublication = (input) => Object.assign(Object.create(prototype),
+      f.configuration.verifyPublication(input), { poeUpperBound: published });
+    const authenticate = (knowledgeTime) => authenticateRetainedAuthorityEntry({
+      ...f.configuration, entry, knowledgeTime, verifyPublication, strictRecords: true });
+    assert.equal(authenticate(published - 0.25), null);
+    for (const knowledgeTime of [published, published + 0.25]) {
+      const admitted = authenticate(knowledgeTime);
+      assert.equal(admitted.published, published);
+      assert.equal(admitted.serial, 0);
+      assert.deepEqual(admitted.hash, c.H('RootTrustManifest', entry.manifest));
+    }
+    assert.deepEqual(f.resolver([entry], { verifyPublication })(f.query), f.resolver([entry])(f.query));
+  }
+});
+
+test('retained publication rejects VALID decisions without a finite own time bound', (t) => {
+  const f = fixture(t), entry = f.snapshot();
+  for (const poeUpperBound of [undefined, null, NaN, Infinity, -Infinity, String(f.start)]) {
+    const verifyPublication = () => ({ overall: 'VALID', poeUpperBound });
+    const resolve = f.resolver([entry], { verifyPublication });
+    assert.deepEqual(resolve(f.query), { overall: 'INDETERMINATE', reason: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
+    assert.throws(() => requireAuthority(resolve, f.query), { code: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
+    assert.throws(() => authenticateRetainedAuthorityEntry({ ...f.configuration, entry,
+      knowledgeTime: f.query.knowledgeTime, verifyPublication, strictRecords: true }),
+    { overall: 'INDETERMINATE', code: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
+  }
+});
+
+test('retained publication rejects inherited accessor and proxy decisions without executing hooks', (t) => {
+  const f = fixture(t), entry = f.snapshot();
+  let hooks = 0;
+  const hook = () => { hooks++; return f.start; };
+  const decisions = [
+    Object.create({ overall: 'VALID', poeUpperBound: f.start }),
+    { get overall() { hooks++; return 'VALID'; }, poeUpperBound: f.start },
+    { overall: 'VALID', get poeUpperBound() { return hook(); } },
+    { overall: 'VALID', poeUpperBound: f.start, get then() { return hook(); } },
+    new Proxy({ overall: 'VALID', poeUpperBound: f.start }, {
+      get: hook, getPrototypeOf: hook, getOwnPropertyDescriptor: hook, has: hook,
+    }),
+  ];
+  const revoked = Proxy.revocable({}, {});
+  revoked.revoke();
+  decisions.push(revoked.proxy);
+  for (const decision of decisions) {
+    assert.deepEqual(f.resolver([entry], { verifyPublication: () => decision })(f.query),
+      { overall: 'INDETERMINATE', reason: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
+  }
+  assert.equal(hooks, 0);
+});
+
+test('retained publication preserves explicit negative decisions and rejects malformed verdicts', (t) => {
+  const f = fixture(t), entry = f.snapshot();
+  for (const overall of ['INVALID', 'INDETERMINATE', 'UNSUPPORTED']) {
+    const decision = { overall, reason: 'PUBLICATION_PROOF_DENIED' };
+    assert.deepEqual(f.resolver([entry], { verifyPublication: () => decision })(f.query), decision);
+  }
+  let hooks = 0;
+  for (const decision of [undefined, null, true, 'VALID', {}, { overall: 'UNKNOWN' },
+    Object.assign([], { overall: 'VALID', poeUpperBound: f.start }),
+    Object.assign(() => {}, { overall: 'VALID', poeUpperBound: f.start }),
+    { overall: 'VALID', poeUpperBound: f.start, then() { hooks++; } },
+    { overall: 'VALID', poeUpperBound: f.start, then: null }]) {
+    assert.deepEqual(f.resolver([entry], { verifyPublication: () => decision })(f.query),
+      { overall: 'INDETERMINATE', reason: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
+  }
+  const denied = { overall: 'INVALID', get reason() { hooks++; return 'UNREAD'; } };
+  assert.deepEqual(f.resolver([entry], { verifyPublication: () => denied })(f.query),
+    { overall: 'INVALID', reason: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
+  assert.equal(hooks, 0);
+});
+
+test('retained publication rejects native promises and observes ordinary rejected results', async (t) => {
+  const f = fixture(t), entry = f.snapshot();
+  let hooks = 0;
+  for (const decision of [Promise.resolve({ overall: 'VALID', poeUpperBound: f.start }),
+    Promise.reject(Error('publication unavailable'))]) {
+    Object.assign(decision, { overall: 'VALID', poeUpperBound: f.start });
+    Object.defineProperty(decision, 'then', { get() { hooks++; throw Error('unread then'); } });
+    assert.deepEqual(f.resolver([entry], { verifyPublication: () => decision })(f.query),
+      { overall: 'INDETERMINATE', reason: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
+  }
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(hooks, 0);
+});
+
+test('retained publication exceptions cannot supply a positive or unknown authority verdict', (t) => {
+  const f = fixture(t), entry = f.snapshot();
+  for (const overall of ['VALID', 'UNKNOWN']) {
+    const resolve = f.resolver([entry], { verifyPublication: () => {
+      throw { overall, code: 'PUBLICATION_CALLBACK_FAILED' };
+    } });
+    assert.deepEqual(resolve(f.query), { overall: 'INVALID', reason: 'PUBLICATION_CALLBACK_FAILED' });
+    assert.throws(() => requireAuthority(resolve, f.query), { code: 'PUBLICATION_CALLBACK_FAILED' });
+  }
+});
+
+test('retained publication rejects promises even when custom species prevents rejection observation', () => {
+  const child = spawnSync(process.execPath, ['--input-type=module', '--eval', `
+    import { authenticateRetainedAuthorityEntry } from ${JSON.stringify(new URL('./retained-authorities.mjs', import.meta.url).href)};
+    const unhandled = [];
+    process.on('unhandledRejection', (error) => unhandled.push(error.message));
+    class ThrowingSpecies extends Promise {
+      static get [Symbol.species]() { throw Error('species getter'); }
+    }
+    const decision = ThrowingSpecies.reject(Error('publication unavailable'));
+    Object.assign(decision, { overall: 'VALID', poeUpperBound: 1 });
+    let admitted = false, failure;
+    try {
+      authenticateRetainedAuthorityEntry({
+        entry: { manifest: {}, signatures: [], publicationProof: Buffer.alloc(0) },
+        verifyPublication: () => decision,
+      });
+      admitted = true;
+    } catch (error) { failure = { overall: error.overall, code: error.code }; }
+    await new Promise((resolve) => setImmediate(resolve));
+    console.log(JSON.stringify({ admitted, failure, unhandled }));
+  `], { encoding: 'utf8', timeout: 10000 });
+  assert.equal(child.error, undefined);
+  assert.equal(child.signal, null);
+  assert.equal(child.status, 0, child.stderr);
+  assert.deepEqual(JSON.parse(child.stdout), {
+    admitted: false,
+    failure: { overall: 'INDETERMINATE', code: 'HISTORY_PUBLICATION_PROOF_REQUIRED' },
+    unhandled: ['publication unavailable'],
+  });
+});
+
+test('retained publication data decisions still require signed manifest authorization', (t) => {
+  const f = fixture(t), entry = f.snapshot();
+  const verifyPublication = () => ({ overall: 'VALID', poeUpperBound: f.start });
+  entry.signatures[0].signature[0] ^= 1;
+  assert.equal(f.resolver([entry], { verifyPublication })(f.query).reason, 'HISTORY_ROOT_AUTHORIZATION');
+  assert.throws(() => authenticateRetainedAuthorityEntry({ ...f.configuration, entry,
+    knowledgeTime: f.query.knowledgeTime, verifyPublication, strictRecords: true }),
+  { code: 'HISTORY_ROOT_AUTHORIZATION' });
+});
 
 test('retained RTM and RFC3161 evidence support offline role history and late compromise', (t) => {
   const f = fixture(t), first = f.snapshot();
