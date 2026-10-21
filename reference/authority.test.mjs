@@ -329,7 +329,10 @@ test('Remote CryptoKey recovers a lost HTTP response after journal reopen withou
     journal = null;
     journal = new Journal(journalPath);
     service = new RemoteCryptoKeyService({ ...serviceOptions, journal });
-    const recovered = await remote.getOperationResult(args.operationID),
+    const recovered = await remote.getOperationResult(args.operationID, {
+        tbs,
+        publicKey: holder.publicKey,
+      }),
       signature = c.unb64u(recovered.signature);
     assert.equal(recovered.status, 'COMPLETED');
     assert.equal(recovered.operationID, args.operationID);

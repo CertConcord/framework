@@ -154,14 +154,15 @@ test('Remote CryptoKey process death after completion recovers the original resu
       t,
       'after-commit',
     ),
-    recovered = await remote.getOperationResult(input.operationID),
+    context = { tbs: input.tbs, publicKey },
+    recovered = await remote.getOperationResult(input.operationID, context),
     signature = c.unb64u(recovered.signature);
   assert.deepEqual({ ...recovered }, { status: 'COMPLETED', ...checkpoint.value });
   assert.equal(recovered.operationID, input.operationID);
   assert.equal(recovered.tbsHash, c.b64u(c.sha512(input.tbs)));
   assert(c.verify(input.tbs, signature, publicKey));
   assert.deepEqual(await remote.sign(input), signature);
-  assert.deepEqual(await remote.getOperationResult(input.operationID), recovered);
+  assert.deepEqual(await remote.getOperationResult(input.operationID, context), recovered);
   assertOneSign();
 });
 
@@ -170,9 +171,10 @@ test('Remote CryptoKey process death before completion remains uncertain without
       t,
       'after-sign',
     ),
+    context = { tbs: input.tbs, publicKey },
     unknown = { operationID: input.operationID, status: 'UNKNOWN_EXECUTION' };
   assert(c.verify(input.tbs, c.unb64u(checkpoint.value), publicKey));
-  assert.deepEqual({ ...(await remote.getOperationResult(input.operationID)) }, unknown);
+  assert.deepEqual({ ...(await remote.getOperationResult(input.operationID, context)) }, unknown);
   const retry = await requestBytes(remote.url + '/rra/v1/sign', {
     method: 'POST',
     headers: { authorization: 'Bearer ' + remote.token, 'content-type': 'application/json' },
@@ -187,6 +189,6 @@ test('Remote CryptoKey process death before completion remains uncertain without
   });
   assert.equal(retry.status, 400);
   assert.deepEqual(JSON.parse(retry.body.toString('utf8')), { error: 'UNKNOWN_EXECUTION' });
-  assert.deepEqual({ ...(await remote.getOperationResult(input.operationID)) }, unknown);
+  assert.deepEqual({ ...(await remote.getOperationResult(input.operationID, context)) }, unknown);
   assertOneSign();
 });
