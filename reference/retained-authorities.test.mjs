@@ -389,3 +389,108 @@ test('archive crash harness rejects an exit before the transaction boundary', as
     rmSync(directory, { recursive: true, force: true });
   }
 });
+
+
+test('archive publication accepts explicit synchronous decisions and preserves idempotent results', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let calls = 0;
+  const publication = { archiveID: 'explicit-decision', previousHash: null, dataHash: c.sha512(Buffer.from('document')),
+    evidenceRecord: Buffer.from('opaque authenticated test record'), history: [{ serial: 0 }] };
+  const store = new ArchivePublicationStore(journal, { validatePublication: (candidate) => {
+    calls++;
+    assert.deepEqual(candidate, c.decodeCBOR(c.dcbor(publication)));
+    candidate.evidenceRecord.fill(0);
+    return Object.assign(Object.create(null), { overall: 'VALID' });
+  } });
+  const completed = store.publish(publication);
+  assert.deepEqual(completed, { digest: c.sha512(c.dcbor(publication)), publication: c.decodeCBOR(c.dcbor(publication)) });
+  assert.deepEqual(store.read(publication.archiveID), c.decodeCBOR(c.dcbor(completed)));
+  assert.deepEqual(store.publish(publication), c.decodeCBOR(c.dcbor(completed)));
+  assert.equal(journal.get('archive-publication', publication.archiveID).revision, 0);
+  assert.equal(calls, 1);
+});
+
+test('archive publication rejects inherited and accessor decisions without invoking getters', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let reads = 0;
+  const decisions = [
+    Object.create({ overall: 'VALID' }),
+    Object.defineProperty({}, 'overall', { get() { reads++; return 'VALID'; } }),
+    Object.defineProperty({ overall: 'VALID' }, 'then', { get() { reads++; return null; } }),
+    Object.assign(Object.create({ then() { reads++; } }), { overall: 'VALID' }),
+  ];
+  for (const [index, decision] of decisions.entries()) {
+    const publication = { archiveID: 'inherited-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  assert.equal(reads, 0);
+});
+
+test('archive publication rejects malformed and thenable decisions before storing a record', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let invoked = 0;
+  const decisions = [undefined, null, true, false, {}, { overall: 'GOOD' },
+    { overall: 'INVALID' }, { overall: 'INDETERMINATE' }, { overall: 'UNSUPPORTED' },
+    Object.assign([], { overall: 'VALID' }), Object.assign(() => {}, { overall: 'VALID' }),
+    { overall: 'VALID', then: null }, { overall: 'VALID', then: undefined },
+    { overall: 'VALID', then() { invoked++; } }];
+  const revoked = Proxy.revocable({}, {});
+  revoked.revoke();
+  decisions.push(revoked.proxy);
+  for (const [index, decision] of decisions.entries()) {
+    const publication = { archiveID: 'malformed-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  assert.equal(invoked, 0);
+});
+
+test('archive publication rejects native promises and observes rejected validation results', async (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  const decisions = [() => Promise.resolve({ overall: 'VALID' }),
+    () => Object.assign(Promise.resolve({ overall: 'INVALID' }), { overall: 'VALID', then: null }),
+    () => Object.assign(Promise.reject(Error('validator unavailable')), { overall: 'VALID', then: null })];
+  for (const [index, decision] of decisions.entries()) {
+    const publication = { archiveID: 'async-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  await new Promise((resolve) => setImmediate(resolve));
+});
+
+test('archive publication retains the committed head when renewal validation is denied or throws', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  const first = { archiveID: 'retained-on-denial', previousHash: null, dataHash: c.sha512(Buffer.from('document')),
+    evidenceRecord: Buffer.from('opaque authenticated initial record'), history: [{ serial: 0 }] };
+  let validate = () => ({ overall: 'VALID' });
+  const store = new ArchivePublicationStore(journal, { validatePublication: () => validate() });
+  const initial = store.publish(first);
+  const next = { ...first, previousHash: initial.digest,
+    evidenceRecord: Buffer.from('opaque authenticated renewal'), history: [{ serial: 0 }, { serial: 1 }] };
+  for (const overall of ['INVALID', 'INDETERMINATE', 'UNSUPPORTED']) {
+    validate = () => ({ overall });
+    assert.throws(() => store.publish(next), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.deepEqual(store.read(first.archiveID), c.decodeCBOR(c.dcbor(initial)));
+    assert.equal(journal.get('archive-publication', first.archiveID).revision, 0);
+  }
+  const unavailable = Error('publication validation unavailable');
+  validate = () => { throw unavailable; };
+  assert.throws(() => store.publish(next), (error) => error === unavailable);
+  assert.deepEqual(store.read(first.archiveID), c.decodeCBOR(c.dcbor(initial)));
+  validate = () => ({ overall: 'VALID' });
+  const completed = store.publish(next);
+  assert.deepEqual(completed, { digest: c.sha512(c.dcbor(next)), publication: c.decodeCBOR(c.dcbor(next)) });
+  assert.equal(journal.get('archive-publication', first.archiveID).revision, 1);
+});
