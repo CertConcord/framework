@@ -255,6 +255,7 @@
   "reference/registry.json",
   "reference/remote-process-recovery-child.mjs",
   "reference/remote-process-recovery.test.mjs",
+  "reference/remote-result.test.mjs",
   "reference/retained-authorities-crash-child.mjs",
   "reference/retained-authorities.mjs",
   "reference/retained-authorities.test.mjs",

@@ -1,5 +1,6 @@
 import { requireOperationAuthorities } from './control-authority.mjs';
 import {
+  KeyObject,
   X509Certificate,
   createPublicKey,
   sign as cryptoSign,
@@ -24,6 +25,7 @@ import {
   decodeCBOR,
   now,
   keyID,
+  fields,
 } from './core.mjs';
 import { postJSON, requestJSON, requestBytes, endpoint } from './transport.mjs';
 import { parseJSON } from './json.mjs';
@@ -86,8 +88,29 @@ export class RemoteCryptoKey {
     );
     return unb64u(r.signature);
   }
-  async getOperationResult(operationID) {
-    return this.call('result', { operationID });
+  async getOperationResult(operationID, { tbs, publicKey } = {}) {
+    requireThat(
+      typeof operationID === 'string' &&
+        operationID.length > 0 &&
+        Buffer.isBuffer(tbs) &&
+        publicKey instanceof KeyObject &&
+        publicKey.type === 'public',
+      'REMOTE_RESULT_CONTEXT',
+    );
+    const original = Buffer.from(tbs),
+      r = await this.call('result', { operationID });
+    fields(r, ['operationID', 'status'], ['tbsHash', 'signature']);
+    requireThat(r.operationID === operationID, 'REMOTE_RESPONSE_BINDING');
+    requireThat(
+      ['COMPLETED', 'UNKNOWN_EXECUTION', 'NOT_FOUND'].includes(r.status),
+      'REMOTE_RESULT_STATUS',
+    );
+    if (r.status === 'COMPLETED') {
+      fields(r, ['operationID', 'status', 'tbsHash', 'signature']);
+      requireThat(r.tbsHash === b64u(sha512(original)), 'REMOTE_RESPONSE_BINDING');
+      requireThat(verify(original, unb64u(r.signature), publicKey), 'REMOTE_RESULT_SIGNATURE');
+    } else fields(r, ['operationID', 'status']);
+    return r;
   }
 }
 // The service runs behind authenticated transport. Every invocation still needs a signed permit.
