@@ -11,9 +11,16 @@ const copy = (value) => decodeCBOR(dcbor(value));
 const fail = (overall, reason) => { throw new AuthorityError({ overall, reason }); };
 const validTime = (value) => Number.isSafeInteger(value) && value >= 0;
 const outcome = (error) => {
-  const overall = error?.overall;
-  return { overall: ['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(overall) ? overall : 'INVALID',
-    reason: error?.code ?? 'HISTORY_INVALID' };
+  const failure = { overall: 'INVALID', reason: 'HISTORY_INVALID' };
+  if (!error || typeof error !== 'object' || isProxy(error)) return failure;
+  const decision = Object.getOwnPropertyDescriptor(error, 'overall');
+  const code = Object.getOwnPropertyDescriptor(error, 'code');
+  if (decision && Object.hasOwn(decision, 'value') &&
+    ['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(decision.value))
+    failure.overall = decision.value;
+  if (code && Object.hasOwn(code, 'value') && typeof code.value === 'string')
+    failure.reason = code.value;
+  return failure;
 };
 
 function rootPolicy(policy) {

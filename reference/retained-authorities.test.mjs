@@ -76,8 +76,10 @@ test('retained publication accepts authenticated data decisions and exact fracti
 
 test('retained publication rejects VALID decisions without a finite own time bound', (t) => {
   const f = fixture(t), entry = f.snapshot();
-  for (const poeUpperBound of [undefined, null, NaN, Infinity, -Infinity, String(f.start)]) {
-    const verifyPublication = () => ({ overall: 'VALID', poeUpperBound });
+  const decisions = [{ overall: 'VALID' }, ...[undefined, null, NaN, Infinity, -Infinity, String(f.start)]
+    .map((poeUpperBound) => ({ overall: 'VALID', poeUpperBound }))];
+  for (const decision of decisions) {
+    const verifyPublication = () => decision;
     const resolve = f.resolver([entry], { verifyPublication });
     assert.deepEqual(resolve(f.query), { overall: 'INDETERMINATE', reason: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
     assert.throws(() => requireAuthority(resolve, f.query), { code: 'HISTORY_PUBLICATION_PROOF_REQUIRED' });
@@ -185,6 +187,35 @@ test('retained publication rejects promises even when custom species prevents re
     failure: { overall: 'INDETERMINATE', code: 'HISTORY_PUBLICATION_PROOF_REQUIRED' },
     unhandled: ['publication unavailable'],
   });
+});
+
+test('retained publication normalizes thrown getters proxies and nonstring reasons without executing hooks', (t) => {
+  const f = fixture(t), entry = f.snapshot();
+  let hooks = 0;
+  const hook = () => { hooks++; throw Error('unread exception hook'); };
+  const revoked = Proxy.revocable({}, {});
+  revoked.revoke();
+  const errors = [
+    { get overall() { return hook(); } },
+    { overall: 'INVALID', get code() { return hook(); } },
+    new Proxy({}, { get: hook, getPrototypeOf: hook, getOwnPropertyDescriptor: hook }),
+    revoked.proxy,
+    { overall: 'INVALID', code: {} },
+    { overall: 'INVALID', code: 1 },
+    Object.create({ overall: 'INDETERMINATE', code: 'INHERITED_FAILURE' }),
+    undefined, null, 'failure', 0,
+  ];
+  for (const error of errors) {
+    const resolve = f.resolver([entry], { verifyPublication: () => { throw error; } });
+    assert.deepEqual(resolve(f.query), { overall: 'INVALID', reason: 'HISTORY_INVALID' });
+    assert.throws(() => requireAuthority(resolve, f.query), { code: 'HISTORY_INVALID' });
+  }
+  for (const overall of ['INVALID', 'INDETERMINATE', 'UNSUPPORTED']) {
+    const error = Object.assign(Error('publication failed'), { overall, code: 'PUBLICATION_CALLBACK_FAILED' });
+    assert.deepEqual(f.resolver([entry], { verifyPublication: () => { throw error; } })(f.query),
+      { overall, reason: 'PUBLICATION_CALLBACK_FAILED' });
+  }
+  assert.equal(hooks, 0);
 });
 
 test('retained publication data decisions still require signed manifest authorization', (t) => {
