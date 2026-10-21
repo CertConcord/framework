@@ -5,7 +5,7 @@ import {
 import { parseCertificate } from './pki.mjs';
 import { createAuthorityResolver, authorityStatus, AuthorityError, requireAuthority } from './authority-history.mjs';
 import { parseTimestampRequest, verifyTimestampToken } from './timestamp.mjs';
-import { isPromise } from 'node:util/types';
+import { isPromise, isProxy } from 'node:util/types';
 
 const copy = (value) => decodeCBOR(dcbor(value));
 const fail = (overall, reason) => { throw new AuthorityError({ overall, reason }); };
@@ -188,9 +188,10 @@ export class ArchivePublicationStore {
     const validation = this.validatePublication(copy(publication));
     let admitted = false;
     if (isPromise(validation)) {
-      // Observe native rejections without calling a supplied thenable method.
-      Promise.prototype.then.call(validation, undefined, () => {});
-    } else {
+      // Observe ordinary native rejections without calling a supplied thenable.
+      try { Promise.prototype.then.call(validation, undefined, () => {}); }
+      catch { /* Custom constructors/species can prevent rejection observation. */ }
+    } else if (!isProxy(validation)) {
       try {
         const prototype = validation && Object.getPrototypeOf(validation);
         const decision = validation && Object.getOwnPropertyDescriptor(validation, 'overall');

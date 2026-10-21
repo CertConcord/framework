@@ -64,10 +64,14 @@ commitment, and retained governance/custodian history in one journal transaction
 Its required synchronous publication validator must authenticate the ERS, bind it
 to the selected document and data commitment, and admit the selected custodian
 through the retained history. Compare-and-swap rejects competing archive heads.
-The validator must return a plain or null-prototype object with its own `overall`
-data property equal to `VALID`. Promises, thenables, inherited or accessor verdicts,
-and malformed results cannot authorize publication. Rejected validation leaves
-the committed archive head intact. Identical completed publications are idempotent
+The validator must return a non-Proxy plain or null-prototype object with its own
+`overall` data property equal to `VALID`. Proxies, promises, thenables, inherited
+or accessor verdicts, and malformed results cannot authorize publication. The
+store observes rejections from ordinary native promises, but custom `constructor`
+or `Symbol.species` behavior can prevent attaching that observer. Callbacks must
+handle their own asynchronous failures; observer exceptions still result in
+`ARCHIVE_PUBLICATION_VALIDATION` without writing a publication. Rejected validation
+leaves the committed archive head intact. Identical completed publications are idempotent
 without calling the validator again. A process killed after the write
 but before commit cannot publish only part of a renewal or custody transition.
 

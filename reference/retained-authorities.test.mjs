@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
@@ -467,6 +467,80 @@ test('archive publication rejects native promises and observes rejected validati
     assert.equal(store.read(publication.archiveID), undefined);
   }
   await new Promise((resolve) => setImmediate(resolve));
+});
+
+test('archive publication rejects proxy decisions before invoking reflection traps', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let traps = 0;
+  const target = {};
+  const forged = new Proxy(target, {
+    getPrototypeOf() { traps++; return Object.prototype; },
+    getOwnPropertyDescriptor(_target, key) {
+      traps++;
+      return key === 'overall' ? { value: 'VALID', configurable: true } : undefined;
+    },
+    has() { traps++; return false; },
+  });
+  assert.equal(Object.hasOwn(target, 'overall'), false);
+  const decisions = [forged, new Proxy({ overall: 'VALID' }, {}), new Proxy(Promise.resolve(), {})];
+  for (const [index, decision] of decisions.entries()) {
+    const publication = { archiveID: 'proxy-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  assert.equal(traps, 0);
+});
+
+test('archive publication rejects promises when rejection observation throws', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let reads = 0;
+  class ThrowingSpecies extends Promise {
+    static get [Symbol.species]() { reads++; throw Error('species getter'); }
+  }
+  const constructorFailure = Promise.resolve();
+  Object.defineProperty(constructorFailure, 'constructor', { get() { reads++; throw Error('constructor getter'); } });
+  for (const [index, decision] of [ThrowingSpecies.resolve(), constructorFailure].entries()) {
+    const publication = { archiveID: 'observer-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  assert.equal(reads, 2);
+
+  // Isolate the unsupported rejection so node:test does not consume the event.
+  const child = spawnSync(process.execPath, ['--input-type=module', '--eval', `
+    import { ArchivePublicationStore } from ${JSON.stringify(new URL('./retained-authorities.mjs', import.meta.url).href)};
+    import { Journal } from ${JSON.stringify(new URL('./state.mjs', import.meta.url).href)};
+    const unhandled = [];
+    process.on('unhandledRejection', (error) => unhandled.push(error.message));
+    class ThrowingSpecies extends Promise {
+      static get [Symbol.species]() { throw Error('species getter'); }
+    }
+    const decision = ThrowingSpecies.reject(Error('validator rejected'));
+    Object.defineProperty(decision, 'then', { value: null });
+    const journal = new Journal();
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    let code;
+    try {
+      store.publish({ archiveID: 'unsupported-observer', previousHash: null,
+        dataHash: Buffer.alloc(64), evidenceRecord: Buffer.from('opaque'), history: [] });
+    } catch (error) { code = error.code ?? error.message; }
+    const stored = store.read('unsupported-observer') !== undefined;
+    journal.close();
+    await new Promise((resolve) => setImmediate(resolve));
+    console.log(JSON.stringify({ code, stored, unhandled }));
+  `], { encoding: 'utf8', timeout: 10000 });
+  assert.equal(child.error, undefined);
+  assert.equal(child.signal, null);
+  assert.equal(child.status, 0, child.stderr);
+  assert.deepEqual(JSON.parse(child.stdout), {
+    code: 'ARCHIVE_PUBLICATION_VALIDATION', stored: false, unhandled: ['validator rejected'],
+  });
 });
 
 test('archive publication retains the committed head when renewal validation is denied or throws', (t) => {
