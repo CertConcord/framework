@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { createServer } from 'node:http';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import * as e from './enrollment.mjs';
@@ -232,9 +235,11 @@ test('epoch commit requires the same root and the evidence plan binds its leaf c
     journal.close();
   }
 });
-test('Remote CryptoKey uses real signatures, signed permits and durable idempotency over HTTP', async () => {
-  const journal = new Journal(),
-    holder = c.generate(),
+test('Remote CryptoKey recovers a lost HTTP response after journal reopen without signing again', async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'certconcord-remote-http-')),
+    journalPath = join(directory, 'operations.sqlite');
+  let journal = new Journal(journalPath);
+  const holder = c.generate(),
     authority = c.generate(),
     issuer = p.name('Synthetic Authority'),
     certificate = p.issueCertificate(
@@ -254,9 +259,8 @@ test('Remote CryptoKey uses real signatures, signed permits and durable idempote
       authorities: [{ certificate, roles: ['PERMIT_AUTHORITY'] }],
     }),
     provider = new SoftwareProvider(new Map([['document-key', holder]])),
-    service = new RemoteCryptoKeyService({
+    serviceOptions = {
       provider,
-      journal,
       permitCertificate: certificate,
       authorityResolver,
       audience: 'test-gateway',
@@ -264,12 +268,29 @@ test('Remote CryptoKey uses real signatures, signed permits and durable idempote
         assert.equal(permit.proofMode, 'HUMAN_WEBAUTHN');
         return true;
       },
-    }),
-    server = createServer(async (req, res) => {
+    };
+  let signCalls = 0,
+    committedResult = null,
+    dropFirstResponse = true,
+    service = new RemoteCryptoKeyService({ ...serviceOptions, journal });
+  const sign = provider.sign.bind(provider);
+  provider.sign = async (input) => {
+    signCalls++;
+    return sign(input);
+  };
+  const server = createServer(async (req, res) => {
       try {
         c.requireThat(req.headers.authorization === 'Bearer ' + auth, 'AUTH');
         const data = parseJSON((await readBody(req)).toString('utf8'));
-        sendJSON(res, 200, await service.handle(req.url.split('/').at(-1), data));
+        const path = req.url.split('/').at(-1),
+          result = await service.handle(path, data);
+        if (path === 'sign' && dropFirstResponse) {
+          dropFirstResponse = false;
+          committedResult = result;
+          res.destroy();
+          return;
+        }
+        sendJSON(res, 200, result);
       } catch (error) {
         sendJSON(res, 400, { error: error.code ?? 'INVALID_REQUEST' });
       }
@@ -301,14 +322,27 @@ test('Remote CryptoKey uses real signatures, signed permits and durable idempote
         activationEvidenceHash: c.random(64),
         proofMode: 'HUMAN_WEBAUTHN',
       }),
-      args = { keyRef: 'document-key', tbs, operationID: c.b64u(a.operationID), permit },
-      signature = await remote.sign(args);
+      args = { keyRef: 'document-key', tbs, operationID: c.b64u(a.operationID), permit };
+    await assert.rejects(remote.sign(args), { name: 'TypeError' });
+    assert.equal(signCalls, 1);
+    journal.close();
+    journal = null;
+    journal = new Journal(journalPath);
+    service = new RemoteCryptoKeyService({ ...serviceOptions, journal });
+    const recovered = await remote.getOperationResult(args.operationID),
+      signature = c.unb64u(recovered.signature);
+    assert.equal(recovered.status, 'COMPLETED');
+    assert.equal(recovered.operationID, args.operationID);
+    assert.equal(recovered.tbsHash, c.b64u(c.sha512(tbs)));
+    assert.equal(recovered.signature, committedResult.signature);
     assert(c.verify(tbs, signature, holder.publicKey));
     assert(c.equal(signature, await remote.sign(args)));
-    assert.equal((await remote.getOperationResult(args.operationID)).status, 'COMPLETED');
+    assert.equal(signCalls, 1);
     await assert.rejects(remote.sign({ ...args, tbs: Buffer.from('changed') }), /HTTP_400/);
+    assert.equal(signCalls, 1);
   } finally {
     await new Promise((resolve) => server.close(resolve));
-    journal.close();
+    journal?.close();
+    rmSync(directory, { recursive: true, force: true });
   }
 });
