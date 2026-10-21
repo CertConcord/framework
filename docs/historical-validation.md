@@ -75,6 +75,14 @@ the assembled ERS and completing the operation. It never silently repeats an
 uncertain external execution. Completed result lookup does not renew authority or
 create a new timestamp.
 
+The process recovery tests terminate the coordinator after receiving a real
+RFC 3161 token over loopback HTTP, inside the publication transaction, and after
+commit. Restarted coordinators preserve an uncertain operation and the old archive
+head until the original token is authenticated, or recover the already committed
+publication and result together. Recovery after the protection deadline uses a
+token issued before that deadline; it makes no additional TSA request. These
+checks use synthetic authority appointments, clocks and local SQLite storage.
+
 The reference tests use real signatures, timestamp tokens and ERS, with synthetic
 governance, clocks, lifetimes and software custody. The long-lived raw-key
 appointments in the complete CMS/native-mdoc fixtures are explicit external test

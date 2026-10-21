@@ -65,6 +65,8 @@
   "reference/annex-verifier.mjs",
   "reference/archive-demo.mjs",
   "reference/archive-original-proof.test.mjs",
+  "reference/archive-renewal-process-child.mjs",
+  "reference/archive-renewal-process-recovery.test.mjs",
   "reference/archive-security.test.mjs",
   "reference/archive.mjs",
   "reference/arkg.mjs",
