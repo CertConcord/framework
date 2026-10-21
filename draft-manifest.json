@@ -241,7 +241,7 @@
     {
       "path": "docs/smime-application.md",
       "bytes": 14738,
-      "sha256": "15b8cd46cd137b8724e58f8c9f40b81e91f09fc30f07ff9823add2f62f2dc978"
+      "sha256": "b3e926c74c3b770976086952fd7ac0547aa2b6f85f16fa1ab46829a6f07bf3e9"
     },
     {
       "path": "docs/storage.md",
@@ -271,7 +271,7 @@
     {
       "path": "package-lock.json",
       "bytes": 94048,
-      "sha256": "5c1779d8cdc2514eeaee86e1cffd76c1b13473c1e2adc027b4fecb31389238cd"
+      "sha256": "ea7f90d6e53a438a138e4524756b102dbc0221b1f94e54ce23eaf7e2a7397056"
     },
     {
       "path": "package.json",
@@ -301,7 +301,7 @@
     {
       "path": "reference/adapter-lock.json",
       "bytes": 46322,
-      "sha256": "4d76a080772f80ec7430583ee3365883f5d69529d095dbb02117f3a3667fa5e1"
+      "sha256": "34e9b17bf0f54989711616e52e05175420e140613f05f9c232fed45553d5e9bc"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1086,7 +1086,7 @@
     {
       "path": "reference/package.json",
       "bytes": 1488,
-      "sha256": "7abcf6715b42160cc2a7a04c055b4efd1c6df54e71e953ba3fd2fa2f0f40397e"
+      "sha256": "5c957aab74bbff7d5f6955ef3142c8b3f6908a77d1eba1c862990e9fd69adf5e"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
@@ -1460,13 +1460,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 42725,
-      "sha256": "713f07e1bafea53ba929b59f2fc3a039f7ad51416178143da54afd0bf79ed1cc"
+      "bytes": 42727,
+      "sha256": "c3a5e97a67aff96180439d4d244866d7072e4489e670f85c221a5972ea1ffc4c"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 16826,
-      "sha256": "491d27ccd4171f41957b980447695954ee6e0b401fdfe7207e31c7206ba653c4"
+      "sha256": "be17abb8fdd2e0c452b8125da904d72be3fe87b620d1e6c24fe5be5079bd6de7"
     },
     {
       "path": "reference/state-security.test.mjs",
@@ -6605,8 +6605,8 @@
     },
     {
       "path": "tools/check.mjs",
-      "bytes": 7217,
-      "sha256": "88f5a488c94705d2d0fb8770402484fb7d79347a88d4674c592beeeec44812a3"
+      "bytes": 7633,
+      "sha256": "f667bc498d8e5c498d36e10c3acd3c8a921f108690c9d11487574fc677363978"
     },
     {
       "path": "tools/create-mtc-version-vectors.mjs",
