@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 5767,
-      "sha256": "29eecb8a78fc8ccf97464f222c733f320eaf58646424acc895d4f38b8d0ea326"
+      "bytes": 6323,
+      "sha256": "2f17f9d03f6f9f2e2d610775a969b4f1530f8f33b5649391a920575a82196e5d"
     },
     {
       "path": "docs/implementation.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 132152,
-      "sha256": "c3fd1bc706453ff72231c9fbff5030c28a0550adac4e91e4bc905532a0e759ae"
+      "bytes": 132258,
+      "sha256": "b65d7626a9f7aad44b2e944a748faa81f2c848bc9f57c270b742c71333248ab0"
     },
     {
       "path": "reference/README.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46358,
-      "sha256": "3b6f22660836d2fed0a0c9fb31044fdb3efb9fb70257faabd5a17a5d8f10a5a1"
+      "bytes": 46411,
+      "sha256": "7b2347594ed423a8e38ee61929000333d08fefd84abd172da98c951b2b19f1ed"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -332,6 +332,16 @@
       "path": "reference/archive-original-proof.test.mjs",
       "bytes": 6026,
       "sha256": "5300e6eee60f66d2fb8e1ec181b550a1d970562306d29618e21cdcaca8ab5230"
+    },
+    {
+      "path": "reference/archive-renewal-process-child.mjs",
+      "bytes": 4468,
+      "sha256": "70a6ef7f9cb1a4d852c5021f8621c29b04bbbee777d9210db805c58cd0ead276"
+    },
+    {
+      "path": "reference/archive-renewal-process-recovery.test.mjs",
+      "bytes": 13159,
+      "sha256": "4acdfb5fbf9e8011039e0d584b0d0ac5067a77f48ba50f268dd628a6df482645"
     },
     {
       "path": "reference/archive-security.test.mjs",

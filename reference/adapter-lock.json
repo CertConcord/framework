@@ -576,6 +576,7 @@
       "tests": [
         "containers.test.mjs",
         "archive-security.test.mjs",
+        "archive-renewal-process-recovery.test.mjs",
         "retained-authorities.test.mjs",
         "retained-document.test.mjs"
       ],
