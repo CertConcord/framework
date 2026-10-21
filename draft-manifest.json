@@ -370,8 +370,8 @@
     },
     {
       "path": "reference/authority.test.mjs",
-      "bytes": 11223,
-      "sha256": "da5bdf2483ac04bd4df46aced06ee00c14e01fefd4fc1c62caacafb62c6b7e45"
+      "bytes": 12566,
+      "sha256": "e63d208046fd85edacc858a75f750438b69412c401eb1e6142c0913084c3c124"
     },
     {
       "path": "reference/benchmarks/privacy.mjs",
