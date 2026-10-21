@@ -136,6 +136,27 @@
       "retrievedAt": "2026-10-20T21:44:20Z"
     },
     {
+      "id": "rfc9942",
+      "url": "https://www.rfc-editor.org/rfc/rfc9942.txt",
+      "sha256": "da8ed24ef2d757ece900decf34a003a7b02679a16f4c1f25670ea59435372da0",
+      "bytes": 37796,
+      "retrievedAt": "2026-10-20T23:17:01Z"
+    },
+    {
+      "id": "rfc9943",
+      "url": "https://www.rfc-editor.org/rfc/rfc9943.txt",
+      "sha256": "204aea020731e1306e8ffe0aaae5c9559a7a8edf24bd089ae79d6a6d6c7676f1",
+      "bytes": 76117,
+      "retrievedAt": "2026-10-20T23:17:02Z"
+    },
+    {
+      "id": "scittContinuity01",
+      "url": "https://www.ietf.org/archive/id/draft-nikolaichuk-scitt-continuity-receipts-01.txt",
+      "sha256": "05495a6f57accc557f106f3b389746d104aab38c3022c79f6f6f891d6af83de2",
+      "bytes": 100684,
+      "retrievedAt": "2026-10-20T23:17:06Z"
+    },
+    {
       "id": "rfc5652",
       "url": "https://www.rfc-editor.org/rfc/rfc5652.txt",
       "sha256": "dbd209ae7844031f51722c4d9e2d1fa3fff3081319851d581f914f5f0147f918",

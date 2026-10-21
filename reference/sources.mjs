@@ -24,6 +24,10 @@ export const sources = {
   rfc4055: 'https://www.rfc-editor.org/rfc/rfc4055.txt',
   rfc5083: 'https://www.rfc-editor.org/rfc/rfc5083.txt',
   rfc5084: 'https://www.rfc-editor.org/rfc/rfc5084.txt',
+  rfc9942: 'https://www.rfc-editor.org/rfc/rfc9942.txt',
+  rfc9943: 'https://www.rfc-editor.org/rfc/rfc9943.txt',
+  scittContinuity01:
+    'https://www.ietf.org/archive/id/draft-nikolaichuk-scitt-continuity-receipts-01.txt',
   c2spCheckpoint:
     'https://raw.githubusercontent.com/C2SP/C2SP/a29318317776ae8a0e65ff45cfe450fd935a1aca/tlog-checkpoint.md',
   rfc9360: 'https://www.rfc-editor.org/rfc/rfc9360.txt',
