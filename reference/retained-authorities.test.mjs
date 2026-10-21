@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
@@ -388,4 +388,183 @@ test('archive crash harness rejects an exit before the transaction boundary', as
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+
+test('archive publication accepts explicit synchronous decisions and preserves idempotent results', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let calls = 0;
+  const publication = { archiveID: 'explicit-decision', previousHash: null, dataHash: c.sha512(Buffer.from('document')),
+    evidenceRecord: Buffer.from('opaque authenticated test record'), history: [{ serial: 0 }] };
+  const store = new ArchivePublicationStore(journal, { validatePublication: (candidate) => {
+    calls++;
+    assert.deepEqual(candidate, c.decodeCBOR(c.dcbor(publication)));
+    candidate.evidenceRecord.fill(0);
+    return Object.assign(Object.create(null), { overall: 'VALID' });
+  } });
+  const completed = store.publish(publication);
+  assert.deepEqual(completed, { digest: c.sha512(c.dcbor(publication)), publication: c.decodeCBOR(c.dcbor(publication)) });
+  assert.deepEqual(store.read(publication.archiveID), c.decodeCBOR(c.dcbor(completed)));
+  assert.deepEqual(store.publish(publication), c.decodeCBOR(c.dcbor(completed)));
+  assert.equal(journal.get('archive-publication', publication.archiveID).revision, 0);
+  assert.equal(calls, 1);
+});
+
+test('archive publication rejects inherited and accessor decisions without invoking getters', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let reads = 0;
+  const decisions = [
+    Object.create({ overall: 'VALID' }),
+    Object.defineProperty({}, 'overall', { get() { reads++; return 'VALID'; } }),
+    Object.defineProperty({ overall: 'VALID' }, 'then', { get() { reads++; return null; } }),
+    Object.assign(Object.create({ then() { reads++; } }), { overall: 'VALID' }),
+  ];
+  for (const [index, decision] of decisions.entries()) {
+    const publication = { archiveID: 'inherited-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  assert.equal(reads, 0);
+});
+
+test('archive publication rejects malformed and thenable decisions before storing a record', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let invoked = 0;
+  const decisions = [undefined, null, true, false, {}, { overall: 'GOOD' },
+    { overall: 'INVALID' }, { overall: 'INDETERMINATE' }, { overall: 'UNSUPPORTED' },
+    Object.assign([], { overall: 'VALID' }), Object.assign(() => {}, { overall: 'VALID' }),
+    { overall: 'VALID', then: null }, { overall: 'VALID', then: undefined },
+    { overall: 'VALID', then() { invoked++; } }];
+  const revoked = Proxy.revocable({}, {});
+  revoked.revoke();
+  decisions.push(revoked.proxy);
+  for (const [index, decision] of decisions.entries()) {
+    const publication = { archiveID: 'malformed-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  assert.equal(invoked, 0);
+});
+
+test('archive publication rejects native promises and observes rejected validation results', async (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  const decisions = [() => Promise.resolve({ overall: 'VALID' }),
+    () => Object.assign(Promise.resolve({ overall: 'INVALID' }), { overall: 'VALID', then: null }),
+    () => Object.assign(Promise.reject(Error('validator unavailable')), { overall: 'VALID', then: null })];
+  for (const [index, decision] of decisions.entries()) {
+    const publication = { archiveID: 'async-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  await new Promise((resolve) => setImmediate(resolve));
+});
+
+test('archive publication rejects proxy decisions before invoking reflection traps', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let traps = 0;
+  const target = {};
+  const forged = new Proxy(target, {
+    getPrototypeOf() { traps++; return Object.prototype; },
+    getOwnPropertyDescriptor(_target, key) {
+      traps++;
+      return key === 'overall' ? { value: 'VALID', configurable: true } : undefined;
+    },
+    has() { traps++; return false; },
+  });
+  assert.equal(Object.hasOwn(target, 'overall'), false);
+  const decisions = [forged, new Proxy({ overall: 'VALID' }, {}), new Proxy(Promise.resolve(), {})];
+  for (const [index, decision] of decisions.entries()) {
+    const publication = { archiveID: 'proxy-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  assert.equal(traps, 0);
+});
+
+test('archive publication rejects promises when rejection observation throws', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  let reads = 0;
+  class ThrowingSpecies extends Promise {
+    static get [Symbol.species]() { reads++; throw Error('species getter'); }
+  }
+  const constructorFailure = Promise.resolve();
+  Object.defineProperty(constructorFailure, 'constructor', { get() { reads++; throw Error('constructor getter'); } });
+  for (const [index, decision] of [ThrowingSpecies.resolve(), constructorFailure].entries()) {
+    const publication = { archiveID: 'observer-' + index, previousHash: null, dataHash: Buffer.alloc(64, 1),
+      evidenceRecord: Buffer.from('opaque test record'), history: [] };
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    assert.throws(() => store.publish(publication), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.equal(store.read(publication.archiveID), undefined);
+  }
+  assert.equal(reads, 2);
+
+  // Isolate the unsupported rejection so node:test does not consume the event.
+  const child = spawnSync(process.execPath, ['--input-type=module', '--eval', `
+    import { ArchivePublicationStore } from ${JSON.stringify(new URL('./retained-authorities.mjs', import.meta.url).href)};
+    import { Journal } from ${JSON.stringify(new URL('./state.mjs', import.meta.url).href)};
+    const unhandled = [];
+    process.on('unhandledRejection', (error) => unhandled.push(error.message));
+    class ThrowingSpecies extends Promise {
+      static get [Symbol.species]() { throw Error('species getter'); }
+    }
+    const decision = ThrowingSpecies.reject(Error('validator rejected'));
+    Object.defineProperty(decision, 'then', { value: null });
+    const journal = new Journal();
+    const store = new ArchivePublicationStore(journal, { validatePublication: () => decision });
+    let code;
+    try {
+      store.publish({ archiveID: 'unsupported-observer', previousHash: null,
+        dataHash: Buffer.alloc(64), evidenceRecord: Buffer.from('opaque'), history: [] });
+    } catch (error) { code = error.code ?? error.message; }
+    const stored = store.read('unsupported-observer') !== undefined;
+    journal.close();
+    await new Promise((resolve) => setImmediate(resolve));
+    console.log(JSON.stringify({ code, stored, unhandled }));
+  `], { encoding: 'utf8', timeout: 10000 });
+  assert.equal(child.error, undefined);
+  assert.equal(child.signal, null);
+  assert.equal(child.status, 0, child.stderr);
+  assert.deepEqual(JSON.parse(child.stdout), {
+    code: 'ARCHIVE_PUBLICATION_VALIDATION', stored: false, unhandled: ['validator rejected'],
+  });
+});
+
+test('archive publication retains the committed head when renewal validation is denied or throws', (t) => {
+  const journal = new Journal();
+  t.after(() => journal.close());
+  const first = { archiveID: 'retained-on-denial', previousHash: null, dataHash: c.sha512(Buffer.from('document')),
+    evidenceRecord: Buffer.from('opaque authenticated initial record'), history: [{ serial: 0 }] };
+  let validate = () => ({ overall: 'VALID' });
+  const store = new ArchivePublicationStore(journal, { validatePublication: () => validate() });
+  const initial = store.publish(first);
+  const next = { ...first, previousHash: initial.digest,
+    evidenceRecord: Buffer.from('opaque authenticated renewal'), history: [{ serial: 0 }, { serial: 1 }] };
+  for (const overall of ['INVALID', 'INDETERMINATE', 'UNSUPPORTED']) {
+    validate = () => ({ overall });
+    assert.throws(() => store.publish(next), { code: 'ARCHIVE_PUBLICATION_VALIDATION' });
+    assert.deepEqual(store.read(first.archiveID), c.decodeCBOR(c.dcbor(initial)));
+    assert.equal(journal.get('archive-publication', first.archiveID).revision, 0);
+  }
+  const unavailable = Error('publication validation unavailable');
+  validate = () => { throw unavailable; };
+  assert.throws(() => store.publish(next), (error) => error === unavailable);
+  assert.deepEqual(store.read(first.archiveID), c.decodeCBOR(c.dcbor(initial)));
+  validate = () => ({ overall: 'VALID' });
+  const completed = store.publish(next);
+  assert.deepEqual(completed, { digest: c.sha512(c.dcbor(next)), publication: c.decodeCBOR(c.dcbor(next)) });
+  assert.equal(journal.get('archive-publication', first.archiveID).revision, 1);
 });

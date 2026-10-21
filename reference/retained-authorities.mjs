@@ -5,6 +5,7 @@ import {
 import { parseCertificate } from './pki.mjs';
 import { createAuthorityResolver, authorityStatus, AuthorityError, requireAuthority } from './authority-history.mjs';
 import { parseTimestampRequest, verifyTimestampToken } from './timestamp.mjs';
+import { isPromise, isProxy } from 'node:util/types';
 
 const copy = (value) => decodeCBOR(dcbor(value));
 const fail = (overall, reason) => { throw new AuthorityError({ overall, reason }); };
@@ -185,7 +186,21 @@ export class ArchivePublicationStore {
     const previous = this.journal.get('archive-publication', publication.archiveID);
     if (previous && equal(previous.value.digest, digest)) return previous.value;
     const validation = this.validatePublication(copy(publication));
-    requireThat(validation?.overall === 'VALID' && !validation.then, 'ARCHIVE_PUBLICATION_VALIDATION');
+    let admitted = false;
+    if (isPromise(validation)) {
+      // Observe ordinary native rejections without calling a supplied thenable.
+      try { Promise.prototype.then.call(validation, undefined, () => {}); }
+      catch { /* Custom constructors/species can prevent rejection observation. */ }
+    } else if (!isProxy(validation)) {
+      try {
+        const prototype = validation && Object.getPrototypeOf(validation);
+        const decision = validation && Object.getOwnPropertyDescriptor(validation, 'overall');
+        admitted = validation !== null && typeof validation === 'object' &&
+          (prototype === Object.prototype || prototype === null) && !('then' in validation) &&
+          decision && Object.hasOwn(decision, 'value') && decision.value === 'VALID';
+      } catch { /* A malformed callback result cannot authorize publication. */ }
+    }
+    requireThat(admitted, 'ARCHIVE_PUBLICATION_VALIDATION');
     return this.journal.transaction(() => {
       const current = this.journal.get('archive-publication', publication.archiveID);
       if (current && equal(current.value.digest, digest)) return current.value;
