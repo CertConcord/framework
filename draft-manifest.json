@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 35088,
-      "sha256": "b39e00b9a1b2700ffa8b01a903a501fd5469e0d682cf1ee5275d02c386890650"
+      "bytes": 36043,
+      "sha256": "f7bee42fc74399eb58b9ca4e27894234ee4e5ce6a7505f2a6d670abbf20a280d"
     },
     {
       "path": "docs/apple-identity.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 132152,
-      "sha256": "c3fd1bc706453ff72231c9fbff5030c28a0550adac4e91e4bc905532a0e759ae"
+      "bytes": 132190,
+      "sha256": "775f04dcbe4b4ff9cf4f8874f1c1fe2e4b7bdf82f026b129e4f0d51cad6e5ca5"
     },
     {
       "path": "reference/README.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46358,
-      "sha256": "3b6f22660836d2fed0a0c9fb31044fdb3efb9fb70257faabd5a17a5d8f10a5a1"
+      "bytes": 46384,
+      "sha256": "5d883260835e43a272e59888ff0361a8d5c0f086cc517e9c8e5658686ef0b3b2"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -370,8 +370,8 @@
     },
     {
       "path": "reference/authority.test.mjs",
-      "bytes": 12566,
-      "sha256": "e63d208046fd85edacc858a75f750438b69412c401eb1e6142c0913084c3c124"
+      "bytes": 12627,
+      "sha256": "3d9d554273fd8c4cd378c861f44ef3bf6c187ac9ce4b0f2c341eae6cc404efff"
     },
     {
       "path": "reference/benchmarks/privacy.mjs",
@@ -1240,8 +1240,8 @@
     },
     {
       "path": "reference/providers.mjs",
-      "bytes": 13958,
-      "sha256": "b3666626f00acfb0ab74449a043684a631fd70cf471a0b48c1ab1a430caede6f"
+      "bytes": 14909,
+      "sha256": "a48eed021fb2daea2b8e62da2a64696a76ae45a186afe8b600f83168a7bf4367"
     },
     {
       "path": "reference/quorum-authorities.test.mjs",
@@ -1270,8 +1270,13 @@
     },
     {
       "path": "reference/remote-process-recovery.test.mjs",
-      "bytes": 7130,
-      "sha256": "afb19901ea53b44342bb8bf4a374b961728f12ea1b07ca913c6405e6bb3673e9"
+      "bytes": 7256,
+      "sha256": "cac75dc2a9fc73e7fc5f4c90407f4922a54df873a735cd2668bcc60fd6ccb3c0"
+    },
+    {
+      "path": "reference/remote-result.test.mjs",
+      "bytes": 6553,
+      "sha256": "92fc3aa24e49154dbce7f838555d27f2134d6765bf3370616fdc57482a21d918"
     },
     {
       "path": "reference/retained-authorities-crash-child.mjs",

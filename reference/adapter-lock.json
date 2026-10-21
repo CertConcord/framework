@@ -295,7 +295,7 @@
       "version": "1.0.0",
       "wireProfile": "RRA HTTPS protocol carrying signed permits, exact message and pinned key; durable replay/result behavior; no claim of a standardized WebCrypto remote-key API",
       "modules": ["providers.mjs"],
-      "tests": ["authority.test.mjs", "remote-process-recovery.test.mjs"],
+      "tests": ["authority.test.mjs", "remote-process-recovery.test.mjs", "remote-result.test.mjs"],
       "sources": ["rfc9882"],
       "inputSemantics": "Exact message; selected mechanism and registered SPKI; no implicit prehash substitution",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",
