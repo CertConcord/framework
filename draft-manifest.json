@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 132055,
-      "sha256": "3eb707b45887e51c661946be560d64cc43710bed7a126c818e63d68da1d640d0"
+      "bytes": 132152,
+      "sha256": "c3fd1bc706453ff72231c9fbff5030c28a0550adac4e91e4bc905532a0e759ae"
     },
     {
       "path": "reference/README.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46322,
-      "sha256": "34e9b17bf0f54989711616e52e05175420e140613f05f9c232fed45553d5e9bc"
+      "bytes": 46358,
+      "sha256": "3b6f22660836d2fed0a0c9fb31044fdb3efb9fb70257faabd5a17a5d8f10a5a1"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1262,6 +1262,16 @@
       "path": "reference/registry.json",
       "bytes": 2748,
       "sha256": "2740be85ef14cdf2bf0a860a68c99afc773ddf73fa644fbc69db77a5f2ef997a"
+    },
+    {
+      "path": "reference/remote-process-recovery-child.mjs",
+      "bytes": 2792,
+      "sha256": "d6249f7d21acc33076ced693c4b9e636e06aff15467cf81c8791b11acd0d1746"
+    },
+    {
+      "path": "reference/remote-process-recovery.test.mjs",
+      "bytes": 7130,
+      "sha256": "afb19901ea53b44342bb8bf4a374b961728f12ea1b07ca913c6405e6bb3673e9"
     },
     {
       "path": "reference/retained-authorities-crash-child.mjs",
