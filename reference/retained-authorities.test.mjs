@@ -350,6 +350,89 @@ test('a new late timestamp cannot repair an uncertain renewal after the protecti
   assert.equal(store.read(request.archiveID), undefined);
 });
 
+test('archive renewal binds one detached publication snapshot before publishing', async (t) => {
+  const f = fixture(t);
+  for (const [changing, seeded] of [
+    ['archiveID', false], ['archiveID', true], ['previousHash', false], ['previousHash', true],
+  ]) {
+    const journal = new Journal();
+    try {
+      let calls = 0, builds = 0, reads = 0, validations = 0, token;
+      const dataHash = c.sha512(Buffer.from('immutable document'));
+      const store = new ArchivePublicationStore(journal, {
+        validatePublication: () => { validations++; return { overall: 'VALID' }; },
+      });
+      const original = seeded ? store.publish({ archiveID: changing, previousHash: null, dataHash,
+        evidenceRecord: Buffer.from('original archive'), history: [] }) : undefined;
+      validations = 0;
+      const request = { operationID: c.random(), archiveID: changing, previousHash: original?.digest ?? null,
+        timestampRequest: timestampRequest(dataHash, { policy: f.tsa.policy }).der,
+        protectionDeadline: f.start + 100 };
+      const coordinator = new ArchiveRenewalCoordinator({ journal, store, clock: () => f.start,
+        timestampTrust: f.tsaTrust,
+        requestTimestamp: async (der) => { calls++; token = tokenFromResponse(f.tsa.issue(der)); return token; },
+        buildPublication: (saved, retained) => {
+          builds++;
+          const publication = { archiveID: saved.archiveID, previousHash: saved.previousHash,
+            dataHash, evidenceRecord: retained, history: [] };
+          Object.defineProperty(publication, changing, { enumerable: true, get: () => {
+            reads++;
+            return reads === 1 ? saved[changing] : changing === 'archiveID' ? 'different-archive' : c.random(64);
+          } });
+          return publication;
+        } });
+      const completed = await coordinator.renew(request);
+      assert.deepEqual(c.dcbor(completed.publication), c.dcbor({ archiveID: request.archiveID,
+        previousHash: original?.digest ?? null, dataHash, evidenceRecord: token, history: [] }), changing);
+      assert.deepEqual(c.dcbor(store.read(changing)), c.dcbor(completed), changing);
+      assert.equal(store.read('different-archive'), undefined, changing);
+      assert.equal(coordinator.result(request.operationID).status, 'COMPLETED', changing);
+      assert.deepEqual(coordinator.result(request.operationID).result, c.dcbor(completed), changing);
+      assert.deepEqual(c.dcbor(await coordinator.renew(request)), c.dcbor(completed), changing);
+      assert.deepEqual([calls, builds, reads, validations], [1, 1, 1, 1], changing);
+    } finally { journal.close(); }
+  }
+});
+
+test('archive renewal rejects mismatched publication snapshots and recovers with the original token', async (t) => {
+  const f = fixture(t);
+  for (const changing of ['archiveID', 'previousHash']) {
+    const journal = new Journal();
+    try {
+      let calls = 0, validations = 0, token;
+      const dataHash = c.sha512(Buffer.from('retained document'));
+      const store = new ArchivePublicationStore(journal, {
+        validatePublication: () => { validations++; return { overall: 'VALID' }; },
+      });
+      const original = store.publish({ archiveID: changing, previousHash: null, dataHash,
+        evidenceRecord: Buffer.from('original archive'), history: [] });
+      validations = 0;
+      const request = { operationID: c.random(), archiveID: changing, previousHash: original.digest,
+        timestampRequest: timestampRequest(dataHash, { policy: f.tsa.policy }).der,
+        protectionDeadline: f.start + 100 };
+      const build = (saved, retained) => ({ archiveID: saved.archiveID, previousHash: saved.previousHash,
+        dataHash, evidenceRecord: retained, history: [] });
+      const coordinator = new ArchiveRenewalCoordinator({ journal, store, clock: () => f.start,
+        timestampTrust: f.tsaTrust,
+        requestTimestamp: async (der) => { calls++; token = tokenFromResponse(f.tsa.issue(der)); return token; },
+        buildPublication: (saved, retained) => ({ ...build(saved, retained),
+          [changing]: changing === 'archiveID' ? 'different-archive' : c.random(64) }) });
+      await assert.rejects(coordinator.renew(request), { code: 'ARCHIVE_RENEWAL_PUBLICATION_BINDING' });
+      assert.equal(coordinator.result(request.operationID).status, 'UNKNOWN_EXECUTION', changing);
+      assert.deepEqual(c.dcbor(store.read(changing)), c.dcbor(original), changing);
+      assert.equal(store.read('different-archive'), undefined, changing);
+      assert.deepEqual([calls, validations], [1, 0], changing);
+      coordinator.buildPublication = build;
+      coordinator.clock = () => f.start + 200;
+      const completed = coordinator.reconcile(request.operationID, token);
+      assert.deepEqual(c.dcbor(completed.publication), c.dcbor(build(request, token)), changing);
+      assert.deepEqual(c.dcbor(store.read(changing)), c.dcbor(completed), changing);
+      assert.equal(coordinator.result(request.operationID).status, 'COMPLETED', changing);
+      assert.deepEqual([calls, validations], [1, 1], changing);
+    } finally { journal.close(); }
+  }
+});
+
 test('root succession needs both quorums, retained links and explicit algorithm lifetimes', (t) => {
   const f = fixture(t), first = f.snapshot();
   const successorPolicy = f.policy(f.successor);

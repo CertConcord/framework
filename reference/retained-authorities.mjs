@@ -297,7 +297,7 @@ export class ArchiveRenewalCoordinator {
     });
     requireThat(Number.isFinite(time.poeUpperBound) && time.poeUpperBound < request.protectionDeadline,
       'ARCHIVE_RENEWAL_LATE');
-    const publication = this.buildPublication(copy(request), Buffer.from(token));
+    const publication = copy(this.buildPublication(copy(request), Buffer.from(token)));
     requireThat(publication.archiveID === request.archiveID &&
       (request.previousHash === null ? publication.previousHash === null : equal(publication.previousHash, request.previousHash)),
     'ARCHIVE_RENEWAL_PUBLICATION_BINDING');

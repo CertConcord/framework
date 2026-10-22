@@ -100,6 +100,13 @@ the assembled ERS and completing the operation. It never silently repeats an
 uncertain external execution. Completed result lookup does not renew authority or
 create a new timestamp.
 
+The synchronous `buildPublication` callback returns a CBOR-encodable publication.
+The coordinator takes a detached canonical snapshot before checking its archive ID
+and predecessor commitment. Those checks and the publication store therefore use
+the same value, even when the callback returns changing accessors or retains
+mutable references. A snapshot with a different archive ID or predecessor is
+rejected before publication; the retained token remains available for reconciliation.
+
 The synchronous authority resolver used by `requireAuthority` must return a
 non-Proxy plain or null-prototype object with its own `overall` data property.
 Malformed decisions, inherited or accessor verdicts, proxies, promises and
