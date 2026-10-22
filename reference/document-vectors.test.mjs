@@ -408,7 +408,7 @@ function smallCorpus(t) {
   const name = 'files/object.b64';
   const manifest = {
     schemaVersion: 1,
-    profile: 'certconcord-document-acceptance-vectors-draft-03-mtc07',
+    profile: 'certconcord-document-acceptance-vectors-draft-03-mtc07-rar2',
     description: 'Original fixture',
     files: [
       {
