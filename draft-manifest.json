@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 9793,
-      "sha256": "eb35f37440e6e49cec4763c08d8ead72357cfcf894820e6682400ba32644ce61"
+      "bytes": 10566,
+      "sha256": "c7f22d511823cdaf02c46051884603c50dac9c3f5fbc3852d8451e6d904d8ea2"
     },
     {
       "path": "docs/implementation.md",
@@ -1295,13 +1295,13 @@
     },
     {
       "path": "reference/retained-authorities.mjs",
-      "bytes": 18697,
-      "sha256": "2b2d1bca3e986526b57813bf25a5d5dbf699a9a829203651dd4ffb6e74c199b5"
+      "bytes": 19218,
+      "sha256": "9e158a5985284073f81d55ae738158f597af6359c8fbd643136a5259b84664cb"
     },
     {
       "path": "reference/retained-authorities.test.mjs",
-      "bytes": 48482,
-      "sha256": "d76363e14c5128f8482806eda8b93add0ecaaebc745bbbd554f12867d4499891"
+      "bytes": 58045,
+      "sha256": "8e50230eb4121656b2db0d2e7114ba7a279e3836e147525548f968779adf7220"
     },
     {
       "path": "reference/retained-document.test.mjs",

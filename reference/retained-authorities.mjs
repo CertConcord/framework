@@ -288,7 +288,15 @@ export class ArchiveRenewalCoordinator {
   reconcile(operationID, rawToken) {
     const id = 'archive-renewal:' + b64u(operationID), saved = this.journal.get('archive-renewal-request', id);
     requireThat(saved, 'ARCHIVE_RENEWAL_REQUEST_MISSING');
-    const request = saved.value, token = Buffer.from(rawToken), parsed = parseTimestampRequest(request.timestampRequest);
+    const request = saved.value, digest = H('ArchiveRenewalRequest', request);
+    const requireReservation = () => {
+      const current = this.journal.get('archive-renewal-request', id);
+      requireThat(current && this.journal.result(id), 'ARCHIVE_RENEWAL_REQUEST_MISSING');
+      requireThat(equal(H('ArchiveRenewalRequest', current.value), digest), 'ARCHIVE_RENEWAL_REQUEST_BINDING');
+      this.journal.reserve(id, digest);
+    };
+    this.journal.transaction(requireReservation);
+    const token = Buffer.from(rawToken), parsed = parseTimestampRequest(request.timestampRequest);
     const time = verifyTimestampToken(token, { ...this.timestampTrust, ...parsed, at: this.clock(), maxFutureSkew: 0 });
     requireAuthority(this.timestampTrust.authorityResolver, {
       certificate: this.timestampTrust.certificate, role: 'TIMESTAMP_AUTHORITY',
@@ -302,9 +310,11 @@ export class ArchiveRenewalCoordinator {
       (request.previousHash === null ? publication.previousHash === null : equal(publication.previousHash, request.previousHash)),
     'ARCHIVE_RENEWAL_PUBLICATION_BINDING');
     return this.journal.transaction(() => {
+      requireReservation();
       const existing = this.journal.result(id);
       if (existing.status === 'COMPLETED') return decodeCBOR(existing.result);
       const published = this.store.publish(publication);
+      requireReservation();
       this.journal.reconcile(id, dcbor(published));
       return published;
     });

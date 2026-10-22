@@ -433,6 +433,170 @@ test('archive renewal rejects mismatched publication snapshots and recovers with
   }
 });
 
+function renewalRecovery(f, journal, savedRequest) {
+  const dataHash = c.sha512(Buffer.from('reserved recovery document'));
+  const context = { clock: f.start, token: null,
+    calls: { tsa: 0, authority: 0, build: 0, validation: 0 } };
+  const store = new ArchivePublicationStore(journal, { validatePublication: () => {
+    context.calls.validation++;
+    context.onValidation?.();
+    return { overall: 'VALID' };
+  } });
+  const original = store.read('reserved-document') ?? store.publish({ archiveID: 'reserved-document',
+    previousHash: null, dataHash, evidenceRecord: Buffer.from('original archive'), history: [] });
+  context.calls.validation = 0;
+  const request = savedRequest ?? { operationID: c.random(), archiveID: 'reserved-document',
+    previousHash: original.digest, timestampRequest: timestampRequest(dataHash, { policy: f.tsa.policy }).der,
+    protectionDeadline: f.start + 100 };
+  context.build = (saved, token) => ({ archiveID: saved.archiveID, previousHash: saved.previousHash,
+    dataHash, evidenceRecord: token, history: [] });
+  const coordinator = new ArchiveRenewalCoordinator({ journal, store, clock: () => context.clock,
+    timestampTrust: { ...f.tsaTrust, authorityResolver: (query) => {
+      context.calls.authority++;
+      return f.tsaTrust.authorityResolver(query);
+    } },
+    requestTimestamp: async (der) => {
+      context.calls.tsa++;
+      context.token = tokenFromResponse(f.tsa.issue(der));
+      throw Error('response lost');
+    },
+    buildPublication: (saved, token) => {
+      context.calls.build++;
+      context.onBuild?.();
+      return context.build(saved, token);
+    } });
+  return Object.assign(context, { coordinator, store, original, request, dataHash,
+    id: 'archive-renewal:' + c.b64u(request.operationID) });
+}
+
+test('archive renewal rejects changed persisted requests before invoking recovery callbacks', async (t) => {
+  const f = fixture(t);
+  const changes = {
+    operationID: () => c.random(), archiveID: () => 'different-archive', previousHash: () => c.random(64),
+    timestampRequest: () => timestampRequest(c.random(64), { policy: f.tsa.policy }).der,
+    protectionDeadline: () => f.start + 300,
+  };
+  for (const [field, change] of Object.entries(changes)) {
+    const journal = new Journal();
+    try {
+      f.setTime(f.start);
+      const r = renewalRecovery(f, journal);
+      await assert.rejects(r.coordinator.renew(r.request), /response lost/);
+      const saved = journal.get('archive-renewal-request', r.id);
+      journal.put('archive-renewal-request', r.id, { ...saved.value, [field]: change() }, saved.revision);
+      let suppliedToken = r.token;
+      if (field === 'protectionDeadline') {
+        f.setTime(f.start + 101);
+        suppliedToken = tokenFromResponse(f.tsa.issue(r.request.timestampRequest));
+      }
+      r.clock = f.start + 200;
+      assert.throws(() => r.coordinator.reconcile(r.request.operationID, suppliedToken),
+        { code: 'IDEMPOTENCY_CONFLICT' }, field);
+      assert.deepEqual(r.calls, { tsa: 1, authority: 0, build: 0, validation: 0 }, field);
+      assert.equal(r.coordinator.result(r.request.operationID).status, 'UNKNOWN_EXECUTION', field);
+      assert.deepEqual(c.dcbor(r.store.read(r.request.archiveID)), c.dcbor(r.original), field);
+      assert.equal(r.store.read('different-archive'), undefined, field);
+      journal.put('archive-renewal-request', r.id, saved.value,
+        journal.get('archive-renewal-request', r.id).revision);
+      if (field === 'protectionDeadline')
+        assert.throws(() => r.coordinator.reconcile(r.request.operationID, suppliedToken),
+          { code: 'ARCHIVE_RENEWAL_LATE' });
+      const completed = r.coordinator.reconcile(r.request.operationID, r.token);
+      assert.deepEqual(c.dcbor(completed.publication), c.dcbor(r.build(r.request, r.token)), field);
+      assert.equal(r.coordinator.result(r.request.operationID).status, 'COMPLETED', field);
+      assert.equal(r.calls.tsa, 1, field);
+    } finally { journal.close(); }
+  }
+});
+
+test('archive renewal refuses an orphan saved request without creating a reservation', (t) => {
+  const f = fixture(t), journal = new Journal();
+  t.after(() => journal.close());
+  const r = renewalRecovery(f, journal);
+  journal.put('archive-renewal-request', r.id, r.request);
+  const token = tokenFromResponse(f.tsa.issue(r.request.timestampRequest));
+  assert.throws(() => r.coordinator.reconcile(r.request.operationID, token),
+    { code: 'ARCHIVE_RENEWAL_REQUEST_MISSING' });
+  assert.equal(r.coordinator.result(r.request.operationID), undefined);
+  assert.deepEqual(r.calls, { tsa: 0, authority: 0, build: 0, validation: 0 });
+  assert.deepEqual(c.dcbor(r.store.read(r.request.archiveID)), c.dcbor(r.original));
+  assert.deepEqual(c.dcbor(journal.get('archive-renewal-request', r.id).value), c.dcbor(r.request));
+});
+
+test('archive renewal rolls back publication when callbacks change the reserved request', async (t) => {
+  const f = fixture(t);
+  for (const hook of ['onBuild', 'onValidation']) {
+    const journal = new Journal();
+    try {
+      const r = renewalRecovery(f, journal);
+      await assert.rejects(r.coordinator.renew(r.request), /response lost/);
+      const saved = journal.get('archive-renewal-request', r.id);
+      r[hook] = () => {
+        const current = journal.get('archive-renewal-request', r.id);
+        journal.put('archive-renewal-request', r.id,
+          { ...current.value, protectionDeadline: f.start + 300 }, current.revision);
+      };
+      assert.throws(() => r.coordinator.reconcile(r.request.operationID, r.token),
+        { code: 'ARCHIVE_RENEWAL_REQUEST_BINDING' }, hook);
+      assert.equal(r.coordinator.result(r.request.operationID).status, 'UNKNOWN_EXECUTION', hook);
+      assert.deepEqual(c.dcbor(r.store.read(r.request.archiveID)), c.dcbor(r.original), hook);
+      assert.equal(journal.get('archive-publication', r.request.archiveID).revision, 0, hook);
+      assert.deepEqual(r.calls, { tsa: 1, authority: 1, build: 1,
+        validation: hook === 'onValidation' ? 1 : 0 }, hook);
+      if (hook === 'onValidation')
+        assert.deepEqual(journal.get('archive-renewal-request', r.id), saved);
+      else journal.put('archive-renewal-request', r.id, saved.value,
+        journal.get('archive-renewal-request', r.id).revision);
+      r[hook] = undefined;
+      const completed = r.coordinator.reconcile(r.request.operationID, r.token);
+      assert.deepEqual(c.dcbor(completed.publication), c.dcbor(r.build(r.request, r.token)), hook);
+      assert.equal(journal.get('archive-publication', r.request.archiveID).revision, 1, hook);
+      assert.equal(r.coordinator.result(r.request.operationID).status, 'COMPLETED', hook);
+      assert.equal(r.calls.tsa, 1, hook);
+    } finally { journal.close(); }
+  }
+});
+
+test('archive renewal restores request and publication bindings across restart without another TSA request', async (t) => {
+  const f = fixture(t), directory = mkdtempSync(join(tmpdir(), 'certconcord-renewal-bindings-'));
+  const path = join(directory, 'journal.sqlite');
+  let journal = new Journal(path);
+  try {
+    const first = renewalRecovery(f, journal);
+    await assert.rejects(first.coordinator.renew(first.request), /response lost/);
+    const token = Buffer.from(first.token), request = first.request, original = c.dcbor(first.original);
+    journal.close(); journal = new Journal(path);
+    const recovered = renewalRecovery(f, journal, request), saved = journal.get('archive-renewal-request', recovered.id);
+    journal.put('archive-renewal-request', recovered.id,
+      { ...saved.value, protectionDeadline: f.start + 300 }, saved.revision);
+    recovered.clock = f.start + 200;
+    assert.throws(() => recovered.coordinator.reconcile(request.operationID, token),
+      { code: 'IDEMPOTENCY_CONFLICT' });
+    assert.deepEqual(c.dcbor(recovered.store.read(request.archiveID)), original);
+    assert.equal(recovered.coordinator.result(request.operationID).status, 'UNKNOWN_EXECUTION');
+    assert.deepEqual(recovered.calls, { tsa: 0, authority: 0, build: 0, validation: 0 });
+    journal.put('archive-renewal-request', recovered.id, saved.value,
+      journal.get('archive-renewal-request', recovered.id).revision);
+    let reads = 0;
+    recovered.build = (saved, retained) => ({
+      get archiveID() { return ++reads === 1 ? saved.archiveID : 'different-archive'; },
+      previousHash: saved.previousHash, dataHash: recovered.dataHash, evidenceRecord: retained, history: [],
+    });
+    const completed = recovered.coordinator.reconcile(request.operationID, token);
+    assert.deepEqual(c.dcbor(completed.publication), c.dcbor({ archiveID: request.archiveID,
+      previousHash: request.previousHash, dataHash: recovered.dataHash, evidenceRecord: token, history: [] }));
+    assert.deepEqual(c.dcbor(recovered.store.read(request.archiveID)), c.dcbor(completed));
+    assert.equal(recovered.store.read('different-archive'), undefined);
+    assert.deepEqual([first.calls.tsa, recovered.calls.tsa, reads], [1, 0, 1]);
+    journal.close(); journal = new Journal(path);
+    const final = renewalRecovery(f, journal, request);
+    assert.equal(final.coordinator.result(request.operationID).status, 'COMPLETED');
+    assert.deepEqual(final.coordinator.result(request.operationID).result, c.dcbor(completed));
+    assert.deepEqual(c.dcbor(await final.coordinator.renew(request)), c.dcbor(completed));
+    assert.deepEqual(final.calls, { tsa: 0, authority: 0, build: 0, validation: 0 });
+  } finally { journal.close(); rmSync(directory, { recursive: true, force: true }); }
+});
+
 test('root succession needs both quorums, retained links and explicit algorithm lifetimes', (t) => {
   const f = fixture(t), first = f.snapshot();
   const successorPolicy = f.policy(f.successor);

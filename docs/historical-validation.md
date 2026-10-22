@@ -100,6 +100,17 @@ the assembled ERS and completing the operation. It never silently repeats an
 uncertain external execution. Completed result lookup does not renew authority or
 create a new timestamp.
 
+Reconciliation also requires the saved request to match the existing operation
+reservation's digest before token verification or recovery callbacks. A saved
+request without a reservation cannot create one during recovery. The same request
+snapshot is checked again before publication and before completing the operation
+in the publication transaction. Changes made by a publication validator roll back
+with that transaction. A changed deadline, nonce-bearing request or archive
+linkage cannot replace the originally reserved values; restoring the original
+request still permits reconciliation of its retained token. These consistency
+checks do not authenticate a database whose request and reservation records have
+both been replaced outside the journal's trust boundary.
+
 The synchronous `buildPublication` callback returns a CBOR-encodable publication.
 The coordinator takes a detached canonical snapshot before checking its archive ID
 and predecessor commitment. Those checks and the publication store therefore use
