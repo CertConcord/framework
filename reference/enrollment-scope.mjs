@@ -61,7 +61,7 @@ export function requireIssuanceAuthority(request, configuration, at = now()) {
       'ISSUER_KEY_BINDING',
     );
   requireThat(
-    request.schemaVersion === 1 &&
+    request.schemaVersion === 2 &&
       Buffer.isBuffer(request.requestID) &&
       request.requestID.length === 32 &&
       Number.isSafeInteger(request.issuedAt) &&

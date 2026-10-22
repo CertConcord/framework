@@ -184,7 +184,7 @@ test('real ERS unsupported status remains UNSUPPORTED when later timestamp trust
   } finally { f.close(); }
 });
 
-const corpus = loadVectorCorpus(fileURLToPath(new URL('./vectors/document-acceptance-mtc07', import.meta.url)));
+const corpus = loadVectorCorpus(fileURLToPath(new URL('./vectors/document-acceptance-mtc07-rar2', import.meta.url)));
 function documentInput(format, status) {
   const entry = corpus.manifest.documents.find((item) => item.id === format.toLowerCase() + '-valid');
   const input = corpus.config(entry.trust);

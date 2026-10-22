@@ -18,6 +18,21 @@ import {
 } from './organization-history-vector-semantics.mjs';
 
 const cli = fileURLToPath(new URL('./verify-organization-vectors.mjs', import.meta.url));
+
+test('schema1 organization corpora require their original verifier', () => {
+  for (const name of [
+    'organization-history',
+    'preserved-certificate-status',
+    'preserved-delegation-status',
+  ])
+    assert.throws(
+      () =>
+        loadOrganizationHistoryVectorCorpus(
+          resolve(defaultOrganizationHistoryVectorDirectory, '..', name),
+        ),
+      { code: 'ORG_VECTOR_VERSION' },
+    );
+});
 function copiedCorpus(t, ids) {
   const directory = fs.mkdtempSync(join(tmpdir(), 'certconcord-org-replay-'));
   t.after(() => {
@@ -70,7 +85,7 @@ test('saved organization corpus retains exact public original bytes and declared
       fs.readFileSync(new URL('./organization-history-vector-semantics.mjs', import.meta.url)),
     ),
   );
-  assert.equal(provenance.baselineCommit, '47cca52081e31f1aae69dc33a951852ff79bfcb3');
+  assert.equal(provenance.baselineCommit, 'ac43db6dfd52acbac57a091cb2c9b5cc71e06244');
   assert(
     provenance.sources.some(
       (source) => source.path === 'reference/organization-history-source.mjs',

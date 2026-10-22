@@ -167,7 +167,7 @@ function material({ at, pathLength, people }) {
     },
     csr = createCSR({ ...keys.seal, subject: p.name('Organization fixture seal') }),
     rarBody = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       requestID: c.random(),
       subjectID: organizationID,
       profileID: SEAL_PROFILE,

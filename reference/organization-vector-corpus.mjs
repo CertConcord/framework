@@ -3,9 +3,9 @@ import { fileURLToPath } from 'node:url';
 import { createVectorReader } from './vector-corpus.mjs';
 
 export const defaultOrganizationHistoryVectorDirectory = fileURLToPath(
-  new URL('./vectors/organization-history/', import.meta.url),
+  new URL('./vectors/organization-history-rar2/', import.meta.url),
 );
-export const organizationVectorProfile = 'certconcord-organization-history-vectors-draft-03';
+export const organizationVectorProfile = 'certconcord-organization-history-vectors-draft-03-rar2';
 export const vectorHash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const object = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 const need = (condition, code) => {

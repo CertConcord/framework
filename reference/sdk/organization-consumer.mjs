@@ -15,7 +15,7 @@ assert(publicEntry && installedBundle && [4, 5].includes(process.argv.length));
 const hash = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
 const corpus = vectorDirectory
   ? pathToFileURL(resolve(vectorDirectory) + sep)
-  : new URL('../vectors/organization-history/', import.meta.url);
+  : new URL('../vectors/organization-history-rar2/', import.meta.url);
 const manifestBytes = readFileSync(new URL('manifest.json', corpus));
 const manifest = JSON.parse(manifestBytes);
 assert(Array.isArray(manifest.files) && manifest.files.length <= 512);

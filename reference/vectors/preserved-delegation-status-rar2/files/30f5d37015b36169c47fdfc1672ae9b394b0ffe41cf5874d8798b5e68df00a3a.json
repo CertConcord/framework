@@ -1,0 +1,845 @@
+{
+  "purpose": "RETAINED_EVIDENCE_VERIFICATION",
+  "operationTime": 1800000000,
+  "proofOfExistenceUpperBound": 1800000001,
+  "knowledgeTime": 1800000200,
+  "historicalAuthorization": {
+    "scope": "AS_KNOWN_AT_PROOF_TIME",
+    "stateTime": 1800000001,
+    "knowledgeTime": 1800000001,
+    "checks": [
+      {
+        "check": "organization-semantics",
+        "overall": "VALID",
+        "reason": "ORG_EVIDENCE_VALID"
+      },
+      {
+        "check": "organization",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "original-credential",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status:0",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status-closure",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "credential-view",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      }
+    ],
+    "overall": "VALID",
+    "reason": "ORG_HISTORY_AUTHORIZED",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {
+      "authorization": {
+        "overall": "VALID",
+        "reason": "ORG_EVIDENCE_VALID"
+      }
+    }
+  },
+  "currentAdmissibility": {
+    "scope": "HISTORICAL_EVIDENCE_UNDER_CURRENT_KNOWLEDGE",
+    "stateTime": 1800000001,
+    "knowledgeTime": 1800000200,
+    "checks": [
+      {
+        "check": "organization-semantics",
+        "overall": "INVALID",
+        "reason": "TSA_REQUEST_BINDING"
+      },
+      {
+        "check": "retained-organization-incidents",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "organization",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "original-credential",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status:0",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status:1",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "certificate-status-closure",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "credential-view",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "retained-certificate-incidents",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      },
+      {
+        "check": "retained-certificate-knowledge",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      }
+    ],
+    "overall": "INVALID",
+    "reason": "TSA_REQUEST_BINDING",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {
+      "authorization": {
+        "overall": "INVALID",
+        "reason": "TSA_REQUEST_BINDING"
+      }
+    }
+  },
+  "preservation": {
+    "chains": 1,
+    "timestamps": 2,
+    "integrity": "VALID",
+    "preservation": "VALID",
+    "proofOfExistenceUpperBound": 1800000001,
+    "latestRenewalUpperBound": 1800000050,
+    "verifiedAt": 1800000200,
+    "checks": [
+      {
+        "check": "preservation",
+        "overall": "VALID",
+        "reason": "ORG_HISTORY_CHECK_VALID"
+      }
+    ],
+    "overall": "VALID",
+    "reason": "ORG_HISTORY_PRESERVED",
+    "coreRevision": "draft-03",
+    "profile": "certconcord-ecp-cms-organization-delegation-v1",
+    "dimensions": {}
+  },
+  "originalProtectionDeadline": 1800003600,
+  "protectionLedger": [
+    {
+      "kind": "KEY",
+      "id": "c400efd49512c60abe79786f2bb88231f73aed24db4ad3ec29bb0af9c2f75a1927c61f3ac120e873cafed7b5ff8bb715afdebd018125feb4e26a00fc450815e5",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "9a1d213ceaf23b37fc6eeffc99532578e3b1741860937ac4c0a90278e6c037fd204a096e7e7bb0baf069a91009cce3b2496b2658ba58efbc0be806f247c0af3a",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "74a60f7abc4427b2f9937069a9839201816b0f3f693de8f0e3b7f9016caccb3533ae382e35bb39fc1d922d316d2ad0239ec3c8ecfda56a660e8195b1a287f9de",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "cca0e0cdff7c5a27cc92025f77f44179c16c323845a80e4174d73a126189cd66d798726132efc7cdaa2234eacd21b81ccf13aed38e7b82f3b8d8a088059ac9f7",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "671c0f094ae25862a11d7f94c519d07302ae84a36912d9bd31be80d97154c50bc04bdf4a431b6be01d6b5aa73b020533684dd3237b1af4b632bbe6fbd96d38ca",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "eb146c63b318631cb8561d3c731e68476bfb14daafcf002f54e1f9daaf57e893fc655053f8d2df7712b7d68e1854d925c4f54a1e40c04ccd930d1549beb031aa",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "60714c6acaab7aa4ab3c43ddb0f6ee357a970aea4c4e07e9b80947cc613381eeeac2a9c2b406b7d78087e595f16f226560a3be91f6dc06a9a2e663c9264b3ec5",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "99fe65b34aa669210955b629331fd9a368a8a9d54d5b467375a5ee6c98e1a2c84f036ace3e9e77ebddbe3e38b41c69940c9dbc80fdf6fa6a4391230dad2971fa",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "a729561f021c50e58bdfe34dfdde1bbf39dc7958a1df5ebdc923bf3684c90e760e309d5991787cd4b06309feb85d523682c5c325f0c2e91ca5d0af93c26882d5",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "f226892b84a7160f33a030c1d306c6f4eac41d80e5bb4ab52f3cf4d5d56ea2d859d1eef70672e9fa80282f161ddc0ab08bb5061d910a9e7d4431c0004489d699",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "4eea073b06366f44386e29c7bdf5d63044cd6317d9383e04e2a4d2e08553f228ee94aaa51557109c2d8009f76323cb05c07678f884f1b28991f63c42518a9621",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "9bddaeaa08bc7571877526cc30b90bb083784644cd798793ece513fa4923d4ea5d079ad393e30346ba7bffc11e4f1121bd295e0cf1ba8c184aee6d5e1d29bae7",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "9981c0956dee84a307ba8f09855c277f05a97e69b741690002e8e80d94a6394a532bda0d91af901de12585fbc155e61a0e52fcde5e6904e366162d2197bc9483",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "603b9ef0baa4a4d248b0a2b127e25f462337445e18843b1769abc6cade2cddc2d5281ce91311d621e85e7f343d123e526b99ee7dd35587ef3fb9ec4e76427722",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "0296112d2a5c07ac54e14b94631623eba70bf065327800bc55c0fadfef32e6fa507a34433592c8e55fa4d24af3bc9ebf8229030d650df19f03b0f5701585970e",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "f39aebfc81bb546dd746b9b52adf931042ea58261d8be6d744727717ed48117753b21a0f5ba81fee610cb88278c64d3392ec283c1789506846f5bb33a38f4091",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "fc9cf651a755121d3f608ec8bd4882f41f029ba3e6fb89b15a56a599c49fc3817a076188eeb6ab869f02a935a8acac4213ca7b90de189512ca105b67f2520530",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "4bcf9a3bc13a13ba0fd29da01a50707864a1ea9e6308855597a8537a8ceb997951c3569c65ef0156647dff1fd1e463f71599d4e6b7d0f11f3f3c5a664c3f7666",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "b710b2d30c60e667427cf9aa837eef430393e97eea726e11695a02e4afa730ebae7a69bc36fd03cebb9de1c72aac9ab028711575bab288986d1d78b530d4882c",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "d163e3a0a49f7fca8c11078e48b052fb6b3fd88719a1701747acac743eeffea084fe9d617071d95b15ca979ff72681fa27bb35a24561e72346f7c72e3437a6d2",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "b710b2d30c60e667427cf9aa837eef430393e97eea726e11695a02e4afa730ebae7a69bc36fd03cebb9de1c72aac9ab028711575bab288986d1d78b530d4882c",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "d163e3a0a49f7fca8c11078e48b052fb6b3fd88719a1701747acac743eeffea084fe9d617071d95b15ca979ff72681fa27bb35a24561e72346f7c72e3437a6d2",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "a729561f021c50e58bdfe34dfdde1bbf39dc7958a1df5ebdc923bf3684c90e760e309d5991787cd4b06309feb85d523682c5c325f0c2e91ca5d0af93c26882d5",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "f226892b84a7160f33a030c1d306c6f4eac41d80e5bb4ab52f3cf4d5d56ea2d859d1eef70672e9fa80282f161ddc0ab08bb5061d910a9e7d4431c0004489d699",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "b26222171afe41e723fe9373945877e2da7a7b51b882d083d0e2215d7865631895d3d438c9912191e1f2b69bb80bcd269534ad5340cec3e8166c0582e8a539ab",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "4f621a95dfe3de27b0e71359b8bd51652c554435194d8b05e8623cb1e9598491d431315a5e2a77631e9daee2b976833a69755596c18e37fee66806df8211fc20",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "b26222171afe41e723fe9373945877e2da7a7b51b882d083d0e2215d7865631895d3d438c9912191e1f2b69bb80bcd269534ad5340cec3e8166c0582e8a539ab",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "4f621a95dfe3de27b0e71359b8bd51652c554435194d8b05e8623cb1e9598491d431315a5e2a77631e9daee2b976833a69755596c18e37fee66806df8211fc20",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "da20ff59829a7f962ab75870f15c3ab8c9b472801a09ff5db8e19f7a1308729aa002f0900065a088f3bf7d44b0872b25c6e7456354a3558744aa6051b50911d0",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "c46acd86ef297bd37b86d6867076b04a0bb6a1623b8cff620d0082da99cd791af8d264f9362c440f4b43d4c9210672432d8a1aeb34c17b41c4da8c60f115fc2f",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "da20ff59829a7f962ab75870f15c3ab8c9b472801a09ff5db8e19f7a1308729aa002f0900065a088f3bf7d44b0872b25c6e7456354a3558744aa6051b50911d0",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "c46acd86ef297bd37b86d6867076b04a0bb6a1623b8cff620d0082da99cd791af8d264f9362c440f4b43d4c9210672432d8a1aeb34c17b41c4da8c60f115fc2f",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "da20ff59829a7f962ab75870f15c3ab8c9b472801a09ff5db8e19f7a1308729aa002f0900065a088f3bf7d44b0872b25c6e7456354a3558744aa6051b50911d0",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "c46acd86ef297bd37b86d6867076b04a0bb6a1623b8cff620d0082da99cd791af8d264f9362c440f4b43d4c9210672432d8a1aeb34c17b41c4da8c60f115fc2f",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "da20ff59829a7f962ab75870f15c3ab8c9b472801a09ff5db8e19f7a1308729aa002f0900065a088f3bf7d44b0872b25c6e7456354a3558744aa6051b50911d0",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "c46acd86ef297bd37b86d6867076b04a0bb6a1623b8cff620d0082da99cd791af8d264f9362c440f4b43d4c9210672432d8a1aeb34c17b41c4da8c60f115fc2f",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "da20ff59829a7f962ab75870f15c3ab8c9b472801a09ff5db8e19f7a1308729aa002f0900065a088f3bf7d44b0872b25c6e7456354a3558744aa6051b50911d0",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.18",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE_ALGORITHM",
+      "id": "2.16.840.1.101.3.4.3.19",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "CERTIFICATE",
+      "id": "c46acd86ef297bd37b86d6867076b04a0bb6a1623b8cff620d0082da99cd791af8d264f9362c440f4b43d4c9210672432d8a1aeb34c17b41c4da8c60f115fc2f",
+      "validUntil": 1800003600
+    },
+    {
+      "kind": "KEY",
+      "id": "91144a65009df38dc227d393297bc649f03ca6074966c988304c9c650c972ff38c83352e051a0c9620695253a8cc83e90a681b6a6592ed6c96a2468bf5c236ba",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "1.2.840.10045.4.3.2",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.1",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "KEY",
+      "id": "0d2e27750ef8e304fa15184bc9ee809d053cfac6b166ef97d9f1ca875988d2297b4b8abfac568573d4a831f80e5d59c4dbc1897a1e605818576df7dd19acc7a7",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "ALGORITHM",
+      "id": "1.2.840.10045.4.3.2",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.1",
+      "validUntil": 1800010000
+    },
+    {
+      "kind": "HASH",
+      "id": "2.16.840.1.101.3.4.2.3",
+      "validUntil": 1800010000
+    }
+  ],
+  "limitations": [
+    "AUTHORITY_ATTESTED_WORKLOAD_PERMISSION",
+    "SIGNED_REGISTRATION_COUNTER_BASELINE_ONLY",
+    "NO_CURRENT_EXECUTION_PERMISSION"
+  ],
+  "checks": [
+    {
+      "check": "plan",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "sim",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "policy",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "document",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationAuthorization",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OperationPermit",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "ExecutionReceipt",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-leaf",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-binding",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationDelegationPath",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationApprovalSet",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "OrganizationDelegationStatus",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationDelegationPath",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationApprovalSet",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "collection-limit:OrganizationDelegationStatus",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "grant-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "grant-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "registration-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "assertion-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "registration-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "assertion-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:0",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:1",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:2",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:3",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "status-math:4",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "execution-tuple",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "input",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "knowledge",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "original-protection",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "original-proof",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_CHECK_VALID"
+    },
+    {
+      "check": "preservation",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_PRESERVED"
+    },
+    {
+      "check": "historical-authorization",
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_AUTHORIZED"
+    },
+    {
+      "check": "current-admissibility",
+      "overall": "INVALID",
+      "reason": "TSA_REQUEST_BINDING"
+    }
+  ],
+  "overall": "INVALID",
+  "reason": "TSA_REQUEST_BINDING",
+  "coreRevision": "draft-03",
+  "profile": "certconcord-ecp-cms-organization-delegation-v1",
+  "dimensions": {
+    "time": {
+      "overall": "VALID",
+      "reason": "ORG_HISTORY_PRESERVED"
+    },
+    "authorization": {
+      "overall": "INVALID",
+      "reason": "TSA_REQUEST_BINDING"
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "baselineCommit": "ac43db6dfd52acbac57a091cb2c9b5cc71e06244",
+  "baselineTree": "11c0a93e9d9cbc1e52c3fca530cc263ab6260273",
+  "description": "Synthetic public bytes authored from the named baseline plus the separately hashed reviewed sources. These declarations and inventory hashes are not authority signatures or executing-code attestation.",
+  "runtime": {
+    "node": "v24.15.0",
+    "openssl": "3.5.5"
+  },
+  "dependencyLock": {
+    "path": "package-lock.json",
+    "sha256": "ea7f90d6e53a438a138e4524756b102dbc0221b1f94e54ce23eaf7e2a7397056"
+  },
+  "semanticSHA256": "9ea41d36329a068f509352bd60458aee078f1ab1a0daac10e2de6ed12dcc3eac",
+  "sources": [
+    {
+      "path": "tools/freeze-organization-vectors.mjs",
+      "sha256": "d4912e098ae75fc6f32c0ae0368f6614a989edf9c441e008c1d7dbf8b9035d23"
+    },
+    {
+      "path": "reference/organization-history-vector-semantics.mjs",
+      "sha256": "9ea41d36329a068f509352bd60458aee078f1ab1a0daac10e2de6ed12dcc3eac"
+    },
+    {
+      "path": "reference/fixtures-history-independent.mjs",
+      "sha256": "8fb451a68794bede1dde354123347bc3cc76835cfa1c75fe7d4f45a066cc1651"
+    },
+    {
+      "path": "reference/organization-delegation-fixtures.mjs",
+      "sha256": "eee4f79e5e84d85f86619835b45762e71868fcdcab8e053dc128b7f5b01dacb8"
+    },
+    {
+      "path": "reference/organization-vector-corpus.mjs",
+      "sha256": "56db9aca47b1fdc933331295cb6e0ecb96f464b4911f4dcebab695b1fee014fe"
+    },
+    {
+      "path": "reference/vector-corpus.mjs",
+      "sha256": "b78041f2ee023d067c0f243d5b1dcb7e8c277b3ed04dab32d9c8f31f7ed5fab0"
+    },
+    {
+      "path": "reference/verify-organization-vectors.mjs",
+      "sha256": "82d121e66c80fa6bf369854d6ba7e068493e0e3fcb47a7c610e423c5f9294dbc"
+    },
+    {
+      "path": "reference/organization-history.mjs",
+      "sha256": "864404a7ddabc850d3066560507086d04388d58069c6a18783a8f15c64618256"
+    },
+    {
+      "path": "reference/organization-history-source.mjs",
+      "sha256": "738f4bb2e2cc13d2e8d094c8882e370ca10e28e49d4db8b461574aad2f25385f"
+    },
+    {
+      "path": "reference/organization-delegation-evidence.mjs",
+      "sha256": "59a9257400e49d0357d013e001067440c2c1827c614e5d2375cb0f2b9a494979"
+    },
+    {
+      "path": "reference/retained-authorities.mjs",
+      "sha256": "9e158a5985284073f81d55ae738158f597af6359c8fbd643136a5259b84664cb"
+    },
+    {
+      "path": "reference/authority-history.mjs",
+      "sha256": "cbe099d1e0b151cc4252f6f2b9470185a66d9807fa7534ca1ce5ffa86aa21cee"
+    },
+    {
+      "path": "reference/archive.mjs",
+      "sha256": "9cbb871edcf4780fe151e2aa95f97965a09bea4a6df1e5b6ea264a7b7f2e277d"
+    },
+    {
+      "path": "reference/timestamp.mjs",
+      "sha256": "37110292938c084a2229c74966d20285724477eef6daedac4f6f931ac0a79fa8"
+    },
+    {
+      "path": "reference/document-evidence.mjs",
+      "sha256": "d54b4e9128f22616b08d9c039a85a75deeb03caeac856c6ae3e25092a66922b7"
+    },
+    {
+      "path": "reference/enrollment-scope.mjs",
+      "sha256": "46abe204ae25f683087660ba10a309b7b5057667180601a9085979eb29f0db58"
+    },
+    {
+      "path": "reference/pki.mjs",
+      "sha256": "69c51d6437f69132f2d05302a180ad9ee865902974e0ab8b0735eae6d392532c"
+    },
+    {
+      "path": "reference/core.mjs",
+      "sha256": "a0b946cb1212d982b58c74d6bfd73b9f2829816c8192633dffd74eba1e1c7f5c"
+    },
+    {
+      "path": "reference/state.mjs",
+      "sha256": "73a5fba99277fc34472f6e673c6e360767a62b1176accd88271580f99c985f98"
+    },
+    {
+      "path": "reference/verification-result.mjs",
+      "sha256": "4b1d2b11ec00f63a86133ddf747c509ec17ea893ae7ac6dccff10745d4d6a71e"
+    },
+    {
+      "path": "reference/sdk/index.mjs",
+      "sha256": "c7244ace6a7e38b090c5eb47b5c5533c95598bb73aa7f85615d58ac6b9da3c0f"
+    }
+  ],
+  "command": "node tools/freeze-organization-vectors.mjs --write --approved-semantic-sha256 9ea41d36329a068f509352bd60458aee078f1ab1a0daac10e2de6ed12dcc3eac"
+}

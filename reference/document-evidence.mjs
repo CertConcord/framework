@@ -138,7 +138,7 @@ export function verifyRegistrationBinding(
   const extension = cert.extensions.get(RRA['id-pe-certconcordAuthorizationID']);
   const commitment = extension && parseDER(extension.value);
   requireThat(
-    r.schemaVersion === 1 &&
+    r.schemaVersion === 2 &&
       commitment?.tag === 4 &&
       equal(commitment.value, H('RegistrationAuthorization', r)) &&
       Buffer.isBuffer(r.subjectID) &&
@@ -264,7 +264,7 @@ export function verifyDocumentEvidence(
       ),
     );
     requireThat(
-      registration.schemaVersion === 1 &&
+      registration.schemaVersion === 2 &&
         credential &&
         equal(sha512(values.RegistrationAuthorization), credential.claims.ra_authorization_hash) &&
         equal(registration.subjectID, sim.subjectID) &&

@@ -154,7 +154,7 @@ export class PersonalMdocCA extends CredentialIssuer {
       'PERSONAL_MDOC_KEY_ROLE_COLLISION',
     );
     requireThat(
-      r.schemaVersion === 1 &&
+      r.schemaVersion === 2 &&
         r.audience === this.issuer &&
         r.credentialFormat === 'mso_mdoc' &&
         equal(r.issuanceScope.trustDomainID, b.trustDomainID) &&

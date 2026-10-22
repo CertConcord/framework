@@ -263,7 +263,7 @@ export class IdentityAdmission {
               })
             : null,
         request = {
-          schemaVersion: 1,
+          schemaVersion: 2,
           requestID: random(),
           trustDomainID: this.trustDomainID,
           audience: this.issuanceAudience,

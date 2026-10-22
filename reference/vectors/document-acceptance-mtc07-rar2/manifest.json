@@ -1,0 +1,1634 @@
+{
+  "schemaVersion": 1,
+  "profile": "certconcord-document-acceptance-vectors-draft-03-mtc07-rar2",
+  "description": "Synthetic public original-byte document and retained-preservation examples. Explicit external trust and fixed evaluation times are fixture policy, not operational assurances.",
+  "files": [
+    {
+      "path": "files/01425faed1a0c574ac8f484e2e1aaa217efd2690947acdca71c3790ecde66a85.json",
+      "bytes": 3229,
+      "sha256": "01425faed1a0c574ac8f484e2e1aaa217efd2690947acdca71c3790ecde66a85",
+      "encoding": "utf8",
+      "decodedBytes": 3229,
+      "decodedSHA256": "01425faed1a0c574ac8f484e2e1aaa217efd2690947acdca71c3790ecde66a85",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/03eb0b069872174bc84592bd72d342044e2a18ab0dca8b478a96531b92391b70.der.b64",
+      "bytes": 9993,
+      "sha256": "95eeed0569611b78286a8b764447f949ddf23bb7a2972bc3c4e41a50d1fd0991",
+      "encoding": "base64",
+      "decodedBytes": 7493,
+      "decodedSHA256": "03eb0b069872174bc84592bd72d342044e2a18ab0dca8b478a96531b92391b70",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/04e31957ebdfe9041d62d4aeff65ca7dec807e9889a70870e319a13ae7e57d37.json",
+      "bytes": 3228,
+      "sha256": "04e31957ebdfe9041d62d4aeff65ca7dec807e9889a70870e319a13ae7e57d37",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "04e31957ebdfe9041d62d4aeff65ca7dec807e9889a70870e319a13ae7e57d37",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.cbor.b64",
+      "bytes": 152581,
+      "sha256": "a76693f243bc4c1d00b7bae258a651a0ca624cbb29d7b432a67277761a02f306",
+      "encoding": "base64",
+      "decodedBytes": 114435,
+      "decodedSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.der.b64",
+      "bytes": 152581,
+      "sha256": "a76693f243bc4c1d00b7bae258a651a0ca624cbb29d7b432a67277761a02f306",
+      "encoding": "base64",
+      "decodedBytes": 114435,
+      "decodedSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/0a9fc937835b453efeef08c3fc2078a8ca8ce2e9423ad844f741d06dbbd5de07.json",
+      "bytes": 10848,
+      "sha256": "0a9fc937835b453efeef08c3fc2078a8ca8ce2e9423ad844f741d06dbbd5de07",
+      "encoding": "utf8",
+      "decodedBytes": 10848,
+      "decodedSHA256": "0a9fc937835b453efeef08c3fc2078a8ca8ce2e9423ad844f741d06dbbd5de07",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/0d69bd00f437d1490d00581dad572a049359a35d89c86070dbf8b75856b21a1e.json",
+      "bytes": 3229,
+      "sha256": "0d69bd00f437d1490d00581dad572a049359a35d89c86070dbf8b75856b21a1e",
+      "encoding": "utf8",
+      "decodedBytes": 3229,
+      "decodedSHA256": "0d69bd00f437d1490d00581dad572a049359a35d89c86070dbf8b75856b21a1e",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/134c6b7b84f69b217f685c725128407844cff0198bb1a32ef24b8317cda80296.cbor.b64",
+      "bytes": 134693,
+      "sha256": "6eae6213a64f02dcf81cf905df66c22569328b37f949c5707bf05eebabb02c3c",
+      "encoding": "base64",
+      "decodedBytes": 101018,
+      "decodedSHA256": "134c6b7b84f69b217f685c725128407844cff0198bb1a32ef24b8317cda80296",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/13b8afa301fd938659a23d1e70cc7e247aa3ec44d24f8ce3add41f82a93b052e.der.b64",
+      "bytes": 10037,
+      "sha256": "02735ea67b93c7c8cc3a2078996c1ea618a66b2f43ffae91463702824ad8cdaf",
+      "encoding": "base64",
+      "decodedBytes": 7526,
+      "decodedSHA256": "13b8afa301fd938659a23d1e70cc7e247aa3ec44d24f8ce3add41f82a93b052e",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/148c25cb9fb9c16846eb14ece6bc8927bdf442444d7ff76168b680236b343050.der.b64",
+      "bytes": 50641,
+      "sha256": "171d6589103bc883f2b01b5a6f26a632dea5c80838d242632002a409829b9117",
+      "encoding": "base64",
+      "decodedBytes": 37979,
+      "decodedSHA256": "148c25cb9fb9c16846eb14ece6bc8927bdf442444d7ff76168b680236b343050",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/14d458631b31ddbd4caa39ab86658de1ca81367a4de31e984626be9329a2f20d.der.b64",
+      "bytes": 9993,
+      "sha256": "e7d5e0d8f1f5c847dab02f76e728754ec354a86d4d9d14bb7cd53b248ad49083",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "14d458631b31ddbd4caa39ab86658de1ca81367a4de31e984626be9329a2f20d",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/14ecb6f9f7531405a2430956eb4903bc58edec8822a37a51a866ea54f04a6334.cbor.b64",
+      "bytes": 134689,
+      "sha256": "3cb90779c5189ba962f258668465b4cb0ca43da03824b409d7d9c372ba3d56ff",
+      "encoding": "base64",
+      "decodedBytes": 101016,
+      "decodedSHA256": "14ecb6f9f7531405a2430956eb4903bc58edec8822a37a51a866ea54f04a6334",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/16aa998f3f9eb18ad639c2ffdec7ea109a0148fd3bc5044c1066e06fe1bda4af.json",
+      "bytes": 3229,
+      "sha256": "16aa998f3f9eb18ad639c2ffdec7ea109a0148fd3bc5044c1066e06fe1bda4af",
+      "encoding": "utf8",
+      "decodedBytes": 3229,
+      "decodedSHA256": "16aa998f3f9eb18ad639c2ffdec7ea109a0148fd3bc5044c1066e06fe1bda4af",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/190f48242d0fe47ad1c8d27bcd64cef0aa2086af89be2ab8e67d2b39f123c573.json",
+      "bytes": 1617,
+      "sha256": "190f48242d0fe47ad1c8d27bcd64cef0aa2086af89be2ab8e67d2b39f123c573",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "190f48242d0fe47ad1c8d27bcd64cef0aa2086af89be2ab8e67d2b39f123c573",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/1fb01bb6ff4b261c2656ba69b85c4a10c5b1eba8bc3e88c42887a09e8c46e196.der.b64",
+      "bytes": 198993,
+      "sha256": "6d5948a560572921a27cb9b6ae4f8240de961de40f424c19588c843094d6202c",
+      "encoding": "base64",
+      "decodedBytes": 149244,
+      "decodedSHA256": "1fb01bb6ff4b261c2656ba69b85c4a10c5b1eba8bc3e88c42887a09e8c46e196",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/21d334a75d5d69d27988b48967a351d25ad770b99c118deb1899bd27ac32fe2b.json",
+      "bytes": 13666,
+      "sha256": "21d334a75d5d69d27988b48967a351d25ad770b99c118deb1899bd27ac32fe2b",
+      "encoding": "utf8",
+      "decodedBytes": 13666,
+      "decodedSHA256": "21d334a75d5d69d27988b48967a351d25ad770b99c118deb1899bd27ac32fe2b",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/222d4dbb29a05dc078c5e00f59b37668555fee030c2b54dffe8a2cb3fc6338ab.json",
+      "bytes": 10852,
+      "sha256": "222d4dbb29a05dc078c5e00f59b37668555fee030c2b54dffe8a2cb3fc6338ab",
+      "encoding": "utf8",
+      "decodedBytes": 10852,
+      "decodedSHA256": "222d4dbb29a05dc078c5e00f59b37668555fee030c2b54dffe8a2cb3fc6338ab",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/309d3a5adfddcfae57ac4c5de3c96802babe264dbf28dd01cb1ac5bf6925ca5e.der.b64",
+      "bytes": 9993,
+      "sha256": "ad526049eb41f9dc5f231b73fea642778cc1a92bf728d5f21939e25028a3aa2d",
+      "encoding": "base64",
+      "decodedBytes": 7493,
+      "decodedSHA256": "309d3a5adfddcfae57ac4c5de3c96802babe264dbf28dd01cb1ac5bf6925ca5e",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/31b91df96bce72bb89b046f75c5d74ee879c76b84418ac05cdb58aff0c6ce8c4.der.b64",
+      "bytes": 50645,
+      "sha256": "2f371e3c6126070c99859a726f4621f9c733d5d79306ce6c3bc5e005fa4cf299",
+      "encoding": "base64",
+      "decodedBytes": 37982,
+      "decodedSHA256": "31b91df96bce72bb89b046f75c5d74ee879c76b84418ac05cdb58aff0c6ce8c4",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/3570b1cf4159caae4da13a6b6661238fd41323a4b5f0b7bda9c25f53043281fe.json",
+      "bytes": 1617,
+      "sha256": "3570b1cf4159caae4da13a6b6661238fd41323a4b5f0b7bda9c25f53043281fe",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "3570b1cf4159caae4da13a6b6661238fd41323a4b5f0b7bda9c25f53043281fe",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/3589acd9156fb8817f3725219b24ff4b2b18210675d5480c0bd50c4286a74836.der.b64",
+      "bytes": 3489,
+      "sha256": "a266273a49f7102e3bd397fdec1193b97594705591ce842460ab62cd3f94019b",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "3589acd9156fb8817f3725219b24ff4b2b18210675d5480c0bd50c4286a74836",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/3589acd9156fb8817f3725219b24ff4b2b18210675d5480c0bd50c4286a74836.spki.b64",
+      "bytes": 3489,
+      "sha256": "a266273a49f7102e3bd397fdec1193b97594705591ce842460ab62cd3f94019b",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "3589acd9156fb8817f3725219b24ff4b2b18210675d5480c0bd50c4286a74836",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/374591718c801cad2b32acd2cffed3c1e21005661f14ea6f14c77cf5edad0fba.der.b64",
+      "bytes": 9981,
+      "sha256": "245ac9858198c51061a018d193946f70e9af87e0f32abc99c40b4635d9d0e413",
+      "encoding": "base64",
+      "decodedBytes": 7484,
+      "decodedSHA256": "374591718c801cad2b32acd2cffed3c1e21005661f14ea6f14c77cf5edad0fba",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/3caf0f34f4ecab0b78edc0affc77f0ee8a2ace43b1f1eeed23506c3d77c2ddb7.spki.b64",
+      "bytes": 3489,
+      "sha256": "1914a20d26b5751d5985ddf831e5b9bb53dd05ca5e94f152d305ecea9e92e748",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "3caf0f34f4ecab0b78edc0affc77f0ee8a2ace43b1f1eeed23506c3d77c2ddb7",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/456167c872b5e60e7ed55e199924cf460bea3dd4fb6e91cca80c8f009b219040.der.b64",
+      "bytes": 16885,
+      "sha256": "dff8d0c5dc71ab3fea686a9bf6cc03cb6320ca36335b0964b4ca8c7c723ece4f",
+      "encoding": "base64",
+      "decodedBytes": 12662,
+      "decodedSHA256": "456167c872b5e60e7ed55e199924cf460bea3dd4fb6e91cca80c8f009b219040",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "bytes": 10852,
+      "sha256": "468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2",
+      "encoding": "utf8",
+      "decodedBytes": 10852,
+      "decodedSHA256": "468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/475e2a4eeae9bd3a9d87234439f932fdba096f9e662a6d451c4f08c9bbcc3b9f.json",
+      "bytes": 3228,
+      "sha256": "475e2a4eeae9bd3a9d87234439f932fdba096f9e662a6d451c4f08c9bbcc3b9f",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "475e2a4eeae9bd3a9d87234439f932fdba096f9e662a6d451c4f08c9bbcc3b9f",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/499dbe0f4ba597e17f49a8e9a71ce77b2a509621931fb109bb763541172db8dd.der.b64",
+      "bytes": 3489,
+      "sha256": "8b7a7000518a6f832ac65dd8763a8ba4006314fc1f8165025c35b34eb4fbba15",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "499dbe0f4ba597e17f49a8e9a71ce77b2a509621931fb109bb763541172db8dd",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/49a2baaf771ac2dcbe674a34a112cf6eb6ebed1027610bf33a62b6f7c7455774.der.b64",
+      "bytes": 33733,
+      "sha256": "ce3302735a9ef0049a7eba0bd491240e391dd59f48e33364ca3afa551de387ea",
+      "encoding": "base64",
+      "decodedBytes": 25298,
+      "decodedSHA256": "49a2baaf771ac2dcbe674a34a112cf6eb6ebed1027610bf33a62b6f7c7455774",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/4a6f2aaab7a134d760ff33062d2e5fc2039c940d78eb4c0689fa9c60153d7fa6.der.b64",
+      "bytes": 9993,
+      "sha256": "cb7b8719df119a57841dbef8c39034d1910527e08e47a08800e249e1aa9527eb",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "4a6f2aaab7a134d760ff33062d2e5fc2039c940d78eb4c0689fa9c60153d7fa6",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/4c6eabfc7a5d5fa555e3fc39b3c36ea9061a9a49a37f2fdfb32fe93a6c2c1ec3.der.b64",
+      "bytes": 3489,
+      "sha256": "9421e9e6b55cf6dcce49731488b25e430ca60cca39419fac0ac1bfddbaa53ee9",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "4c6eabfc7a5d5fa555e3fc39b3c36ea9061a9a49a37f2fdfb32fe93a6c2c1ec3",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/4c6eabfc7a5d5fa555e3fc39b3c36ea9061a9a49a37f2fdfb32fe93a6c2c1ec3.spki.b64",
+      "bytes": 3489,
+      "sha256": "9421e9e6b55cf6dcce49731488b25e430ca60cca39419fac0ac1bfddbaa53ee9",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "4c6eabfc7a5d5fa555e3fc39b3c36ea9061a9a49a37f2fdfb32fe93a6c2c1ec3",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/4cec1fb82b4f2bb5172a0f14a6a6ebbde59af3cb07af1e6f4ca052ffd6bcc036.json",
+      "bytes": 10852,
+      "sha256": "4cec1fb82b4f2bb5172a0f14a6a6ebbde59af3cb07af1e6f4ca052ffd6bcc036",
+      "encoding": "utf8",
+      "decodedBytes": 10852,
+      "decodedSHA256": "4cec1fb82b4f2bb5172a0f14a6a6ebbde59af3cb07af1e6f4ca052ffd6bcc036",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/56465645bf86eb1980968cb215327eeaa5eba86b29eb01ca85a52cf1f79d4daf.cbor.b64",
+      "bytes": 152581,
+      "sha256": "1e1f67fe8b212b5a8c93659106e26df1c69960bf5e285077b799002304c9abd2",
+      "encoding": "base64",
+      "decodedBytes": 114435,
+      "decodedSHA256": "56465645bf86eb1980968cb215327eeaa5eba86b29eb01ca85a52cf1f79d4daf",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661.cbor.b64",
+      "bytes": 134693,
+      "sha256": "ebd925d1ae91f0003c7ab663c581aeb0389e257e9126847a205ac19964689658",
+      "encoding": "base64",
+      "decodedBytes": 101018,
+      "decodedSHA256": "57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661.der.b64",
+      "bytes": 134693,
+      "sha256": "ebd925d1ae91f0003c7ab663c581aeb0389e257e9126847a205ac19964689658",
+      "encoding": "base64",
+      "decodedBytes": 101018,
+      "decodedSHA256": "57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/580f687b1324cddbbbb8fbc75a0a97f1cec5c1f5b969541081dd1ce39800a14c.json",
+      "bytes": 1617,
+      "sha256": "580f687b1324cddbbbb8fbc75a0a97f1cec5c1f5b969541081dd1ce39800a14c",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "580f687b1324cddbbbb8fbc75a0a97f1cec5c1f5b969541081dd1ce39800a14c",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/5e6e20fd4968de357f411bf11df3a66fbe44af554af3cd985b74017cf70d4904.cbor.b64",
+      "bytes": 134689,
+      "sha256": "8b9eb2fcd411e3d77a7a8612287bc1a644624daa65d0c12d4b28ddc1648f5380",
+      "encoding": "base64",
+      "decodedBytes": 101016,
+      "decodedSHA256": "5e6e20fd4968de357f411bf11df3a66fbe44af554af3cd985b74017cf70d4904",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/5f7339946ae53ee86245ad0b11f1f264b136be746886cf2e9cea733f6d82b8fd.der.b64",
+      "bytes": 10017,
+      "sha256": "15a3e1098ca96cd9ec4058f399a8804009e7c6f6f7fe952e444284eaedbf4956",
+      "encoding": "base64",
+      "decodedBytes": 7510,
+      "decodedSHA256": "5f7339946ae53ee86245ad0b11f1f264b136be746886cf2e9cea733f6d82b8fd",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/6992ad5ac34afd1e79c6740f2005615d542e73fa556428da324a1271c2afa698.json",
+      "bytes": 13662,
+      "sha256": "6992ad5ac34afd1e79c6740f2005615d542e73fa556428da324a1271c2afa698",
+      "encoding": "utf8",
+      "decodedBytes": 13662,
+      "decodedSHA256": "6992ad5ac34afd1e79c6740f2005615d542e73fa556428da324a1271c2afa698",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/69ed608f6e6ef777a42b4d0d8c2b5631345c05881b99f168db5198852593aca1.json",
+      "bytes": 13666,
+      "sha256": "69ed608f6e6ef777a42b4d0d8c2b5631345c05881b99f168db5198852593aca1",
+      "encoding": "utf8",
+      "decodedBytes": 13666,
+      "decodedSHA256": "69ed608f6e6ef777a42b4d0d8c2b5631345c05881b99f168db5198852593aca1",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/6a3851994afc0cf36df9ae9668c7ed04b54426fe47deec89d148cfb4086b3230.der.b64",
+      "bytes": 50641,
+      "sha256": "c9fae53d1fc6c144699025b5938e2094703a3b56af6813501a1ef6077706050c",
+      "encoding": "base64",
+      "decodedBytes": 37980,
+      "decodedSHA256": "6a3851994afc0cf36df9ae9668c7ed04b54426fe47deec89d148cfb4086b3230",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/6a3f93f5370b95687fe4a966c246c062aa8cd142b6446676d29e5e99d743a023.der.b64",
+      "bytes": 138085,
+      "sha256": "e110f2af5a1b84427d28be4f201b9201f68c64d9cc7f96c4e1c5384aa5cd9f92",
+      "encoding": "base64",
+      "decodedBytes": 103561,
+      "decodedSHA256": "6a3f93f5370b95687fe4a966c246c062aa8cd142b6446676d29e5e99d743a023",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/6ce25889cc52c0d05ec357aba82d845ab4027a33084dd3fff7da1a20c99a47c8.der.b64",
+      "bytes": 3489,
+      "sha256": "cc1d8229457634845b7733ff7fb1362187a4d2647f643b464f031f0938016c6f",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "6ce25889cc52c0d05ec357aba82d845ab4027a33084dd3fff7da1a20c99a47c8",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/6ce25889cc52c0d05ec357aba82d845ab4027a33084dd3fff7da1a20c99a47c8.spki.b64",
+      "bytes": 3489,
+      "sha256": "cc1d8229457634845b7733ff7fb1362187a4d2647f643b464f031f0938016c6f",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "6ce25889cc52c0d05ec357aba82d845ab4027a33084dd3fff7da1a20c99a47c8",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/7185fcc2615d3757b0f4e0edf77e98e8621993727212e00ca48a2602432ba384.cbor.b64",
+      "bytes": 152641,
+      "sha256": "d6d092c1abee1b0b01aa749c31f262981d8179bc5d5efdc830d3c9bc835d9e23",
+      "encoding": "base64",
+      "decodedBytes": 114480,
+      "decodedSHA256": "7185fcc2615d3757b0f4e0edf77e98e8621993727212e00ca48a2602432ba384",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/7224200760bac760aa60a36faafef225d816007072c26de97190483a654826e6.json",
+      "bytes": 1617,
+      "sha256": "7224200760bac760aa60a36faafef225d816007072c26de97190483a654826e6",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "7224200760bac760aa60a36faafef225d816007072c26de97190483a654826e6",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/770b41e08d22936cd7e2ddb69907ea57cc2fd9c343efcda86a163b666c5b04f7.json",
+      "bytes": 1617,
+      "sha256": "770b41e08d22936cd7e2ddb69907ea57cc2fd9c343efcda86a163b666c5b04f7",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "770b41e08d22936cd7e2ddb69907ea57cc2fd9c343efcda86a163b666c5b04f7",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/78e11e679fc165ee39dfddebd6f7ae5c07802d8d04b96f6b5c449589bcb4b238.cbor.b64",
+      "bytes": 135585,
+      "sha256": "22c84bce47dc299c440326be46c0e3bc7f25f2f3dcd3664b6ec804f013ad5594",
+      "encoding": "base64",
+      "decodedBytes": 101688,
+      "decodedSHA256": "78e11e679fc165ee39dfddebd6f7ae5c07802d8d04b96f6b5c449589bcb4b238",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/7f491fb27facd474f1b6065b22ac2c230b05d0f979074b973cc937c8d6ce1b97.der.b64",
+      "bytes": 50645,
+      "sha256": "9dbf9d50590cfecba8d6f19822c78659236289e3c61b06b0fe15d0b0eb1bcbb5",
+      "encoding": "base64",
+      "decodedBytes": 37981,
+      "decodedSHA256": "7f491fb27facd474f1b6065b22ac2c230b05d0f979074b973cc937c8d6ce1b97",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/81ee5ab69138748cf3e5b62d9e1c90b60ff97e77948451fd244875e6f2811a86.der.b64",
+      "bytes": 3489,
+      "sha256": "e1f86e448553924cecb5b8be86c863e39b783b6b129fc394255e0bfe8d5439d5",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "81ee5ab69138748cf3e5b62d9e1c90b60ff97e77948451fd244875e6f2811a86",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/81ee5ab69138748cf3e5b62d9e1c90b60ff97e77948451fd244875e6f2811a86.spki.b64",
+      "bytes": 3489,
+      "sha256": "e1f86e448553924cecb5b8be86c863e39b783b6b129fc394255e0bfe8d5439d5",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "81ee5ab69138748cf3e5b62d9e1c90b60ff97e77948451fd244875e6f2811a86",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/854041b86da75629c0088d78fe0b92f0d4d47103bf1a3ff6b314e0ad8b0af95c.der.b64",
+      "bytes": 3489,
+      "sha256": "a0fdc868679c70367bb7be3de501f79fc53de440171a8c33bb99085e38e6a28c",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "854041b86da75629c0088d78fe0b92f0d4d47103bf1a3ff6b314e0ad8b0af95c",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/85adb59dd9fc17060fd29fb1c8df60ff1f1138a7cc1883167ab672056c9f13dc.der.b64",
+      "bytes": 202289,
+      "sha256": "f3c25c862acc54291b37952123a3ddb77e2cb624cdbc11abcd13c7d06857fc8e",
+      "encoding": "base64",
+      "decodedBytes": 151714,
+      "decodedSHA256": "85adb59dd9fc17060fd29fb1c8df60ff1f1138a7cc1883167ab672056c9f13dc",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/87874f040f0e32818763f8eae44c174932bc3fa9ab67b9a55871e259ad74318d.der.b64",
+      "bytes": 3489,
+      "sha256": "818f77fb1ea27758f38237fa216b3895f1ce7a4cb14c37e3e3fbcb45e7989714",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "87874f040f0e32818763f8eae44c174932bc3fa9ab67b9a55871e259ad74318d",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/88c45463eea152e86791251f3b643dbedf3d84c4ee6927fed1046016a9f6669e.cbor.b64",
+      "bytes": 134693,
+      "sha256": "07138dfe26ba8397f12a6dacc408bf58e9fff0b8038dcb4fab77ae2208913c3f",
+      "encoding": "base64",
+      "decodedBytes": 101018,
+      "decodedSHA256": "88c45463eea152e86791251f3b643dbedf3d84c4ee6927fed1046016a9f6669e",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/89fb624174fb799d7826dc57bf47f0595d6a6b1f686421f3ae1484b917ffe942.der.b64",
+      "bytes": 9993,
+      "sha256": "73609efe1936a26879702f5407124fb6e83087894aed2bfbcf8698ea04b56899",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "89fb624174fb799d7826dc57bf47f0595d6a6b1f686421f3ae1484b917ffe942",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/90c1acbebc2281eeb1cee0b25ac55a9ce3e51cc90c5317c1fc739b0ed7b84fc0.cbor.b64",
+      "bytes": 135585,
+      "sha256": "f78578783067cb1ced3649cc242ee63bff5cf8f8a12f9089de0bc2d960a06637",
+      "encoding": "base64",
+      "decodedBytes": 101688,
+      "decodedSHA256": "90c1acbebc2281eeb1cee0b25ac55a9ce3e51cc90c5317c1fc739b0ed7b84fc0",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/9116fff9811dcfbd6dcef9a82f6b345c22600e4260c1e8af870bfa8cd8260865.der.b64",
+      "bytes": 689,
+      "sha256": "d95cae569b3007b3c20884293f87a73d50d512e474653a0762c9a4933971cd45",
+      "encoding": "base64",
+      "decodedBytes": 515,
+      "decodedSHA256": "9116fff9811dcfbd6dcef9a82f6b345c22600e4260c1e8af870bfa8cd8260865",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/94805c3f1ef59fda317bdead282ba6b4905b806341a60f285fb2ff86b6bb2b6d.json",
+      "bytes": 1617,
+      "sha256": "94805c3f1ef59fda317bdead282ba6b4905b806341a60f285fb2ff86b6bb2b6d",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "94805c3f1ef59fda317bdead282ba6b4905b806341a60f285fb2ff86b6bb2b6d",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/979f8463483d6ffba9e941f95b8f76449914375653f319ca100af292c178eb81.der.b64",
+      "bytes": 3489,
+      "sha256": "c1baa502c198f918a3e65873d2b087de35757589581aa27270b286101c87b64e",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "979f8463483d6ffba9e941f95b8f76449914375653f319ca100af292c178eb81",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/979f8463483d6ffba9e941f95b8f76449914375653f319ca100af292c178eb81.spki.b64",
+      "bytes": 3489,
+      "sha256": "c1baa502c198f918a3e65873d2b087de35757589581aa27270b286101c87b64e",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "979f8463483d6ffba9e941f95b8f76449914375653f319ca100af292c178eb81",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/9c8954f24b1114a1f21be2e5427d0ec9a0a5ec09103ea191a43817105570ebd6.spki.b64",
+      "bytes": 3489,
+      "sha256": "34ba03dcc74254e3631e0178dee29ff7d46bcf47c0a167b1b64a7819470b081c",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "9c8954f24b1114a1f21be2e5427d0ec9a0a5ec09103ea191a43817105570ebd6",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/9fcecd84a053a692103bbf241c16a1e9a3fbda1d3465cbf45026425429c26369.der.b64",
+      "bytes": 16889,
+      "sha256": "2383be315d6f26ea92fd7339fa14ac7d7264be8d105be60481dd9acd1a7e5ee2",
+      "encoding": "base64",
+      "decodedBytes": 12665,
+      "decodedSHA256": "9fcecd84a053a692103bbf241c16a1e9a3fbda1d3465cbf45026425429c26369",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/a1c6c93235c616c42a337405707879c7fce297f149e4ec19ecf2883895c5c8a6.der.b64",
+      "bytes": 10029,
+      "sha256": "a22be644bcbf7c3039bcc93b70e27b9880700d28409a9e605854a963ec710b8e",
+      "encoding": "base64",
+      "decodedBytes": 7520,
+      "decodedSHA256": "a1c6c93235c616c42a337405707879c7fce297f149e4ec19ecf2883895c5c8a6",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/a441d473c0b99aefa1eb20c32c7654859a52154dcf8513b6185a5ae0c674e71c.der.b64",
+      "bytes": 3489,
+      "sha256": "778b79ed3e338728d642ebea8abfe8a6fc66066308c2e5229b639ca53f9948db",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "a441d473c0b99aefa1eb20c32c7654859a52154dcf8513b6185a5ae0c674e71c",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/a83a44adadfd3b8f3201f25da95571a4698ac78521e59d4b540df07d0c7f7436.der.b64",
+      "bytes": 3489,
+      "sha256": "59bc8927fd8a4f9e3490e7f9aaa593917106e5d6cdf684d7606c31d1404f10ed",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "a83a44adadfd3b8f3201f25da95571a4698ac78521e59d4b540df07d0c7f7436",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/b074255a288d6895b8dab344bd5b77ee3268a5d6035c9a077f12623ec8182b6b.json",
+      "bytes": 1617,
+      "sha256": "b074255a288d6895b8dab344bd5b77ee3268a5d6035c9a077f12623ec8182b6b",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "b074255a288d6895b8dab344bd5b77ee3268a5d6035c9a077f12623ec8182b6b",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/b4b8663b420c67c50cb90b14275aff023e2e3427607b2070f1c722176751774e.der.b64",
+      "bytes": 152581,
+      "sha256": "e05374b379924d51612f8f6d5d02ee4ad2bdeb5b45a8c42580610941a010deeb",
+      "encoding": "base64",
+      "decodedBytes": 114435,
+      "decodedSHA256": "b4b8663b420c67c50cb90b14275aff023e2e3427607b2070f1c722176751774e",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/bb90d7f705b10c5e3be9b8e7715bb4d7bac5a02e978440b72b452e5b48ac7173.cbor.b64",
+      "bytes": 152581,
+      "sha256": "23b86883d05492d60e0bebfa9573044a14183a28fb7828870ace8ad38a458f31",
+      "encoding": "base64",
+      "decodedBytes": 114433,
+      "decodedSHA256": "bb90d7f705b10c5e3be9b8e7715bb4d7bac5a02e978440b72b452e5b48ac7173",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/be09a053f70acba4433702ee2c70c7d2084f372f6ec71fb4646707da440e6fba.der.b64",
+      "bytes": 9993,
+      "sha256": "875cc3a15753d81c09ba585ab119268aff28aa6421204dbcb431904ddab83717",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "be09a053f70acba4433702ee2c70c7d2084f372f6ec71fb4646707da440e6fba",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/c5a7bffb34ee880dae0bad29a80ef3800d5097de9ff2f184d4fbca892683f762.der.b64",
+      "bytes": 125,
+      "sha256": "702ff556e40107f36437152cf2fd528f63ac11b72a4d99f766b66e6cdf40e557",
+      "encoding": "base64",
+      "decodedBytes": 91,
+      "decodedSHA256": "c5a7bffb34ee880dae0bad29a80ef3800d5097de9ff2f184d4fbca892683f762",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/c5a7bffb34ee880dae0bad29a80ef3800d5097de9ff2f184d4fbca892683f762.spki.b64",
+      "bytes": 125,
+      "sha256": "702ff556e40107f36437152cf2fd528f63ac11b72a4d99f766b66e6cdf40e557",
+      "encoding": "base64",
+      "decodedBytes": 91,
+      "decodedSHA256": "c5a7bffb34ee880dae0bad29a80ef3800d5097de9ff2f184d4fbca892683f762",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/ca1a7c665a4e9a7e676050b659257626015b172d27899b0ea3910ba2ce23c43c.der.b64",
+      "bytes": 33733,
+      "sha256": "638397e13c1a7756cc8700c928f0552927ab2810bc37a85ff802bc8b15f1a2cc",
+      "encoding": "base64",
+      "decodedBytes": 25297,
+      "decodedSHA256": "ca1a7c665a4e9a7e676050b659257626015b172d27899b0ea3910ba2ce23c43c",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/cdb48f6076ddd371021edab8b5c210e9dd10202a1a024e9f2c75f2bbe93bec2b.cbor.b64",
+      "bytes": 152581,
+      "sha256": "be38fc5148bb79314ac468c229911a066e5ea4c1439ca0f8b5d1ab182c78cf83",
+      "encoding": "base64",
+      "decodedBytes": 114433,
+      "decodedSHA256": "cdb48f6076ddd371021edab8b5c210e9dd10202a1a024e9f2c75f2bbe93bec2b",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/d2dc02d97fa6a895abbbf335f36617cbe5e810616a91409a6d1e79c826be77f6.cbor.b64",
+      "bytes": 152581,
+      "sha256": "7c490cd3c93b80991828d446328585744a2c4a57e39591e583719d0a1b1dcf34",
+      "encoding": "base64",
+      "decodedBytes": 114435,
+      "decodedSHA256": "d2dc02d97fa6a895abbbf335f36617cbe5e810616a91409a6d1e79c826be77f6",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/d5523dc102ea62dfec6876bce2fd91452b7318fb6283dfb5658a6bb9fd485624.der.b64",
+      "bytes": 134693,
+      "sha256": "183918a105a3ba2fc21e04294421ffecd4d6d0ff3130a2740a4fb93b5a274219",
+      "encoding": "base64",
+      "decodedBytes": 101018,
+      "decodedSHA256": "d5523dc102ea62dfec6876bce2fd91452b7318fb6283dfb5658a6bb9fd485624",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/d719ed960b22d5e9ce1983ad4478a1632260ca0e1ff00e7b3277a3636fbe2a7b.der.b64",
+      "bytes": 9993,
+      "sha256": "ad68640c87b0264aa18876e13e0c330b0960511ec9d5c3b0ae2aa17deb9fa1e0",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "d719ed960b22d5e9ce1983ad4478a1632260ca0e1ff00e7b3277a3636fbe2a7b",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/dda9487018931eb9a361deb45e89559cabcf559631303846f3db7486d0734a94.der.b64",
+      "bytes": 3489,
+      "sha256": "5e38df9f994fdfaf746e3dfbde95912a27a8cb0d0ab797cf8aca9d705d3efbe9",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "dda9487018931eb9a361deb45e89559cabcf559631303846f3db7486d0734a94",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/dff68da77d72cacf3b7413b67f1fc76ab706fa7e43c65e6606341b58fb088fb1.json",
+      "bytes": 1617,
+      "sha256": "dff68da77d72cacf3b7413b67f1fc76ab706fa7e43c65e6606341b58fb088fb1",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "dff68da77d72cacf3b7413b67f1fc76ab706fa7e43c65e6606341b58fb088fb1",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd.json",
+      "bytes": 13666,
+      "sha256": "e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd",
+      "encoding": "utf8",
+      "decodedBytes": 13666,
+      "decodedSHA256": "e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/e3d0947ff156c581f94c996ee07cff0f27e6a968f60c06cff36eee2cd7f84028.der.b64",
+      "bytes": 3489,
+      "sha256": "e306ddb0ebdee89eb07b660918d2c167b3f2855422eedca63f94b6c2ee2a0ca5",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e3d0947ff156c581f94c996ee07cff0f27e6a968f60c06cff36eee2cd7f84028",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e3e142d2ecdaa8edeff63275edefb452404cb58ee7fd3af01e7f22e4b8249496.der.b64",
+      "bytes": 3489,
+      "sha256": "aac14212cfe3c8a07719c79eec45570079f5d442c3fee97c27c1a0494f0e4cd4",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e3e142d2ecdaa8edeff63275edefb452404cb58ee7fd3af01e7f22e4b8249496",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e3e142d2ecdaa8edeff63275edefb452404cb58ee7fd3af01e7f22e4b8249496.spki.b64",
+      "bytes": 3489,
+      "sha256": "aac14212cfe3c8a07719c79eec45570079f5d442c3fee97c27c1a0494f0e4cd4",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e3e142d2ecdaa8edeff63275edefb452404cb58ee7fd3af01e7f22e4b8249496",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e3e720fda846aac601a7ee48f5b02b507312658ea49e2a5cd0aa03fc378b553e.der.b64",
+      "bytes": 9993,
+      "sha256": "f4971ab7bb92e02cf7d7bfff63cdc1d8a86463524f7ad9a46db3e2a8529b6c82",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "e3e720fda846aac601a7ee48f5b02b507312658ea49e2a5cd0aa03fc378b553e",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e9f43f4331d245dd1cc33de1b61f65653c990f2a2627146f9efc9f694a1a628f.der.b64",
+      "bytes": 3489,
+      "sha256": "ecf5a214fb550b9829adfcafc62374f10064d40f20030c1a1caae0cd843133f8",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e9f43f4331d245dd1cc33de1b61f65653c990f2a2627146f9efc9f694a1a628f",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e9f43f4331d245dd1cc33de1b61f65653c990f2a2627146f9efc9f694a1a628f.spki.b64",
+      "bytes": 3489,
+      "sha256": "ecf5a214fb550b9829adfcafc62374f10064d40f20030c1a1caae0cd843133f8",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e9f43f4331d245dd1cc33de1b61f65653c990f2a2627146f9efc9f694a1a628f",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/ec0074ce7f4e92455f97c1cdd573781a56a4dffbaea73a2dc550661e35cfa802.der.b64",
+      "bytes": 3489,
+      "sha256": "438ba73402ccece30daca1d4a34fd8aed1b463f06924341c538d941e6797dfae",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "ec0074ce7f4e92455f97c1cdd573781a56a4dffbaea73a2dc550661e35cfa802",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/ec0074ce7f4e92455f97c1cdd573781a56a4dffbaea73a2dc550661e35cfa802.spki.b64",
+      "bytes": 3489,
+      "sha256": "438ba73402ccece30daca1d4a34fd8aed1b463f06924341c538d941e6797dfae",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "ec0074ce7f4e92455f97c1cdd573781a56a4dffbaea73a2dc550661e35cfa802",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/ed94d78831fd4788f552f5c284493c617d2942b3caf6a2401f68a9124a32a544.json",
+      "bytes": 1617,
+      "sha256": "ed94d78831fd4788f552f5c284493c617d2942b3caf6a2401f68a9124a32a544",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "ed94d78831fd4788f552f5c284493c617d2942b3caf6a2401f68a9124a32a544",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/edb87dea55cf5ef507cb5fc6d638cef8b6e6f589582f0deff549ffa27a71def4.der.b64",
+      "bytes": 9993,
+      "sha256": "cf6c5f4b13d89bccdc51966d634d1f0dd517432848f3e62dc0b7c725c0ad95a2",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "edb87dea55cf5ef507cb5fc6d638cef8b6e6f589582f0deff549ffa27a71def4",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/eea6ac5c4a2ee4b9fd9cbd2e913f0a5b52081052cc88897cf20f48a82a69bafd.der.b64",
+      "bytes": 3489,
+      "sha256": "c2cd6236f05afee814fcc10f82d30d5d6c1e2736c588f4caf7693432332c77ef",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "eea6ac5c4a2ee4b9fd9cbd2e913f0a5b52081052cc88897cf20f48a82a69bafd",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/eea6ac5c4a2ee4b9fd9cbd2e913f0a5b52081052cc88897cf20f48a82a69bafd.spki.b64",
+      "bytes": 3489,
+      "sha256": "c2cd6236f05afee814fcc10f82d30d5d6c1e2736c588f4caf7693432332c77ef",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "eea6ac5c4a2ee4b9fd9cbd2e913f0a5b52081052cc88897cf20f48a82a69bafd",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/eecba75dcd030b52aad1a7dcfdf5cdf8884d6ac13a7aa8a0ad2101c6799cc3de.cbor.b64",
+      "bytes": 117697,
+      "sha256": "a25c4a52c4421ee4f786bf559db8756fb7cf202677baccac0cc79efc6a0041ae",
+      "encoding": "base64",
+      "decodedBytes": 88271,
+      "decodedSHA256": "eecba75dcd030b52aad1a7dcfdf5cdf8884d6ac13a7aa8a0ad2101c6799cc3de",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/f18d0716ae537f7d47e6c746bfc0e7a14f6cb7115bad921b0295065780d04c1d.json",
+      "bytes": 1617,
+      "sha256": "f18d0716ae537f7d47e6c746bfc0e7a14f6cb7115bad921b0295065780d04c1d",
+      "encoding": "utf8",
+      "decodedBytes": 1617,
+      "decodedSHA256": "f18d0716ae537f7d47e6c746bfc0e7a14f6cb7115bad921b0295065780d04c1d",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/f8a0f012c0a28878b2cffea061b59762bab17e135bd058d2de8f0974cab937f8.spki.b64",
+      "bytes": 61,
+      "sha256": "7bda97b9cfecf671ed35bba3d831d46cbf0095ffc5ba1210b4d9761f2f7707a2",
+      "encoding": "base64",
+      "decodedBytes": 44,
+      "decodedSHA256": "f8a0f012c0a28878b2cffea061b59762bab17e135bd058d2de8f0974cab937f8",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/f9fc7931da075e4f92a5a2d369c5eb4f724bccd544de19cdb77d237b1c5b1707.cbor.b64",
+      "bytes": 117697,
+      "sha256": "2250a99c4e9b8bba842ee1e10d1922c3a0f6a5d2bc590abaa87a3c0ce0db8df7",
+      "encoding": "base64",
+      "decodedBytes": 88271,
+      "decodedSHA256": "f9fc7931da075e4f92a5a2d369c5eb4f724bccd544de19cdb77d237b1c5b1707",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/fc1df37d3160bd09186143c2039ccb0cf72e6dae78165d2b1fb454e30896770b.der.b64",
+      "bytes": 135889,
+      "sha256": "967090ce5e2afffb0783ee039e4c47e9fd85e2437c69c1c858822d77031db637",
+      "encoding": "base64",
+      "decodedBytes": 101914,
+      "decodedSHA256": "fc1df37d3160bd09186143c2039ccb0cf72e6dae78165d2b1fb454e30896770b",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/fe424738ef104087d840998d3083af47fa815b26fe5ed863fa61f3bed68a2b30.json",
+      "bytes": 3228,
+      "sha256": "fe424738ef104087d840998d3083af47fa815b26fe5ed863fa61f3bed68a2b30",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "fe424738ef104087d840998d3083af47fa815b26fe5ed863fa61f3bed68a2b30",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/ffb3fee2df085f07dd237bf4f2ea198716ed1121c4bdf8b2b03112651d0328d7.der.b64",
+      "bytes": 653,
+      "sha256": "3aa6bf5d770b1636286483aaff16316ca2da6429c6b1c67890676a924e59b4df",
+      "encoding": "base64",
+      "decodedBytes": 487,
+      "decodedSHA256": "ffb3fee2df085f07dd237bf4f2ea198716ed1121c4bdf8b2b03112651d0328d7",
+      "mediaType": "application/octet-stream"
+    }
+  ],
+  "documents": [
+    {
+      "id": "cms-valid",
+      "description": "Original ordinary WebAuthn activation and trusted document time.",
+      "format": "CMS",
+      "bytes": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "VALID",
+        "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "integrity": {
+            "overall": "VALID",
+            "reason": "SELECTED_SIGNATURES_AND_BINDINGS_VALID"
+          },
+          "issuerTrust": {
+            "overall": "VALID",
+            "reason": "SELECTED_ISSUER_AUTHORITIES_VALID"
+          },
+          "qualification": {
+            "overall": "VALID",
+            "reason": "REGISTRATION_AUTHORIZATION_VALID"
+          },
+          "keyBinding": {
+            "overall": "VALID",
+            "reason": "DOCUMENT_KEY_BINDING_VALID"
+          },
+          "authorization": {
+            "overall": "VALID",
+            "reason": "SELECTED_OPERATION_AUTHORIZATION_VALID"
+          },
+          "status": {
+            "overall": "VALID",
+            "reason": "SELECTED_STATUS_VALID"
+          },
+          "time": {
+            "overall": "VALID",
+            "reason": "TRUSTED_PROOF_OF_EXISTENCE"
+          },
+          "transparency": {
+            "overall": "VALID",
+            "reason": "SELECTED_TRANSPARENCY_VALID"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-changed-commitment",
+      "description": "Original leaf commitment with one altered document byte.",
+      "format": "CMS",
+      "bytes": "files/56465645bf86eb1980968cb215327eeaa5eba86b29eb01ca85a52cf1f79d4daf.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "ECP_HASH",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "integrity": {
+            "overall": "INVALID",
+            "reason": "ECP_HASH"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-missing-time",
+      "description": "Required timestamp reference remains but its raw leaf is absent.",
+      "format": "CMS",
+      "bytes": "files/78e11e679fc165ee39dfddebd6f7ae5c07802d8d04b96f6b5c449589bcb4b238.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "reason": "ECP_MISSING_OBJECT",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "time": {
+            "overall": "INDETERMINATE",
+            "reason": "ECP_MISSING_OBJECT"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-unsupported-profile",
+      "description": "Well-formed flat commitments with an unimplemented plan profile.",
+      "format": "CMS",
+      "bytes": "files/bb90d7f705b10c5e3be9b8e7715bb4d7bac5a02e978440b72b452e5b48ac7173.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "UNSUPPORTED",
+        "reason": "SDK_UNSUPPORTED_PROFILE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-future-draft-99",
+        "dimensions": {}
+      }
+    },
+    {
+      "id": "cms-unsupported-with-bad-commitment",
+      "description": "Unsupported profile cannot conceal a known leaf hash failure.",
+      "format": "CMS",
+      "bytes": "files/cdb48f6076ddd371021edab8b5c210e9dd10202a1a024e9f2c75f2bbe93bec2b.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "ECP_HASH",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-future-draft-99",
+        "dimensions": {
+          "integrity": {
+            "overall": "INVALID",
+            "reason": "ECP_HASH"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-wrong-domain",
+      "description": "Original bytes under a different relying-party domain.",
+      "format": "CMS",
+      "bytes": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.cbor.b64",
+      "trust": "files/222d4dbb29a05dc078c5e00f59b37668555fee030c2b54dffe8a2cb3fc6338ab.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "ECP_POLICY_AUTHORITY",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "authorization": {
+            "overall": "INVALID",
+            "reason": "ECP_POLICY_AUTHORITY"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-wrong-role",
+      "description": "The pinned RA key is appointed only to a different explicit role.",
+      "format": "CMS",
+      "bytes": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.cbor.b64",
+      "trust": "files/0a9fc937835b453efeef08c3fc2078a8ca8ce2e9423ad844f741d06dbbd5de07.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "AUTHORITY_ROLE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "qualification": {
+            "overall": "INVALID",
+            "reason": "AUTHORITY_ROLE"
+          },
+          "integrity": {
+            "overall": "VALID",
+            "reason": "SELECTED_SIGNATURES_AND_BINDINGS_VALID"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-stale-status",
+      "description": "Same original bytes evaluated two days later with stale credential status.",
+      "format": "CMS",
+      "bytes": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.cbor.b64",
+      "trust": "files/4cec1fb82b4f2bb5172a0f14a6a6ebbde59af3cb07af1e6f4ca052ffd6bcc036.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "reason": "ECP_STATUS_STALE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "status": {
+            "overall": "INDETERMINATE",
+            "reason": "ECP_STATUS_STALE"
+          },
+          "integrity": {
+            "overall": "VALID",
+            "reason": "SELECTED_SIGNATURES_AND_BINDINGS_VALID"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-bad-signature",
+      "description": "Altered document signature with a freshly computed outer leaf commitment.",
+      "format": "CMS",
+      "bytes": "files/d2dc02d97fa6a895abbbf335f36617cbe5e810616a91409a6d1e79c826be77f6.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "CMS_SIGNATURE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "integrity": {
+            "overall": "INVALID",
+            "reason": "CMS_SIGNATURE"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-bad-signature-missing-time",
+      "description": "Known available signature failure together with absent required time.",
+      "format": "CMS",
+      "bytes": "files/90c1acbebc2281eeb1cee0b25ac55a9ce3e51cc90c5317c1fc739b0ed7b84fc0.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "CMS_SIGNATURE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "time": {
+            "overall": "INDETERMINATE",
+            "reason": "ECP_MISSING_OBJECT"
+          },
+          "integrity": {
+            "overall": "INVALID",
+            "reason": "CMS_SIGNATURE"
+          }
+        }
+      }
+    },
+    {
+      "id": "cms-known-compromise",
+      "description": "Genuinely signed later status applies compromise before signing.",
+      "format": "CMS",
+      "bytes": "files/7185fcc2615d3757b0f4e0edf77e98e8621993727212e00ca48a2602432ba384.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "ECP_STATUS_REVOKED",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "status": {
+            "overall": "INVALID",
+            "reason": "ECP_STATUS_REVOKED"
+          },
+          "integrity": {
+            "overall": "VALID",
+            "reason": "SELECTED_SIGNATURES_AND_BINDINGS_VALID"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-valid",
+      "description": "Original ordinary WebAuthn activation and trusted document time.",
+      "format": "MDOC",
+      "bytes": "files/57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661.cbor.b64",
+      "trust": "files/e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd.json",
+      "expected": {
+        "overall": "VALID",
+        "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-document-draft-03",
+        "dimensions": {
+          "integrity": {
+            "overall": "VALID",
+            "reason": "SELECTED_SIGNATURES_AND_BINDINGS_VALID"
+          },
+          "issuerTrust": {
+            "overall": "VALID",
+            "reason": "SELECTED_ISSUER_AUTHORITIES_VALID"
+          },
+          "qualification": {
+            "overall": "VALID",
+            "reason": "REGISTRATION_AUTHORIZATION_VALID"
+          },
+          "keyBinding": {
+            "overall": "VALID",
+            "reason": "DOCUMENT_KEY_BINDING_VALID"
+          },
+          "authorization": {
+            "overall": "VALID",
+            "reason": "SELECTED_OPERATION_AUTHORIZATION_VALID"
+          },
+          "status": {
+            "overall": "VALID",
+            "reason": "SELECTED_STATUS_VALID"
+          },
+          "time": {
+            "overall": "VALID",
+            "reason": "TRUSTED_PROOF_OF_EXISTENCE"
+          },
+          "transparency": {
+            "overall": "VALID",
+            "reason": "SELECTED_TRANSPARENCY_VALID"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-changed-commitment",
+      "description": "Original leaf commitment with one altered document byte.",
+      "format": "MDOC",
+      "bytes": "files/88c45463eea152e86791251f3b643dbedf3d84c4ee6927fed1046016a9f6669e.cbor.b64",
+      "trust": "files/e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "ECP_HASH",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-document-draft-03",
+        "dimensions": {
+          "integrity": {
+            "overall": "INVALID",
+            "reason": "ECP_HASH"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-missing-time",
+      "description": "Required timestamp reference remains but its raw leaf is absent.",
+      "format": "MDOC",
+      "bytes": "files/f9fc7931da075e4f92a5a2d369c5eb4f724bccd544de19cdb77d237b1c5b1707.cbor.b64",
+      "trust": "files/e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "reason": "ECP_MISSING_OBJECT",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-document-draft-03",
+        "dimensions": {
+          "time": {
+            "overall": "INDETERMINATE",
+            "reason": "ECP_MISSING_OBJECT"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-unsupported-profile",
+      "description": "Well-formed flat commitments with an unimplemented plan profile.",
+      "format": "MDOC",
+      "bytes": "files/5e6e20fd4968de357f411bf11df3a66fbe44af554af3cd985b74017cf70d4904.cbor.b64",
+      "trust": "files/e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd.json",
+      "expected": {
+        "overall": "UNSUPPORTED",
+        "reason": "SDK_UNSUPPORTED_PROFILE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-future-draft-99",
+        "dimensions": {}
+      }
+    },
+    {
+      "id": "mdoc-unsupported-with-bad-commitment",
+      "description": "Unsupported profile cannot conceal a known leaf hash failure.",
+      "format": "MDOC",
+      "bytes": "files/14ecb6f9f7531405a2430956eb4903bc58edec8822a37a51a866ea54f04a6334.cbor.b64",
+      "trust": "files/e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "ECP_HASH",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-future-draft-99",
+        "dimensions": {
+          "integrity": {
+            "overall": "INVALID",
+            "reason": "ECP_HASH"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-wrong-domain",
+      "description": "Original bytes under a different relying-party domain.",
+      "format": "MDOC",
+      "bytes": "files/57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661.cbor.b64",
+      "trust": "files/21d334a75d5d69d27988b48967a351d25ad770b99c118deb1899bd27ac32fe2b.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "PERSONAL_MDOC_PURPOSE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-document-draft-03",
+        "dimensions": {
+          "keyBinding": {
+            "overall": "INVALID",
+            "reason": "PERSONAL_MDOC_PURPOSE"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-wrong-role",
+      "description": "The pinned RA key is appointed only to a different explicit role.",
+      "format": "MDOC",
+      "bytes": "files/57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661.cbor.b64",
+      "trust": "files/6992ad5ac34afd1e79c6740f2005615d542e73fa556428da324a1271c2afa698.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "AUTHORITY_ROLE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-document-draft-03",
+        "dimensions": {
+          "qualification": {
+            "overall": "INVALID",
+            "reason": "AUTHORITY_ROLE"
+          },
+          "integrity": {
+            "overall": "VALID",
+            "reason": "SELECTED_SIGNATURES_AND_BINDINGS_VALID"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-stale-status",
+      "description": "Same original bytes evaluated two days later with stale credential status.",
+      "format": "MDOC",
+      "bytes": "files/57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661.cbor.b64",
+      "trust": "files/69ed608f6e6ef777a42b4d0d8c2b5631345c05881b99f168db5198852593aca1.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "reason": "STATUS_LIST_STALE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-document-draft-03",
+        "dimensions": {
+          "status": {
+            "overall": "INDETERMINATE",
+            "reason": "STATUS_LIST_STALE"
+          },
+          "integrity": {
+            "overall": "VALID",
+            "reason": "SELECTED_SIGNATURES_AND_BINDINGS_VALID"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-bad-signature",
+      "description": "Altered document signature with a freshly computed outer leaf commitment.",
+      "format": "MDOC",
+      "bytes": "files/134c6b7b84f69b217f685c725128407844cff0198bb1a32ef24b8317cda80296.cbor.b64",
+      "trust": "files/e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "MDOC_DOCUMENT_SIGNATURE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-document-draft-03",
+        "dimensions": {
+          "integrity": {
+            "overall": "INVALID",
+            "reason": "MDOC_DOCUMENT_SIGNATURE"
+          }
+        }
+      }
+    },
+    {
+      "id": "mdoc-bad-signature-missing-time",
+      "description": "Known available signature failure together with absent required time.",
+      "format": "MDOC",
+      "bytes": "files/eecba75dcd030b52aad1a7dcfdf5cdf8884d6ac13a7aa8a0ad2101c6799cc3de.cbor.b64",
+      "trust": "files/e0d5f5deca7ea37c93279e0dd4e4fc14e7861ef809db517202d2a0131689f1fd.json",
+      "expected": {
+        "overall": "INVALID",
+        "reason": "MDOC_DOCUMENT_SIGNATURE",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-mdoc-document-draft-03",
+        "dimensions": {
+          "time": {
+            "overall": "INDETERMINATE",
+            "reason": "ECP_MISSING_OBJECT"
+          },
+          "integrity": {
+            "overall": "INVALID",
+            "reason": "MDOC_DOCUMENT_SIGNATURE"
+          }
+        }
+      }
+    }
+  ],
+  "preservation": [
+    {
+      "id": "cms-ers-original",
+      "description": "Original evidence record before its first protection deadline.",
+      "options": "files/94805c3f1ef59fda317bdead282ba6b4905b806341a60f285fb2ff86b6bb2b6d.json",
+      "expected": {
+        "outcome": "RETURNED",
+        "result": {
+          "chains": 1,
+          "timestamps": 1,
+          "integrity": "VALID",
+          "preservation": "VALID",
+          "proofOfExistenceUpperBound": 1792454402,
+          "latestRenewalUpperBound": 1792454402,
+          "verifiedAt": 1792454403
+        }
+      }
+    },
+    {
+      "id": "cms-ers-timely",
+      "description": "Timely TSU succession and SHA-256 to SHA-512 hash renewal.",
+      "options": "files/770b41e08d22936cd7e2ddb69907ea57cc2fd9c343efcda86a163b666c5b04f7.json",
+      "expected": {
+        "outcome": "RETURNED",
+        "result": {
+          "chains": 2,
+          "timestamps": 3,
+          "integrity": "VALID",
+          "preservation": "VALID",
+          "proofOfExistenceUpperBound": 1792454402,
+          "latestRenewalUpperBound": 1792456402,
+          "verifiedAt": 1792627202
+        }
+      }
+    },
+    {
+      "id": "cms-ers-missing-renewal",
+      "description": "Original record without the required renewal at later evaluation.",
+      "options": "files/f18d0716ae537f7d47e6c746bfc0e7a14f6cb7115bad921b0295065780d04c1d.json",
+      "expected": {
+        "outcome": "THREW",
+        "code": "ERS_FINAL_PROTECTION_EXPIRED"
+      }
+    },
+    {
+      "id": "cms-ers-missing-hash-renewal",
+      "description": "Timestamp renewal alone does not extend the original data hash deadline.",
+      "options": "files/580f687b1324cddbbbb8fbc75a0a97f1cec5c1f5b969541081dd1ce39800a14c.json",
+      "expected": {
+        "outcome": "THREW",
+        "code": "ERS_HASH_RENEWAL_LATE"
+      }
+    },
+    {
+      "id": "cms-ers-late-renewal",
+      "description": "Genuinely issued hash renewal exactly at the old hash deadline.",
+      "options": "files/3570b1cf4159caae4da13a6b6661238fd41323a4b5f0b7bda9c25f53043281fe.json",
+      "expected": {
+        "outcome": "THREW",
+        "code": "ERS_HASH_RENEWAL_LATE"
+      }
+    },
+    {
+      "id": "mdoc-ers-original",
+      "description": "Original evidence record before its first protection deadline.",
+      "options": "files/ed94d78831fd4788f552f5c284493c617d2942b3caf6a2401f68a9124a32a544.json",
+      "expected": {
+        "outcome": "RETURNED",
+        "result": {
+          "chains": 1,
+          "timestamps": 1,
+          "integrity": "VALID",
+          "preservation": "VALID",
+          "proofOfExistenceUpperBound": 1792454402,
+          "latestRenewalUpperBound": 1792454402,
+          "verifiedAt": 1792454403
+        }
+      }
+    },
+    {
+      "id": "mdoc-ers-timely",
+      "description": "Timely TSU succession and SHA-256 to SHA-512 hash renewal.",
+      "options": "files/dff68da77d72cacf3b7413b67f1fc76ab706fa7e43c65e6606341b58fb088fb1.json",
+      "expected": {
+        "outcome": "RETURNED",
+        "result": {
+          "chains": 2,
+          "timestamps": 3,
+          "integrity": "VALID",
+          "preservation": "VALID",
+          "proofOfExistenceUpperBound": 1792454402,
+          "latestRenewalUpperBound": 1792456402,
+          "verifiedAt": 1792627202
+        }
+      }
+    },
+    {
+      "id": "mdoc-ers-missing-renewal",
+      "description": "Original record without the required renewal at later evaluation.",
+      "options": "files/b074255a288d6895b8dab344bd5b77ee3268a5d6035c9a077f12623ec8182b6b.json",
+      "expected": {
+        "outcome": "THREW",
+        "code": "ERS_FINAL_PROTECTION_EXPIRED"
+      }
+    },
+    {
+      "id": "mdoc-ers-missing-hash-renewal",
+      "description": "Timestamp renewal alone does not extend the original data hash deadline.",
+      "options": "files/7224200760bac760aa60a36faafef225d816007072c26de97190483a654826e6.json",
+      "expected": {
+        "outcome": "THREW",
+        "code": "ERS_HASH_RENEWAL_LATE"
+      }
+    },
+    {
+      "id": "mdoc-ers-late-renewal",
+      "description": "Genuinely issued hash renewal exactly at the old hash deadline.",
+      "options": "files/190f48242d0fe47ad1c8d27bcd64cef0aa2086af89be2ab8e67d2b39f123c573.json",
+      "expected": {
+        "outcome": "THREW",
+        "code": "ERS_HASH_RENEWAL_LATE"
+      }
+    }
+  ],
+  "retained": [
+    {
+      "id": "cms-retained-renewed",
+      "description": "Retired issuer, retained root succession, renewed original bytes and refreshed status.",
+      "options": "files/fe424738ef104087d840998d3083af47fa815b26fe5ed863fa61f3bed68a2b30.json",
+      "expected": {
+        "overall": "VALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "currentAdmissibility": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "cms-retained-stale-current",
+      "description": "Preserved original bytes do not make stale current status fresh.",
+      "options": "files/04e31957ebdfe9041d62d4aeff65ca7dec807e9889a70870e319a13ae7e57d37.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "currentAdmissibility": {
+          "overall": "INDETERMINATE",
+          "reason": "ECP_STATUS_STALE"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "cms-retained-known-compromise",
+      "description": "A later authenticated incident preserves archive integrity but invalidates current admissibility.",
+      "options": "files/475e2a4eeae9bd3a9d87234439f932fdba096f9e662a6d451c4f08c9bbcc3b9f.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "mdoc-retained-renewed",
+      "description": "Retired issuer, retained root succession, renewed original bytes and refreshed status.",
+      "options": "files/0d69bd00f437d1490d00581dad572a049359a35d89c86070dbf8b75856b21a1e.json",
+      "expected": {
+        "overall": "VALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "currentAdmissibility": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "mdoc-retained-stale-current",
+      "description": "Preserved original bytes do not make stale current status fresh.",
+      "options": "files/16aa998f3f9eb18ad639c2ffdec7ea109a0148fd3bc5044c1066e06fe1bda4af.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "currentAdmissibility": {
+          "overall": "INDETERMINATE",
+          "reason": "STATUS_LIST_STALE"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "mdoc-retained-known-compromise",
+      "description": "A later authenticated incident preserves archive integrity but invalidates current admissibility.",
+      "options": "files/01425faed1a0c574ac8f484e2e1aaa217efd2690947acdca71c3790ecde66a85.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    }
+  ]
+}

@@ -451,6 +451,8 @@ export async function freezePreservedDelegationStatusVectors({
     'reference/timestamp.mjs',
     'reference/retained-authorities.mjs',
     'reference/authority-history.mjs',
+    'reference/document-evidence.mjs',
+    'reference/enrollment-scope.mjs',
     'reference/pki.mjs',
     'reference/core.mjs',
     'reference/state.mjs',
@@ -459,8 +461,8 @@ export async function freezePreservedDelegationStatusVectors({
   ];
   const provenance = json({
     schemaVersion: 1,
-    baselineCommit: '96110c038c9babe41d21f0f5d4c8911bdc8e1c8f',
-    baselineTree: 'a55ebf6a48f05c19fa802ea738af05b10c6e9d24',
+    baselineCommit: 'ac43db6dfd52acbac57a091cb2c9b5cc71e06244',
+    baselineTree: '11c0a93e9d9cbc1e52c3fca530cc263ab6260273',
     description:
       'Synthetic public inputs and complete results. Source digests describe construction; they do not attest an executing implementation or establish authority.',
     inputSHA256: vectorHash(inputBytes),

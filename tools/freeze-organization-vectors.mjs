@@ -381,6 +381,8 @@ export async function freezeOrganizationHistoryVectors({
     'reference/authority-history.mjs',
     'reference/archive.mjs',
     'reference/timestamp.mjs',
+    'reference/document-evidence.mjs',
+    'reference/enrollment-scope.mjs',
     'reference/pki.mjs',
     'reference/core.mjs',
     'reference/state.mjs',
@@ -389,8 +391,8 @@ export async function freezeOrganizationHistoryVectors({
   ];
   const provenance = json({
     schemaVersion: 1,
-    baselineCommit: '47cca52081e31f1aae69dc33a951852ff79bfcb3',
-    baselineTree: '368a218a0ed2d9cf222490e8379d52b052c3a693',
+    baselineCommit: 'ac43db6dfd52acbac57a091cb2c9b5cc71e06244',
+    baselineTree: '11c0a93e9d9cbc1e52c3fca530cc263ab6260273',
     description:
       'Synthetic public bytes authored from the named baseline plus the separately hashed reviewed sources. These declarations and inventory hashes are not authority signatures or executing-code attestation.',
     runtime: { node: process.version, openssl: process.versions.openssl },

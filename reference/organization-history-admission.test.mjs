@@ -16,7 +16,7 @@ import {
 } from './sdk/index.mjs';
 
 const corpus = loadOrganizationHistoryVectorCorpus(
-  fileURLToPath(new URL('./vectors/organization-history', import.meta.url)),
+  fileURLToPath(new URL('./vectors/organization-history-rar2', import.meta.url)),
 );
 const saved = (id) => corpus.input(corpus.manifest.cases.find((row) => row.id === id));
 const valid = () => saved('expired-issuer-scoped-successor');

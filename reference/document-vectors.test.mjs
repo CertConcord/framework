@@ -61,6 +61,13 @@ test('draft-06 document corpus requires its original verifier', () => {
   assert.throws(() => loadVectorCorpus(legacy), { code: 'VECTOR_VERSION' });
 });
 
+test('schema1 document corpus requires its original verifier', () => {
+  assert.throws(
+    () => loadVectorCorpus(resolve(defaultVectorDirectory, '..', 'document-acceptance-mtc07')),
+    { code: 'VECTOR_VERSION' },
+  );
+});
+
 test('published CMS and native mdoc originals verify through the public SDK', () => {
   const results = runDocumentVectors();
   for (const format of ['cms', 'mdoc']) {
