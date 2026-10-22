@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 241241,
-      "sha256": "d383ad59a5f03738afd2610f35efe7c9a1f1f27e04c851c566d710b4f75f2418"
+      "bytes": 241293,
+      "sha256": "1935cb0d449da798265002833fb00440baa741c3aaadee99369369ac21c7165c"
     },
     {
       "path": "reference/README.md",
@@ -897,6 +897,11 @@
       "path": "reference/mdoc.test.mjs",
       "bytes": 14758,
       "sha256": "aa77f8eb17dc10eefc7abf235d5462fd01e4a228f514367852a5bef6e3be09af"
+    },
+    {
+      "path": "reference/mirror-checkpoint-atomicity.test.mjs",
+      "bytes": 5568,
+      "sha256": "c66f9bfa02389d6a3ea133d263f984bbeb1a6267af6a311ffd9276a9a8f7ad5f"
     },
     {
       "path": "reference/mtc-range-contract.test.mjs",
@@ -1670,8 +1675,8 @@
     },
     {
       "path": "reference/transparency.mjs",
-      "bytes": 23035,
-      "sha256": "f50d22aa7707249d5168516727992ca971b3a58912782bf7ca4dc1f3e585236e"
+      "bytes": 23113,
+      "sha256": "45e6c285892ded4f10d16e9ad3c465ab30fd9044e370eab18a388a105b2e120b"
     },
     {
       "path": "reference/transparency.test.mjs",
