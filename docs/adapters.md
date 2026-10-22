@@ -145,3 +145,9 @@ consistently for checkpoint admission, old-size requests and conflict responses.
 Canonical decimal syntax and the 63-hash proof limit remain mandatory. Numeric
 boundary fixtures use signed size declarations; they do not establish possession
 of a tree of that size.
+
+The add-checkpoint HTTP handler authenticates the log before validating the
+old/new size range, and rejects a reversed range with 400 before checking stored
+size. Missing or invalid trusted log signatures return 403; invalid empty roots
+and consistency proofs return 422. A valid request with a stale old size returns
+409 with the exact retained decimal size and LF, allowing the client to retry.
