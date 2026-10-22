@@ -100,6 +100,24 @@ the assembled ERS and completing the operation. It never silently repeats an
 uncertain external execution. Completed result lookup does not renew authority or
 create a new timestamp.
 
+Reconciliation also requires the saved request to match the existing operation
+reservation's digest before token verification or recovery callbacks. A saved
+request without a reservation cannot create one during recovery. The same request
+snapshot is checked again before publication and before completing the operation
+in the publication transaction. Changes made by a publication validator roll back
+with that transaction. A changed deadline, nonce-bearing request or archive
+linkage cannot replace the originally reserved values; restoring the original
+request still permits reconciliation of its retained token. These consistency
+checks do not authenticate a database whose request and reservation records have
+both been replaced outside the journal's trust boundary.
+
+The synchronous `buildPublication` callback returns a CBOR-encodable publication.
+The coordinator takes a detached canonical snapshot before checking its archive ID
+and predecessor commitment. Those checks and the publication store therefore use
+the same value, even when the callback returns changing accessors or retains
+mutable references. A snapshot with a different archive ID or predecessor is
+rejected before publication; the retained token remains available for reconciliation.
+
 The synchronous authority resolver used by `requireAuthority` must return a
 non-Proxy plain or null-prototype object with its own `overall` data property.
 Malformed decisions, inherited or accessor verdicts, proxies, promises and
@@ -123,6 +141,11 @@ head until the original token is authenticated, or recover the already committed
 publication and result together. Recovery after the protection deadline uses a
 token issued before that deadline; it makes no additional TSA request. These
 checks use synthetic authority appointments, clocks and local SQLite storage.
+The combined recovery case also changes a saved request after process death,
+rejects it against the original reservation, and restores the original request.
+A fresh process then reconciles the retained HTTP timestamp into one detached
+ERS publication snapshot after the deadline, with no additional TSA request.
+Another process recovers the exact committed result and archive revision.
 
 The reference tests use real signatures, timestamp tokens and ERS, with synthetic
 governance, clocks, lifetimes and software custody. The long-lived raw-key

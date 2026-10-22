@@ -205,7 +205,7 @@ export function verifyCSR(
 export function issueRAR(request, { privateKey, certificate }) {
   snapshotIssuanceScope(request.issuanceScope);
   requireThat(
-    request.schemaVersion === 1 &&
+    request.schemaVersion === 2 &&
       request.expiresAt > now() &&
       request.expiresAt - now() <= 300 &&
       request.requestID.length === 32 &&
@@ -286,7 +286,7 @@ export class RegistrationAuthority {
     });
     requireThat(decision?.approved === true, 'RA_DENIED');
     const request = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       requestID: random(),
       subjectID,
       profileID,
@@ -344,7 +344,7 @@ export class AuthorizedIssuer {
       p = verifyCSR(csr, { validatePossessionCertificate: this.validatePossessionCertificate });
     requireIssuanceAuthority(r, this);
     requireThat(
-      r.schemaVersion === 1 &&
+      r.schemaVersion === 2 &&
         r.expiresAt > now() &&
         r.issuedAt <= now() &&
         r.expiresAt - r.issuedAt <= 300 &&

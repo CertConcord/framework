@@ -23,7 +23,7 @@ import {
 } from './preserved-certificate-status-semantics.mjs';
 
 const directory = fileURLToPath(
-  new URL('./vectors/preserved-certificate-status/', import.meta.url),
+  new URL('./vectors/preserved-certificate-status-rar2/', import.meta.url),
 );
 const corpus = loadOrganizationHistoryVectorCorpus(directory);
 const saved = (id) => corpus.input(corpus.manifest.cases.find((entry) => entry.id === id));

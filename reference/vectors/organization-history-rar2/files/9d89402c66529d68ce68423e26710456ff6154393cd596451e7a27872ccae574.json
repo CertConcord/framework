@@ -1,0 +1,91 @@
+{
+  "knowledgeTime": 1800007200,
+  "statusMaterial": [
+    {
+      "cms": {
+        "$file": "files/22815eebcfea6ca7191f6bccc078fa2b6a08d4db87668ada3cdcfec3215deaee.bin.b64",
+        "type": "bytes"
+      },
+      "issuerCertificate": {
+        "$file": "files/0ef551347f2f9b0d5011e6c38d609d2f4fe8758e4f4682f699e485a16f3a9ee1.bin.b64",
+        "type": "bytes"
+      }
+    },
+    {
+      "cms": {
+        "$file": "files/d48b38fad3ae878a0fc8676483677c4b73db92e55a1a4a7b3cfdc26565bd4cd0.bin.b64",
+        "type": "bytes"
+      },
+      "issuerCertificate": {
+        "$file": "files/0ef551347f2f9b0d5011e6c38d609d2f4fe8758e4f4682f699e485a16f3a9ee1.bin.b64",
+        "type": "bytes"
+      }
+    },
+    {
+      "cms": {
+        "$file": "files/ed0409e63949b5f75f11fd7259a7eeba9e0e89ba7738c835c8eccaa964ddd80c.bin.b64",
+        "type": "bytes"
+      },
+      "issuerCertificate": {
+        "$file": "files/0ef551347f2f9b0d5011e6c38d609d2f4fe8758e4f4682f699e485a16f3a9ee1.bin.b64",
+        "type": "bytes"
+      }
+    },
+    {
+      "cms": {
+        "$file": "files/8bc7b56c201a572f82a7354fc550b6ac31e71d75b493a9dc77807e2d75913de5.bin.b64",
+        "type": "bytes"
+      },
+      "issuerCertificate": {
+        "$file": "files/0ef551347f2f9b0d5011e6c38d609d2f4fe8758e4f4682f699e485a16f3a9ee1.bin.b64",
+        "type": "bytes"
+      }
+    },
+    {
+      "cms": {
+        "$file": "files/6f0539f1d8a309f54241ce6005a4931babf2a5636ee6614935a7a69af60a439b.bin.b64",
+        "type": "bytes"
+      },
+      "issuerCertificate": {
+        "$file": "files/0ef551347f2f9b0d5011e6c38d609d2f4fe8758e4f4682f699e485a16f3a9ee1.bin.b64",
+        "type": "bytes"
+      }
+    }
+  ],
+  "certificateStatusMaterial": [
+    {
+      "cms": {
+        "$file": "files/26b0df1019f148cb680ba56f909b61f19797fc8d2cf7eb73cbae461bc1d24c31.bin.b64",
+        "type": "bytes"
+      },
+      "issuerCertificate": {
+        "$file": "files/7c844e0711252018162a9d7912d3ca542f834fcc7df9a79c45b7d675f8a5f501.bin.b64",
+        "type": "bytes"
+      }
+    }
+  ],
+  "authorityHistory": [
+    {
+      "manifest": {
+        "$file": "files/4ecf6adf432350d58c2d49aa66ea300b6a6fcf57a22b2741bd58922ea1a6fe02.bin.b64",
+        "type": "bytes"
+      },
+      "signatures": [
+        {
+          "keyID": {
+            "$file": "files/2cc31b40f861512be4199fbbbf84350f1a522df3cf7033c734a836d458fd7c39.bin.b64",
+            "type": "bytes"
+          },
+          "signature": {
+            "$file": "files/625ae5c3415bd4a07c96f5099dfa0c2f662858c24693340ee1b43e74234893c5.bin.b64",
+            "type": "bytes"
+          }
+        }
+      ],
+      "publicationProof": {
+        "$file": "files/c34ca4f4d1748096f0b56b890c14c890caf14c0aacf4bea7e4c72f8ec3ba1cb1.bin.b64",
+        "type": "bytes"
+      }
+    }
+  ]
+}

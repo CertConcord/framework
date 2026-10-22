@@ -63,7 +63,7 @@ const preservedStatusReplay = spawnSync(
     resolve('sdk/organization-consumer.mjs'),
     entry,
     cwd + '/node_modules/@certconcord/verifier/index.mjs',
-    resolve('vectors/preserved-certificate-status'),
+    resolve('vectors/preserved-certificate-status-rar2'),
   ],
   { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, windowsHide: true },
 );
@@ -164,7 +164,7 @@ const preservedDelegationReplay = spawnSync(
     resolve('sdk/organization-consumer.mjs'),
     entry,
     cwd + '/node_modules/@certconcord/verifier/index.mjs',
-    resolve('vectors/preserved-delegation-status'),
+    resolve('vectors/preserved-delegation-status-rar2'),
   ],
   { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, windowsHide: true },
 );

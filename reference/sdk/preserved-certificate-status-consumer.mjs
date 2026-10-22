@@ -17,7 +17,7 @@ assert(
 );
 assert.equal(existsSync(databasePath), phase.startsWith('reopen-'));
 const hash = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
-const directory = new URL('../vectors/preserved-certificate-status/', import.meta.url);
+const directory = new URL('../vectors/preserved-certificate-status-rar2/', import.meta.url);
 const manifestBytes = readFileSync(new URL('manifest.json', directory));
 const manifest = JSON.parse(manifestBytes);
 assert(Array.isArray(manifest.files) && manifest.files.length <= 512);

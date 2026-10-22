@@ -666,6 +666,87 @@ function x509Fixture(f) {
   };
 }
 
+for (const representation of ['X509', 'MTC', 'MDOC']) {
+  test(`${representation} receipt permitHash binds the exact signed CMS bytes`, async () => {
+    const format = representation === 'MDOC' ? 'MDOC' : 'CMS',
+      base = await fixture(format),
+      original = representation === 'X509' ? x509Fixture(base) : base;
+    const initial = verdict(format, original);
+    assert.equal(initial.overall, 'VALID', initial.reason);
+    const key = c.generate('ml-dsa-87'),
+      certificate = p.issueCertificate(
+        {
+          publicKey: key.publicKey,
+          serial: 1,
+          issuer: p.name('SDK exact permit fixture'),
+          subject: p.name('SDK exact permit fixture'),
+          profileID: 'CERTCONCORD-EVIDENCE-SIGN-v1',
+        },
+        key.privateKey,
+      ),
+      signControl = (label, body) =>
+        p.signCMS({ content: c.D(label, body), certificate }, key.privateKey),
+      permitBody = readControl(
+        payload(original.bundle, 'OperationPermit'),
+        'OperationPermit',
+        original.trust.permitCertificate,
+      ),
+      receiptBody = readControl(
+        payload(original.bundle, 'ExecutionReceipt'),
+        'ExecutionReceipt',
+        original.trust.receiptCertificate,
+      ),
+      permitA = signControl('OperationPermit', permitBody),
+      permitB = signControl('OperationPermit', permitBody),
+      trust = {
+        ...original.trust,
+        permitCertificate: certificate,
+        receiptCertificate: certificate,
+        authorityResolver(query) {
+          if (
+            ['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY'].includes(query.role) &&
+            equal(query.certificate, certificate)
+          )
+            return { overall: 'VALID', reason: 'FIXTURE_EXACT_PERMIT_AUTHORITY' };
+          return original.trust.authorityResolver(query);
+        },
+      },
+      candidate = (permit, permitHash) =>
+        replace(
+          replace(original.bundle, 'OperationPermit', permit),
+          'ExecutionReceipt',
+          signControl('ExecutionReceipt', { ...receiptBody, permitHash }),
+        ),
+      expectedReason = format === 'CMS' ? 'ECP_EXECUTION_RECEIPT' : 'MDOC_ECP_RECEIPT';
+
+    // Both CMS values authenticate the same body with the same signer; their signatures differ.
+    for (const permit of [permitA, permitB])
+      assert.deepEqual(readControl(permit, 'OperationPermit', certificate), permitBody);
+    assert(!equal(permitA, permitB));
+    assert(!equal(c.sha512(permitA), c.sha512(permitB)));
+    const boundA = candidate(permitA, c.sha512(permitA));
+    const validA = verdict(format, original, boundA, trust);
+    assert.equal(validA.overall, 'VALID', validA.reason);
+
+    const swapped = verdict(format, original, replace(boundA, 'OperationPermit', permitB), trust);
+    assert.equal(swapped.overall, 'INVALID');
+    assert.equal(swapped.reason, expectedReason);
+    assert.equal(swapped.dimensions.authorization?.overall, 'INVALID');
+
+    const boundB = verdict(format, original, candidate(permitB, c.sha512(permitB)), trust);
+    assert.equal(boundB.overall, 'VALID', boundB.reason);
+    for (const bodyHash of [
+      c.sha512(c.D('OperationPermit', permitBody)),
+      c.sha512(dcbor(permitBody)),
+    ]) {
+      const wrong = verdict(format, original, candidate(permitB, bodyHash), trust);
+      assert.equal(wrong.overall, 'INVALID');
+      assert.equal(wrong.reason, expectedReason);
+      assert.equal(wrong.dimensions.authorization?.overall, 'INVALID');
+    }
+  });
+}
+
 test('unused MTC configuration does not claim transparency for an X509 signature', async () => {
   const f = x509Fixture(await fixture('CMS'));
   const original = verdict('CMS', f);

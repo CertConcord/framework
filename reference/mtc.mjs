@@ -116,6 +116,9 @@ export function consistencyProof(entries, start, end) {
   }
   return sub(entries, start, end, true);
 }
+// Hash compatibility is conditional on the supplied range and tree size. Callers
+// must authenticate size/root separately; this primitive does not prove an exact
+// leaf count or entry availability. An empty-range proof is vacuous.
 export function verifyConsistency({ start, end, size, node, root, proof }) {
   start = BigInt(start);
   end = BigInt(end);

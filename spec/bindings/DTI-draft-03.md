@@ -235,6 +235,8 @@ Monitors independently inspect log consistency, mirror availability, membership 
 
 Mirrors verify consistency and entry contents before asserting durable possession. Partial uploads retain only authenticated complete packages and advertise the next resumable index. Checkpoint and entry commit state survives restart. Monitoring interfaces expose the accepted checkpoint and corresponding tiles/bundles. A service storing only a root hash is a witness, not a mirror.
 
+A Merkle consistency or inclusion calculation establishes hash compatibility under the supplied range and size; it does not authenticate those bounds or prove entry availability. Consumers bind the exact size and root to the verified checkpoint, or the exact start, end and root to the verified subtree cosignature or authenticated landmark. A successful bare calculation, including an empty-range proof, is insufficient evidence of an absolute leaf count or durable possession. A mirror reconstructs the signed checkpoint from the complete retained entries before issuing its possession cosignature.
+
 ## 39. Fail-closed behavior
 
 Failures of required trust, authority, freshness, quorum, signature, activation or content checks prevent the requested positive assertion. Optional asynchronous evidence can remain pending without falsifying the completed core operation. Failure states preserve enough immutable context for reconciliation and do not trigger an unapproved fallback key or algorithm.

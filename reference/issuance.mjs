@@ -91,7 +91,7 @@ export class MTCIssuer {
       origin = this.caID + '.0.' + this.logNumber;
     requireIssuanceAuthority(a, this);
     requireThat(
-      a.schemaVersion === 1 &&
+      a.schemaVersion === 2 &&
         a.issuedAt <= now() &&
         a.expiresAt > now() &&
         equal(a.policyHash, this.policyHash) &&

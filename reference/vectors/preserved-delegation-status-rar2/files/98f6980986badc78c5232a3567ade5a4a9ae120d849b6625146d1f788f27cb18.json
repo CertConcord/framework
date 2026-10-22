@@ -1,0 +1,335 @@
+{
+  "trust": {
+    "policy": {
+      "rpID": "organization.example",
+      "audience": "organization-seal",
+      "schemaVersion": 1,
+      "activationMode": "WORKLOAD",
+      "allowedOrigins": [
+        "https://organization.example"
+      ],
+      "allowedProfiles": [
+        "CERTCONCORD-ORG-SEAL-v1"
+      ],
+      "executionBinding": {
+        "profile": "certconcord-execution-binding-draft-03",
+        "providerID": "organization-fixture-backend",
+        "maxLeaseSeconds": 300
+      },
+      "requireTrustedTime": false,
+      "maxActivationLifetime": 120,
+      "organizationDelegation": {
+        "mode": "CURRENT_STATE_ONLY",
+        "profile": "certconcord-organization-delegation-v1",
+        "minimumApprovers": 2,
+        "identityNamespace": "fixture-personnel-v1"
+      }
+    },
+    "issuerID": "fixture-organization",
+    "controlTrust": [
+      {
+        "purpose": "ORGANIZATION_DELEGATION_ROOT",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/2e1ba934e2bd964b87de4447f1483500d04463bde0d11d2a77e5e0f3a731d2b1.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_DELEGATION_ISSUE",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/2f59355f36c379aedaadd02c34c6cd868e2620f48c6090df44fe240081ef77a9.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_FINAL_AUTHORIZATION",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/15de5dfcb2f73d61d020c4a71281766d2fa05d2a4f4bb6533a3c18a8e9839161.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_APPROVER_REGISTRATION",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/ff8a16d24b12ab8540e22ed584011dd70c1d657d1723d0341ac68870748cb0ff.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_DELEGATION_STATUS",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/1073f1bbbb5816d283d2d1f1ae482787d36018f59323c7a364f0422e3fcf933f.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [
+          "GRANT",
+          "APPROVER_REGISTRATION",
+          "FINAL_AUTHORIZATION"
+        ],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_DELEGATION_PERMIT",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/9745d7f1f91b6fca4308ebfeefd98131fbbd39ee43d646165266880bd09a58fd.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_DELEGATION_RECEIPT",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/b0c771d7b1b49698a6542cbbf4f7142ab41cdd9be1197a726f412270b7f4b8a1.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_DELEGATION_EXECUTION_BINDING",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/a798952ce250aa17f0c383053bd160a64ba50b6e0b95e72189ba1de7509531a1.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_DELEGATION_STATUS",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/5358e72592945b546af7d601b662a91c0a94d4f2bbfdeccd3525f9f1412a6589.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [
+          "GRANT",
+          "APPROVER_REGISTRATION",
+          "FINAL_AUTHORIZATION"
+        ],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      },
+      {
+        "purpose": "ORGANIZATION_DELEGATION_STATUS",
+        "issuerID": "fixture-organization",
+        "certificate": {
+          "$file": "files/eaa620ab64624b74a8cfe839618e8738556282bfa14025da17271db3209e4c30.bin.b64",
+          "type": "bytes"
+        },
+        "objectTypes": [
+          "GRANT",
+          "APPROVER_REGISTRATION",
+          "FINAL_AUTHORIZATION"
+        ],
+        "organizationID": {
+          "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+          "type": "bytes"
+        },
+        "identityNamespace": "fixture-personnel-v1"
+      }
+    ],
+    "keyDeadlines": {
+      "0296112d2a5c07ac54e14b94631623eba70bf065327800bc55c0fadfef32e6fa507a34433592c8e55fa4d24af3bc9ebf8229030d650df19f03b0f5701585970e": 1800010000,
+      "0d2e27750ef8e304fa15184bc9ee809d053cfac6b166ef97d9f1ca875988d2297b4b8abfac568573d4a831f80e5d59c4dbc1897a1e605818576df7dd19acc7a7": 1800010000,
+      "4eea073b06366f44386e29c7bdf5d63044cd6317d9383e04e2a4d2e08553f228ee94aaa51557109c2d8009f76323cb05c07678f884f1b28991f63c42518a9621": 1800010000,
+      "4f61c9e65cfb309e24d843fd682b0fda5fded9e88acc66083ef05537241b18f82b889692caffd9c8e8b0a4d1dd663e6cc43aecbf0f45db74dd89da7bafbce416": 1800000040,
+      "60714c6acaab7aa4ab3c43ddb0f6ee357a970aea4c4e07e9b80947cc613381eeeac2a9c2b406b7d78087e595f16f226560a3be91f6dc06a9a2e663c9264b3ec5": 1800010000,
+      "671c0f094ae25862a11d7f94c519d07302ae84a36912d9bd31be80d97154c50bc04bdf4a431b6be01d6b5aa73b020533684dd3237b1af4b632bbe6fbd96d38ca": 1800010000,
+      "74a60f7abc4427b2f9937069a9839201816b0f3f693de8f0e3b7f9016caccb3533ae382e35bb39fc1d922d316d2ad0239ec3c8ecfda56a660e8195b1a287f9de": 1800010000,
+      "91144a65009df38dc227d393297bc649f03ca6074966c988304c9c650c972ff38c83352e051a0c9620695253a8cc83e90a681b6a6592ed6c96a2468bf5c236ba": 1800010000,
+      "9981c0956dee84a307ba8f09855c277f05a97e69b741690002e8e80d94a6394a532bda0d91af901de12585fbc155e61a0e52fcde5e6904e366162d2197bc9483": 1800010000,
+      "a729561f021c50e58bdfe34dfdde1bbf39dc7958a1df5ebdc923bf3684c90e760e309d5991787cd4b06309feb85d523682c5c325f0c2e91ca5d0af93c26882d5": 1800010000,
+      "b26222171afe41e723fe9373945877e2da7a7b51b882d083d0e2215d7865631895d3d438c9912191e1f2b69bb80bcd269534ad5340cec3e8166c0582e8a539ab": 1800010000,
+      "b710b2d30c60e667427cf9aa837eef430393e97eea726e11695a02e4afa730ebae7a69bc36fd03cebb9de1c72aac9ab028711575bab288986d1d78b530d4882c": 1800010000,
+      "c400efd49512c60abe79786f2bb88231f73aed24db4ad3ec29bb0af9c2f75a1927c61f3ac120e873cafed7b5ff8bb715afdebd018125feb4e26a00fc450815e5": 1800010000,
+      "da20ff59829a7f962ab75870f15c3ab8c9b472801a09ff5db8e19f7a1308729aa002f0900065a088f3bf7d44b0872b25c6e7456354a3558744aa6051b50911d0": 1800010000,
+      "fa258554fcba8b2686db96a5c44b7de9af3cc42683b438742e82a838eba553ce08944cb6067044e8e1509f9a56baf8de695788211ea005a3b88ceac7e3323d0d": 1800010000,
+      "fc9cf651a755121d3f608ec8bd4882f41f029ba3e6fb89b15a56a599c49fc3817a076188eeb6ab869f02a935a8acac4213ca7b90de189512ca105b67f2520530": 1800010000,
+      "ff4f6dfc888feb2567d0d796d7d815ecd043e62c16eeff04c7288542568dcbc176ac7fe73dd41ef7639c4d9a58a7783555a846ec05812492eff14827c9cb0c92": 1800010000
+    },
+    "hashDeadlines": {
+      "2.16.840.1.101.3.4.2.1": 1800010000,
+      "2.16.840.1.101.3.4.2.3": 1800000030
+    },
+    "trustDomainID": {
+      "$file": "files/101f5084b6448855b26489412e41731d7763c2e74647bbfe30759ecadf7975cb.bin.b64",
+      "type": "bytes"
+    },
+    "organizationID": {
+      "$file": "files/1c88d7a0ed3218a61843e3dca713bc5d4af6dcc82f02d50f0a1037a27ffa4eaf.bin.b64",
+      "type": "bytes"
+    },
+    "credentialTrust": {
+      "certificate": {
+        "$file": "files/1ca16c53c046264d044be36abc20d25d56e7dd9daa2c658a19424d27348af21a.bin.b64",
+        "type": "bytes"
+      },
+      "issuanceScope": {
+        "issuerID": "fixture-certificate-issuer",
+        "issuerKeyID": {
+          "$file": "files/8fc824cac1c532e5e545b41c82bf57f31695cbf75760286ebe82ccbcb97f88a9.bin.b64",
+          "type": "bytes"
+        },
+        "trustDomainID": {
+          "$file": "files/101f5084b6448855b26489412e41731d7763c2e74647bbfe30759ecadf7975cb.bin.b64",
+          "type": "bytes"
+        },
+        "representation": "X509"
+      },
+      "raCertificate": {
+        "$file": "files/c3a0e708c09dd198c9435364e5011e62f56fc951b6c109345245926d0ab2a6f2.bin.b64",
+        "type": "bytes"
+      },
+      "issuerCertificate": {
+        "$file": "files/f940628c14adfafc61c573c07fe3619acd556c48d6edbeba36b8449e6fae68be.bin.b64",
+        "type": "bytes"
+      },
+      "statusCertificate": {
+        "$file": "files/9f575341f8cc490b98606774b9baa4354b5f9ca6e16ecac2889ff9296a3e18c0.bin.b64",
+        "type": "bytes"
+      },
+      "registrationAuthorization": {
+        "$file": "files/5e84c2039375b9a8e9a75da4c0dd7244d3a676f9a30ddd222544236ef183bec0.bin.b64",
+        "type": "bytes"
+      }
+    },
+    "identityNamespace": "fixture-personnel-v1",
+    "algorithmDeadlines": {
+      "1.2.840.10045.4.3.2": 1800010000,
+      "2.16.840.1.101.3.4.3.18": 1800010000,
+      "2.16.840.1.101.3.4.3.19": 1800010000
+    }
+  },
+  "preservation": {
+    "dataValidUntil": 1800000600,
+    "hashValidUntil": {
+      "2.16.840.1.101.3.4.2.1": 1800000070,
+      "2.16.840.1.101.3.4.2.3": 1800010000
+    },
+    "timestampAuthorities": [
+      {
+        "policy": "1.3.6.1.4.1.32473.77.3",
+        "validUntil": 1800000080,
+        "certificate": {
+          "$file": "files/e67ed0306aba4d1638d857a25d9fa696a832dbe3fd859aa3d99eeae0bc818d06.bin.b64",
+          "type": "bytes"
+        },
+        "signatureProfile": "CERTCONCORD-PQ",
+        "issuerPublicKeyDER": {
+          "$file": "files/68f45dcda4c1c20debb2885c5aea49acbd8bd2d8beb9a4f168b987e0f0c25a84.spki.b64",
+          "type": "spki"
+        }
+      },
+      {
+        "policy": "1.3.6.1.4.1.32473.77.3",
+        "validUntil": 1800010000,
+        "certificate": {
+          "$file": "files/76e567930634548e8020e4a46265844f82be76fe4be9633144326546bfa259bc.bin.b64",
+          "type": "bytes"
+        },
+        "signatureProfile": "CERTCONCORD-PQ",
+        "issuerPublicKeyDER": {
+          "$file": "files/68f45dcda4c1c20debb2885c5aea49acbd8bd2d8beb9a4f168b987e0f0c25a84.spki.b64",
+          "type": "spki"
+        }
+      }
+    ]
+  },
+  "schemaVersion": 1,
+  "retainedAuthorities": {
+    "governance": {
+      "roots": [
+        {
+          "validFrom": 1799999940,
+          "validUntil": 1800010000,
+          "publicKeyDER": {
+            "$file": "files/68f45dcda4c1c20debb2885c5aea49acbd8bd2d8beb9a4f168b987e0f0c25a84.spki.b64",
+            "type": "spki"
+          }
+        }
+      ],
+      "threshold": 1
+    },
+    "publication": {
+      "format": "RFC3161",
+      "hashValidUntil": {
+        "2.16.840.1.101.3.4.2.1": 1800010000,
+        "2.16.840.1.101.3.4.2.3": 1800010000
+      },
+      "timestampAuthorities": [
+        {
+          "policy": "1.3.6.1.4.1.32473.77.3",
+          "validFrom": 1799999940,
+          "validUntil": 1800010000,
+          "certificate": {
+            "$file": "files/9ec9201cbbcf83be22e165b81f80f007d5ae81207009ed708445a3d13918e8a3.bin.b64",
+            "type": "bytes"
+          },
+          "signatureProfile": "CERTCONCORD-PQ",
+          "issuerPublicKeyDER": {
+            "$file": "files/68f45dcda4c1c20debb2885c5aea49acbd8bd2d8beb9a4f168b987e0f0c25a84.spki.b64",
+            "type": "spki"
+          },
+          "knowledgeValidUntil": 1800010000
+        }
+      ]
+    },
+    "algorithmDeadlines": {
+      "ec": 1800010000,
+      "ml-dsa-65": 1800010000,
+      "ml-dsa-87": 1800010000
+    }
+  }
+}

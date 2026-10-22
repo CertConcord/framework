@@ -22,7 +22,7 @@ import {
   assertPreservedDelegationStatusOutcome,
 } from './preserved-delegation-status-semantics.mjs';
 
-const directory = fileURLToPath(new URL('./vectors/preserved-delegation-status/', import.meta.url));
+const directory = fileURLToPath(new URL('./vectors/preserved-delegation-status-rar2/', import.meta.url));
 const corpus = loadOrganizationHistoryVectorCorpus(directory);
 const saved = (id) => corpus.input(corpus.manifest.cases.find((entry) => entry.id === id));
 const clone = (value) => decodeCBOR(dcbor(value));

@@ -326,6 +326,7 @@ export class PasskeySigningRegistry {
         'RegistrationAuthorization',
         this.registrationAuthorityCertificate,
       );
+      requireThat(original.schemaVersion === 2, 'PASSKEY_RA_BINDING');
       requireThat(
         requestID && equal(requestID, original.requestID),
         'PASSKEY_ISSUANCE_ALREADY_ACTIVE',
@@ -349,6 +350,7 @@ export class PasskeySigningRegistry {
     const r = this.admitted(bindingID);
     requireThat(!r.credential, 'PASSKEY_CERTIFICATE_CONFLICT');
     const a = readControl(rar, 'RegistrationAuthorization', this.registrationAuthorityCertificate);
+    requireThat(a.schemaVersion === 2, 'PASSKEY_RA_BINDING');
     const admission = this.forIssuance(bindingID, { ...a, csr: r.csr });
     requireThat(equal(a.keyBindingHash, admission.hash), 'PASSKEY_RA_BINDING');
     requireThat(
@@ -389,6 +391,7 @@ export class PasskeySigningRegistry {
     const r = this.admitted(bindingID);
     requireThat(!r.certificate, 'PASSKEY_CERTIFICATE_CONFLICT');
     const a = readControl(rar, 'RegistrationAuthorization', this.registrationAuthorityCertificate);
+    requireThat(a.schemaVersion === 2, 'PASSKEY_RA_BINDING');
     const admission = this.forIssuance(bindingID, { ...a, csr: r.csr });
     requireThat(equal(a.keyBindingHash, admission.hash), 'PASSKEY_RA_BINDING');
     const info = this.credentialInfo({ ...r, credential, seal });
