@@ -108,3 +108,88 @@ test('missing, conflicting, unavailable and unsupported authority decisions prev
   assert.throws(() => requireAuthority(undefined, f.query), (error) => error.overall === 'INDETERMINATE');
   assert.throws(() => requireAuthority(f.resolver(), { ...f.query, role: 'ISSUER' }), (error) => error.overall === 'INVALID');
 });
+
+
+test('authority guard accepts own synchronous decisions and preserves query metadata', () => {
+  const query = { role: 'TIMESTAMP_AUTHORITY', stateTime: 1800000000.25, knowledgeTime: 1800000200 };
+  for (const decision of [{ overall: 'VALID', reason: 'AUTHORITY_ADMITTED', coverageUntil: 1800000300 },
+    Object.assign(Object.create(null), { overall: 'VALID' })]) {
+    let calls = 0;
+    const actual = requireAuthority((received) => { calls++; assert.equal(received, query); return decision; }, query);
+    assert.equal(actual, decision);
+    assert.equal(actual.overall, 'VALID');
+    assert.equal(calls, 1);
+    assert.deepEqual(query, { role: 'TIMESTAMP_AUTHORITY', stateTime: 1800000000.25, knowledgeTime: 1800000200 });
+  }
+});
+
+test('authority guard rejects malformed decisions without executing accessors or proxy traps', () => {
+  let hooks = 0;
+  const forged = new Proxy({}, {
+    get() { hooks++; return 'VALID'; },
+    getPrototypeOf() { hooks++; return Object.prototype; },
+    getOwnPropertyDescriptor() { hooks++; return { value: 'VALID', configurable: true }; },
+    has() { hooks++; return false; },
+  });
+  const revoked = Proxy.revocable({}, {}); revoked.revoke();
+  const cases = [undefined, null, true, 'VALID', 1, {}, { overall: 'UNKNOWN' },
+    { overall: new Proxy({}, { get() { hooks++; throw Error('must not coerce'); } }) },
+    Object.assign([], { overall: 'VALID' }), Object.assign(() => {}, { overall: 'VALID' }),
+    Object.assign(new Date(), { overall: 'VALID' }), Object.create({ overall: 'VALID' }),
+    { get overall() { hooks++; return hooks === 1 ? 'INVALID' : 'VALID'; } },
+    { overall: 'VALID', then() { hooks++; } },
+    { overall: 'VALID', get then() { hooks++; throw Error('must not read then'); } },
+    forged, revoked.proxy];
+  for (const [index, decision] of cases.entries()) {
+    assert.throws(() => requireAuthority(() => decision, {}),
+      { overall: 'INDETERMINATE', code: 'AUTHORITY_DECISION_MISSING' }, 'case ' + index);
+  }
+  assert.equal(hooks, 0);
+});
+
+test('authority guard preserves negative verdicts with safe reason metadata', () => {
+  let hooks = 0;
+  for (const overall of ['INVALID', 'INDETERMINATE', 'UNSUPPORTED']) {
+    assert.throws(() => requireAuthority(() => ({ overall, reason: 'SELECTED_POLICY_FAILURE' }), {}),
+      { overall, code: 'SELECTED_POLICY_FAILURE' });
+    for (const decision of [{ overall }, { overall, reason: 7 }, { overall, reason: Symbol('reason') },
+      { overall, reason: new Proxy({}, { get() { hooks++; throw Error('must not coerce'); } }) },
+      { overall, get reason() { hooks++; throw Error('must not read reason'); } }]) {
+      assert.throws(() => requireAuthority(() => decision, {}),
+        { overall, code: 'AUTHORITY_DECISION_MISSING' });
+    }
+  }
+  assert.equal(hooks, 0);
+});
+
+test('authority guard rejects native promises and observes ordinary rejected results', async () => {
+  const decisions = [Promise.resolve({ overall: 'VALID' }),
+    Object.assign(Promise.resolve({ overall: 'INVALID' }), { overall: 'VALID' }),
+    Promise.reject(Error('unavailable asynchronous authority')),
+    Object.assign(Promise.reject(Error('decorated asynchronous authority')), { overall: 'VALID' })];
+  for (const decision of decisions) {
+    assert.throws(() => requireAuthority(() => decision, {}),
+      { overall: 'INDETERMINATE', code: 'AUTHORITY_DECISION_MISSING' });
+  }
+  await new Promise((resolve) => setImmediate(resolve));
+});
+
+test('authority guard rejects promises when rejection observation throws', () => {
+  const constructorFailure = Promise.resolve({ overall: 'VALID' });
+  Object.defineProperty(constructorFailure, 'constructor', { get() { throw Error('constructor unavailable'); } });
+  class SpeciesFailure extends Promise {
+    static get [Symbol.species]() { throw Error('species unavailable'); }
+  }
+  for (const decision of [constructorFailure, SpeciesFailure.resolve({ overall: 'VALID' })]) {
+    Object.assign(decision, { overall: 'VALID' });
+    assert.throws(() => requireAuthority(() => decision, {}),
+      { overall: 'INDETERMINATE', code: 'AUTHORITY_DECISION_MISSING' });
+  }
+});
+
+test('authority guard preserves missing resolver and synchronous exception behavior', () => {
+  assert.throws(() => requireAuthority(undefined, {}),
+    { overall: 'INDETERMINATE', code: 'AUTHORITY_RESOLVER_REQUIRED' });
+  const unavailable = Error('selected policy unavailable');
+  assert.throws(() => requireAuthority(() => { throw unavailable; }, {}), (error) => error === unavailable);
+});

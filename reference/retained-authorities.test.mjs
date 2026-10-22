@@ -275,6 +275,63 @@ test('lost renewal responses reconcile the exact retained timestamp without anot
   } finally { journal.close(); rmSync(directory, { recursive: true, force: true }); }
 });
 
+
+
+test('archive renewal rejects malformed authority decisions and reconciles retained tokens without another TSA execution', async (t) => {
+  const f = fixture(t);
+  const cases = [
+    ['inherited', () => Object.create({ overall: 'VALID' })],
+    ['thenable', (hook) => ({ overall: 'VALID', then: hook })],
+    ['promise', () => Object.assign(Promise.resolve({ overall: 'INVALID' }), { overall: 'VALID' })],
+    ['accessor', (hook) => ({ get overall() { hook(); return 'VALID'; } })],
+    ['proxy', (hook) => new Proxy({}, { get() { hook(); return 'VALID'; } })],
+  ];
+  for (const [name, decision] of cases) {
+    const journal = new Journal();
+    try {
+      let calls = 0, builds = 0, validations = 0, hooks = 0, token;
+      const queries = [], dataHash = c.sha512(Buffer.from('unchanged document bytes'));
+      const store = new ArchivePublicationStore(journal, {
+        validatePublication: () => { validations++; return { overall: 'VALID' }; },
+      });
+      const original = store.publish({ archiveID: name, previousHash: null, dataHash,
+        evidenceRecord: Buffer.from('previous retained archive'), history: [] });
+      validations = 0;
+      const request = { operationID: c.random(), archiveID: name, previousHash: original.digest,
+        timestampRequest: timestampRequest(dataHash, { policy: f.tsa.policy }).der,
+        protectionDeadline: f.start + 100 };
+      const coordinator = new ArchiveRenewalCoordinator({ journal, store, clock: () => f.start + 20,
+        timestampTrust: { ...f.tsaTrust, authorityResolver: (query) => {
+          queries.push(query); return decision(() => { hooks++; });
+        } },
+        requestTimestamp: async (der) => { calls++; token = tokenFromResponse(f.tsa.issue(der)); return token; },
+        buildPublication: (saved, retained) => { builds++; return { archiveID: saved.archiveID,
+          previousHash: saved.previousHash, dataHash, evidenceRecord: retained, history: [] }; } });
+      await assert.rejects(coordinator.renew(request),
+        { overall: 'INDETERMINATE', code: 'AUTHORITY_DECISION_MISSING' }, name);
+      assert.equal(coordinator.result(request.operationID).status, 'UNKNOWN_EXECUTION', name);
+      assert.deepEqual(c.dcbor(store.read(name)), c.dcbor(original), name);
+      assert.deepEqual([calls, builds, validations, hooks], [1, 0, 0, 0], name);
+      assert.deepEqual(queries[0], { certificate: f.tsaTrust.certificate, role: 'TIMESTAMP_AUTHORITY',
+        scope: { trustDomainID: f.trustDomainID, purpose: 'ARCHIVE_PRESERVATION' },
+        stateTime: f.start, knowledgeTime: f.start + 20 });
+      await assert.rejects(coordinator.renew(request), { code: 'ARCHIVE_RENEWAL_UNKNOWN' });
+      coordinator.clock = () => f.start + 200;
+      coordinator.timestampTrust.authorityResolver = (query) => { queries.push(query); return f.tsaTrust.authorityResolver(query); };
+      const recovered = coordinator.reconcile(request.operationID, token);
+      assert.equal(coordinator.result(request.operationID).status, 'COMPLETED', name);
+      assert.deepEqual(c.dcbor(store.read(name)), c.dcbor(recovered), name);
+      assert.deepEqual(recovered.publication.previousHash, original.digest);
+      assert.deepEqual(recovered.publication.evidenceRecord, token);
+      assert.equal(queries.length, 2);
+      assert.equal(queries[1].stateTime, f.start);
+      assert.equal(queries[1].knowledgeTime, f.start + 200);
+      assert.deepEqual(c.dcbor(await coordinator.renew(request)), c.dcbor(recovered), name);
+      assert.deepEqual([calls, builds, validations, hooks], [1, 1, 1, 0], name);
+    } finally { journal.close(); }
+  }
+});
+
 test('a new late timestamp cannot repair an uncertain renewal after the protection deadline', async (t) => {
   const f = fixture(t), journal = new Journal();
   t.after(() => journal.close());
