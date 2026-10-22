@@ -211,6 +211,7 @@ export class TlogWitness {
       if (BigInt(old.size) !== q.oldSize)
         return { status: 409, type: 'text/x.tlog.size', body: old.size + '\n' };
       requireThat(cp.size >= q.oldSize, 'WITNESS_ROLLBACK');
+      requireThat(cp.size !== 0n || equal(cp.root, treeHash([])), 'WITNESS_EMPTY_ROOT');
       if (q.oldSize === 0n) requireThat(q.proof.length === 0, 'WITNESS_ZERO_PROOF');
       else
         verifyConsistency({

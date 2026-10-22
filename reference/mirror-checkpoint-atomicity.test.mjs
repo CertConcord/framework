@@ -106,7 +106,7 @@ for (const priorSize of [0, 3]) {
   }
 }
 
-test('mirror checkpoint history conflict preserves the previously admitted empty checkpoint', (t) => {
+test('mirror rejects a noncanonical empty fork without changing an admitted checkpoint', (t) => {
   const f = fixture(t);
   const checkpoint = tlog.signedCheckpoint({ origin: f.log.name, entries: [], signer: f.log });
   assert.equal(f.mirror.addCheckpoint(tlog.witnessRequest(0, [], checkpoint)).status, 200);
@@ -114,7 +114,7 @@ test('mirror checkpoint history conflict preserves the previously admitted empty
   const body = tlog.checkpointBody(f.log.name, 0, Buffer.alloc(32, 9));
   const conflicting = body + '\n' + tlog.noteSignature(body, f.log);
   assert.throws(() => f.mirror.addCheckpoint(tlog.witnessRequest(0, [], conflicting)), {
-    code: 'MIRROR_CHECKPOINT_FORK',
+    code: 'WITNESS_EMPTY_ROOT',
   });
   assert.deepEqual(f.snapshot(), before);
   f.reopen();
@@ -141,4 +141,25 @@ test('mirror checkpoint size conflict leaves pending and historical state unchan
   });
   f.reopen();
   assert.deepEqual(f.snapshot(), before);
+});
+
+test('a conflicting legacy empty history row remains protected by atomic admission', (t) => {
+  const f = fixture(t);
+  const root = Buffer.alloc(32, 9);
+  const body = tlog.checkpointBody(f.log.name, 0, root);
+  const note = body + '\n' + tlog.noteSignature(body, f.log);
+  // Reproduce a size-zero record retained before empty-root admission validation.
+  f.journal.put('mirror-pending', f.log.name, { size: 0n, root, note, cosignature: '' });
+  f.journal.put('mirror-checkpoint-history', f.log.name + ':0', { note });
+  const before = f.snapshot();
+  const canonical = tlog.signedCheckpoint({ origin: f.log.name, entries: [], signer: f.log });
+  for (let attempt = 0; attempt < 2; attempt++) {
+    assert.throws(() => f.mirror.addCheckpoint(tlog.witnessRequest(0, [], canonical)), {
+      code: 'MIRROR_CHECKPOINT_FORK',
+    });
+    assert.deepEqual(f.snapshot(), before);
+    f.reopen();
+    assert.deepEqual(f.snapshot(), before);
+    assert.throws(() => f.mirror.checkpoint(f.log.name), { code: 'MIRROR_UNCOMMITTED' });
+  }
 });

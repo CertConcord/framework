@@ -133,3 +133,9 @@ signed-note response is rejected. A published checkpoint must also contain a
 cryptographically valid signature from the admitted log. The unchanged
 `CERTCONCORD-MLDSA87-SUBTREE-v1` identifier selects the experimental signature
 algorithm and key hint, not the transport revision.
+
+Witness and mirror admission require the RFC 6962 empty-tree hash for size-zero
+checkpoints before signing or retaining state. Rejection leaves the prior journal
+state intact, allowing a canonical retry after restart. The mirror custody root
+check also rejects invalid empty checkpoints retained by earlier implementations;
+existing history conflicts are not silently replaced.
