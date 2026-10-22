@@ -250,8 +250,8 @@
     },
     {
       "path": "docs/storage.md",
-      "bytes": 5484,
-      "sha256": "a795e2c887f9c071797c1ffc1cd9b08818bf25c13882d39fc130e501c5f1b5ea"
+      "bytes": 6001,
+      "sha256": "cc91994a1900153719c95546a7046a4a1d46c2e37b4ab0b886aa513ea1ac3fda"
     },
     {
       "path": "docs/timestamp-application.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 241241,
-      "sha256": "d383ad59a5f03738afd2610f35efe7c9a1f1f27e04c851c566d710b4f75f2418"
+      "bytes": 241441,
+      "sha256": "937d05774fedf18cecebd6626e7015033a6d21b77786c136ebd50bcac89f437a"
     },
     {
       "path": "reference/README.md",
@@ -897,6 +897,26 @@
       "path": "reference/mdoc.test.mjs",
       "bytes": 14758,
       "sha256": "aa77f8eb17dc10eefc7abf235d5462fd01e4a228f514367852a5bef6e3be09af"
+    },
+    {
+      "path": "reference/mirror-checkpoint-atomicity.test.mjs",
+      "bytes": 5568,
+      "sha256": "c66f9bfa02389d6a3ea133d263f984bbeb1a6267af6a311ffd9276a9a8f7ad5f"
+    },
+    {
+      "path": "reference/mirror-custody-process-child.mjs",
+      "bytes": 2054,
+      "sha256": "41ad887b8b1049757cb552c4b47321eea1c10f2141afd988913696ce3d5dbce3"
+    },
+    {
+      "path": "reference/mirror-custody-process-recovery.test.mjs",
+      "bytes": 8446,
+      "sha256": "c2111c4846f11b138eb62d83e234baa5a8d21046e04b54cebaa34892d8613e8a"
+    },
+    {
+      "path": "reference/mirror-custody-root.test.mjs",
+      "bytes": 4286,
+      "sha256": "8d8d9a7a0d722dd12c8edf4c024e99b1c34710321313aed518b5b39d9594183e"
     },
     {
       "path": "reference/mtc-range-contract.test.mjs",
@@ -1670,8 +1690,8 @@
     },
     {
       "path": "reference/transparency.mjs",
-      "bytes": 23035,
-      "sha256": "f50d22aa7707249d5168516727992ca971b3a58912782bf7ca4dc1f3e585236e"
+      "bytes": 23197,
+      "sha256": "3d4c01969872f2ca1e7170b34aa4297ce00e631eb129febbadf339c15ae2d64c"
     },
     {
       "path": "reference/transparency.test.mjs",

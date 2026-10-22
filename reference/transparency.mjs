@@ -294,19 +294,21 @@ export class TlogMirror {
     return this.store(origin).head().size;
   }
   addCheckpoint(body) {
-    const result = this.pending.addCheckpoint(body, { sign: false });
-    if (result.status === 200) {
-      const cp = parseCheckpoint(parseWitnessRequest(body).note);
-      const previous = this.journal.get('mirror-checkpoint-history', cp.origin + ':' + cp.size);
-      if (previous)
-        requireThat(
-          equal(parseCheckpoint(previous.value.note).root, cp.root),
-          'MIRROR_CHECKPOINT_FORK',
-        );
-      else
-        this.journal.put('mirror-checkpoint-history', cp.origin + ':' + cp.size, { note: cp.note });
-    }
-    return result;
+    return this.journal.transaction(() => {
+      const result = this.pending.addCheckpoint(body, { sign: false });
+      if (result.status === 200) {
+        const cp = parseCheckpoint(parseWitnessRequest(body).note);
+        const previous = this.journal.get('mirror-checkpoint-history', cp.origin + ':' + cp.size);
+        if (previous)
+          requireThat(
+            equal(parseCheckpoint(previous.value.note).root, cp.root),
+            'MIRROR_CHECKPOINT_FORK',
+          );
+        else
+          this.journal.put('mirror-checkpoint-history', cp.origin + ':' + cp.size, { note: cp.note });
+      }
+      return result;
+    });
   }
   addEntries(input, { gzip = false } = {}) {
     return this.journal.transaction(() => this.appendEntries(input, { gzip }));
@@ -390,6 +392,7 @@ export class TlogMirror {
         body: `${end}\n${store.head().size}\n\n`,
       };
     requireThat(pos === b.length, 'MIRROR_TRAILING');
+    requireThat(equal(store.root(Number(end)), cp.root), 'MIRROR_CHECKPOINT_ROOT');
     const cosignature = noteSignature(cp.body, this.signer);
     this.journal.put(
       'mirror-data',
