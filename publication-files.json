@@ -2110,6 +2110,7 @@
   "reference/webauthn.mjs",
   "reference/windows-tpm.mjs",
   "reference/witness-empty-checkpoint.test.mjs",
+  "reference/witness-size-contract.test.mjs",
   "spec/applications.md",
   "spec/architecture.md",
   "spec/bindings/COMMON-draft-03.md",

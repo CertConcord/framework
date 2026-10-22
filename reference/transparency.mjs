@@ -40,7 +40,7 @@ function unbase64(s) {
 function decimal(s) {
   requireThat(/^(0|[1-9][0-9]*)$/.test(s), 'NOTE_DECIMAL');
   const n = BigInt(s);
-  requireThat(n <= 0x7fffffffffffffffn, 'NOTE_SIZE');
+  requireThat(n <= 0xffffffffffffffffn, 'NOTE_SIZE');
   return n;
 }
 export function checkpointBody(origin, size, root) {

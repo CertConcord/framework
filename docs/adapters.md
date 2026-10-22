@@ -139,3 +139,9 @@ checkpoints before signing or retaining state. Rejection leaves the prior journa
 state intact, allowing a canonical retry after restart. The mirror custody root
 check also rejects invalid empty checkpoints retained by earlier implementations;
 existing history conflicts are not silently replaced.
+
+The adapter uses the selected checkpoint parser's unsigned 64-bit size domain
+consistently for checkpoint admission, old-size requests and conflict responses.
+Canonical decimal syntax and the 63-hash proof limit remain mandatory. Numeric
+boundary fixtures use signed size declarations; they do not establish possession
+of a tree of that size.
