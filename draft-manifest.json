@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 241337,
-      "sha256": "e3def0402b50baefbadc4e49776e5e8f30925f0bb192b5edd2bf56039bcff71c"
+      "bytes": 241441,
+      "sha256": "937d05774fedf18cecebd6626e7015033a6d21b77786c136ebd50bcac89f437a"
     },
     {
       "path": "reference/README.md",
@@ -902,6 +902,16 @@
       "path": "reference/mirror-checkpoint-atomicity.test.mjs",
       "bytes": 5568,
       "sha256": "c66f9bfa02389d6a3ea133d263f984bbeb1a6267af6a311ffd9276a9a8f7ad5f"
+    },
+    {
+      "path": "reference/mirror-custody-process-child.mjs",
+      "bytes": 2054,
+      "sha256": "41ad887b8b1049757cb552c4b47321eea1c10f2141afd988913696ce3d5dbce3"
+    },
+    {
+      "path": "reference/mirror-custody-process-recovery.test.mjs",
+      "bytes": 8446,
+      "sha256": "c2111c4846f11b138eb62d83e234baa5a8d21046e04b54cebaa34892d8613e8a"
     },
     {
       "path": "reference/mirror-custody-root.test.mjs",
