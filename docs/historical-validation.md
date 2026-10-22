@@ -141,6 +141,11 @@ head until the original token is authenticated, or recover the already committed
 publication and result together. Recovery after the protection deadline uses a
 token issued before that deadline; it makes no additional TSA request. These
 checks use synthetic authority appointments, clocks and local SQLite storage.
+The combined recovery case also changes a saved request after process death,
+rejects it against the original reservation, and restores the original request.
+A fresh process then reconciles the retained HTTP timestamp into one detached
+ERS publication snapshot after the deadline, with no additional TSA request.
+Another process recovers the exact committed result and archive revision.
 
 The reference tests use real signatures, timestamp tokens and ERS, with synthetic
 governance, clocks, lifetimes and software custody. The long-lived raw-key

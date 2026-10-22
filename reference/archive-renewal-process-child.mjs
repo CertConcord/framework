@@ -34,10 +34,12 @@ process.once('message', (configuration) => {
     trustDomainID,
   };
   const operation = 'archive-renewal:' + c.b64u(request.operationID);
+  let publicationReads = 0;
   const inspect = () => ({
     operation: journal.result(operation),
     publication: store.read(request.archiveID),
     revision: journal.get('archive-publication', request.archiveID)?.revision,
+    publicationReads,
   });
   const pause = (stage) => {
     emit('paused', { stage, pid: process.pid, depth: journal.depth ?? 0, ...inspect() });
@@ -89,7 +91,7 @@ process.once('message', (configuration) => {
       const root = c.parseDER(initial.publication.evidenceRecord);
       const chain = root.children[2].children[0];
       const stamp = c.seq(c.der(0xa0, c.parseDER(algID(OID.sha512)).value), token);
-      return {
+      const publication = {
         archiveID: saved.archiveID,
         previousHash: saved.previousHash,
         dataHash: c.sha512(data),
@@ -100,6 +102,12 @@ process.once('message', (configuration) => {
         ),
         history,
       };
+      if (mode === 'changing-publication')
+        Object.defineProperty(publication, 'archiveID', {
+          enumerable: true,
+          get: () => ++publicationReads === 1 ? saved.archiveID : 'different-archive',
+        });
+      return publication;
     },
   });
   process.on('message', async ({ action, token }) => {

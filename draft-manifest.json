@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 10566,
-      "sha256": "c7f22d511823cdaf02c46051884603c50dac9c3f5fbc3852d8451e6d904d8ea2"
+      "bytes": 10952,
+      "sha256": "fe922b0764d969d9a5a635728ee12ac13947341665bee10c75cafb7b5f9c78ad"
     },
     {
       "path": "docs/implementation.md",
@@ -335,13 +335,13 @@
     },
     {
       "path": "reference/archive-renewal-process-child.mjs",
-      "bytes": 4468,
-      "sha256": "70a6ef7f9cb1a4d852c5021f8621c29b04bbbee777d9210db805c58cd0ead276"
+      "bytes": 4785,
+      "sha256": "7513e6866fd4ee39d548e8146a808351e1d98316bc1f018c0d4b28cb87c2d5f6"
     },
     {
       "path": "reference/archive-renewal-process-recovery.test.mjs",
-      "bytes": 13159,
-      "sha256": "4acdfb5fbf9e8011039e0d584b0d0ac5067a77f48ba50f268dd628a6df482645"
+      "bytes": 15486,
+      "sha256": "c0e6609e409cc517ce7c74d7bfd9bd4a29c76aa393f013f9234db6f48d7e2fda"
     },
     {
       "path": "reference/archive-security.test.mjs",

@@ -249,6 +249,15 @@ async function fixture(t) {
     requests,
     startWorker,
     disk,
+    replaceRequest: (value) => {
+      const journal = new Journal(journalPath), id = 'archive-renewal:' + c.b64u(request.operationID);
+      try {
+        const saved = journal.get('archive-renewal-request', id);
+        assert(saved);
+        journal.put('archive-renewal-request', id, value, saved.revision);
+        return journal.get('archive-renewal-request', id);
+      } finally { journal.close(); }
+    },
     token: () => retainedToken,
     expected: async () => ({
       publication: {
@@ -268,7 +277,7 @@ async function fixture(t) {
   };
 }
 
-async function killAt(t, mode) {
+async function killAt(t, mode, recoveryMode = 'normal') {
   const f = await fixture(t),
     worker = await f.startWorker(mode, f.start + 10);
   const paused = waitFor(worker, 'paused');
@@ -283,7 +292,7 @@ async function killAt(t, mode) {
   if (process.platform === 'win32' && exit.signal === null)
     assert(Number.isInteger(exit.code) && exit.code !== 0);
   else assert.equal(exit.signal, 'SIGKILL', worker.stderr);
-  const restarted = await f.startWorker('normal', f.start + 200);
+  const restarted = await f.startWorker(recoveryMode, f.start + 200);
   assert.notEqual(restarted.child.pid, worker.child.pid);
   t.diagnostic(
     JSON.stringify({
@@ -349,6 +358,38 @@ for (const [mode, description] of [
     },
   );
 }
+
+test('archive renewal process recovery binds restored requests to one publication snapshot', async (t) => {
+  const f = await killAt(t, 'after-token', 'changing-publication');
+  assert.equal(f.beforeKill.operation.status, 'UNKNOWN_EXECUTION');
+  assert.equal(f.beforeKill.publication.revision, 0);
+  f.replaceRequest({ ...f.request, protectionDeadline: f.start + 300 });
+  assert.equal((await f.restarted.call('reconcile', f.token())).error?.code, 'IDEMPOTENCY_CONFLICT');
+  assert.deepEqual(f.disk(), f.beforeKill);
+  assert.equal((await f.restarted.call('inspect')).result.publicationReads, 0);
+  assert.equal(f.requests.length, 1);
+  assert.deepEqual(c.dcbor(f.replaceRequest(f.request).value), c.dcbor(f.request));
+  const expected = (await f.expected()).publication;
+  const expectedValue = c.decodeCBOR(c.dcbor({ digest: c.sha512(c.dcbor(expected)), publication: expected }));
+  const completed = (await f.restarted.call('reconcile', f.token())).result;
+  assert.deepEqual(completed, expectedValue);
+  const state = (await f.restarted.call('inspect')).result;
+  assert.equal(state.publicationReads, 1);
+  assert.equal(state.operation.status, 'COMPLETED');
+  assert.deepEqual(c.decodeCBOR(state.operation.result), expectedValue);
+  assert.deepEqual(state.publication, expectedValue);
+  assert.equal(state.revision, 1);
+  const reopened = await f.startWorker('normal', f.start + 200);
+  assert.notEqual(reopened.child.pid, f.restarted.child.pid);
+  assert.deepEqual((await reopened.call('renew')).result, expectedValue);
+  const final = (await reopened.call('inspect')).result;
+  assert.equal(final.operation.status, 'COMPLETED');
+  assert.deepEqual(c.decodeCBOR(final.operation.result), expectedValue);
+  assert.deepEqual(final.publication, expectedValue);
+  assert.equal(final.revision, 1);
+  assert.equal(final.publicationReads, 0);
+  assert.equal(f.requests.length, 1);
+});
 
 test('archive renewal process death after commit recovers the original publication and result without another TSA request', async (t) => {
   const f = await killAt(t, 'after-commit');
