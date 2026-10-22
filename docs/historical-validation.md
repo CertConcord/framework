@@ -59,6 +59,23 @@ Key compromise is irreversible across subsequent GOOD snapshots, roles, and
 certificate renewals. Appointments first published after the operation cannot be
 backdated to authorize it.
 
+`verifyPublication` is synchronous. It must return a non-Proxy plain or
+null-prototype object with its own `overall` data property. A `VALID` decision
+also requires an own finite numeric `poeUpperBound` data property; fractional
+seconds are preserved. Missing or malformed decisions, accessors, inherited
+verdicts, proxies, promises and thenables produce
+`INDETERMINATE/HISTORY_PUBLICATION_PROOF_REQUIRED`. Explicit `INVALID`,
+`INDETERMINATE` and `UNSUPPORTED` decisions retain their classification and own
+string reason. An exception cannot supply a positive authority verdict. Thrown
+values are normalized without executing accessors or Proxy traps: only own data
+fields can supply a known negative classification and a string error code.
+Missing or unsafe fields fall back to `INVALID` and `HISTORY_INVALID` respectively.
+The same entry authenticator is used for in-memory resolution and durable admission and
+replay; result validation does not replace proof authentication, root signatures
+or manifest-chain checks. Ordinary native promise rejections are observed, but
+custom `constructor` or `Symbol.species` behavior can prevent that observation.
+Callbacks must handle their own asynchronous failures.
+
 `ArchivePublicationStore` atomically persists the ERS head, original data
 commitment, and retained governance/custodian history in one journal transaction.
 Its required synchronous publication validator must authenticate the ERS, bind it

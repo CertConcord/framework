@@ -10,7 +10,18 @@ import { isPromise, isProxy } from 'node:util/types';
 const copy = (value) => decodeCBOR(dcbor(value));
 const fail = (overall, reason) => { throw new AuthorityError({ overall, reason }); };
 const validTime = (value) => Number.isSafeInteger(value) && value >= 0;
-const outcome = (error) => ({ overall: error.overall ?? 'INVALID', reason: error.code ?? 'HISTORY_INVALID' });
+const outcome = (error) => {
+  const failure = { overall: 'INVALID', reason: 'HISTORY_INVALID' };
+  if (!error || typeof error !== 'object' || isProxy(error)) return failure;
+  const decision = Object.getOwnPropertyDescriptor(error, 'overall');
+  const code = Object.getOwnPropertyDescriptor(error, 'code');
+  if (decision && Object.hasOwn(decision, 'value') &&
+    ['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(decision.value))
+    failure.overall = decision.value;
+  if (code && Object.hasOwn(code, 'value') && typeof code.value === 'string')
+    failure.reason = code.value;
+  return failure;
+};
 
 function rootPolicy(policy) {
   fields(policy, ['roots', 'threshold']);
@@ -43,6 +54,29 @@ function threshold(manifest, signatures, policy, at, deadlines) {
 export const manifestPublicationImprint = ({ manifest, signatures }) =>
   H('RootTrustManifestPublication', { manifest, signatures });
 
+function publicationUpperBound(publication) {
+  const missing = () => fail('INDETERMINATE', 'HISTORY_PUBLICATION_PROOF_REQUIRED');
+  if (isPromise(publication)) {
+    try { Promise.prototype.then.call(publication, undefined, () => {}); }
+    catch { /* Custom constructors/species can prevent rejection observation. */ }
+    missing();
+  }
+  if (!publication || typeof publication !== 'object' || isProxy(publication)) missing();
+  const prototype = Object.getPrototypeOf(publication);
+  if ((prototype !== Object.prototype && prototype !== null) || 'then' in publication) missing();
+  const decision = Object.getOwnPropertyDescriptor(publication, 'overall');
+  if (!decision || !Object.hasOwn(decision, 'value')) missing();
+  if (['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(decision.value)) {
+    const reason = Object.getOwnPropertyDescriptor(publication, 'reason');
+    fail(decision.value, reason && Object.hasOwn(reason, 'value') && typeof reason.value === 'string'
+      ? reason.value : 'HISTORY_PUBLICATION_PROOF_REQUIRED');
+  }
+  const bound = Object.getOwnPropertyDescriptor(publication, 'poeUpperBound');
+  if (decision.value !== 'VALID' || !bound || !Object.hasOwn(bound, 'value') ||
+    !Number.isFinite(bound.value)) missing();
+  return bound.value;
+}
+
 // Shared raw-entry authentication. The durable source replays this function at
 // each entry's recorded admission time; no serialized appointment is imported.
 export function authenticateRetainedAuthorityEntry({ trustDomainID, governance, algorithmDeadlines,
@@ -51,9 +85,7 @@ export function authenticateRetainedAuthorityEntry({ trustDomainID, governance, 
   const { manifest, signatures } = entry;
   const publication = verifyPublication({ imprint: manifestPublicationImprint(entry),
     proof: Buffer.from(entry.publicationProof), at: validationTime });
-  if (publication?.overall !== 'VALID' || !Number.isFinite(publication.poeUpperBound))
-    fail(publication?.overall ?? 'INDETERMINATE', publication?.reason ?? 'HISTORY_PUBLICATION_PROOF_REQUIRED');
-  const published = publication.poeUpperBound;
+  const published = publicationUpperBound(publication);
   if (published > knowledgeTime) return null;
   fields(manifest, ['schemaVersion', 'trustDomainID', 'serial', 'previousHash', 'issuedAt',
     'notBefore', 'notAfter', 'coverageUntil', 'authorities'], ['successor']);
