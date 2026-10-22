@@ -250,8 +250,8 @@
     },
     {
       "path": "docs/storage.md",
-      "bytes": 5484,
-      "sha256": "a795e2c887f9c071797c1ffc1cd9b08818bf25c13882d39fc130e501c5f1b5ea"
+      "bytes": 6001,
+      "sha256": "cc91994a1900153719c95546a7046a4a1d46c2e37b4ab0b886aa513ea1ac3fda"
     },
     {
       "path": "docs/timestamp-application.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 241293,
-      "sha256": "1935cb0d449da798265002833fb00440baa741c3aaadee99369369ac21c7165c"
+      "bytes": 241337,
+      "sha256": "e3def0402b50baefbadc4e49776e5e8f30925f0bb192b5edd2bf56039bcff71c"
     },
     {
       "path": "reference/README.md",
@@ -902,6 +902,11 @@
       "path": "reference/mirror-checkpoint-atomicity.test.mjs",
       "bytes": 5568,
       "sha256": "c66f9bfa02389d6a3ea133d263f984bbeb1a6267af6a311ffd9276a9a8f7ad5f"
+    },
+    {
+      "path": "reference/mirror-custody-root.test.mjs",
+      "bytes": 4286,
+      "sha256": "8d8d9a7a0d722dd12c8edf4c024e99b1c34710321313aed518b5b39d9594183e"
     },
     {
       "path": "reference/mtc-range-contract.test.mjs",
@@ -1675,8 +1680,8 @@
     },
     {
       "path": "reference/transparency.mjs",
-      "bytes": 23113,
-      "sha256": "45e6c285892ded4f10d16e9ad3c465ab30fd9044e370eab18a388a105b2e120b"
+      "bytes": 23197,
+      "sha256": "3d4c01969872f2ca1e7170b34aa4297ce00e631eb129febbadf339c15ae2d64c"
     },
     {
       "path": "reference/transparency.test.mjs",

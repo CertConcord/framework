@@ -392,6 +392,7 @@ export class TlogMirror {
         body: `${end}\n${store.head().size}\n\n`,
       };
     requireThat(pos === b.length, 'MIRROR_TRAILING');
+    requireThat(equal(store.root(Number(end)), cp.root), 'MIRROR_CHECKPOINT_ROOT');
     const cosignature = noteSignature(cp.body, this.signer);
     this.journal.put(
       'mirror-data',
