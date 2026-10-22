@@ -560,8 +560,8 @@
     },
     {
       "path": "reference/document-vectors.test.mjs",
-      "bytes": 22310,
-      "sha256": "bb51763daccb64263ea86306ea0c960a7327bd9c8561cf112c5d8d01bc3b167b"
+      "bytes": 22315,
+      "sha256": "a6c18430171a0f40c9057731a5e30b6aa6c8fc88e4f46444a4f35f69920a8265"
     },
     {
       "path": "reference/draft-domain.test.mjs",
@@ -5245,8 +5245,8 @@
     },
     {
       "path": "reference/vectors/preserved-certificate-status-rar2/README.md",
-      "bytes": 2968,
-      "sha256": "6321b260b39aea167ced8ce0268c6cee9e8116f24705978c532ecba8df38b1ba"
+      "bytes": 2978,
+      "sha256": "700009a3349a3f02de1f2eb5c708c4866fbe4b666234bc7885e3033e97404ee6"
     },
     {
       "path": "reference/vectors/preserved-certificate-status-rar2/files/0066f41605ff6bcf724452cada127369117614702cec0714ab3176aa033239bf.bin.b64",
@@ -7325,8 +7325,8 @@
     },
     {
       "path": "reference/vectors/preserved-delegation-status-rar2/README.md",
-      "bytes": 3507,
-      "sha256": "85dc9e8a67453db36100d69a7a15fd16c95e8ffe21dc991bd49167ca876cd02b"
+      "bytes": 3517,
+      "sha256": "63aa1d042de472536f3f2660157f97e20ac04be4ca39e54e91ecde1ff1b99dcf"
     },
     {
       "path": "reference/vectors/preserved-delegation-status-rar2/files/01332691026dff45a85d5c6fbaa72bf7db256ccca094442054a5c483dbe5cac9.json",

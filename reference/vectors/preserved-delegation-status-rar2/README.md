@@ -2,10 +2,10 @@
 
 This corpus issues RegistrationAuthorization schema 2 as required by COMMON-draft-03. It retains the prior scenario assertions and uses newly signed synthetic inputs. The original [preserved-delegation-status](../preserved-delegation-status/README.md) directory and its bytes remain unchanged; replay of that schema 1 corpus belongs to Framework commit `ac43db6dfd52acbac57a091cb2c9b5cc71e06244`. The current loader rejects its old profile identifier.
 
-This synthetic corpus contains 50 cases with exact public OrganizationDelegationStatus CMS and RFC 4998 bytes. It uses the existing organization-history encoding and public replay factories. The selected credential's CertificateStatus has a [separate corpus](../preserved-certificate-status/README.md).
+This synthetic corpus contains 50 cases with exact public OrganizationDelegationStatus CMS and RFC 4998 bytes. It uses the existing organization-history encoding and public replay factories. The selected credential's CertificateStatus has a [separate corpus](../preserved-certificate-status-rar2/README.md).
 
 ```sh
-node reference/verify-organization-vectors.mjs reference/vectors/preserved-delegation-status
+node reference/verify-organization-vectors.mjs reference/vectors/preserved-delegation-status-rar2
 node --test reference/preserved-delegation-status.test.mjs
 ```
 
