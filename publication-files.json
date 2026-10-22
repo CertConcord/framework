@@ -178,6 +178,7 @@
   "reference/mdoc-pki.mjs",
   "reference/mdoc.mjs",
   "reference/mdoc.test.mjs",
+  "reference/mtc-range-contract.test.mjs",
   "reference/mtc-version.test.mjs",
   "reference/mtc.mjs",
   "reference/native-driver.mjs",

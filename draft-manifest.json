@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 241198,
-      "sha256": "776011f0e9a46e8803bec74c637de69fe350c767a98a883c77e96dd7f0844bcd"
+      "bytes": 241241,
+      "sha256": "d383ad59a5f03738afd2610f35efe7c9a1f1f27e04c851c566d710b4f75f2418"
     },
     {
       "path": "reference/README.md",
@@ -899,14 +899,19 @@
       "sha256": "aa77f8eb17dc10eefc7abf235d5462fd01e4a228f514367852a5bef6e3be09af"
     },
     {
+      "path": "reference/mtc-range-contract.test.mjs",
+      "bytes": 6417,
+      "sha256": "526969fa246a031f378a85f0a9b28605cc5909b56e48b24d5bba378c16c1e408"
+    },
+    {
       "path": "reference/mtc-version.test.mjs",
       "bytes": 2278,
       "sha256": "777b117202f237c248724f1eaba4f472782f28855eb255076dc5305f38e75b15"
     },
     {
       "path": "reference/mtc.mjs",
-      "bytes": 16358,
-      "sha256": "7b1a1fa23610b7b26940b07ae9f844b0d1cfb7d70719591ad2aa2caf66a5c2af"
+      "bytes": 16592,
+      "sha256": "d8a4c295dbac9c1ab9a19212e0b3ea1e9b2dd2fa49e72324987e144a4bc47f25"
     },
     {
       "path": "reference/native-driver.mjs",
@@ -10565,8 +10570,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 44478,
-      "sha256": "24e3c8108427835cb7b42e6ebd0ffe836bb29f3e41f1e03f9431f59ccd15a29a"
+      "bytes": 45080,
+      "sha256": "d6d6f78c89d07d74fca14e0d0e4b5d18cc746593aadd625330af4195fa9599ee"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
