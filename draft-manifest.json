@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 36043,
-      "sha256": "f7bee42fc74399eb58b9ca4e27894234ee4e5ce6a7505f2a6d670abbf20a280d"
+      "bytes": 37477,
+      "sha256": "9b05f99e1f76b2a433bcb747d8c6cae6a1ef36d0c16c156c6874f756b2dd0ad8"
     },
     {
       "path": "docs/apple-identity.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 241441,
-      "sha256": "937d05774fedf18cecebd6626e7015033a6d21b77786c136ebd50bcac89f437a"
+      "bytes": 241582,
+      "sha256": "066bf48a3c4786287cb712cc432ee7eba32fbbcab05284d412bcfe76be3d3ead"
     },
     {
       "path": "reference/README.md",
@@ -900,8 +900,8 @@
     },
     {
       "path": "reference/mirror-checkpoint-atomicity.test.mjs",
-      "bytes": 5568,
-      "sha256": "c66f9bfa02389d6a3ea133d263f984bbeb1a6267af6a311ffd9276a9a8f7ad5f"
+      "bytes": 6666,
+      "sha256": "1eeaf81816c915ed69a2e4b09a2bb5b675a9da403b3f0b8b55ac17d640739c8d"
     },
     {
       "path": "reference/mirror-custody-process-child.mjs",
@@ -910,13 +910,13 @@
     },
     {
       "path": "reference/mirror-custody-process-recovery.test.mjs",
-      "bytes": 8446,
-      "sha256": "c2111c4846f11b138eb62d83e234baa5a8d21046e04b54cebaa34892d8613e8a"
+      "bytes": 8548,
+      "sha256": "e02d909725e6fd24dd46a35b5f1e143e0efaab9c1fedb8fdfaac4a9787af0f25"
     },
     {
       "path": "reference/mirror-custody-root.test.mjs",
-      "bytes": 4286,
-      "sha256": "8d8d9a7a0d722dd12c8edf4c024e99b1c34710321313aed518b5b39d9594183e"
+      "bytes": 4523,
+      "sha256": "a3010b8180f83f1595f150e4575a0e4cd96c806830234a586bcd0430f0260b6b"
     },
     {
       "path": "reference/mtc-range-contract.test.mjs",
@@ -1690,8 +1690,8 @@
     },
     {
       "path": "reference/transparency.mjs",
-      "bytes": 23197,
-      "sha256": "3d4c01969872f2ca1e7170b34aa4297ce00e631eb129febbadf339c15ae2d64c"
+      "bytes": 23488,
+      "sha256": "a992b7bfb50f95699979a914f5beff2e54f58b18a36323f38a1f5c7e49179d96"
     },
     {
       "path": "reference/transparency.test.mjs",
@@ -10552,6 +10552,21 @@
       "path": "reference/windows-tpm.mjs",
       "bytes": 7568,
       "sha256": "dfd560a40df96c3702c89d432f6bbcb8065c7c48c32e0770dc652dc86e3ef077"
+    },
+    {
+      "path": "reference/witness-empty-checkpoint.test.mjs",
+      "bytes": 6192,
+      "sha256": "77ee3a92bbb461b2b57ea5ca971064764f50345746721dc611eb0127a9577a16"
+    },
+    {
+      "path": "reference/witness-http-contract.test.mjs",
+      "bytes": 10486,
+      "sha256": "c994aebd02e356ee5d003190ca587358a6846262c5169234b5f0396092d4bfa6"
+    },
+    {
+      "path": "reference/witness-size-contract.test.mjs",
+      "bytes": 4693,
+      "sha256": "5cc37cafc9295b9f052b23e5ed5d28e22f3bfd6cfc7a19f7db805c53a8c69158"
     },
     {
       "path": "spec/applications.md",

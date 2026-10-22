@@ -40,7 +40,7 @@ function unbase64(s) {
 function decimal(s) {
   requireThat(/^(0|[1-9][0-9]*)$/.test(s), 'NOTE_DECIMAL');
   const n = BigInt(s);
-  requireThat(n <= 0x7fffffffffffffffn, 'NOTE_SIZE');
+  requireThat(n <= 0xffffffffffffffffn, 'NOTE_SIZE');
   return n;
 }
 export function checkpointBody(origin, size, root) {
@@ -205,12 +205,13 @@ export class TlogWitness {
       log = this.logs.get(cp.origin);
     requireThat(log, 'WITNESS_UNKNOWN_LOG');
     verifyPublishedCheckpoint(q.note, log);
+    requireThat(cp.size >= q.oldSize, 'WITNESS_ROLLBACK');
     return this.journal.transaction(() => {
       const r = this.journal.get(this.namespace, cp.origin),
         old = r?.value ?? { size: 0, root: treeHash([]) };
       if (BigInt(old.size) !== q.oldSize)
         return { status: 409, type: 'text/x.tlog.size', body: old.size + '\n' };
-      requireThat(cp.size >= q.oldSize, 'WITNESS_ROLLBACK');
+      requireThat(cp.size !== 0n || equal(cp.root, treeHash([])), 'WITNESS_EMPTY_ROOT');
       if (q.oldSize === 0n) requireThat(q.proof.length === 0, 'WITNESS_ZERO_PROOF');
       else
         verifyConsistency({
@@ -221,6 +222,7 @@ export class TlogWitness {
           root: cp.root,
           proof: q.proof,
         });
+      requireThat(cp.size !== q.oldSize || equal(cp.root, old.root), 'CONSISTENCY_HASH');
       const cosignature = sign ? noteSignature(cp.body, this.signer) : '';
       this.journal.put(
         this.namespace,
@@ -602,9 +604,9 @@ export function createTransparencyHandler(service) {
       const code = e.code ?? e.message,
         status = /UNKNOWN_LOG/.test(code)
           ? 404
-          : /UNTRUSTED_SIGNATURE/.test(code)
+          : /UNTRUSTED_SIGNATURE/.test(code) || code === 'CHECKPOINT_LOG_SIGNATURE_REQUIRED'
             ? 403
-            : /CONSISTENCY/.test(code)
+            : /CONSISTENCY/.test(code) || code === 'WITNESS_ZERO_PROOF' || code === 'WITNESS_EMPTY_ROOT'
               ? 422
               : 400;
       res.writeHead(status, { 'content-type': 'text/plain' });

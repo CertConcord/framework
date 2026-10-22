@@ -133,3 +133,26 @@ signed-note response is rejected. A published checkpoint must also contain a
 cryptographically valid signature from the admitted log. The unchanged
 `CERTCONCORD-MLDSA87-SUBTREE-v1` identifier selects the experimental signature
 algorithm and key hint, not the transport revision.
+
+Witness and mirror admission require the RFC 6962 empty-tree hash for size-zero
+checkpoints before signing or retaining state. Rejection leaves the prior journal
+state intact, allowing a canonical retry after restart. The mirror custody root
+check also rejects invalid empty checkpoints retained by earlier implementations;
+existing history conflicts are not silently replaced.
+
+The adapter uses the selected checkpoint parser's unsigned 64-bit size domain
+consistently for checkpoint admission, old-size requests and conflict responses.
+Canonical decimal syntax and the 63-hash proof limit remain mandatory. Numeric
+boundary fixtures use signed size declarations; they do not establish possession
+of a tree of that size.
+
+The add-checkpoint HTTP handler authenticates the log before validating the
+old/new size range, and rejects a reversed range with 400 before checking stored
+size. Missing or invalid trusted log signatures return 403; invalid empty roots
+and consistency proofs return 422. A valid request with a stale old size returns
+409 with the exact retained decimal size and LF, allowing the client to retry.
+
+Equal-size witness requests must retain the stored root, including size zero. A
+conflicting root retained by an earlier implementation is rejected with 422 and
+its original note, signature and journal revision remain intact. A subsequent
+nonempty checkpoint can still advance under the normal consistency rules.
