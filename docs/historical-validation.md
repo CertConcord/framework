@@ -100,6 +100,22 @@ the assembled ERS and completing the operation. It never silently repeats an
 uncertain external execution. Completed result lookup does not renew authority or
 create a new timestamp.
 
+The synchronous authority resolver used by `requireAuthority` must return a
+non-Proxy plain or null-prototype object with its own `overall` data property.
+Malformed decisions, inherited or accessor verdicts, proxies, promises and
+thenables produce `INDETERMINATE/AUTHORITY_DECISION_MISSING`. Explicit `INVALID`,
+`INDETERMINATE` and `UNSUPPORTED` decisions retain their classification and own
+string reason; an absent or unsafe reason uses `AUTHORITY_DECISION_MISSING`.
+Verdicts and negative reason metadata are read without invoking accessors or
+Proxy traps. Ordinary native promise rejections are observed, but custom
+`constructor` or `Symbol.species` behavior can prevent that observation; the
+resolver remains responsible for its asynchronous failures. Synchronous resolver
+exceptions propagate unchanged. These result checks do not authenticate policy
+inputs or replace the selected authority's role, scope and status evaluation.
+A rejected renewal decision leaves the old archive head and uncertain operation
+intact, so the original token can be reconciled under a valid authority decision
+without repeating the TSA request.
+
 The process recovery tests terminate the coordinator after receiving a real
 RFC 3161 token over loopback HTTP, inside the publication transaction, and after
 commit. Restarted coordinators preserve an uncertain operation and the old archive

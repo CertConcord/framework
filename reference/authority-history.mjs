@@ -2,6 +2,7 @@ import {
   ProtocolError, requireThat, fields, dcbor, decodeCBOR, equal, keyID, publicFromDER,
 } from './core.mjs';
 import { parseCertificate } from './pki.mjs';
+import { isPromise, isProxy } from 'node:util/types';
 
 export const authorityRoles = Object.freeze([
   'REGISTRATION_AUTHORITY', 'ISSUER', 'PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY',
@@ -170,8 +171,25 @@ export function requireAuthority(resolver, query) {
   const outcome = typeof resolver === 'function'
     ? resolver(query)
     : result('INDETERMINATE', 'AUTHORITY_RESOLVER_REQUIRED');
-  if (!outcome || !['VALID', 'INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(outcome.overall))
+  const missing = () => {
     throw new AuthorityError(result('INDETERMINATE', 'AUTHORITY_DECISION_MISSING'));
-  if (outcome.overall !== 'VALID') throw new AuthorityError(outcome);
+  };
+  if (isPromise(outcome)) {
+    try { Promise.prototype.then.call(outcome, undefined, () => {}); }
+    catch { /* Custom constructors/species can prevent rejection observation. */ }
+    missing();
+  }
+  if (!outcome || typeof outcome !== 'object' || isProxy(outcome)) missing();
+  const prototype = Object.getPrototypeOf(outcome);
+  if ((prototype !== Object.prototype && prototype !== null) || 'then' in outcome) missing();
+  const decision = Object.getOwnPropertyDescriptor(outcome, 'overall');
+  if (!decision || !Object.hasOwn(decision, 'value') ||
+    !['VALID', 'INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(decision.value)) missing();
+  if (decision.value !== 'VALID') {
+    const reason = Object.getOwnPropertyDescriptor(outcome, 'reason');
+    throw new AuthorityError(result(decision.value,
+      reason && Object.hasOwn(reason, 'value') && typeof reason.value === 'string'
+        ? reason.value : 'AUTHORITY_DECISION_MISSING'));
+  }
   return outcome;
 }
