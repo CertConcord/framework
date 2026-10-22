@@ -148,11 +148,16 @@ test('a conflicting legacy empty history row remains protected by atomic admissi
   const root = Buffer.alloc(32, 9);
   const body = tlog.checkpointBody(f.log.name, 0, root);
   const note = body + '\n' + tlog.noteSignature(body, f.log);
-  // Reproduce a size-zero record retained before empty-root admission validation.
-  f.journal.put('mirror-pending', f.log.name, { size: 0n, root, note, cosignature: '' });
+  // Reproduce conflicting history retained before pending/history writes were atomic.
+  const canonical = tlog.signedCheckpoint({ origin: f.log.name, entries: [], signer: f.log });
+  f.journal.put('mirror-pending', f.log.name, {
+    size: 0n,
+    root: tlog.parseCheckpoint(canonical).root,
+    note: canonical,
+    cosignature: '',
+  });
   f.journal.put('mirror-checkpoint-history', f.log.name + ':0', { note });
   const before = f.snapshot();
-  const canonical = tlog.signedCheckpoint({ origin: f.log.name, entries: [], signer: f.log });
   for (let attempt = 0; attempt < 2; attempt++) {
     assert.throws(() => f.mirror.addCheckpoint(tlog.witnessRequest(0, [], canonical)), {
       code: 'MIRROR_CHECKPOINT_FORK',

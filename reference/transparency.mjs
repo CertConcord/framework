@@ -222,6 +222,7 @@ export class TlogWitness {
           root: cp.root,
           proof: q.proof,
         });
+      requireThat(cp.size !== q.oldSize || equal(cp.root, old.root), 'CONSISTENCY_HASH');
       const cosignature = sign ? noteSignature(cp.body, this.signer) : '';
       this.journal.put(
         this.namespace,

@@ -97,3 +97,36 @@ test('invalid empty mirror admission leaves no history and permits a canonical r
   assert.equal(verified.size, 0n);
   assert.deepEqual(verified.root, treeHash([]));
 });
+
+for (const algorithm of ['ed25519', 'ml-dsa-87']) {
+  test(
+    'a ' + algorithm + ' witness preserves a conflicting retained empty root across reopen',
+    (t) => {
+      const f = fixture(t, algorithm);
+      const root = Buffer.alloc(32, 9);
+      const body = tlog.checkpointBody(f.log.name, 0, root);
+      const note = body + '\n' + tlog.noteSignature(body, f.log);
+      const cosignature = tlog.noteSignature(body, f.signer);
+      // Reproduce the signed witness state admitted before empty-root validation.
+      assert.deepEqual(tlog.verifyNote(note + cosignature, f.signer).root, root);
+      f.journal.put('witness', f.log.name, { size: 0n, root, note, cosignature });
+      const before = f.journal.get('witness', f.log.name);
+      const canonical = tlog.signedCheckpoint({ origin: f.log.name, entries: [], signer: f.log });
+      for (let attempt = 0; attempt < 2; attempt++) {
+        assert.throws(() => f.witness.addCheckpoint(tlog.witnessRequest(0, [], canonical)), {
+          code: 'CONSISTENCY_HASH',
+        });
+        assert.deepEqual(f.journal.get('witness', f.log.name), before);
+        f.reopen();
+        assert.deepEqual(f.journal.get('witness', f.log.name), before);
+      }
+      const entries = [Buffer.from('first leaf')];
+      const next = tlog.signedCheckpoint({ origin: f.log.name, entries, signer: f.log });
+      const grown = f.witness.addCheckpoint(tlog.witnessRequest(0, [], next));
+      assert.equal(grown.status, 200);
+      assert.deepEqual(tlog.verifyNote(next + grown.body, f.signer).root, treeHash(entries));
+      f.reopen();
+      assert.equal(f.journal.get('witness', f.log.name).value.note, next);
+    },
+  );
+}

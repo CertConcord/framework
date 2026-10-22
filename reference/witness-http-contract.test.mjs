@@ -46,6 +46,9 @@ async function fixture(t, kind) {
   return {
     log,
     signer,
+    get journal() {
+      return journal;
+    },
     get base() {
       return 'http://127.0.0.1:' + server.address().port;
     },
@@ -261,3 +264,31 @@ for (const size of [0x8000000000000000n, 0xffffffffffffffffn]) {
     },
   );
 }
+
+test('witness HTTP retains a legacy empty-root conflict across restart before valid growth', async (t) => {
+  const f = await fixture(t, 'witness');
+  const root = Buffer.alloc(32, 9);
+  const body = tlog.checkpointBody(f.log.name, 0, root);
+  const note = body + '\n' + tlog.noteSignature(body, f.log);
+  const cosignature = tlog.noteSignature(body, f.signer);
+  f.journal.put('witness', f.log.name, { size: 0n, root, note, cosignature });
+  const before = f.snapshot();
+  const canonical = f.checkpoint([]);
+  for (let attempt = 0; attempt < 2; attempt++) {
+    assert.deepEqual(await f.post(tlog.witnessRequest(0, [], canonical)), {
+      status: 422,
+      type: 'text/plain',
+      body: 'CONSISTENCY_HASH',
+    });
+    assert.deepEqual(f.snapshot(), before);
+    await f.reopen();
+    assert.deepEqual(f.snapshot(), before);
+  }
+  const entries = [Buffer.from('first leaf')];
+  const next = f.checkpoint(entries);
+  const grown = await f.post(tlog.witnessRequest(0, [], next));
+  assert.equal(grown.status, 200);
+  assert.deepEqual(tlog.verifyNote(next + grown.body, f.signer).root, treeHash(entries));
+  await f.reopen();
+  await f.published(entries);
+});

@@ -151,3 +151,8 @@ old/new size range, and rejects a reversed range with 400 before checking stored
 size. Missing or invalid trusted log signatures return 403; invalid empty roots
 and consistency proofs return 422. A valid request with a stale old size returns
 409 with the exact retained decimal size and LF, allowing the client to retry.
+
+Equal-size witness requests must retain the stored root, including size zero. A
+conflicting root retained by an earlier implementation is rejected with 422 and
+its original note, signature and journal revision remain intact. A subsequent
+nonempty checkpoint can still advance under the normal consistency rules.
