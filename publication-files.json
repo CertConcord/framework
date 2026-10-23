@@ -2112,6 +2112,7 @@
   "reference/witness-empty-checkpoint.test.mjs",
   "reference/witness-http-contract.test.mjs",
   "reference/witness-size-contract.test.mjs",
+  "reference/xmlers-contract.test.mjs",
   "spec/applications.md",
   "spec/architecture.md",
   "spec/bindings/COMMON-draft-03.md",

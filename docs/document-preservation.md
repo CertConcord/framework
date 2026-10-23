@@ -53,6 +53,8 @@ MTC cosignatures establish the selected issuance commitments. They do not provid
 
 ## Encoding and recovery
 
+The selected XMLERS parser requires the RFC 6283 namespace on every element and permits at most 64 chains with 64 timestamps per chain. These are reference-profile bounds, not limits imposed by RFC 6283. Namespace prefixes may vary without changing the selected namespace.
+
 The RFC 4998 adapter supports bounded nonempty chains, SHA-256/SHA-512 tree hashes, matching timestamp imprint hashes and single-object renewal. An omitted `digestAlgorithm` comes from the timestamp imprint. The first reduced-tree level contains the target hash; later levels contain siblings of the computed node.
 
 Hash renewal hashes the DER-encoded preceding `ArchiveTimeStampSequence`, including its outer SEQUENCE tag and length, and selects RFC 4998 Figure 4's binary-sorted construction. [Erratum 7411](https://www.rfc-editor.org/errata/eid7411) reports the conflicting section 5.2 prose and remains Reported, not an approved correction. Previous reference records omitted the outer sequence framing and used unsorted pairs. Those records are incompatible with this corrected encoding. There is no legacy fallback or silent rewrite of archived bytes.

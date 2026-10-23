@@ -444,6 +444,10 @@ export function verifyXMLERS(xml, data, trust) {
   const doc = xmlDocument(xml),
     root = doc.documentElement;
   requireThat(
+    Array.from(root.getElementsByTagName('*')).every((node) => node.namespaceURI === XMLNS),
+    'XMLERS_NAMESPACE',
+  );
+  requireThat(
     root.localName === 'EvidenceRecord' &&
       root.getAttribute('Version') === '1.0' &&
       children(root).length === 1,
@@ -469,6 +473,7 @@ export function verifyXMLERS(xml, data, trust) {
     );
     const h = hashes[hashOID],
       stamps = children(chain).filter((n) => n.localName === 'ArchiveTimeStamp');
+    requireThat(stamps.length <= 64, 'XMLERS_STAMP_LIMIT');
     requireThat(
       stamps.length > 0 && children(chain).length === stamps.length + 2,
       'XMLERS_CHILDREN',

@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 14473,
-      "sha256": "aa625c9e48b1ed21cd548563b4b6159564ca5f4664ceb46da8faec523b62539d"
+      "bytes": 14747,
+      "sha256": "9404dc3ae35106e8ee6cf3ac7308fdec5074b4deb4bc471131038e14d24f4722"
     },
     {
       "path": "docs/draft-acceptance.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 241582,
-      "sha256": "066bf48a3c4786287cb712cc432ee7eba32fbbcab05284d412bcfe76be3d3ead"
+      "bytes": 241622,
+      "sha256": "cf2fb60527b17adb6e0cb32250099c30b4e89bb8c9bad6e3eeee396e2217c295"
     },
     {
       "path": "reference/README.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46437,
-      "sha256": "85cd30b9fe870e5bb7bd273eba55931062c091f32ac098882cfa92e49b9e252f"
+      "bytes": 46505,
+      "sha256": "d7114c20c5aa53a10e01195a02554a29ce201e8e8dc56299be440b1f391bcdec"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -350,8 +350,8 @@
     },
     {
       "path": "reference/archive.mjs",
-      "bytes": 20448,
-      "sha256": "9cbb871edcf4780fe151e2aa95f97965a09bea4a6df1e5b6ea264a7b7f2e277d"
+      "bytes": 20645,
+      "sha256": "294d17cf7c4a7ad4995c467ee73952050c3519ad1a78158a8a5904ecc4f313db"
     },
     {
       "path": "reference/arkg.mjs",
@@ -10567,6 +10567,11 @@
       "path": "reference/witness-size-contract.test.mjs",
       "bytes": 4693,
       "sha256": "5cc37cafc9295b9f052b23e5ed5d28e22f3bfd6cfc7a19f7db805c53a8c69158"
+    },
+    {
+      "path": "reference/xmlers-contract.test.mjs",
+      "bytes": 3465,
+      "sha256": "cf700d3b060610e4f453e3267d42ff92b31e5a445f14cad2b1ad4d94e8f1b9cd"
     },
     {
       "path": "spec/applications.md",

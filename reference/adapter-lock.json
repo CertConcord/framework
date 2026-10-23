@@ -8,7 +8,11 @@
       "version": "1.0.1",
       "wireProfile": "Approved mDL/photo ID/PID/custom rulebooks; typed multi-namespace disclosure; profile commitment; native holder proof, status and enrollment/session/CSR binding",
       "modules": ["identity.mjs", "openid.mjs", "annex-verifier.mjs", "identity-profiles.mjs"],
-      "tests": ["foundation-security.test.mjs", "identity-profiles.test.mjs", "identity-crl-usage.test.mjs"],
+      "tests": [
+        "foundation-security.test.mjs",
+        "identity-profiles.test.mjs",
+        "identity-crl-usage.test.mjs"
+      ],
       "sources": [
         "oid4vp",
         "multipazAnnexC",
@@ -578,7 +582,8 @@
         "archive-security.test.mjs",
         "archive-renewal-process-recovery.test.mjs",
         "retained-authorities.test.mjs",
-        "retained-document.test.mjs"
+        "retained-document.test.mjs",
+        "xmlers-contract.test.mjs"
       ],
       "sources": ["rfc4998", "rfc6283"],
       "inputSemantics": "Exact original bytes and DER-encoded prior chains; no signed archive wrapper. ERS preservation additionally requires external TSA/status and finite security lifetimes.",
