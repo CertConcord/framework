@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 38760,
-      "sha256": "dfd7d1dce5e9ab573c1457c886e8fda30d4b0a27184a360f82613b489c8222d0"
+      "bytes": 38799,
+      "sha256": "7fe683b372487e2b7f13f445bf0c6654ee507b96ad67ae53cdeaef9d373fc333"
     },
     {
       "path": "docs/apple-identity.md",
@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 14747,
-      "sha256": "9404dc3ae35106e8ee6cf3ac7308fdec5074b4deb4bc471131038e14d24f4722"
+      "bytes": 15966,
+      "sha256": "d3a924950a8112c47df94360a26990a5ef1cc8a54d4840650a781bf725a0d3f4"
     },
     {
       "path": "docs/draft-acceptance.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46505,
-      "sha256": "d7114c20c5aa53a10e01195a02554a29ce201e8e8dc56299be440b1f391bcdec"
+      "bytes": 46594,
+      "sha256": "9cd7dbc85936a83cb0dad8adcf7ecaadeeddf6fdfabf0b433fa034f9454c5b7f"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -350,8 +350,8 @@
     },
     {
       "path": "reference/archive.mjs",
-      "bytes": 20645,
-      "sha256": "294d17cf7c4a7ad4995c467ee73952050c3519ad1a78158a8a5904ecc4f313db"
+      "bytes": 21380,
+      "sha256": "743d1c452d16bdb77eee32be4ab8dba6305676a826071b57c49121d49869c540"
     },
     {
       "path": "reference/arkg.mjs",
@@ -10570,8 +10570,8 @@
     },
     {
       "path": "reference/xmlers-contract.test.mjs",
-      "bytes": 3465,
-      "sha256": "cf700d3b060610e4f453e3267d42ff92b31e5a445f14cad2b1ad4d94e8f1b9cd"
+      "bytes": 15638,
+      "sha256": "f5606688bcc0f514438883636416906172507fe916c70ed8c5c8af860aec3062"
     },
     {
       "path": "spec/applications.md",
@@ -10610,8 +10610,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 45080,
-      "sha256": "d6d6f78c89d07d74fca14e0d0e4b5d18cc746593aadd625330af4195fa9599ee"
+      "bytes": 45224,
+      "sha256": "645139e3f669977744dfe928ee5a8cca9ea9000f6450db59a13d1f58481139fe"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
@@ -10640,13 +10640,13 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 48367,
-      "sha256": "e0839559fee5dff6ca98bf7637d9e27db487b351199e651f623a71608303db98"
+      "bytes": 50099,
+      "sha256": "37816c0321e18d3b8bcc3e528fec11cdf0cecb438c1270b4bdab7dff56273179"
     },
     {
       "path": "spec/conformance.md",
-      "bytes": 10819,
-      "sha256": "f770622d8fdd946275a356d2a0d2a75c206a74cc45c18fa421c028244298d3aa"
+      "bytes": 11035,
+      "sha256": "e9f0d5340d6cc4b6174dead377748d6cc8a9b7ecca9d78b353321e24552f336d"
     },
     {
       "path": "spec/document-baseline.md",

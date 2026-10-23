@@ -280,7 +280,12 @@ export function verifyERSOriginalProof(
 }
 
 /** Evaluate preservation under externally supplied authority and security lifetimes. */
-export function verifyERSPreservation(
+export function verifyERSPreservation(raw, data, policy) {
+  return verifyPreservation(walkERS, raw, data, policy);
+}
+
+function verifyPreservation(
+  walk,
   raw,
   data,
   { at, dataValidUntil, hashValidUntil, resolveTimestamp },
@@ -297,8 +302,13 @@ export function verifyERSPreservation(
   const failures = [];
   let verified;
   try {
-    verified = walkERS(raw, data, (token, binding) => {
-      const trust = resolveTimestamp(Buffer.from(token));
+    verified = walk(raw, data, (token, binding) => {
+      let trust;
+      try {
+        trust = resolveTimestamp(Buffer.from(token));
+      } catch {
+        throw new VerificationError('ERS_TSA_TRUST_UNAVAILABLE', 'INDETERMINATE', 'time');
+      }
       requireThat(
         trust?.certificate &&
           trust.issuerKey &&
@@ -440,7 +450,7 @@ export async function renewXMLERS(xml, data, { tsa, hashRenewal = false, hashOID
   }
   return doc.toString();
 }
-export function verifyXMLERS(xml, data, trust) {
+function walkXMLERS(xml, data, verifyToken) {
   const doc = xmlDocument(xml),
     root = doc.documentElement;
   requireThat(
@@ -458,6 +468,7 @@ export function verifyXMLERS(xml, data, trust) {
   requireThat(chains.length > 0 && chains.length <= 64, 'XMLERS_LIMIT');
   let latest,
     lastTime = -Infinity;
+  const records = [];
   for (let i = 0; i < chains.length; i++) {
     const chain = chains[i];
     requireThat(
@@ -534,19 +545,31 @@ export function verifyXMLERS(xml, data, trust) {
           children(token).length === 0,
         'XMLERS_TIMESTAMP',
       );
-      latest = verifyTimestampToken(Buffer.from(token.textContent, 'base64'), {
-        ...trust,
+      latest = verifyToken(Buffer.from(token.textContent, 'base64'), {
         imprint: expected,
         hashOID,
       });
       requireThat(latest.genTime >= lastTime, 'XMLERS_TIME_ORDER');
       lastTime = latest.genTime;
+      records.push({ ...latest, chain: i, hashOID });
     }
   }
+  return { chains: chains.length, records };
+}
+
+export function verifyXMLERS(xml, data, trust) {
+  const { chains, records } = walkXMLERS(xml, data, (token, binding) =>
+    verifyTimestampToken(token, { ...trust, ...binding }),
+  );
   return {
-    chains: chains.length,
-    poeUpperBound: latest.poeUpperBound,
+    chains,
+    poeUpperBound: records.at(-1).poeUpperBound,
     integrity: 'VALID',
     preservation: 'NOT_EVALUATED',
   };
+}
+
+/** Apply the same external preservation policy to the selected XMLERS encoding. */
+export function verifyXMLERSPreservation(xml, data, policy) {
+  return verifyPreservation(walkXMLERS, xml, data, policy);
 }

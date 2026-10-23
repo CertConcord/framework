@@ -4,6 +4,7 @@ import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import * as a from './archive.mjs';
 import { Journal } from './state.mjs';
+import { verificationOutcome } from './verification-result.mjs';
 
 const namespace = 'urn:ietf:params:xml:ns:ers';
 const start = 1800000000;
@@ -51,6 +52,17 @@ function fixture(t, { notBefore = start - 10, notAfter = start + 10000 } = {}) {
     },
     tsa: async (imprint, hashOID) =>
       a.tokenFromResponse(authority.issue(a.timestampRequest(imprint, { hashOID, policy }).der)),
+    rewriteToken: (token, transform) =>
+      p.signCMS(
+        {
+          content: transform(
+            c.parseDER(p.verifyCMS(token, { expectedContentType: p.OID.tstInfo }).content),
+          ),
+          contentType: p.OID.tstInfo,
+          certificate,
+        },
+        key.privateKey,
+      ),
   };
 }
 
@@ -106,3 +118,380 @@ test('XMLERS accepts 64 timestamps in a chain and rejects a genuine 65th renewal
   const extra = await a.renewXMLERS(record, data, { tsa: f.tsa });
   assert.throws(() => a.verifyXMLERS(extra, data, trust), { code: 'XMLERS_STAMP_LIMIT' });
 });
+
+function preservation(trust) {
+  return {
+    at: start + 1000,
+    dataValidUntil: start + 50,
+    hashValidUntil: { [p.OID.sha256]: start + 300, [p.OID.sha512]: start + 2000 },
+    resolveTimestamp: () => trust,
+  };
+}
+
+async function lifecycle(t) {
+  const f = fixture(t),
+    data = Buffer.from('Original XML archive and validation material');
+  const first = await a.createXMLERS(data, { tsa: f.tsa, hashOID: p.OID.sha256 });
+  f.clock(start + 100);
+  const renewed = await a.renewXMLERS(first, data, { tsa: f.tsa });
+  f.clock(start + 200);
+  const record = await a.renewXMLERS(renewed, data, { tsa: f.tsa, hashRenewal: true });
+  return { ...f, data, first, renewed, record, policy: preservation(f.trust) };
+}
+
+function rejects(operation, overall, reason) {
+  assert.throws(operation, (error) => {
+    assert.deepEqual(verificationOutcome(error), { overall, reason });
+    return true;
+  });
+}
+
+test('XMLERS preservation retains the original proof across TSA and hash renewal', async (t) => {
+  const old = fixture(t, { notAfter: start + 150 }),
+    next = fixture(t),
+    data = Buffer.from('Archive protected across TSA retirement'),
+    authorities = new Map(),
+    queries = [];
+  const selected = (f) => async (imprint, hashOID) => {
+    const token = await f.tsa(imprint, hashOID);
+    authorities.set(token.toString('base64'), {
+      ...f.trust,
+      status: (query) => {
+        queries.push(query);
+        return { overall: 'VALID', reason: 'AUTHORITY_ADMITTED' };
+      },
+    });
+    return token;
+  };
+  const first = await a.createXMLERS(data, { tsa: selected(old), hashOID: p.OID.sha256 });
+  next.clock(start + 100);
+  const renewed = await a.renewXMLERS(first, data, { tsa: selected(next) });
+  next.clock(start + 200);
+  const record = await a.renewXMLERS(renewed, data, { tsa: selected(next), hashRenewal: true });
+  const policy = {
+    ...preservation(next.trust),
+    resolveTimestamp: (token) => authorities.get(token.toString('base64')),
+  };
+  const result = a.verifyXMLERSPreservation(record, data, policy);
+  assert.deepEqual(result, {
+    chains: 2,
+    timestamps: 3,
+    integrity: 'VALID',
+    preservation: 'VALID',
+    proofOfExistenceUpperBound: start,
+    latestRenewalUpperBound: start + 200,
+    verifiedAt: start + 1000,
+  });
+  assert.deepEqual(
+    queries.map((q) => [q.genTime, q.stateTime, q.knowledgeTime]),
+    [0, 100, 200].map((offset) => [start + offset, start + offset, start + 1000]),
+  );
+  assert.deepEqual(
+    queries.map((q) => q.certificate),
+    [old.trust.certificate, next.trust.certificate, next.trust.certificate],
+  );
+  assert.equal(
+    a.verifyXMLERS(first, data, { ...old.trust, at: policy.at }).preservation,
+    'NOT_EVALUATED',
+  );
+  rejects(
+    () =>
+      a.verifyXMLERSPreservation(first, data, {
+        ...policy,
+        hashValidUntil: { [p.OID.sha256]: start + 2000 },
+      }),
+    'INVALID',
+    'ERS_FINAL_PROTECTION_EXPIRED',
+  );
+});
+
+for (const [name, reason, alter] of [
+  [
+    'initial protection',
+    'ERS_INITIAL_PROTECTION_LATE',
+    (f, delta) => ({ ...f.policy, dataValidUntil: start + delta }),
+  ],
+  [
+    'timestamp renewal',
+    'ERS_RENEWAL_LATE',
+    (f, delta) => ({
+      ...f.policy,
+      resolveTimestamp: (token) => ({
+        ...f.trust,
+        validUntil:
+          a.parseTSTInfo(p.verifyCMS(token, { expectedContentType: p.OID.tstInfo }).content)
+            .genTime === start
+            ? start + 100 + delta
+            : f.trust.validUntil,
+      }),
+    }),
+  ],
+  [
+    'hash renewal',
+    'ERS_HASH_RENEWAL_LATE',
+    (f, delta) => ({
+      ...f.policy,
+      hashValidUntil: { ...f.policy.hashValidUntil, [p.OID.sha256]: start + 200 + delta },
+    }),
+  ],
+  [
+    'final timestamp protection',
+    'ERS_FINAL_PROTECTION_EXPIRED',
+    (f, delta) => ({
+      ...f.policy,
+      resolveTimestamp: () => ({ ...f.trust, validUntil: start + 1000 + delta }),
+    }),
+  ],
+  [
+    'final hash protection',
+    'ERS_HASH_RENEWAL_LATE',
+    (f, delta) => ({
+      ...f.policy,
+      hashValidUntil: { ...f.policy.hashValidUntil, [p.OID.sha512]: start + 1000 + delta },
+    }),
+  ],
+]) {
+  test(`XMLERS preservation enforces the exclusive ${name} deadline`, async (t) => {
+    const f = await lifecycle(t);
+    assert.equal(a.verifyXMLERSPreservation(f.record, f.data, alter(f, 1)).preservation, 'VALID');
+    for (const delta of [0, -1])
+      rejects(
+        () => a.verifyXMLERSPreservation(f.record, f.data, alter(f, delta)),
+        'INVALID',
+        reason,
+      );
+  });
+}
+
+test('XMLERS preservation rejects a genuinely signed late hash renewal', async (t) => {
+  const f = await lifecycle(t);
+  f.clock(start + 300);
+  const late = await a.renewXMLERS(f.renewed, f.data, { tsa: f.tsa, hashRenewal: true });
+  assert.equal(a.verifyXMLERS(late, f.data, { ...f.trust, at: f.policy.at }).integrity, 'VALID');
+  rejects(
+    () => a.verifyXMLERSPreservation(late, f.data, f.policy),
+    'INVALID',
+    'ERS_HASH_RENEWAL_LATE',
+  );
+});
+
+test('XMLERS preservation distinguishes missing lifetimes and unknown TSA from invalid bytes', async (t) => {
+  const f = await lifecycle(t);
+  rejects(
+    () => a.verifyXMLERSPreservation(f.record, f.data, { ...f.policy, hashValidUntil: {} }),
+    'INDETERMINATE',
+    'ERS_HASH_LIFETIME_REQUIRED',
+  );
+  rejects(
+    () =>
+      a.verifyXMLERSPreservation(f.record, f.data, {
+        ...f.policy,
+        resolveTimestamp: () => undefined,
+      }),
+    'INDETERMINATE',
+    'ERS_TSA_TRUST_REQUIRED',
+  );
+  rejects(
+    () => a.verifyXMLERSPreservation(f.record, Buffer.from('Replacement object'), f.policy),
+    'INVALID',
+    'TSA_REQUEST_BINDING',
+  );
+  rejects(
+    () =>
+      a.verifyXMLERSPreservation(
+        qualify(f.first, 'ArchiveTimeStamp', 'urn:foreign'),
+        f.data,
+        f.policy,
+      ),
+    'INVALID',
+    'XMLERS_NAMESPACE',
+  );
+  rejects(
+    () => a.verifyXMLERSPreservation('<!DOCTYPE x>' + f.record, f.data, f.policy),
+    'INVALID',
+    'XML_EXTERNAL_ENTITY_OR_SIZE',
+  );
+});
+
+test('XMLERS preservation evaluates the entire signed accuracy interval', async (t) => {
+  const f = fixture(t),
+    data = Buffer.from('Archive time uncertainty');
+  f.accuracy(2);
+  const first = await a.createXMLERS(data, { tsa: f.tsa });
+  f.clock(start + 4);
+  const touching = await a.renewXMLERS(first, data, { tsa: f.tsa });
+  const policy = preservation(f.trust);
+  assert.equal(
+    a.verifyXMLERSPreservation(touching, data, policy).proofOfExistenceUpperBound,
+    start + 2,
+  );
+  assert.equal(
+    a.verifyXMLERSPreservation(touching, data, { ...policy, at: start + 6 }).preservation,
+    'VALID',
+  );
+  rejects(
+    () => a.verifyXMLERSPreservation(touching, data, { ...policy, at: start + 5 }),
+    'INVALID',
+    'ERS_TIMESTAMP_INTERVAL',
+  );
+  rejects(
+    () =>
+      a.verifyXMLERSPreservation(first, data, {
+        ...policy,
+        resolveTimestamp: () => ({ ...f.trust, revokedAt: start + 2 }),
+      }),
+    'INVALID',
+    'ERS_TIMESTAMP_LIFETIME',
+  );
+  f.clock(start + 3);
+  const overlapping = await a.renewXMLERS(first, data, { tsa: f.tsa });
+  rejects(
+    () => a.verifyXMLERSPreservation(overlapping, data, policy),
+    'INVALID',
+    'ERS_INTERVAL_ORDER',
+  );
+});
+
+test('XMLERS preservation requires accuracy and retains fractional proof bounds', async (t) => {
+  const f = fixture(t),
+    data = Buffer.from('Fractional timestamp bound'),
+    policy = preservation(f.trust);
+  const make = (accuracy) =>
+    a.createXMLERS(data, {
+      tsa: async (imprint, hashOID) =>
+        f.rewriteToken(await f.tsa(imprint, hashOID), (info) =>
+          c.seq(
+            ...info.children.flatMap((n, i) => (i === 5 ? (accuracy ? [accuracy] : []) : [n.raw])),
+          ),
+        ),
+    });
+  const fractional = await make(c.seq(c.der(0x80, Buffer.from([0, 250]))));
+  assert.equal(
+    a.verifyXMLERSPreservation(fractional, data, policy).proofOfExistenceUpperBound,
+    start + 0.25,
+  );
+  const absent = await make(undefined);
+  rejects(
+    () => a.verifyXMLERSPreservation(absent, data, policy),
+    'INDETERMINATE',
+    'ERS_ACCURACY_REQUIRED',
+  );
+});
+
+for (const [boundary, bounds] of [
+  ['start', { notBefore: start - 1 }],
+  ['end', { notAfter: start + 2 }],
+]) {
+  test(`XMLERS preservation requires the full accuracy interval inside the certificate ${boundary}`, async (t) => {
+    const f = fixture(t, bounds),
+      data = Buffer.from('Certificate interval');
+    f.accuracy(2);
+    const record = await a.createXMLERS(data, { tsa: f.tsa });
+    rejects(
+      () => a.verifyXMLERSPreservation(record, data, preservation(f.trust)),
+      'INVALID',
+      'ERS_TIMESTAMP_INTERVAL',
+    );
+  });
+}
+
+test('XMLERS preservation retains typed TSA status and current-knowledge decisions', async (t) => {
+  const f = await lifecycle(t);
+  for (const [overall, reason] of [
+    ['INDETERMINATE', 'STATUS_MISSING'],
+    ['INDETERMINATE', 'STATUS_STALE'],
+    ['UNSUPPORTED', 'STATUS_CAPABILITY'],
+    ['INVALID', 'AUTHENTICATED_COMPROMISE'],
+  ]) {
+    const policy = {
+      ...f.policy,
+      resolveTimestamp: () => ({
+        ...f.trust,
+        status: (q) => {
+          assert.equal(q.knowledgeTime, f.policy.at);
+          return { overall, reason };
+        },
+      }),
+    };
+    rejects(() => a.verifyXMLERSPreservation(f.record, f.data, policy), overall, reason);
+  }
+  for (const status of [() => Promise.resolve(true), () => ({ overall: 'VALID' })])
+    rejects(
+      () =>
+        a.verifyXMLERSPreservation(f.record, f.data, {
+          ...f.policy,
+          resolveTimestamp: () => ({ ...f.trust, status }),
+        }),
+      'INVALID',
+      'ERS_TSA_STATUS_DECISION',
+    );
+});
+
+test('XMLERS preservation cannot hide invalid mathematics or late renewal behind missing status', async (t) => {
+  const f = await lifecycle(t);
+  const policy = {
+    ...f.policy,
+    resolveTimestamp: () => ({
+      ...f.trust,
+      status: () => ({ overall: 'INDETERMINATE', reason: 'STATUS_MISSING' }),
+    }),
+  };
+  let index = 0;
+  const altered = f.record.replace(
+    /(<TimeStampToken Type="RFC3161">)([^<]+)(<\/TimeStampToken>)/g,
+    (all, open, value, close) => {
+      if (++index !== 3) return all;
+      const token = Buffer.from(value, 'base64');
+      token[token.length - 1] ^= 1;
+      return open + token.toString('base64') + close;
+    },
+  );
+  assert.equal(index, 3);
+  rejects(() => a.verifyXMLERSPreservation(altered, f.data, policy), 'INVALID', 'CMS_SIGNATURE');
+  rejects(
+    () => a.verifyXMLERSPreservation(f.record, f.data, { ...policy, dataValidUntil: start }),
+    'INVALID',
+    'ERS_INITIAL_PROTECTION_LATE',
+  );
+  const combined = {
+    ...f.policy,
+    resolveTimestamp: () => ({
+      ...f.trust,
+      status: (q) => ({
+        overall: q.genTime === start ? 'INDETERMINATE' : 'INVALID',
+        reason: q.genTime === start ? 'STATUS_MISSING' : 'AUTHENTICATED_COMPROMISE',
+      }),
+    }),
+  };
+  rejects(
+    () => a.verifyXMLERSPreservation(f.record, f.data, combined),
+    'INVALID',
+    'AUTHENTICATED_COMPROMISE',
+  );
+});
+
+for (const [name, create, verify] of [
+  ['ERS', a.createERS, (record, data, policy) => a.verifyERSPreservation(record, data, policy)],
+  [
+    'XMLERS',
+    a.createXMLERS,
+    (record, data, policy) => a.verifyXMLERSPreservation(record, data, policy),
+  ],
+]) {
+  test(`${name} preservation reports an unavailable TSA resolver without trusting exception verdicts`, async (t) => {
+    const f = fixture(t),
+      data = Buffer.from('Unavailable TSA selection'),
+      record = await create(data, { tsa: f.tsa });
+    rejects(
+      () =>
+        verify(record, data, {
+          ...preservation(f.trust),
+          resolveTimestamp: () => {
+            throw { overall: 'VALID', code: 'FORGED_ACCEPTANCE' };
+          },
+        }),
+      'INDETERMINATE',
+      'ERS_TSA_TRUST_UNAVAILABLE',
+    );
+  });
+}

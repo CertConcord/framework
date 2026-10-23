@@ -389,9 +389,25 @@
         {
           "file": "reference/organization-history-independent.test.mjs",
           "name": "late archive renewal cannot restore an expired original protection interval"
+        },
+        {
+          "file": "reference/xmlers-contract.test.mjs",
+          "name": "XMLERS preservation retains the original proof across TSA and hash renewal"
+        },
+        {
+          "file": "reference/xmlers-contract.test.mjs",
+          "name": "XMLERS preservation rejects a genuinely signed late hash renewal"
+        },
+        {
+          "file": "reference/xmlers-contract.test.mjs",
+          "name": "XMLERS preservation distinguishes missing lifetimes and unknown TSA from invalid bytes"
+        },
+        {
+          "file": "reference/xmlers-contract.test.mjs",
+          "name": "XMLERS preservation cannot hide invalid mathematics or late renewal behind missing status"
         }
       ],
-      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. The separate XMLERS lifetime API covers the selected canonical single-object encoding and per-token TSA rotation; retained-document composition remains DER ERS. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-CORE-10",
@@ -835,9 +851,25 @@
         {
           "file": "reference/mtc-version.test.mjs",
           "name": "MTC wire profiles: ${row.name}"
+        },
+        {
+          "file": "reference/xmlers-contract.test.mjs",
+          "name": "XMLERS preservation retains the original proof across TSA and hash renewal"
+        },
+        {
+          "file": "reference/xmlers-contract.test.mjs",
+          "name": "XMLERS preservation rejects a genuinely signed late hash renewal"
+        },
+        {
+          "file": "reference/xmlers-contract.test.mjs",
+          "name": "XMLERS preservation distinguishes missing lifetimes and unknown TSA from invalid bytes"
+        },
+        {
+          "file": "reference/xmlers-contract.test.mjs",
+          "name": "XMLERS preservation cannot hide invalid mathematics or late renewal behind missing status"
         }
       ],
-      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
+      "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. The separate XMLERS lifetime API covers the selected canonical single-object encoding and per-token TSA rotation; retained-document composition remains DER ERS. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
     },
     {
       "id": "CC-DOC-06",
