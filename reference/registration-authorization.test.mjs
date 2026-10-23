@@ -13,7 +13,10 @@ import {
 } from './enrollment.mjs';
 import { MTCIssuer } from './issuance.mjs';
 import { Mirror, createMTCTBS, issueMTC, logEntryFromTBS, verifyMTC } from './mtc.mjs';
-import { PersonalMdocCA } from './signer-mdoc.mjs';
+import { PersonalMdocCA, verifyPersonalMdoc } from './signer-mdoc.mjs';
+import { CredentialIssuer, verifyStatusList } from './openid.mjs';
+import { OpenIDWallet } from './wallet.mjs';
+import { MDOC_CONFIG } from './mdoc.mjs';
 import { verifyDocumentEvidence } from './document-evidence.mjs';
 import { exampleAuthorityResolver } from './example-authorities.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
@@ -21,7 +24,7 @@ import { PasskeySigningRegistry } from './passkey-credentials.mjs';
 
 const profileID = 'CERTCONCORD-PERSON-SIGN-v1';
 
-function fixture(t, representation) {
+function fixture(t, representation, { statusURI } = {}) {
   const journals = [],
     journal = () => {
       const value = new Journal();
@@ -153,6 +156,7 @@ function fixture(t, representation) {
     issuer = new PersonalMdocCA({
       ...common,
       issuer: scope.issuerID,
+      statusURI,
       certificate: issuerCertificate,
       sealCertificate: ra.certificate,
       sealKey: ra.privateKey,
@@ -231,7 +235,19 @@ function fixture(t, representation) {
         { raCertificate: ra.certificate, issuanceScope: scope, authorityResolver },
       );
   };
-  return { body, raw, ra, csr, journal, authorityResolver, scope, issue, allocated, offline };
+  return {
+    body,
+    raw,
+    ra,
+    csr,
+    journal,
+    authorityResolver,
+    scope,
+    issuer,
+    issue,
+    allocated,
+    offline,
+  };
 }
 
 for (const representation of ['X509', 'MTC', 'MDOC']) {
@@ -306,6 +322,48 @@ test('identity registration authority emits schema2 for a complete native mdoc d
         2,
       );
       assert.equal(result.verification.overall, 'VALID_UNDER_POLICY');
+      const certified = verifyPersonalMdoc(result.credential, {
+        ...result.credentialTrust,
+        seal: result.seal,
+        statusToken: result.issuer.status.token(),
+      });
+      const registration = readControl(
+        result.enrollment.rar,
+        'RegistrationAuthorization',
+        result.ra.certificate,
+      );
+      assert.deepEqual(certified.claims.ra_authorization_hash, c.sha512(result.enrollment.rar));
+      assert.deepEqual(
+        certified.claims.ra_authorization_commitment,
+        c.H('RegistrationAuthorization', registration),
+      );
+      assert.equal(certified.claims.status.status_list.uri, 'https://issuer.example/status/1');
+      assert.equal(result.wallet.statusURI, 'https://issuer.example/status/1');
+      assert.equal(result.wallet.statusEndpoint, result.issuer.issuer + '/status/1');
+      const calls = [];
+      const receiver = {
+        ...result.wallet,
+        verifyCredentialExtension: undefined,
+        post: async (path) => {
+          calls.push(path);
+          return { credentials: [{ credential: c.b64u(result.credential) }] };
+        },
+      };
+      const received = await OpenIDWallet.prototype.receive.call(receiver, {
+        transactionID: 'captured',
+      });
+      assert.equal(received.credential, c.b64u(result.credential));
+      assert.deepEqual(calls, ['/deferred', '/notification']);
+      calls.length = 0;
+      await assert.rejects(
+        () =>
+          OpenIDWallet.prototype.receive.call(
+            { ...receiver, statusURI: receiver.statusEndpoint },
+            { transactionID: 'captured' },
+          ),
+        { code: 'CREDENTIAL_STATUS_URI' },
+      );
+      assert.deepEqual(calls, ['/deferred']);
     },
   });
 });
@@ -399,4 +457,121 @@ for (const entry of frozen.cases) {
         code: 'DOCUMENT_REGISTRATION_BINDING',
       });
   });
+}
+
+test('personal mdoc offer retains separate CMS-byte and signed-body registration commitments', (t) => {
+  const f = fixture(t, 'MDOC'),
+    bytes = f.raw(2),
+    offer = f.issue(bytes);
+  const authenticated = readControl(bytes, 'RegistrationAuthorization', f.ra.certificate);
+  const claims = f.issuer.journal.get('offers', offer.grants.authorization_code.issuer_state).value
+    .claims;
+  assert.deepEqual(claims.ra_authorization_hash, c.sha512(bytes));
+  assert.deepEqual(
+    claims.ra_authorization_commitment,
+    c.H('RegistrationAuthorization', authenticated),
+  );
+  assert.notDeepEqual(claims.ra_authorization_commitment, claims.ra_authorization_hash);
+  assert.deepEqual(c.dcbor(f.issue(bytes)), c.dcbor(offer));
+  assert.deepEqual(
+    f.allocated().map((rows) => rows.length),
+    [1, 1, 1],
+  );
+});
+
+test('credential issuer separates its signed HTTPS status URI from loopback transport', (t) => {
+  const f = fixture(t, 'MDOC'),
+    statusURI = 'https://status.example/credentials/1';
+  const issuer = new CredentialIssuer({
+    ...f.issuer,
+    issuer: 'http://127.0.0.1:18080',
+    statusURI,
+    journal: f.journal(),
+  });
+  const status = issuer.status.allocate().status_list;
+  assert.equal(status.uri, statusURI);
+  assert.equal(issuer.statusURI, statusURI);
+  assert.equal(issuer.metadata().credential_endpoint, 'http://127.0.0.1:18080/credential');
+  assert.deepEqual(
+    verifyStatusList(issuer.status.token(), {
+      publicKey: p.parseCertificate(issuer.certificate).publicKey,
+      uri: statusURI,
+      index: status.idx,
+    }),
+    { status: 'GOOD', overall: 'VALID' },
+  );
+});
+
+for (const [label, statusURI] of [
+  ['HTTP', 'http://status.example/list'],
+  ['relative', '/status/1'],
+  ['user information', 'https://user:pass@status.example/list'],
+  ['fragment', 'https://status.example/list#fragment'],
+  ['empty fragment', 'https://status.example/list#'],
+  ['default port', 'https://status.example:443/list'],
+  ['uppercase host', 'https://STATUS.example/list'],
+  ['empty', ''],
+  ['null', null],
+  ['number', 7],
+  ['array', ['https://status.example/list']],
+]) {
+  test('personal mdoc issuer rejects a ' + label + ' status URI', (t) => {
+    assert.throws(() => fixture(t, 'MDOC', { statusURI }), { code: 'MDOC_STATUS_REFERENCE' });
+  });
+}
+
+test('personal mdoc issuer retains a canonical HTTPS status URI with a query', (t) => {
+  const statusURI = 'https://status.example/list?tenant=one';
+  const f = fixture(t, 'MDOC', { statusURI });
+  assert.equal(f.issuer.status.uri, statusURI);
+  assert.equal(f.issuer.statusURI, statusURI);
+  const allocated = f.issuer.status.allocate().status_list;
+  assert.equal(allocated.uri, statusURI);
+  assert(Number.isSafeInteger(allocated.idx) && allocated.idx >= 0);
+});
+
+for (const preAuthorized of [false, true]) {
+  test(
+    'restarted personal issuer rejects stale registration commitments for ' +
+      (preAuthorized ? 'pre-authorized' : 'authorization-code') +
+      ' grants',
+    async (t) => {
+      for (const defect of ['missing', 'wrong'])
+        await t.test(defect, (subtest) => {
+          const f = fixture(subtest, 'MDOC'),
+            bytes = f.raw(2);
+          const request = {
+            csr: f.csr,
+            rar: bytes,
+            bindingID: Buffer.alloc(32, 1),
+            preAuthorized,
+            ...(preAuthorized ? { txCode: '123456' } : {}),
+          };
+          const offer = f.issuer.offer(request);
+          assert.deepEqual(c.dcbor(f.issuer.offer(request)), c.dcbor(offer));
+          const id = preAuthorized
+            ? offer.grants['urn:ietf:params:oauth:grant-type:pre-authorized_code'][
+                'pre-authorized_code'
+              ]
+            : offer.grants.authorization_code.issuer_state;
+          const saved = f.issuer.journal.get('offers', id);
+          if (defect === 'missing') delete saved.value.claims.ra_authorization_commitment;
+          else saved.value.claims.ra_authorization_commitment = Buffer.alloc(64);
+          f.issuer.journal.put('offers', id, saved.value, saved.revision);
+          const before = f.allocated();
+          const restarted = new PersonalMdocCA({ ...f.issuer });
+          assert.throws(() => restarted.offer(request), {
+            code: 'PERSONAL_MDOC_REGISTRATION_COMMITMENT',
+          });
+          assert.throws(
+            () => restarted.mint({ offer: saved.value, configurationID: MDOC_CONFIG }),
+            {
+              code: 'PERSONAL_MDOC_REGISTRATION_COMMITMENT',
+            },
+          );
+          assert.deepEqual(f.allocated(), before);
+          assert.deepEqual(f.issuer.journal.list('personal-mdoc'), []);
+        });
+    },
+  );
 }

@@ -16,7 +16,7 @@ Leaf payloads are binary and use `H("EvidenceLeaf", {type, payload})`. The plan'
 
 For both representations, the verifier MUST authenticate RegistrationAuthorization with the configured RA certificate, resolve its RA role at issuance under the selected knowledge time, and verify that:
 
-1. The CMS certificate's authorization extension or native mdoc's certified registration commitment equals `H("RegistrationAuthorization", body)` using the COMMON domain-separated deterministic encoding.
+1. The CMS certificate's authorization extension or native mdoc's issuer-certified `ra_authorization_commitment` equals `H("RegistrationAuthorization", body)` using the COMMON domain-separated deterministic encoding. Native mdoc separately retains `ra_authorization_hash`, the SHA-512 commitment to the complete original signed RAR required by DCP; both commitments MUST match, and neither substitutes for the other.
 2. The authorization's subject ID, profile, policy hash and public-key hash match the signed intent and credential. Public-key hashing uses the exact SPKI DER.
 3. The signed schema-2 issuanceScope matches the expected trust domain, issuer identity, actual issuer key and representation. Purpose is fixed by the signed profile; one decision cannot admit multiple issuers.
 4. Credential issuance is within the original RA authorization interval, which is positive and no longer than 300 seconds, and precedes the declared execution time.

@@ -495,6 +495,14 @@
         {
           "file": "reference/evidence-plan.test.mjs",
           "name": "nested verification plans and independent activation leaves are forbidden even with valid commitments"
+        },
+        {
+          "file": "reference/registration-authorization.test.mjs",
+          "name": "personal mdoc offer retains separate CMS-byte and signed-body registration commitments"
+        },
+        {
+          "file": "reference/mdoc-certified-contract.test.mjs",
+          "name": "DOCUMENT requires distinct authenticated CMS-byte and RA-body commitments"
         }
       ],
       "gap": "Ordinary WebAuthn completes selected CMS and mdoc document plans without raw-signing or execution proposals. Independent full-profile interoperability remains unrecorded."
@@ -867,6 +875,10 @@
         {
           "file": "reference/xmlers-contract.test.mjs",
           "name": "XMLERS preservation cannot hide invalid mathematics or late renewal behind missing status"
+        },
+        {
+          "file": "reference/mdoc-certified-contract.test.mjs",
+          "name": "signed native mdoc status references reject malformed contracts before authority resolution"
         }
       ],
       "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. The separate XMLERS lifetime API covers the selected canonical single-object encoding and per-token TSA rotation; retained-document composition remains DER ERS. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
@@ -938,6 +950,10 @@
         {
           "file": "reference/document-vectors.test.mjs",
           "name": "retained ERS bridge reports missing latest governance coverage without changing original bytes"
+        },
+        {
+          "file": "reference/document-vectors.test.mjs",
+          "name": "pre-contract RAR2 corpus keeps its original profile and bytes"
         }
       ],
       "gap": "The public original-byte corpus, external trust schema, fixed knowledge times and offline runner reproduce selected CMS/MTC and native mdoc document results, ERS renewal and separate historical/current decisions. The installed SDK replays the document cases through its public export. This is draft acceptance evidence; a second independently developed complete implementation and recorded interoperability remain later stability requirements."

@@ -267,6 +267,11 @@ export function verifyDocumentEvidence(
       registration.schemaVersion === 2 &&
         credential &&
         equal(sha512(values.RegistrationAuthorization), credential.claims.ra_authorization_hash) &&
+        (!policy.documentEvidence ||
+          equal(
+            H('RegistrationAuthorization', registration),
+            credential.claims.ra_authorization_commitment,
+          )) &&
         equal(registration.subjectID, sim.subjectID) &&
         registration.profileID === sim.profileID &&
         equal(registration.policyHash, sim.policyHash) &&

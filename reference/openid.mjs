@@ -251,6 +251,7 @@ function inspectStatusList(token, { publicKey, uri, index, at = now() }) {
 export class CredentialIssuer {
   constructor({
     issuer,
+    statusURI = issuer + '/status/1',
     journal,
     privateKey,
     certificate,
@@ -266,6 +267,7 @@ export class CredentialIssuer {
   }) {
     Object.assign(this, {
       issuer,
+      statusURI,
       journal,
       privateKey,
       certificate,
@@ -279,7 +281,7 @@ export class CredentialIssuer {
       mdocDocType,
       mdocNamespace,
     });
-    this.status = new StatusList({ journal, uri: issuer + '/status/1', privateKey, certificate });
+    this.status = new StatusList({ journal, uri: statusURI, privateKey, certificate });
     for (const name of ['par', 'authorize', 'token', 'credential', 'deferred', 'notification']) {
       const method = this[name].bind(this);
       this[name] = (...args) => journal.transaction(() => method(...args));

@@ -1,0 +1,2633 @@
+{
+  "schemaVersion": 1,
+  "profile": "certconcord-mdoc-certified-contract-draft-03-v1",
+  "cases": [
+    {
+      "id": "status-http",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/4fb2302d9bb33c4ca4585485d6484c4bffd97afc74f3c841d82f597f9d19b9d3.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/212225e7f2d6e6db4bc705c69a07483d3f23034e21b7c958311fd79dcfc9e384.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "http://status.example/list",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-relative",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/7d19b9e1eee451e94bf3a46a4a334d0f73d0b8e8459b579a8e724d9847482cca.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/8860d57606577e9ba607f3c4820d84d8fd30ec4503b0e0f2d9ff42545766be90.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-userinfo",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/395ea3ffc66a87c20b5ef04590452e3664d71dbb0f4108eecbcecbb0afbc16ef.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/0df3562b4a9fdf988576751c9d03a4ab3de77d8093f64ab30c8d2568121f53ef.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://user:pass@status.example/list",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-fragment",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/fb6173b19703a488aa00fb7ee0892e4d849ab3d2d8d039957914141d4902daf9.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/61bfb2b83ac3ccf67dd84bb9e2fb5ce4cdf350c66c35ff9daa2210159b88bafa.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://status.example/list#fragment",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-empty-fragment",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/e0ae7925ce704dda2555fc61c009d2befc34c48d953bfd9c2d368695ae1212b6.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/206311968bc99810775dfe5cdf6a9af48b4b29eecd72adf6297fb381bde2b5cf.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://status.example/list#",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-default-port",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/65981e8c4dd517aac09ca2cf69d901a59826a7a36ab802ad15d7914a1454b5eb.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/a84caed024d7ae9ab726aba7ad09f8970e2767d16f0716db7fca64e6226042c5.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://status.example:443/list",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-uppercase-host",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/61f482a96aab92a3b09dab34c22c1782aa1e63b988d880fe79e9a547d8ad30f0.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/35882b2111d763ee2272f9ecbdc96bd76e3642e3a1582e7a1d3d8e989571a882.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://STATUS.example/list",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-null",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/d3312a3113aeb6b50ae0c1c4f109aee231cad833945c194819bda100ec59c807.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/10ee43d7ca2296b7d8776075f27909201b9fee1d3c77bcb6d0307856c277c5fd.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": null,
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-number",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/ef34a2563caf2aedbf228e07aae8cd7b1e223744be53a0ab345149a7493762de.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/e76539cdbcecb043512435be11203dc18e47babe62ed5200c07774a003903b10.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": 7,
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-array",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/45c4091dc7a797b79cc7af8ef6e4ae0beb5d0ff324bde45cecbd6ce6deed3005.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/d085a7ac9b9fff466f2b0058e36c91d35b4e37694f6a910361f8f887a9eff00a.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": [
+        "https://status.example/list"
+      ],
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-invalid-index-0",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/d7682029b9976a74a1c56ec2ca8dd50cb0d6844c5d97b94efb82948c380b92bf.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/f7bc2b4dd1bdf6778b5cb5348e8e6c5d0298ca4b822d8e04fe8d296c11ae93eb.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-invalid-index-1",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/95bfddb07ea7a62e3f3efdb4952d74d82071c1b7c4fd1d8bfc8602ab51885df1.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/b7e262d54dc5a1f21f1e0fce3c9fcf083d33965e029235ebda4556275082dc99.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-invalid-index-2",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/5b2450fddda832273a74bdbb7e1125d54b33674b7180b567b71c6485ebaa60f1.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/b8bf7e229332c9503cbd550fc8802d9d293234166c590e6b2ae89885f0863bf2.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-missing-status",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/9b23aa6b5b6afa451a31614ce6c947e88d931e5c6a685e46994bb982951d5893.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/75408aa1928f1252320e6f6f898cdc4487525dd74a6ce6b92641dcb431aaee58.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": null,
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-missing-list",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/cb235bc14cc25e2d771ada51930107a9e6995eab1198f65c1bbdceec90d76c53.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/5c0f0488e859c66b6f3069fe50c51aa0678e895595b3d9c50420307d554a5ad7.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": null,
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-extra-status-key",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/e168a1c7e976e8916a18e19e4d73992ce2d9184441d220f0462949c2ed3bffe0.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/1665a98dfe7763951bb82b5249bc3e2fea7b997f144fa8bd7e3192f9bace1a00.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "status-extra-reference-key",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/c894ef1937bc38882ced4f2a87369cdd3ba0dce0daada21dd22bd0d683605419.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/cd9a9fdd997f5574a9ea9ff7e7a67a1af6a59b14abf907c9991606ce39aed5ad.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "MDOC_STATUS_REFERENCE"
+      }
+    },
+    {
+      "id": "credential-valid",
+      "mode": "credential",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/7d7ecce9f1c13e6ed524fbce5a270dc3a635ff37eb893524d33d7b48b27f68be.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/112560790eb081e2ef943892347ac7b7ef9d925235093c1234bfecb414ca0966.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "RETURNED",
+        "status": "VALID"
+      }
+    },
+    {
+      "id": "missing-body",
+      "mode": "document",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/bbc737222ce075a67370c45b01e39e59df33953bb0607fc98a057eed711a9797.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/e7c205f4be457ca03a9f561eb72936abdee3e10a4de061d96d2bc4e0ad344c5e.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "DOCUMENT_REGISTRATION_BINDING"
+      }
+    },
+    {
+      "id": "null-body",
+      "mode": "document",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/62c9af21ac7cabaec30590dcd7b03380027308014ec00cd9fd4cb79eb1a7efe3.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/f0017ae5073d9f27cba86d60b8220524fb5ac25528bcced690b1d3f11f9a355e.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "DOCUMENT_REGISTRATION_BINDING"
+      }
+    },
+    {
+      "id": "short-body",
+      "mode": "document",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/51ac6cbdc53fe5c5ec6ad03f9d2c3da0f202497a42bf158c6a9eb6d5ee361d07.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/041cd3eed8f8172add282abe4d9db41734f14b3de7a9363d0a66105e66ff2206.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "DOCUMENT_REGISTRATION_BINDING"
+      }
+    },
+    {
+      "id": "hex-text-body",
+      "mode": "document",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/a18b8ddf2d9726803550fd8e00e035c96d1102f2331f916ca3a82ecdced68523.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/005788c21fbc3fb64b554dceab36453f7bdd207ca590bfb442cf65fd1424cdec.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "DOCUMENT_REGISTRATION_BINDING"
+      }
+    },
+    {
+      "id": "cms-hash-as-body",
+      "mode": "document",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/5ff95252ee7382d9f22c738163707a4af04921c1d817545f2eead04820e7f373.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/f455ee0ced200bd6842ff0cee21209e591902f5cfe13ef8bc8996b047c19907f.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "DOCUMENT_REGISTRATION_BINDING"
+      }
+    },
+    {
+      "id": "different-body",
+      "mode": "document",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/dff770524139284fb12b35b588a0fa6d2338880326d8e047a1dd718082b3234f.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/8ae5d080f0240ef16a0f515adac6298aec121e182380c658ef491188367b9e76.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "DOCUMENT_REGISTRATION_BINDING"
+      }
+    },
+    {
+      "id": "body-hash-as-cms",
+      "mode": "document",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/c6bf1f204be2916698cf14995b415f975fe54249ec26120e9fd81bd5fe0a9626.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/687905abd17e0f90504465c5b3d22c38602332aa532bb39021031926e39d6334.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "THREW",
+        "code": "DOCUMENT_REGISTRATION_BINDING"
+      }
+    },
+    {
+      "id": "document-valid",
+      "mode": "document",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/ea172b313aaa45023ec430e227d329ee1148f63a95407e70b05fbb54d020a354.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/9790535499901b9bd99e23b6ed9423ef34a74ec41dd3e2d9ef1a969eeffc0c41.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "RETURNED",
+        "result": {
+          "time": "DECLARED_EXECUTION_TIME",
+          "stateTime": 1792454400,
+          "subjectBinding": "NATIVE_MDOC"
+        }
+      }
+    },
+    {
+      "id": "dcp-without-document-commitment",
+      "mode": "dcp",
+      "trust": "files/e0334f1386d50903ea1d5c50e0817d173630683440c061c08666f5eea2aac0f2.json",
+      "at": 1792454400,
+      "registration": {
+        "$file": "files/fef1fc6f903c5fe89d4ba65647ea0b9e57025d5a98327ae3b3b98977f8c46fcd.der.b64",
+        "type": "bytes"
+      },
+      "sim": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "nonce": {
+          "$hex": "8a2503219df88fb861e8f1df6bfc2433ab91abf4eaab86168056c7399da16f69"
+        },
+        "origin": "https://website.example",
+        "purpose": "DOCUMENT_SIGN",
+        "issuedAt": 1792454400,
+        "adapterID": "certconcord-mdoc-document-v1",
+        "container": "COSE",
+        "documents": [
+          {
+            "scope": "COSE_PAYLOAD",
+            "digest": {
+              "$hex": "5ffac8e710b9859dc8cd561a4e069d03feb0989203d07564d931fe5f9494988481c1adf53ed58910d91b91674f263884cf8dd9734808dc637c284014c66da1df"
+            },
+            "mediaType": "text/plain",
+            "documentID": {
+              "$hex": "636daaf902e5b6e914f24363fee5cefb11c0961092ab613002a059875334bb8c"
+            },
+            "displayName": "Synthetic document",
+            "digestAlgorithm": "SHA-512"
+          }
+        ],
+        "expiresAt": 1792454520,
+        "profileID": "CERTCONCORD-PERSON-SIGN-v1",
+        "subjectID": {
+          "$hex": "91b85ef30194569d3f343932357bdc66b0d8dd6bd4b72628d0bdc454765a3415"
+        },
+        "policyHash": {
+          "$hex": "6d01a9ddf6864cd8a69e80fd3f626a0ed79bd7d083895e738ded3997f79601d706ebcddf29d3a3b1257c329b1de5ab962bee12d81c67b9ead79e8014e4f157fc"
+        },
+        "displayText": "Sign the exact synthetic document using the key certified by the personal mdoc.",
+        "certificateID": {
+          "$hex": "aa0418bb054eb9a3ff19ca1ce53a31cc6afcbc844ef0e4c075f9ff91eed969fa6ec9029fe0255a1281647bb7b981a4769868388a37d921626a6e85fa5f118ba1"
+        },
+        "schemaVersion": 1,
+        "transactionID": {
+          "$hex": "96e9dcbf713705d99cb30517dbba58df289ee61f91223d17c474273a83ad2473"
+        },
+        "trustDomainID": {
+          "$hex": "56bd585eac52e67681117111e7d908fe9029eee04fdf80cd772df93a39c22a79"
+        },
+        "credentialType": "MDOC",
+        "certificateRepresentationHash": {
+          "$hex": "f4b5ca7cda5b11c027878bb96c3f4d9c2a024e3e42c4aac12672a5927d0822a5e1eb5b2a90c1cbf416a4e26a736bdae23584cadbc54f4bc6449240ec2c8ed4ab"
+        }
+      },
+      "receipt": {
+        "keyID": {
+          "$hex": "255605d12cbafcbdab63df07dad13e5a55ed827b6974c1b4719676438bafca5a71dff03ad439b990d4e84b2ca06cf8652b28f7a6b9757b32f84f15bc612b4f08"
+        },
+        "tbsHash": {
+          "$hex": "a4bd2a7ad273412fa39fc58fae20ec9420cf6735de239ff3769f30278314fa498b4a3669bd5f37cfde21debf5cb5d800334ba416b9bf02a5ba527997098042a6"
+        },
+        "provider": "certconcord-software-v1",
+        "executedAt": 1792454400,
+        "permitHash": {
+          "$hex": "df9e697b0e117592e363a820c1ea3f2ca461a69a94dd147c2b4f0152d8dccef88d25ad421a97d13047f0f4bbdfecdec8761d9c8a3a5da2d2f4ae24415faf913e"
+        },
+        "operationID": {
+          "$hex": "6c9424a4413924ed9ceb983b05152300bc6d0ecad4a191542399f276e40cf9f4"
+        },
+        "schemaVersion": 1,
+        "signatureHash": {
+          "$hex": "0b9849059f6ce3db665cae378d695c0ae1a87f12ec4b8573ade5ecbfe2d8897753308d0d9c8ec4f8e06bd57c3eb1200257826cd81c8764ecdc33240746be047d"
+        },
+        "activationHash": {
+          "$hex": "0b15dbfc01385d2be7765d41f79c053fe5becd348f8d77372b271fa03920d8693b873c78b2cc287f83243a9152f3945ac873b2366298d86840befe36da79a885"
+        }
+      },
+      "credential": {
+        "$file": "files/10c62f817951ea29e29cf3d759c649c6aa8079ceed0004e5ad8a5ebae6b567ae.der.b64",
+        "type": "bytes"
+      },
+      "seal": {
+        "$file": "files/5062f111afccda77f2d849cab67839d3bec8986048c64ad6fb890e11a1d64b15.der.b64",
+        "type": "bytes"
+      },
+      "statusToken": "eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsIng1YyI6WyJNSUlDQURDQ0FhYWdBd0lCQWdJQkF6QUtCZ2dxaGtqT1BRUURBakFaTVJjd0ZRWURWUVFEREE1VGVXNTBhR1YwYVdNZ1NVRkRRVEFpR0E4eU1ESTJNVEF4T1RJek5Ua3dNRm9ZRHpJd01qWXhNREl4TURBd01EQXdXakFsTVNNd0lRWURWUVFEREJwVGVXNTBhR1YwYVdNZ2NHVnljMjl1WVd3Z2JXUnZZeUJEUVRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkUwVWFEZ0JIZVdwRXhoamlOVzJyVUhkZXBCYU9YVG5ydCsyR0xXSEZRNmxhOG96QThYR3dsU081QU5pakZaZVZiUzBGSXJ0WG9tSFNNR08zSk1lZXJLamdjNHdnY3N3REFZRFZSMFRBUUgvQkFJd0FEQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0hRWURWUjBPQkJZRUZJYzNDelNGMkUvT25HYnRpWW5NZE5lRTZteVhNQlVHQTFVZEpRRUIvd1FMTUFrR0J5aUJqRjBGQVFJd0h3WURWUjBqQkJnd0ZvQVVITzcrVkRIalp0UEU0d2VEbUtoMnJsRXlFNUF3SkFZRFZSMFNCQjB3RzRZWmFIUjBjSE02THk5emVXNTBhR1YwYVdNdVpYaGhiWEJzWlRBdUJnTlZIUjhFSnpBbE1DT2dJYUFmaGgxb2RIUndjem92TDNONWJuUm9aWFJwWXk1bGVHRnRjR3hsTDJOeWJEQUtCZ2dxaGtqT1BRUURBZ05JQURCRkFpQTdaYU9ucVg1NjYzUko1VnZFMHd2b2xYdFcvcmJ3dDh2OGwxME9WK1YyN0FJaEFOK1JoUmdPY1lqeVRKeHBmbDlzcjJqeXE4azZhSEEvaGNyQzUrSDJNTUdOIl0sImFsZyI6IkVTMjU2In0.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlL3N0YXR1cy8xIiwic3ViIjoiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS9zdGF0dXMvMSIsImlhdCI6MTc5MjQ1NDQwMCwiZXhwIjoxNzkyNDU0NzAwLCJ0dGwiOjMwMCwic3RhdHVzX2xpc3QiOnsiYml0cyI6MSwibHN0IjoiZUp6dHdURUJBQUFBd3FEMVQyME1INkFBQUFBQUFBQUFBQUFBQUFBQUFBQ0F0d0ZBQUFBQiJ9fQ.P95DyYZtTQfRGTqUNUOBT1h8ypDHubB6qH4tI7O6ENxkelBFuWZETyiKpq-iq262VmWAJra-i0a8GquMmPr6ug",
+      "selectedStatusURI": "https://issuer.example/status/1",
+      "expected": {
+        "outcome": "RETURNED",
+        "result": {
+          "subjectBinding": "REGISTRATION_AUTHORIZATION"
+        }
+      }
+    }
+  ]
+}

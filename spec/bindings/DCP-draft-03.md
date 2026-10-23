@@ -148,10 +148,13 @@ The default personal signer document type and signing namespace are `org.certcon
 | allowed_purposes                      | Explicit list containing DOCUMENT_SIGN                                                  |
 | policy_hash                           | 64-byte RRA policy commitment                                                           |
 | ra_authorization_hash                 | SHA-512 of the original signed RAR                                                      |
+| ra_authorization_commitment           | Independent 64-byte `H("RegistrationAuthorization", body)`, required by DOCUMENT        |
 | device_binding_id, binding_epoch      | Current registry binding and integer epoch                                              |
 | qualification                         | Assessed identity qualification                                                         |
 | issuer                                | Exact registered issuer identifier                                                      |
 | status                                | Issuer-pinned Token Status List reference and independent index                         |
+
+The native reference issuer rejects cached pending grants whose registration commitments no longer satisfy the selected issuance contract; final minting checks the body commitment again. It does not silently upgrade or sign an old grant. Its certified HTTPS status URI is independently configured from any explicitly selected retrieval transport endpoint.
 
 IssuerSigned contains nameSpaces and issuerAuth. Each IssuerSignedItem has a digestID unique within its namespace, at least 16 random salt bytes, elementIdentifier and elementValue, wrapped as tag 24 bytes. SHA-256 covers the complete IssuerSignedItemBytes encoding. The MSO commits valueDigests for every namespace, deviceKeyInfo.deviceKey, docType and validityInfo. issuerAuth is COSE_Sign1 over MobileSecurityObjectBytes with the authorized issuer certificate. A complete issued credential includes every committed namespace and item; presentations may selectively disclose requested fields.
 
