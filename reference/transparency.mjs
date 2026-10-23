@@ -138,6 +138,29 @@ export function verifyNote(note, signer, { maxFutureSkew = 30, knowledgeTime = n
   requireThat(good, 'NOTE_UNTRUSTED_SIGNATURE');
   return cp;
 }
+function mergeCosignatures(note, signatures, signer) {
+  const publicKey = signer.publicKey ?? createPublicKey(signer.privateKey);
+  return mergeSignatureBlock(note, signatures, {
+    name: signer.name,
+    keyID: noteKeyID(signer.name, publicKey, signer.scheme),
+  });
+}
+function mergeSignatureBlock(note, signatures, identity) {
+  const cp = parseCheckpoint(note);
+  if (signatures === '') return note;
+  const appended = parseCheckpoint(cp.body + '\n' + signatures),
+    selected = (s) => s.name === identity.name && equal(s.keyID, identity.keyID);
+  if (!appended.signatures.some(selected)) return note + signatures;
+  return (
+    cp.body +
+    '\n' +
+    cp.signatures
+      .filter((s) => !selected(s))
+      .map((s) => '— ' + s.name + ' ' + base64(Buffer.concat([s.keyID, s.signature])) + '\n')
+      .join('') +
+    signatures
+  );
+}
 export function verifyPublishedCheckpoint(note, log) {
   assertCheckpointLogSignature(note, {
     name: log.name,
@@ -248,7 +271,7 @@ export async function submitWitness(url, request, { signer, checkpoint, allowLoo
   if (r.status === 409)
     return { status: 'CONFLICT', size: decimal(r.body.toString('utf8').trimEnd()) };
   requireThat(r.status === 200, 'WITNESS_HTTP');
-  const combined = checkpoint + r.body.toString('utf8');
+  const combined = mergeCosignatures(checkpoint, r.body.toString('utf8'), signer);
   verifyNote(combined, signer);
   return { status: 'SIGNED', checkpoint: combined };
 }
@@ -332,11 +355,9 @@ export class TlogMirror {
       start = u(8),
       end = u(8),
       ticket = read(Number(u(2)));
+    requireThat(this.logs.has(origin), 'MIRROR_UNKNOWN_LOG');
     requireThat(
-      ticket.length === 0 &&
-        this.logs.has(origin) &&
-        start <= end &&
-        end <= BigInt(this.maxEntries),
+      ticket.length === 0 && start <= end && end <= BigInt(this.maxEntries),
       'MIRROR_HEADER',
     );
     const history = this.journal.get('mirror-checkpoint-history', origin + ':' + end),
@@ -399,7 +420,7 @@ export class TlogMirror {
     this.journal.put(
       'mirror-data',
       origin,
-      { ...state, size: end, note: cp.note + cosignature },
+      { ...state, size: end, note: mergeCosignatures(cp.note, cosignature, this.signer) },
       row?.revision ?? -1,
     );
     return { status: 200, type: 'text/plain', body: cosignature };
@@ -565,7 +586,19 @@ export function createTransparencyHandler(service) {
             typeof row.value.cosignature === 'string',
             'WITNESS_STORED_SIGNATURE_REQUIRED',
           );
-          note = row.value.note + row.value.cosignature;
+          note = row.value.note;
+          if (row.value.cosignature !== '') {
+            const cp = parseCheckpoint(note),
+              issued = parseCheckpoint(cp.body + '\n' + row.value.cosignature).signatures,
+              log = service.logs.get(origin);
+            requireThat(
+              issued.length === 1 &&
+                !(issued[0].name === log.name &&
+                  equal(issued[0].keyID, noteKeyID(log.name, log.publicKey, log.scheme))),
+              'WITNESS_STORED_SIGNATURE',
+            );
+            note = mergeSignatureBlock(note, row.value.cosignature, issued[0]);
+          }
         }
         const published = verifyPublishedCheckpoint(note, service.logs.get(origin));
         requireThat(published.origin === origin, 'CHECKPOINT_ORIGIN');
@@ -606,7 +639,10 @@ export function createTransparencyHandler(service) {
           ? 404
           : /UNTRUSTED_SIGNATURE/.test(code) || code === 'CHECKPOINT_LOG_SIGNATURE_REQUIRED'
             ? 403
-            : /CONSISTENCY/.test(code) || code === 'WITNESS_ZERO_PROOF' || code === 'WITNESS_EMPTY_ROOT'
+            : /CONSISTENCY/.test(code) ||
+                code === 'WITNESS_ZERO_PROOF' ||
+                code === 'WITNESS_EMPTY_ROOT' ||
+                code === 'MIRROR_NO_CHECKPOINT'
               ? 422
               : 400;
       res.writeHead(status, { 'content-type': 'text/plain' });

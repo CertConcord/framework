@@ -156,3 +156,23 @@ Equal-size witness requests must retain the stored root, including size zero. A
 conflicting root retained by an earlier implementation is rejected with 422 and
 its original note, signature and journal revision remain intact. A subsequent
 nonempty checkpoint can still advance under the normal consistency rules.
+
+The add-entries HTTP handler returns 404 for an unknown log origin and 422 when
+a configured log has no pending checkpoint. Malformed upload headers remain 400.
+These rejections leave mirror state unchanged, so an accepted checkpoint and
+subsequent valid upload can proceed after restart.
+
+Checkpoint publication and witness-client retries merge a new cosignature with
+an existing checkpoint by replacing only the selected cosigner's exact name and
+key identifier. Log signatures, other cosigners and same-name rotated keys remain
+intact. Each input signature block must still be structurally valid and contain
+no duplicate identities; the resulting checkpoint retains the existing log or
+selected-witness cryptographic verification gate.
+
+Witness publication uses the exact issuer identity from its locally retained
+single cosignature, so a signing-key rotation does not invalidate the previously
+issued checkpoint. It does not reinterpret that old signature as one issued by
+the current key. The retained block cannot replace a log signature or contain
+multiple issued identities; an empty response remains valid. Publication still
+verifies the admitted log, while consumers separately verify any witness keys
+they trust. The journal remains a trusted local persistence boundary.
