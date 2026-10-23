@@ -650,8 +650,8 @@
     },
     {
       "path": "reference/execution-binding.test.mjs",
-      "bytes": 24660,
-      "sha256": "ffa4b830fbb2fee0f762a582cca6ae93fec1d3ef3d816457ca2bd6ffe2c1f363"
+      "bytes": 33370,
+      "sha256": "6afbd5bf37a74d730de7629e0ddf009facc6729832edeaa329aa31d8c8a91bbc"
     },
     {
       "path": "reference/external-cms.mjs",

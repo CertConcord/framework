@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { unlinkSync, mkdirSync } from 'node:fs';
+import { createServer } from 'node:http';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import { Journal, SigningGateway, activationContext, issuePermit, readControl } from './state.mjs';
 import { createEvidencePackage } from './evidence-plan.mjs';
-import { RemoteCryptoKeyService } from './providers.mjs';
+import { RemoteCryptoKey, RemoteCryptoKeyService } from './providers.mjs';
+import { readBody, sendJSON } from './transport.mjs';
 import {
   EXECUTION_BINDING_PROFILE,
   ExecutionBindingGateway,
@@ -578,6 +580,234 @@ test('lost results survive restart, block concurrent key use and reconcile witho
     journal.close();
     unlinkSync(path);
   }
+});
+
+// Synthetic authenticated peer over real HTTP, with distinct local and remote journals.
+async function remoteRecoveryFixture(t) {
+  const path = '.runtime/remote-execution-' + c.b64u(c.random()) + '.sqlite',
+    remotePath = path + '.remote',
+    f = fixture({ path }),
+    remoteJournal = new Journal(remotePath),
+    id = c.b64u(f.activation.operationID),
+    lockID = c.b64u(f.binding.keyID),
+    nextActivation = { ...f.activation, operationID: c.random() },
+    nextID = c.b64u(nextActivation.operationID),
+    next = { ...f.input, permit: nextPermit(f, nextActivation) },
+    requests = [];
+  let journal = f.journal,
+    gateway,
+    responseOverride,
+    advertisedKey = f.document.publicKey;
+  const service = new RemoteCryptoKeyService({
+    ...f.options,
+    journal: remoteJournal,
+    audience: f.policy.audience,
+    provider: {
+      ...f.backend,
+      capabilities: async () => ({ publicKey: advertisedKey, input: 'MESSAGE' }),
+    },
+  });
+  const server = createServer(async (req, res) => {
+    try {
+      assert.equal(req.method, 'POST');
+      assert.equal(req.headers.authorization, 'Bearer synthetic-recovery');
+      const route = req.url.slice('/rra/v1/'.length),
+        data = JSON.parse((await readBody(req)).toString('utf8'));
+      assert.equal(req.url, '/rra/v1/' + route);
+      assert(['capabilities', 'sign', 'result'].includes(route));
+      requests.push({ route, data });
+      const result =
+        route === 'result' && responseOverride
+          ? responseOverride
+          : await service.handle(route, data);
+      // The remote signature is durably completed before this response is lost.
+      if (route === 'sign') res.destroy();
+      else sendJSON(res, 200, result);
+    } catch (error) {
+      sendJSON(res, 400, { error: error.code ?? 'INVALID_REQUEST' });
+    }
+  });
+  t.after(async () => {
+    await new Promise((resolve) => server.close(resolve));
+    journal.close();
+    remoteJournal.close();
+    unlinkSync(path);
+    unlinkSync(remotePath);
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const remote = new RemoteCryptoKey({
+    url: 'http://127.0.0.1:' + server.address().port,
+    token: 'synthetic-recovery',
+    allowLoopback: true,
+  });
+  const reopen = () => {
+    journal.close();
+    journal = new Journal(path);
+    gateway = new ExecutionBindingGateway({ ...f.options, journal, backend: remote });
+  };
+  gateway = new ExecutionBindingGateway({ ...f.options, backend: remote });
+  await assert.rejects(gateway.execute(f.input));
+  assert.equal(remoteJournal.result(id).status, 'COMPLETED');
+  assert.equal(gateway.getOperationResult(f.activation.operationID).status, 'UNKNOWN_EXECUTION');
+  reopen();
+  const snapshot = () => ({
+    operation: journal.result(id),
+    dispatch: journal.get('execution-dispatch', id),
+    lock: journal.get('execution-key-lock', lockID),
+  });
+  const assertNoResign = () => {
+    assert.equal(f.calls(), 1);
+    assert.equal(requests.filter((r) => r.route === 'sign').length, 1);
+  };
+  const assertNoSuccessor = () => {
+    assert.equal(journal.result(nextID), undefined);
+    assert.equal(journal.get('execution-dispatch', nextID), undefined);
+  };
+  const assertBlocked = async () => {
+    await assert.rejects(gateway.execute(f.input), { code: 'UNKNOWN_EXECUTION' });
+    await assert.rejects(gateway.execute(next), { code: 'EXECUTION_KEY_PENDING' });
+    assert.equal(gateway.getOperationResult(f.activation.operationID).status, 'UNKNOWN_EXECUTION');
+    assert.equal(journal.get('execution-key-lock', lockID).value.operationID, id);
+    assertNoSuccessor();
+    assertNoResign();
+  };
+  assertNoResign();
+  return {
+    f,
+    id,
+    nextActivation,
+    requests,
+    remote,
+    reopen,
+    snapshot,
+    assertBlocked,
+    assertNoResign,
+    assertNoSuccessor,
+    gateway: () => gateway,
+    completed: await service.handle('result', { operationID: id }),
+    query: (context = { tbs: f.input.tbs, publicKey: f.document.publicKey }) =>
+      remote.getOperationResult(id, context),
+    override: (value) => {
+      responseOverride = value;
+    },
+    advertise: (key) => {
+      advertisedKey = key;
+    },
+  };
+}
+
+test('remote result recovery reconciles only the reserved operation after journal reopen', async (t) => {
+  const r = await remoteRecoveryFixture(t),
+    before = r.snapshot(),
+    requestCount = r.requests.length,
+    retrieved = await r.query(),
+    signature = c.unb64u(retrieved.signature);
+  assert.deepEqual({ ...retrieved }, r.completed);
+  assert(c.verify(r.f.input.tbs, signature, r.f.document.publicKey));
+  assert.deepEqual(r.requests.slice(requestCount), [
+    { route: 'result', data: { operationID: r.id } },
+  ]);
+  assert.deepEqual(r.snapshot(), before);
+  await r.assertBlocked();
+  await assert.rejects(
+    r.gateway().reconcile({ operationID: r.nextActivation.operationID, signature }),
+    { code: 'EXECUTION_DISPATCH_REQUIRED' },
+  );
+  assert.deepEqual(r.snapshot(), before);
+  r.assertNoSuccessor();
+  const result = await r
+    .gateway()
+    .reconcile({ operationID: r.f.activation.operationID, signature });
+  assert.equal(verifyResult(r.f, result).epoch, 1);
+  const receipt = readControl(result.receipt, 'ExecutionReceipt', r.f.certificate);
+  assert.deepEqual(receipt.operationID, r.f.activation.operationID);
+  assert.deepEqual(receipt.keyID, r.f.binding.keyID);
+  assert.deepEqual(receipt.tbsHash, c.sha512(r.f.input.tbs));
+  assert.deepEqual(receipt.signatureHash, c.sha512(signature));
+  assert.deepEqual(result.signature, c.unb64u(r.completed.signature));
+  assert.deepEqual(result.executionEvidence.binding, before.dispatch.value.binding);
+  assert.equal(r.snapshot().operation.status, 'COMPLETED');
+  assert.equal(r.snapshot().lock.value.operationID, null);
+  r.assertNoSuccessor();
+  assert.deepEqual(
+    c.dcbor(await r.gateway().reconcile({ operationID: r.f.activation.operationID, signature })),
+    c.dcbor(result),
+  );
+  assert.deepEqual(
+    c.dcbor(r.gateway().getOperationResult(r.f.activation.operationID).result),
+    c.dcbor(result),
+  );
+  r.assertNoResign();
+});
+
+test('unresolved remote result states retain the execution key lock after journal reopen', async (t) => {
+  for (const status of ['UNKNOWN_EXECUTION', 'NOT_FOUND']) {
+    await t.test(status, async (t) => {
+      const r = await remoteRecoveryFixture(t),
+        before = r.snapshot();
+      r.override({ operationID: r.id, status });
+      const requestCount = r.requests.length;
+      for (let i = 0; i < 2; i++)
+        assert.deepEqual({ ...(await r.query()) }, { operationID: r.id, status });
+      assert.deepEqual(
+        r.requests.slice(requestCount),
+        Array.from({ length: 2 }, () => ({ route: 'result', data: { operationID: r.id } })),
+      );
+      assert.deepEqual(r.snapshot(), before);
+      r.reopen();
+      assert.deepEqual(r.snapshot(), before);
+      await r.assertBlocked();
+      assert.deepEqual(r.snapshot(), before);
+    });
+  }
+});
+
+test('remote recovery rejects alternate query context and changed backend keys without releasing reservations', async (t) => {
+  const r = await remoteRecoveryFixture(t),
+    before = r.snapshot(),
+    changed = Buffer.from('A different, mathematically valid remote input'),
+    other = c.generate('ml-dsa-65');
+  for (const [name, tbs, key, error] of [
+    ['alternate input', changed, r.f.document, 'REMOTE_RESPONSE_BINDING'],
+    ['alternate key', r.f.input.tbs, other, 'REMOTE_RESULT_SIGNATURE'],
+  ]) {
+    await t.test(name, async () => {
+      r.override({
+        ...r.completed,
+        tbsHash: c.b64u(c.sha512(tbs)),
+        signature: c.b64u(c.sign(tbs, key.privateKey)),
+      });
+      await assert.rejects(r.query(), { code: error });
+      const candidate = await r.query({ tbs, publicKey: key.publicKey });
+      assert(c.verify(tbs, c.unb64u(candidate.signature), key.publicKey));
+      await assert.rejects(
+        r
+          .gateway()
+          .reconcile({
+            operationID: r.f.activation.operationID,
+            signature: c.unb64u(candidate.signature),
+          }),
+        { code: 'EXECUTION_SIGNATURE' },
+      );
+      assert.deepEqual(r.snapshot(), before);
+      await r.assertBlocked();
+    });
+  }
+  r.override(undefined);
+  const original = await r.query();
+  r.advertise(other.publicKey);
+  await assert.rejects(
+    r
+      .gateway()
+      .reconcile({
+        operationID: r.f.activation.operationID,
+        signature: c.unb64u(original.signature),
+      }),
+    { code: 'ACTIVATION_BINDING' },
+  );
+  assert.deepEqual(r.snapshot(), before);
+  r.assertNoSuccessor();
+  r.assertNoResign();
 });
 
 test('admission changed during provider execution prevents release of an accepted result', async () => {
