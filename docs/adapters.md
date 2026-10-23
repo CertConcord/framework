@@ -156,3 +156,8 @@ Equal-size witness requests must retain the stored root, including size zero. A
 conflicting root retained by an earlier implementation is rejected with 422 and
 its original note, signature and journal revision remain intact. A subsequent
 nonempty checkpoint can still advance under the normal consistency rules.
+
+The add-entries HTTP handler returns 404 for an unknown log origin and 422 when
+a configured log has no pending checkpoint. Malformed upload headers remain 400.
+These rejections leave mirror state unchanged, so an accepted checkpoint and
+subsequent valid upload can proceed after restart.

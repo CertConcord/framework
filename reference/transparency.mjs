@@ -332,11 +332,9 @@ export class TlogMirror {
       start = u(8),
       end = u(8),
       ticket = read(Number(u(2)));
+    requireThat(this.logs.has(origin), 'MIRROR_UNKNOWN_LOG');
     requireThat(
-      ticket.length === 0 &&
-        this.logs.has(origin) &&
-        start <= end &&
-        end <= BigInt(this.maxEntries),
+      ticket.length === 0 && start <= end && end <= BigInt(this.maxEntries),
       'MIRROR_HEADER',
     );
     const history = this.journal.get('mirror-checkpoint-history', origin + ':' + end),
@@ -606,7 +604,10 @@ export function createTransparencyHandler(service) {
           ? 404
           : /UNTRUSTED_SIGNATURE/.test(code) || code === 'CHECKPOINT_LOG_SIGNATURE_REQUIRED'
             ? 403
-            : /CONSISTENCY/.test(code) || code === 'WITNESS_ZERO_PROOF' || code === 'WITNESS_EMPTY_ROOT'
+            : /CONSISTENCY/.test(code) ||
+                code === 'WITNESS_ZERO_PROOF' ||
+                code === 'WITNESS_EMPTY_ROOT' ||
+                code === 'MIRROR_NO_CHECKPOINT'
               ? 422
               : 400;
       res.writeHead(status, { 'content-type': 'text/plain' });

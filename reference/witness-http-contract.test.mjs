@@ -292,3 +292,57 @@ test('witness HTTP retains a legacy empty-root conflict across restart before va
   await f.reopen();
   await f.published(entries);
 });
+
+for (const failure of [
+  {
+    name: 'unknown origin',
+    origin: 'unknown.example/upload',
+    status: 404,
+    code: 'MIRROR_UNKNOWN_LOG',
+  },
+  { name: 'missing pending checkpoint', status: 422, code: 'MIRROR_NO_CHECKPOINT' },
+]) {
+  test(
+    'mirror HTTP upload rejects ' + failure.name + ' without state changes across restart',
+    async (t) => {
+      const f = await fixture(t, 'mirror');
+      const request = tlog.mirrorUpload(failure.origin ?? f.log.name, []);
+      const snapshot = () =>
+        f.journal.db.prepare('SELECT * FROM state ORDER BY namespace, id').all();
+      const before = snapshot();
+      for (let attempt = 0; attempt < 2; attempt++) {
+        assert.deepEqual(await f.post(request, '/add-entries'), {
+          status: failure.status,
+          type: 'text/plain',
+          body: failure.code,
+        });
+        assert.deepEqual(snapshot(), before);
+        await f.reopen();
+        assert.deepEqual(snapshot(), before);
+      }
+      const entries = [Buffer.from('valid upload after rejection')];
+      const note = f.checkpoint(entries);
+      assert.equal((await f.post(tlog.witnessRequest(0, [], note))).status, 200);
+      const uploaded = await f.post(tlog.mirrorUpload(f.log.name, entries), '/add-entries');
+      assert.equal(uploaded.status, 200);
+      assert.deepEqual(tlog.verifyNote(note + uploaded.body, f.signer).root, treeHash(entries));
+      await f.reopen();
+      await f.published(entries);
+    },
+  );
+}
+
+test('mirror HTTP upload keeps malformed headers at 400 before checkpoint lookup', async (t) => {
+  const f = await fixture(t, 'mirror');
+  for (const [request, code] of [
+    [Buffer.from([4, 97]), 'MIRROR_TRUNCATED'],
+    [tlog.mirrorUpload(f.log.name, [], 1), 'MIRROR_HEADER'],
+  ]) {
+    assert.deepEqual(await f.post(request, '/add-entries'), {
+      status: 400,
+      type: 'text/plain',
+      body: code,
+    });
+    assert.deepEqual(f.journal.db.prepare('SELECT * FROM state').all(), []);
+  }
+});
