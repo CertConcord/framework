@@ -389,6 +389,11 @@ function xmlDocument(xml) {
     'application/xml',
   );
   requireThat(!errors.length && d.documentElement.namespaceURI === XMLNS, 'XML_PARSE_OR_NAMESPACE');
+  // Canonical XML 1.0 section 2.1 also forbids unused relative namespace declarations.
+  for (const node of Array.from(d.getElementsByTagName('*')))
+    for (const attribute of Array.from(node.attributes))
+      if (attribute.namespaceURI === 'http://www.w3.org/2000/xmlns/' && attribute.value)
+        requireThat(/^[A-Za-z][A-Za-z0-9+.-]*:/.test(attribute.value), 'XMLERS_RELATIVE_NAMESPACE');
   return d;
 }
 const children = (node) => Array.from(node.childNodes).filter((n) => n.nodeType === 1);
