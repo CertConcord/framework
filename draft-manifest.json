@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 273890,
-      "sha256": "44e22a7444fb6b0d4e48ce50e0be711f59dd97870488c54c4b4d3a7aba0ce6e0"
+      "bytes": 273934,
+      "sha256": "3f7b9e2ffd1970ce11e809e9aa57d038b8472c86c4da44b9f09e9b5e4beda551"
     },
     {
       "path": "reference/README.md",
@@ -1239,14 +1239,19 @@
       "sha256": "327f4e5118c3e318ac0291dd935b2a9c2aaff7cd2080f7d2908d538b6746c07c"
     },
     {
+      "path": "reference/person-sign-profile.test.mjs",
+      "bytes": 1288,
+      "sha256": "cbf8c690d0c56f4379c7d5962f5989cc48618bafcda5fb406560935366b56468"
+    },
+    {
       "path": "reference/pkcs11.mjs",
       "bytes": 8731,
       "sha256": "4479c689a59fe0451804bf001a9863d78e93ad01cd2a1f9c914dda18893c0298"
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 19749,
-      "sha256": "69c51d6437f69132f2d05302a180ad9ee865902974e0ab8b0735eae6d392532c"
+      "bytes": 19951,
+      "sha256": "74577501f06d9f06e93e9948114415ae521a8b09e999bda84bd82f85bfa30c18"
     },
     {
       "path": "reference/preserved-certificate-status-semantics.mjs",

@@ -319,6 +319,11 @@ export function validateCertificate(
   if (profileID) {
     const p = profiles[profileID];
     requireThat(p, 'UNKNOWN_PROFILE');
+    if (profileID === 'CERTCONCORD-PERSON-SIGN-v1')
+      requireThat(
+        ['ml-dsa-65', 'ml-dsa-87'].includes(c.publicKey.asymmetricKeyType),
+        'CERTIFICATE_DOCUMENT_KEY_ALGORITHM',
+      );
     if (profileID === 'CERTCONCORD-PERSON-PASSKEY-SIGN-v1')
       requireThat(
         c.publicKey.asymmetricKeyType === 'ec' &&

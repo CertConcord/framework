@@ -246,6 +246,7 @@
   "reference/pdf-structure.mjs",
   "reference/pdf-worker.mjs",
   "reference/pdf.mjs",
+  "reference/person-sign-profile.test.mjs",
   "reference/pkcs11.mjs",
   "reference/pki.mjs",
   "reference/preserved-certificate-status-semantics.mjs",
