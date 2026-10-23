@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import * as a from './archive.mjs';
@@ -557,3 +558,181 @@ for (const [name, select] of [
     }
   });
 }
+
+function savedNamespaceVector() {
+  const read = (name) =>
+      readFileSync(new URL('./vectors/xmlers-namespace/' + name, import.meta.url)),
+    saved = JSON.parse(read('trust.json')),
+    data = Buffer.from(read('data.cbor.b64').toString(), 'base64'),
+    trust = {
+      at: saved.at,
+      certificate: Buffer.from(saved.certificate, 'base64'),
+      issuerKey: p.parseCertificate(Buffer.from(saved.issuerCertificate, 'base64')).publicKey,
+      policy: saved.policy,
+    };
+  assert.equal(c.sha256(data).toString('hex'), saved.dataSha256);
+  const records = Object.fromEntries(
+    Object.entries(saved.xmlSha256).map(([name, hash]) => {
+      const raw = read(name),
+        xml = raw.toString('utf8'),
+        token = Buffer.from(xml.match(/<TimeStampToken[^>]*>([^<]+)/)[1], 'base64');
+      assert.equal(c.sha256(raw).toString('hex'), hash);
+      assert.equal(c.sha256(token).toString('hex'), saved.tokenSha256);
+      return [name, xml];
+    }),
+  );
+  return { data, trust, records };
+}
+
+test('XMLERS saved original and absolute namespace controls retain initial integrity', () => {
+  const { data, trust, records } = savedNamespaceVector(),
+    original = records['valid_initial.xml'],
+    expected = {
+      chains: 1,
+      poeUpperBound: 1792700815,
+      integrity: 'VALID',
+      preservation: 'NOT_EVALUATED',
+    };
+  for (const xml of [
+    original,
+    records['absolute-unused-prefix.xml'],
+    qualify(original, 'ArchiveTimeStampChain', namespace),
+    original.replace(
+      '<CanonicalizationMethod ',
+      '<selected:CanonicalizationMethod xmlns:selected="' + namespace + '" xmlns="" ',
+    ),
+  ])
+    assert.deepEqual(a.verifyXMLERS(xml, data, trust), expected);
+});
+
+for (const file of ['relative-unused-prefix.xml', 'relative-child-prefix.xml']) {
+  test('XMLERS rejects saved relative namespace vector ' + file, async () => {
+    const { data, trust, records } = savedNamespaceVector(),
+      xml = records[file];
+    rejects(() => a.verifyXMLERS(xml, data, trust), 'INVALID', 'XMLERS_RELATIVE_NAMESPACE');
+    let resolverCalls = 0,
+      tsaCalls = 0;
+    rejects(
+      () =>
+        a.verifyXMLERSPreservation(xml, data, {
+          at: trust.at,
+          dataValidUntil: trust.at + 100,
+          hashValidUntil: { [p.OID.sha512]: trust.at + 100 },
+          resolveTimestamp: () => {
+            resolverCalls++;
+            return trust;
+          },
+        }),
+      'INVALID',
+      'XMLERS_RELATIVE_NAMESPACE',
+    );
+    for (const hashRenewal of [false, true]) {
+      await assert.rejects(
+        a.renewXMLERS(xml, data, {
+          hashRenewal,
+          tsa: () => {
+            tsaCalls++;
+            throw Error('Relative namespace reached TSA');
+          },
+        }),
+        { code: 'XMLERS_RELATIVE_NAMESPACE' },
+      );
+    }
+    assert.equal(resolverCalls, 0);
+    assert.equal(tsaCalls, 0);
+  });
+}
+
+for (const stage of ['first', 'renewed', 'record']) {
+  test(
+    'XMLERS rejects relative namespace declarations before ' + stage + ' proof processing',
+    async (t) => {
+      const f = await lifecycle(t);
+      let resolverCalls = 0,
+        tsaCalls = 0;
+      for (const location of ['EvidenceRecord', 'TimeStampToken', 'CanonicalizationMethod']) {
+        for (const uri of [
+          '../relative',
+          '//example.test/ns',
+          '/relative',
+          '?query',
+          '#fragment',
+          '1bad:scheme',
+          '&#x2e;./relative',
+        ]) {
+          const xml = f[stage].replace(
+            '<' + location,
+            location === 'CanonicalizationMethod'
+              ? '<selected:CanonicalizationMethod xmlns:selected="' +
+                  namespace +
+                  '" xmlns="' +
+                  uri +
+                  '"'
+              : '<' + location + ' xmlns:r="' + uri + '" xml:base="https://example.test/base/"',
+          );
+          rejects(
+            () => a.verifyXMLERS(xml, f.data, { ...f.trust, at: start + 1000 }),
+            'INVALID',
+            'XMLERS_RELATIVE_NAMESPACE',
+          );
+          rejects(
+            () =>
+              a.verifyXMLERSPreservation(xml, f.data, {
+                ...f.policy,
+                resolveTimestamp: () => {
+                  resolverCalls++;
+                  return f.trust;
+                },
+              }),
+            'INVALID',
+            'XMLERS_RELATIVE_NAMESPACE',
+          );
+          for (const hashRenewal of [false, true]) {
+            await assert.rejects(
+              a.renewXMLERS(xml, f.data, {
+                hashRenewal,
+                tsa: () => {
+                  tsaCalls++;
+                  throw Error('Relative namespace reached TSA');
+                },
+              }),
+              { code: 'XMLERS_RELATIVE_NAMESPACE' },
+            );
+          }
+        }
+      }
+      assert.equal(resolverCalls, 0);
+      assert.equal(tsaCalls, 0);
+    },
+  );
+}
+
+test('XMLERS absolute namespace declarations preserve timestamp and hash renewal', async (t) => {
+  const f = fixture(t),
+    data = Buffer.from('Absolute namespace renewal control');
+  let xml = await a.createXMLERS(data, { tsa: f.tsa, hashOID: p.OID.sha256 });
+  xml = qualify(xml, 'ArchiveTimeStampChain', namespace)
+    .replace('<EvidenceRecord ', '<EvidenceRecord xmlns:r="https://example.test/ns" ')
+    .replace(
+      '<TimeStampToken ',
+      '<TimeStampToken xmlns:u="urn:example:namespace" xmlns:c="a+1.-:namespace" ',
+    )
+    .replace(
+      '<CanonicalizationMethod ',
+      '<selected:CanonicalizationMethod xmlns:selected="' + namespace + '" xmlns="" ',
+    );
+  f.clock(start + 100);
+  xml = await a.renewXMLERS(xml, data, { tsa: f.tsa });
+  f.clock(start + 200);
+  xml = await a.renewXMLERS(xml, data, { tsa: f.tsa, hashRenewal: true });
+  assert.deepEqual(a.verifyXMLERS(xml, data, { ...f.trust, at: start + 1000 }), {
+    chains: 2,
+    poeUpperBound: start + 200,
+    integrity: 'VALID',
+    preservation: 'NOT_EVALUATED',
+  });
+  const result = a.verifyXMLERSPreservation(xml, data, preservation(f.trust));
+  assert.equal(result.preservation, 'VALID');
+  assert.equal(result.proofOfExistenceUpperBound, start);
+  assert.equal(result.latestRenewalUpperBound, start + 200);
+});

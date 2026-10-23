@@ -55,7 +55,7 @@ MTC cosignatures establish the selected issuance commitments. They do not provid
 
 ## Encoding and recovery
 
-The selected XMLERS parser requires the RFC 6283 namespace on every element and permits at most 64 chains with 64 timestamps per chain. These are reference-profile bounds, not limits imposed by RFC 6283. Namespace prefixes may vary without changing the selected namespace.
+The selected XMLERS parser requires the RFC 6283 namespace on every element and permits at most 64 chains with 64 timestamps per chain. These are reference-profile bounds, not limits imposed by RFC 6283. Namespace prefixes may vary without changing the selected namespace. Nonempty namespace declarations must have an absolute URI scheme, including unused declarations on the root or descendants; relative references are rejected as `XMLERS_RELATIVE_NAMESPACE` before verification or renewal, as required by [Canonical XML 1.0, section 2.1](https://www.w3.org/TR/2001/REC-xml-c14n-20010315#DataModel). Empty default-namespace undeclarations remain permitted on elements whose qualified names select the RFC 6283 namespace. Prefix changes do not imply equivalent canonical bytes for existing renewal proofs.
 
 The RFC 4998 adapter supports bounded nonempty chains, SHA-256/SHA-512 tree hashes, matching timestamp imprint hashes and single-object renewal. An omitted `digestAlgorithm` comes from the timestamp imprint. The first reduced-tree level contains the target hash; later levels contain siblings of the computed node.
 

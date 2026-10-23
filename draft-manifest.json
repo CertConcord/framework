@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 15961,
-      "sha256": "139f20b4c99b68adda46da3b47711be790f53d5acd8781f73660678f67ae2404"
+      "bytes": 16495,
+      "sha256": "464420d4ae515cf0b45cdcf347350e561dbed01142a341a78cc74c45fe1396b1"
     },
     {
       "path": "docs/draft-acceptance.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 273527,
-      "sha256": "1365d32fecd5a5bcdb9fab2bdaecc0a2dd1fa1b67b5ef5bb9530c16846d416bd"
+      "bytes": 273890,
+      "sha256": "44e22a7444fb6b0d4e48ce50e0be711f59dd97870488c54c4b4d3a7aba0ce6e0"
     },
     {
       "path": "reference/README.md",
@@ -350,8 +350,8 @@
     },
     {
       "path": "reference/archive.mjs",
-      "bytes": 21305,
-      "sha256": "2b2aa4851da2d39a964898fbff0b0bd04717ecda293c8f15bf28c0ade3854262"
+      "bytes": 21702,
+      "sha256": "331577a3b25a6d2e847ea9a87dd5c2fe949b810967fc3c4226ded2263220efd3"
     },
     {
       "path": "reference/arkg.mjs",
@@ -11644,6 +11644,36 @@
       "sha256": "06b48829f25488f58e640446483b4e13d2037a0149ff1d29894ec8c2653f51db"
     },
     {
+      "path": "reference/vectors/xmlers-namespace/absolute-unused-prefix.xml",
+      "bytes": 12841,
+      "sha256": "56787fbad8632ae7264437532a42e226baf5fc7fc83e81710b749190200c9937"
+    },
+    {
+      "path": "reference/vectors/xmlers-namespace/data.cbor.b64",
+      "bytes": 70437,
+      "sha256": "7922e50e03a6c9375c623d866b4c47f7b36e6ad8e7cabd138886d2eff4bc57dc"
+    },
+    {
+      "path": "reference/vectors/xmlers-namespace/relative-child-prefix.xml",
+      "bytes": 12836,
+      "sha256": "43bc3d126c0e97c41eb100c8349b08cd479b42baa7855f923b7821afea71bf52"
+    },
+    {
+      "path": "reference/vectors/xmlers-namespace/relative-unused-prefix.xml",
+      "bytes": 12836,
+      "sha256": "a5ed57dbcb9c95dad5bb35a659d53ca1534196d9364b0a1bbd2faeaf10ca178b"
+    },
+    {
+      "path": "reference/vectors/xmlers-namespace/trust.json",
+      "bytes": 15460,
+      "sha256": "9f9796377740b164e884b0fee5b24e95acde25db1a53eebeedea0e21255469e2"
+    },
+    {
+      "path": "reference/vectors/xmlers-namespace/valid_initial.xml",
+      "bytes": 12814,
+      "sha256": "7240e37b07493ee572b27978e07fa3b39dc96be73e8a5da4296f9e5dcf3e1552"
+    },
+    {
       "path": "reference/vendor/mdoc-signing/base.mjs",
       "bytes": 20362,
       "sha256": "a602bb6bd7c405c188208ce61629d49a8a6ba7cd3c358f6fe742b05bb623ca79"
@@ -11730,8 +11760,8 @@
     },
     {
       "path": "reference/xmlers-contract.test.mjs",
-      "bytes": 17625,
-      "sha256": "19e81bdb6e5ee12078137b609e96b1e499ca6479e974e263d1c107475d494c24"
+      "bytes": 23841,
+      "sha256": "dc4a2dab03e2c2bc6b165c5f000a93362111d52bf332c2456207722a302e22ac"
     },
     {
       "path": "spec/applications.md",
