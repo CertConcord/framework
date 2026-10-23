@@ -1300,8 +1300,8 @@
     },
     {
       "path": "reference/registration-authorization.test.mjs",
-      "bytes": 20672,
-      "sha256": "5d2498c127acb4488d95b95292623097c3782c016c3e21efbd619781795551dd"
+      "bytes": 21131,
+      "sha256": "d9abe8582d9a69e1a64be7efccd2a520dde3871e88b70d69dc675c053b33bd06"
     },
     {
       "path": "reference/registry.json",

@@ -85,6 +85,7 @@ function fixture(t, representation, { statusURI } = {}) {
       ...c.generate('ml-dsa-87'),
     })),
     authorityResolver = exampleAuthorityResolver({
+      at: body.issuedAt,
       trustDomainID: scope.trustDomainID,
       authorities: [
         { certificate: ra.certificate, roles: ['REGISTRATION_AUTHORITY'] },
@@ -283,6 +284,18 @@ for (const representation of ['X509', 'MTC', 'MDOC']) {
     assert.throws(fixture(t, representation).offline(1), { code: 'DOCUMENT_REGISTRATION_BINDING' });
   });
 }
+
+test('offline mdoc authorization retains authority knowledge across clock advances', (t) => {
+  let clock = Date.now();
+  t.mock.method(Date, 'now', () => {
+    clock += 1000;
+    return clock;
+  });
+  const f = fixture(t, 'MDOC');
+  assert(c.now() > f.body.issuedAt);
+  assert.deepEqual(f.offline(2)(), { subjectBinding: 'REGISTRATION_AUTHORIZATION' });
+  assert.throws(f.offline(1), { code: 'DOCUMENT_REGISTRATION_BINDING' });
+});
 
 test('RAR producer accepts schema2 and rejects schema1', (t) => {
   const f = fixture(t, 'X509');
