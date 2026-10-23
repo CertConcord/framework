@@ -84,8 +84,9 @@ async function fixture(
         (namespace) => journal.list(namespace).map(({ id }) => [id, journal.get(namespace, id)]),
       );
     },
-    async reopen() {
+    async reopen({ signer: nextSigner } = {}) {
       await stop();
+      if (nextSigner) Object.assign(signer, nextSigner);
       journal = new Journal(file);
       await start();
     },
@@ -418,6 +419,34 @@ for (const algorithm of [
   );
 
   test(
+    algorithm.keyType +
+      ' witness publication retains its issued signature after key rotation and reopen',
+    async (t) => {
+      const f = await fixture(t, 'witness', algorithm);
+      const original = additionalSignatures(f, f.checkpoint([Buffer.from('retained issuer')]));
+      const oldSigner = { ...f.signer };
+      assert.equal((await f.post(tlog.witnessRequest(0, [], original))).status, 200);
+      const first = await publishedNote(f);
+      assert.equal((await f.post(tlog.witnessRequest(1, [], first))).status, 200);
+      const issued = await publishedNote(f);
+      const retained = f.snapshot();
+      await f.reopen({ signer: { ...generateKeyPairSync(algorithm.keyType) } });
+      assert.deepEqual(f.snapshot(), retained);
+      assert.equal(await publishedNote(f), issued);
+      assertMergedCheckpoint(issued, original, oldSigner, f.log);
+      assert.throws(() => tlog.verifyNote(issued, f.signer), { code: 'NOTE_UNTRUSTED_SIGNATURE' });
+      assert.deepEqual(f.snapshot(), retained);
+      const signed = await f.post(tlog.witnessRequest(1, [], issued));
+      assert.equal(signed.status, 200);
+      const rotated = await publishedNote(f);
+      assertMergedCheckpoint(rotated, issued, f.signer, f.log);
+      tlog.verifyNote(rotated, oldSigner);
+      await f.reopen();
+      assert.equal(await publishedNote(f), rotated);
+    },
+  );
+
+  test(
     algorithm.keyType + ' witness client merges a successful cosigned checkpoint retry',
     async (t) => {
       const f = await fixture(t, 'witness', algorithm);
@@ -536,3 +565,61 @@ for (const responseCase of [
     }
   });
 }
+
+for (const storedCase of [
+  { name: 'log signature identity', code: 'WITNESS_STORED_SIGNATURE', lines: (logLine) => logLine },
+  {
+    name: 'multiple issued identities',
+    code: 'WITNESS_STORED_SIGNATURE',
+    lines: (logLine, selected, other) => selected + other,
+  },
+  {
+    name: 'duplicate issued identity',
+    code: 'CHECKPOINT_DUPLICATE_SIGNATURE',
+    lines: (logLine, selected) => selected + selected,
+  },
+]) {
+  test('witness publication rejects retained ' + storedCase.name + ' across reopen', async (t) => {
+    const f = await fixture(t, 'witness');
+    const note = f.checkpoint([]);
+    const body = tlog.parseCheckpoint(note).body;
+    const selected = tlog.noteSignature(body, f.signer);
+    const other = tlog.noteSignature(body, {
+      ...generate('ed25519'),
+      name: 'other.example/stored',
+      scheme: 'ed25519-cosign',
+    });
+    f.journal.put('witness', f.log.name, {
+      size: 0n,
+      root: treeHash([]),
+      note,
+      cosignature: storedCase.lines(tlog.noteSignature(body, f.log), selected, other),
+    });
+    const before = f.snapshot();
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const result = await fetch(
+        f.base + '/' + sha256(Buffer.from(f.log.name)).toString('hex') + '/checkpoint',
+      );
+      assert.equal(result.status, 400);
+      assert.equal(await result.text(), storedCase.code);
+      assert.deepEqual(f.snapshot(), before);
+      await f.reopen();
+    }
+  });
+}
+
+test('witness publication retains an empty issued response across reopen', async (t) => {
+  const f = await fixture(t, 'witness');
+  const note = f.checkpoint([]);
+  const service = new tlog.TlogWitness({
+    journal: f.journal,
+    signer: f.signer,
+    logs: new Map([[f.log.name, f.log]]),
+  });
+  assert.equal(service.addCheckpoint(tlog.witnessRequest(0, [], note), { sign: false }).body, '');
+  const before = f.snapshot();
+  assert.equal(await publishedNote(f), note);
+  await f.reopen({ signer: { ...generateKeyPairSync('ml-dsa-87') } });
+  assert.equal(await publishedNote(f), note);
+  assert.deepEqual(f.snapshot(), before);
+});

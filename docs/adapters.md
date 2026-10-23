@@ -168,3 +168,11 @@ key identifier. Log signatures, other cosigners and same-name rotated keys remai
 intact. Each input signature block must still be structurally valid and contain
 no duplicate identities; the resulting checkpoint retains the existing log or
 selected-witness cryptographic verification gate.
+
+Witness publication uses the exact issuer identity from its locally retained
+single cosignature, so a signing-key rotation does not invalidate the previously
+issued checkpoint. It does not reinterpret that old signature as one issued by
+the current key. The retained block cannot replace a log signature or contain
+multiple issued identities; an empty response remains valid. Publication still
+verifies the admitted log, while consumers separately verify any witness keys
+they trust. The journal remains a trusted local persistence boundary.

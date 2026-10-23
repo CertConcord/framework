@@ -139,12 +139,17 @@ export function verifyNote(note, signer, { maxFutureSkew = 30, knowledgeTime = n
   return cp;
 }
 function mergeCosignatures(note, signatures, signer) {
+  const publicKey = signer.publicKey ?? createPublicKey(signer.privateKey);
+  return mergeSignatureBlock(note, signatures, {
+    name: signer.name,
+    keyID: noteKeyID(signer.name, publicKey, signer.scheme),
+  });
+}
+function mergeSignatureBlock(note, signatures, identity) {
   const cp = parseCheckpoint(note);
   if (signatures === '') return note;
   const appended = parseCheckpoint(cp.body + '\n' + signatures),
-    publicKey = signer.publicKey ?? createPublicKey(signer.privateKey),
-    id = noteKeyID(signer.name, publicKey, signer.scheme),
-    selected = (s) => s.name === signer.name && equal(s.keyID, id);
+    selected = (s) => s.name === identity.name && equal(s.keyID, identity.keyID);
   if (!appended.signatures.some(selected)) return note + signatures;
   return (
     cp.body +
@@ -581,7 +586,19 @@ export function createTransparencyHandler(service) {
             typeof row.value.cosignature === 'string',
             'WITNESS_STORED_SIGNATURE_REQUIRED',
           );
-          note = mergeCosignatures(row.value.note, row.value.cosignature, service.signer);
+          note = row.value.note;
+          if (row.value.cosignature !== '') {
+            const cp = parseCheckpoint(note),
+              issued = parseCheckpoint(cp.body + '\n' + row.value.cosignature).signatures,
+              log = service.logs.get(origin);
+            requireThat(
+              issued.length === 1 &&
+                !(issued[0].name === log.name &&
+                  equal(issued[0].keyID, noteKeyID(log.name, log.publicKey, log.scheme))),
+              'WITNESS_STORED_SIGNATURE',
+            );
+            note = mergeSignatureBlock(note, row.value.cosignature, issued[0]);
+          }
         }
         const published = verifyPublishedCheckpoint(note, service.logs.get(origin));
         requireThat(published.origin === origin, 'CHECKPOINT_ORIGIN');
