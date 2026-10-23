@@ -670,8 +670,8 @@
     },
     {
       "path": "reference/foundation-demo.mjs",
-      "bytes": 33859,
-      "sha256": "986b2686af2afe4242ad5da79a30854bc73bd2798d16625c676727c42f848b3a"
+      "bytes": 33963,
+      "sha256": "b1831310cf5050a6c18e4854c6711e47451d30c0eb59f41681b32203e70c2b70"
     },
     {
       "path": "reference/foundation-security.test.mjs",
@@ -990,8 +990,8 @@
     },
     {
       "path": "reference/openid.mjs",
-      "bytes": 47437,
-      "sha256": "add92804c15b5d83c154eb104d21ad546f3ffc8a6a258deaef899070a67e5ee6"
+      "bytes": 47481,
+      "sha256": "f9821ab7eae5eb94983ca9b32cd1fe9ed1dd2a9c2788c7224adbbb829b42e2ad"
     },
     {
       "path": "reference/openssl.test.mjs",
@@ -1295,8 +1295,8 @@
     },
     {
       "path": "reference/registration-authorization.test.mjs",
-      "bytes": 14059,
-      "sha256": "eb5f344ea4235c515248a0717967ec0bd23973337a911a8f80699b27c5b174ce"
+      "bytes": 18684,
+      "sha256": "b60e435800abcd3676ed6c9417f05834707a9e3b6e7ff999efd2735389ec1315"
     },
     {
       "path": "reference/registry.json",
@@ -1420,8 +1420,8 @@
     },
     {
       "path": "reference/signer-mdoc.mjs",
-      "bytes": 33537,
-      "sha256": "ec5d4507d9b02073ed4632f4f848cd66377a44652207345bf861b5f92f2a5634"
+      "bytes": 33972,
+      "sha256": "db62fa8db1929f5c6a3a2ede420402d20a72f1977dbd827e1372065b35c02f3c"
     },
     {
       "path": "reference/smime-adapter-common.mjs",
@@ -10540,8 +10540,8 @@
     },
     {
       "path": "reference/wallet.mjs",
-      "bytes": 12353,
-      "sha256": "1b4eb7bd0e3375711dde70474317096ea581247b8e5cf8c482d1700cc0dc70d4"
+      "bytes": 12460,
+      "sha256": "4fd9927887ea1111cddb990b67f11c5e1f85649ef6a1f60d4a79fd70f7481618"
     },
     {
       "path": "reference/webauthn.mjs",
@@ -10595,13 +10595,13 @@
     },
     {
       "path": "spec/bindings/DCP-draft-03.md",
-      "bytes": 56335,
-      "sha256": "182b524f6acbe2792b02763c78c7a3c7a03be211a52794a959dc336bc7ff3682"
+      "bytes": 56467,
+      "sha256": "382e7253047c868fa38fe1fb6f69038ff763ed049f45ab202866ac68ec3f0574"
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
-      "bytes": 28270,
-      "sha256": "2559cf21a0e776a492ba88b9567b4f06a5c6d7fc7786677741fe7a7ff7bb94b5"
+      "bytes": 28483,
+      "sha256": "19370c01340dde11e4181937029c9555d205a1ecfcdc20128f24cb105170a40a"
     },
     {
       "path": "spec/bindings/DSCP-draft-03.md",

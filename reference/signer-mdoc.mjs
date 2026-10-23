@@ -76,6 +76,18 @@ const plain = (v) =>
       : v;
 const authBytes = (credential) => encode(get(decode(credential), 'issuerAuth'));
 
+function canonicalStatusURI(value) {
+  if (typeof value !== 'string') return false;
+  try {
+    const uri = new URL(value);
+    return (
+      uri.protocol === 'https:' && !uri.username && !uri.password && !uri.hash && uri.href === value
+    );
+  } catch {
+    return false;
+  }
+}
+
 export class PersonalMdocCA extends CredentialIssuer {
   constructor({
     bindings,
@@ -105,6 +117,7 @@ export class PersonalMdocCA extends CredentialIssuer {
       },
       mintCredential: (request) => this.mint(request),
     });
+    requireThat(canonicalStatusURI(this.status.uri), 'MDOC_STATUS_REFERENCE');
     requireThat(
       credentialLog?.journal !== options.journal && credentialLog && credentialLogTrust,
       'CREDENTIAL_LOG_BOUNDARY',
@@ -211,6 +224,7 @@ export class PersonalMdocCA extends CredentialIssuer {
           allowed_purposes: ['DOCUMENT_SIGN'],
           policy_hash: b.policyHash,
           ra_authorization_hash: sha512(rar),
+          ra_authorization_commitment: H('RegistrationAuthorization', r),
           issuance_scope: r.issuanceScope,
           ...(keyAdmission
             ? { passkey_binding: keyAdmission.binding, passkey_binding_hash: keyAdmission.hash }

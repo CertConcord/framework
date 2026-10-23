@@ -148,6 +148,7 @@ The default personal signer document type and signing namespace are `org.certcon
 | allowed_purposes                      | Explicit list containing DOCUMENT_SIGN                                                  |
 | policy_hash                           | 64-byte RRA policy commitment                                                           |
 | ra_authorization_hash                 | SHA-512 of the original signed RAR                                                      |
+| ra_authorization_commitment           | Independent 64-byte `H("RegistrationAuthorization", body)`, required by DOCUMENT        |
 | device_binding_id, binding_epoch      | Current registry binding and integer epoch                                              |
 | qualification                         | Assessed identity qualification                                                         |
 | issuer                                | Exact registered issuer identifier                                                      |

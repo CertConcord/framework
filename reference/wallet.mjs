@@ -18,6 +18,8 @@ import { MDOC_CONFIG, verifyIssuerSigned, NAMESPACE } from './mdoc.mjs';
 export class OpenIDWallet {
   constructor({
     issuer,
+    statusURI = issuer + '/status/1',
+    statusEndpoint = statusURI,
     clientID,
     clientKey,
     clientAuthentication,
@@ -41,6 +43,8 @@ export class OpenIDWallet {
     );
     Object.assign(this, {
       issuer,
+      statusURI,
+      statusEndpoint,
       clientID,
       clientKey,
       clientAuthentication,
@@ -227,8 +231,8 @@ export class OpenIDWallet {
         rawStatus?.status_list instanceof Map
           ? Object.fromEntries(rawStatus.status_list)
           : rawStatus?.status_list;
-    requireThat(status?.uri === this.issuer + '/status/1', 'CREDENTIAL_STATUS_URI');
-    const r = await requestBytes(status.uri, { allowLoopback: this.allowLoopback });
+    requireThat(status?.uri === this.statusURI, 'CREDENTIAL_STATUS_URI');
+    const r = await requestBytes(this.statusEndpoint, { allowLoopback: this.allowLoopback });
     requireThat(r.status === 200, 'STATUS_LIST_MISSING');
     const assessment = verifyStatusList(r.body.toString('utf8'), {
       publicKey: this.issuerPublicKey,
