@@ -4,7 +4,7 @@ import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import * as a from './archive.mjs';
 import { Journal } from './state.mjs';
-import { verificationOutcome } from './verification-result.mjs';
+import { VerificationError, verificationOutcome } from './verification-result.mjs';
 
 const namespace = 'urn:ietf:params:xml:ns:ers';
 const start = 1800000000;
@@ -478,20 +478,82 @@ for (const [name, create, verify] of [
     (record, data, policy) => a.verifyXMLERSPreservation(record, data, policy),
   ],
 ]) {
-  test(`${name} preservation reports an unavailable TSA resolver without trusting exception verdicts`, async (t) => {
+  test(`${name} preservation retains typed TSA resolver outcomes without trusting exception fields`, async (t) => {
     const f = fixture(t),
-      data = Buffer.from('Unavailable TSA selection'),
+      data = Buffer.from('Typed TSA selection outcomes'),
       record = await create(data, { tsa: f.tsa });
+    const policy = {
+      ...preservation(f.trust),
+      hashValidUntil: { [p.OID.sha256]: start + 2000, [p.OID.sha512]: start + 2000 },
+    };
+    assert.equal(verify(record, data, policy).preservation, 'VALID');
+    for (const [overall, reason] of [
+      ['INDETERMINATE', 'ORG_TIMESTAMP_TRUST_UNAVAILABLE'],
+      ['INVALID', 'KNOWN_TSA_COMPROMISE'],
+      ['UNSUPPORTED', 'TSA_PROFILE_UNSUPPORTED'],
+    ]) {
+      rejects(
+        () =>
+          verify(record, data, {
+            ...policy,
+            resolveTimestamp: () => {
+              throw new VerificationError(reason, overall, 'time');
+            },
+          }),
+        overall,
+        reason,
+      );
+    }
     rejects(
       () =>
         verify(record, data, {
-          ...preservation(f.trust),
+          ...policy,
           resolveTimestamp: () => {
             throw { overall: 'VALID', code: 'FORGED_ACCEPTANCE' };
           },
         }),
-      'INDETERMINATE',
-      'ERS_TSA_TRUST_UNAVAILABLE',
+      'INVALID',
+      'MALFORMED_EVIDENCE',
     );
+    rejects(
+      () =>
+        verify(record, data, {
+          ...policy,
+          resolveTimestamp: () => undefined,
+        }),
+      'INDETERMINATE',
+      'ERS_TSA_TRUST_REQUIRED',
+    );
+  });
+}
+
+for (const [name, select] of [
+  ['initial protection', (f) => f.first],
+  ['timestamp renewal', (f) => f.renewed],
+  ['hash renewal', (f) => f.record],
+]) {
+  test(`XMLERS rejects an empty HashTree during ${name}`, async (t) => {
+    const f = await lifecycle(t),
+      record = select(f),
+      policy = {
+        ...f.policy,
+        hashValidUntil: { [p.OID.sha256]: start + 2000, [p.OID.sha512]: start + 2000 },
+      };
+    let empty;
+    if (name === 'hash renewal') {
+      assert.equal((record.match(/<HashTree>/g) ?? []).length, 1);
+      empty = record.replace(/<HashTree>[\s\S]*?<\/HashTree>/, '<HashTree/>');
+    } else {
+      const index = record.lastIndexOf('<TimeStamp>');
+      assert(index >= 0);
+      empty = record.slice(0, index) + '<HashTree/>' + record.slice(index);
+    }
+    for (const verify of [
+      (xml) => a.verifyXMLERS(xml, f.data, { ...f.trust, at: policy.at }),
+      (xml) => a.verifyXMLERSPreservation(xml, f.data, policy),
+    ]) {
+      assert.equal(verify(record).integrity, 'VALID');
+      rejects(() => verify(empty), 'INVALID', 'XMLERS_TREE_STRUCTURE');
+    }
   });
 }

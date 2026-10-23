@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 15966,
-      "sha256": "d3a924950a8112c47df94360a26990a5ef1cc8a54d4840650a781bf725a0d3f4"
+      "bytes": 15961,
+      "sha256": "139f20b4c99b68adda46da3b47711be790f53d5acd8781f73660678f67ae2404"
     },
     {
       "path": "docs/draft-acceptance.md",
@@ -350,8 +350,8 @@
     },
     {
       "path": "reference/archive.mjs",
-      "bytes": 21380,
-      "sha256": "743d1c452d16bdb77eee32be4ab8dba6305676a826071b57c49121d49869c540"
+      "bytes": 21305,
+      "sha256": "2b2aa4851da2d39a964898fbff0b0bd04717ecda293c8f15bf28c0ade3854262"
     },
     {
       "path": "reference/arkg.mjs",
@@ -10570,8 +10570,8 @@
     },
     {
       "path": "reference/xmlers-contract.test.mjs",
-      "bytes": 15638,
-      "sha256": "f5606688bcc0f514438883636416906172507fe916c70ed8c5c8af860aec3062"
+      "bytes": 17625,
+      "sha256": "19e81bdb6e5ee12078137b609e96b1e499ca6479e974e263d1c107475d494c24"
     },
     {
       "path": "spec/applications.md",

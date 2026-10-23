@@ -303,12 +303,7 @@ function verifyPreservation(
   let verified;
   try {
     verified = walk(raw, data, (token, binding) => {
-      let trust;
-      try {
-        trust = resolveTimestamp(Buffer.from(token));
-      } catch {
-        throw new VerificationError('ERS_TSA_TRUST_UNAVAILABLE', 'INDETERMINATE', 'time');
-      }
+      const trust = resolveTimestamp(Buffer.from(token));
       requireThat(
         trust?.certificate &&
           trust.issuerKey &&
@@ -509,6 +504,7 @@ function walkXMLERS(xml, data, verifyToken) {
       );
       if (trees.length) {
         const levels = children(trees[0]);
+        requireThat(levels.length > 0, 'XMLERS_TREE_STRUCTURE');
         for (let n = 0; n < levels.length; n++) {
           const level = levels[n];
           requireThat(
