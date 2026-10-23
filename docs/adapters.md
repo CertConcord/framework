@@ -161,3 +161,10 @@ The add-entries HTTP handler returns 404 for an unknown log origin and 422 when
 a configured log has no pending checkpoint. Malformed upload headers remain 400.
 These rejections leave mirror state unchanged, so an accepted checkpoint and
 subsequent valid upload can proceed after restart.
+
+Checkpoint publication and witness-client retries merge a new cosignature with
+an existing checkpoint by replacing only the selected cosigner's exact name and
+key identifier. Log signatures, other cosigners and same-name rotated keys remain
+intact. Each input signature block must still be structurally valid and contain
+no duplicate identities; the resulting checkpoint retains the existing log or
+selected-witness cryptographic verification gate.

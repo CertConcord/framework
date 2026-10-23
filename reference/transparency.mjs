@@ -138,6 +138,24 @@ export function verifyNote(note, signer, { maxFutureSkew = 30, knowledgeTime = n
   requireThat(good, 'NOTE_UNTRUSTED_SIGNATURE');
   return cp;
 }
+function mergeCosignatures(note, signatures, signer) {
+  const cp = parseCheckpoint(note);
+  if (signatures === '') return note;
+  const appended = parseCheckpoint(cp.body + '\n' + signatures),
+    publicKey = signer.publicKey ?? createPublicKey(signer.privateKey),
+    id = noteKeyID(signer.name, publicKey, signer.scheme),
+    selected = (s) => s.name === signer.name && equal(s.keyID, id);
+  if (!appended.signatures.some(selected)) return note + signatures;
+  return (
+    cp.body +
+    '\n' +
+    cp.signatures
+      .filter((s) => !selected(s))
+      .map((s) => '— ' + s.name + ' ' + base64(Buffer.concat([s.keyID, s.signature])) + '\n')
+      .join('') +
+    signatures
+  );
+}
 export function verifyPublishedCheckpoint(note, log) {
   assertCheckpointLogSignature(note, {
     name: log.name,
@@ -248,7 +266,7 @@ export async function submitWitness(url, request, { signer, checkpoint, allowLoo
   if (r.status === 409)
     return { status: 'CONFLICT', size: decimal(r.body.toString('utf8').trimEnd()) };
   requireThat(r.status === 200, 'WITNESS_HTTP');
-  const combined = checkpoint + r.body.toString('utf8');
+  const combined = mergeCosignatures(checkpoint, r.body.toString('utf8'), signer);
   verifyNote(combined, signer);
   return { status: 'SIGNED', checkpoint: combined };
 }
@@ -397,7 +415,7 @@ export class TlogMirror {
     this.journal.put(
       'mirror-data',
       origin,
-      { ...state, size: end, note: cp.note + cosignature },
+      { ...state, size: end, note: mergeCosignatures(cp.note, cosignature, this.signer) },
       row?.revision ?? -1,
     );
     return { status: 200, type: 'text/plain', body: cosignature };
@@ -563,7 +581,7 @@ export function createTransparencyHandler(service) {
             typeof row.value.cosignature === 'string',
             'WITNESS_STORED_SIGNATURE_REQUIRED',
           );
-          note = row.value.note + row.value.cosignature;
+          note = mergeCosignatures(row.value.note, row.value.cosignature, service.signer);
         }
         const published = verifyPublishedCheckpoint(note, service.logs.get(origin));
         requireThat(published.origin === origin, 'CHECKPOINT_ORIGIN');

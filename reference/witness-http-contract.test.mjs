@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
+import { generateKeyPairSync } from 'node:crypto';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -9,14 +10,18 @@ import { Journal } from './state.mjs';
 import { consistencyProof, treeHash } from './mtc.mjs';
 import * as tlog from './transparency.mjs';
 
-async function fixture(t, kind) {
+async function fixture(
+  t,
+  kind,
+  { keyType = 'ml-dsa-87', scheme = 'CERTCONCORD-MLDSA87-SUBTREE-v1' } = {},
+) {
   const directory = mkdtempSync(join(tmpdir(), 'certconcord witness http '));
   const file = join(directory, 'state.sqlite');
   const log = { ...generate('ed25519'), name: 'log.example/http', scheme: 'ed25519-log' };
   const signer = {
-    ...generate('ml-dsa-87'),
+    ...generateKeyPairSync(keyType),
     name: 'witness.example/http',
-    scheme: 'CERTCONCORD-MLDSA87-SUBTREE-v1',
+    scheme,
   };
   const logs = new Map([[log.name, log]]);
   let journal = new Journal(file),
@@ -346,3 +351,188 @@ test('mirror HTTP upload keeps malformed headers at 400 before checkpoint lookup
     assert.deepEqual(f.journal.db.prepare('SELECT * FROM state').all(), []);
   }
 });
+
+function additionalSignatures(f, note) {
+  const body = tlog.parseCheckpoint(note).body;
+  const rotated = { ...generate('ed25519'), name: f.signer.name, scheme: 'ed25519-cosign' };
+  const other = {
+    ...generate('ed25519'),
+    name: 'other.example/cosigner',
+    scheme: 'ed25519-cosign',
+  };
+  return note + tlog.noteSignature(body, rotated) + tlog.noteSignature(body, other);
+}
+
+function assertMergedCheckpoint(note, original, signer, log) {
+  const cp = tlog.verifyNote(note, signer);
+  tlog.verifyPublishedCheckpoint(note, log);
+  const expected = tlog.parseCheckpoint(original);
+  assert.equal(cp.body, expected.body);
+  const id = tlog.noteKeyID(signer.name, signer.publicKey, signer.scheme);
+  const selected = (s) => s.name === signer.name && s.keyID.equals(id);
+  assert.equal(cp.signatures.filter(selected).length, 1);
+  assert.deepEqual(
+    cp.signatures.filter((s) => !selected(s)),
+    expected.signatures.filter((s) => !selected(s)),
+  );
+}
+
+async function publishedNote(f) {
+  const response = await fetch(
+    f.base + '/' + sha256(Buffer.from(f.log.name)).toString('hex') + '/checkpoint',
+  );
+  assert.equal(response.status, 200, await response.clone().text());
+  return response.text();
+}
+
+for (const algorithm of [
+  { keyType: 'ed25519', scheme: 'ed25519-cosign' },
+  { keyType: 'ml-dsa-44', scheme: 'mldsa44-cosign' },
+  { keyType: 'ml-dsa-87', scheme: 'CERTCONCORD-MLDSA87-SUBTREE-v1' },
+]) {
+  test(
+    algorithm.keyType + ' witness publication merges its repeated cosignature across restart',
+    async (t) => {
+      const f = await fixture(t, 'witness', algorithm);
+      const entries = [Buffer.from('cosigned publication')];
+      const original = additionalSignatures(f, f.checkpoint(entries));
+      assert.equal((await f.post(tlog.witnessRequest(0, [], original))).status, 200);
+      const first = await publishedNote(f);
+      assertMergedCheckpoint(first, original, f.signer, f.log);
+      const repeated = await f.post(tlog.witnessRequest(1, [], first));
+      assert.equal(repeated.status, 200);
+      assert.equal(tlog.verifyNote(original + repeated.body, f.signer).size, 1n);
+      const last = await publishedNote(f);
+      assertMergedCheckpoint(last, first, f.signer, f.log);
+      await f.reopen();
+      assert.equal(await publishedNote(f), last);
+      const before = f.snapshot();
+      assert.deepEqual(await f.post(tlog.witnessRequest(1, [], first + repeated.body)), {
+        status: 400,
+        type: 'text/plain',
+        body: 'CHECKPOINT_DUPLICATE_SIGNATURE',
+      });
+      assert.deepEqual(f.snapshot(), before);
+      assert.equal(await publishedNote(f), last);
+    },
+  );
+
+  test(
+    algorithm.keyType + ' witness client merges a successful cosigned checkpoint retry',
+    async (t) => {
+      const f = await fixture(t, 'witness', algorithm);
+      const original = additionalSignatures(f, f.checkpoint([Buffer.from('client replay')]));
+      const submit = (note, old) =>
+        tlog.submitWitness(f.base, tlog.witnessRequest(old, [], note), {
+          signer: f.signer,
+          checkpoint: note,
+          allowLoopback: true,
+        });
+      const first = await submit(original, 0);
+      assert.equal(first.status, 'SIGNED');
+      const next = await submit(first.checkpoint, 1);
+      assert.equal(next.status, 'SIGNED');
+      assertMergedCheckpoint(next.checkpoint, first.checkpoint, f.signer, f.log);
+      assert.equal(await publishedNote(f), next.checkpoint);
+    },
+  );
+
+  test(
+    algorithm.keyType + ' mirror publication merges an already cosigned initial checkpoint',
+    async (t) => {
+      const f = await fixture(t, 'mirror', algorithm);
+      const entries = [Buffer.from('mirrored cosigned checkpoint')];
+      const original = additionalSignatures(f, f.checkpoint(entries));
+      const donorJournal = new Journal();
+      let donorNote;
+      try {
+        const donor = new tlog.TlogMirror({
+          journal: donorJournal,
+          signer: f.signer,
+          logs: new Map([[f.log.name, f.log]]),
+        });
+        assert.equal(donor.addCheckpoint(tlog.witnessRequest(0, [], original)).status, 200);
+        assert.equal(donor.addEntries(tlog.mirrorUpload(f.log.name, entries)).status, 200);
+        donorNote = donor.checkpoint(f.log.name);
+      } finally {
+        donorJournal.close();
+      }
+      assertMergedCheckpoint(donorNote, original, f.signer, f.log);
+      assert.equal((await f.post(tlog.witnessRequest(0, [], donorNote))).status, 200);
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const uploaded = await f.post(tlog.mirrorUpload(f.log.name, entries), '/add-entries');
+        assert.equal(uploaded.status, 200);
+        assert.equal(tlog.verifyNote(original + uploaded.body, f.signer).size, 1n);
+        const published = await publishedNote(f);
+        assertMergedCheckpoint(published, donorNote, f.signer, f.log);
+        await f.reopen();
+        assert.equal(await publishedNote(f), published);
+      }
+    },
+  );
+}
+
+for (const responseCase of [
+  { name: 'empty response with retained trusted signature', body: () => '', accepted: true },
+  {
+    name: 'unknown response with retained trusted signature',
+    body: (f) => f.unknown,
+    accepted: true,
+  },
+  {
+    name: 'invalid selected replacement',
+    body: (f) => forgedSignature(f.selected),
+    code: 'NOTE_UNTRUSTED_SIGNATURE',
+  },
+  {
+    name: 'duplicate selected response',
+    body: (f) => f.selected + f.selected,
+    code: 'CHECKPOINT_DUPLICATE_SIGNATURE',
+  },
+  {
+    name: 'attempted log signature replacement',
+    body: (f) => forgedSignature(f.logLine) + f.selected,
+    code: 'CHECKPOINT_DUPLICATE_SIGNATURE',
+  },
+  { name: 'malformed response signature', body: () => 'malformed\n', code: 'CHECKPOINT_SIGNATURE' },
+  {
+    name: 'duplicate original signature',
+    body: (f) => f.selected,
+    duplicateOriginal: true,
+    code: 'CHECKPOINT_DUPLICATE_SIGNATURE',
+  },
+]) {
+  test('witness client signature merge handles ' + responseCase.name, async (t) => {
+    const log = { ...generate('ed25519'), name: 'log.example/merge', scheme: 'ed25519-log' };
+    const signer = { ...generate('ed25519'), name: log.name, scheme: 'ed25519-cosign' };
+    const unknown = { ...generate('ed25519'), name: signer.name, scheme: signer.scheme };
+    const body = tlog.checkpointBody(log.name, 0, treeHash([]));
+    const f = {
+      logLine: tlog.noteSignature(body, log),
+      selected: tlog.noteSignature(body, signer),
+      unknown: tlog.noteSignature(body, unknown),
+    };
+    const checkpoint =
+      body + '\n' + f.logLine + f.selected + (responseCase.duplicateOriginal ? f.selected : '');
+    const server = createServer((req, res) => {
+      req.resume();
+      res.writeHead(200, { 'content-type': 'text/plain' });
+      res.end(responseCase.body(f));
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    t.after(() => new Promise((resolve) => server.close(resolve)));
+    const result = tlog.submitWitness(
+      'http://127.0.0.1:' + server.address().port,
+      tlog.witnessRequest(0, [], checkpoint),
+      { signer, checkpoint, allowLoopback: true },
+    );
+    if (!responseCase.accepted) await assert.rejects(result, { code: responseCase.code });
+    else {
+      const signed = await result;
+      assert.equal(signed.status, 'SIGNED');
+      assert.equal(tlog.verifyNote(signed.checkpoint, signer).size, 0n);
+      tlog.verifyPublishedCheckpoint(signed.checkpoint, log);
+      assert(signed.checkpoint.startsWith(checkpoint));
+    }
+  });
+}

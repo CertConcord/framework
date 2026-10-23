@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 37767,
-      "sha256": "4df6058d06ed155928cfbddb9e2ca15fc95e151704a9acc376cd634d231e875f"
+      "bytes": 38217,
+      "sha256": "e0397a780c51aae935b644453d37d3bcdb3a5abfc55b9a009b8ad0382f6511f1"
     },
     {
       "path": "docs/apple-identity.md",
@@ -1690,8 +1690,8 @@
     },
     {
       "path": "reference/transparency.mjs",
-      "bytes": 23584,
-      "sha256": "339e81a00851cdb1eddc2e3a1957e6cf1925c70a33fdcadccc2403164f1aa99b"
+      "bytes": 24362,
+      "sha256": "4fba72d3e3ae028407908302b7ab14f247dc7c722de7b5ff46ba9473fc075b53"
     },
     {
       "path": "reference/transparency.test.mjs",
@@ -10560,8 +10560,8 @@
     },
     {
       "path": "reference/witness-http-contract.test.mjs",
-      "bytes": 12463,
-      "sha256": "4f85f7e20e093984ad42213f64b508d78ac6c8597b750b15769d4a795189f662"
+      "bytes": 20078,
+      "sha256": "8e46f290895307f0bde091880ae03d1f3ba2c497a598dc8e82ddd2ac01f2dd61"
     },
     {
       "path": "reference/witness-size-contract.test.mjs",
