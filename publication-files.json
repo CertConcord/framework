@@ -183,6 +183,7 @@
   "reference/mirror-custody-process-child.mjs",
   "reference/mirror-custody-process-recovery.test.mjs",
   "reference/mirror-custody-root.test.mjs",
+  "reference/mtc-person-sign-profile.test.mjs",
   "reference/mtc-range-contract.test.mjs",
   "reference/mtc-version.test.mjs",
   "reference/mtc.mjs",

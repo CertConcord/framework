@@ -385,6 +385,11 @@ export function verifyMTC(
   if (c.extensions.has('2.5.29.15'))
     validateKeyUsage(c.extensions.get('2.5.29.15'), undefined, 'MTC_CERTIFICATE_PROFILE');
   if (profileID) {
+    if (profileID === 'CERTCONCORD-PERSON-SIGN-v1')
+      requireThat(
+        ['ml-dsa-65', 'ml-dsa-87'].includes(c.publicKey.asymmetricKeyType),
+        'MTC_DOCUMENT_KEY_ALGORITHM',
+      );
     if (profileID === 'CERTCONCORD-PERSON-PASSKEY-SIGN-v1')
       requireThat(
         c.publicKey.asymmetricKeyType === 'ec' &&
