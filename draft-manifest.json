@@ -170,8 +170,8 @@
     },
     {
       "path": "docs/draft-acceptance.md",
-      "bytes": 9493,
-      "sha256": "453db619bd43ac8a1b2c0b2b9af1258bece3dd790277bce55b258ecfc7b4d8a9"
+      "bytes": 10156,
+      "sha256": "ea9cd959bf5d6ca774ed9dde388a456c77992b6ce21d6a542f4c4121e981cd42"
     },
     {
       "path": "docs/ecosystem-comparison.md",
@@ -11800,18 +11800,18 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 50099,
-      "sha256": "37816c0321e18d3b8bcc3e528fec11cdf0cecb438c1270b4bdab7dff56273179"
+      "bytes": 50830,
+      "sha256": "73cb858e285fd2fcccbe35d38b360c383cba2eb87b35b16b06873f886b561f01"
     },
     {
       "path": "spec/conformance.md",
-      "bytes": 11035,
-      "sha256": "e9f0d5340d6cc4b6174dead377748d6cc8a9b7ecca9d78b353321e24552f336d"
+      "bytes": 11052,
+      "sha256": "4a83a09c9ecde691e5896f0d68b83ec8b1825ed433b62a58160d7feff3f3c9a7"
     },
     {
       "path": "spec/document-baseline.md",
-      "bytes": 8435,
-      "sha256": "a6cda047a37e5ebff5557fe386520b55e097a57fd96f891f4824ea54b20a7865"
+      "bytes": 8452,
+      "sha256": "dedfe2fabff08ac3d5372faa2ba448464ec59897e42f229b62f778efc8b8d143"
     },
     {
       "path": "spec/external/mdoc-signing/NOTICE",
@@ -11975,8 +11975,8 @@
     },
     {
       "path": "spec/trust-core.md",
-      "bytes": 9192,
-      "sha256": "0d0305a1542d1e389f4178d3048dbad24fe2dbd730723a6c3b18939d93d7341d"
+      "bytes": 9209,
+      "sha256": "ac8b6edd2c9bb9aeeada7dec6593b94b826391a100bdb0af2b3c059251c73f17"
     },
     {
       "path": "tools/check.mjs",
