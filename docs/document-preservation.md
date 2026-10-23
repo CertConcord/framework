@@ -16,7 +16,7 @@ The example treats one complete package as one archived data object. Later statu
 
 ## Reference contract
 
-`verifyERSPreservation(record, bytes, policy)` accepts these external inputs:
+`verifyERSPreservation(record, bytes, policy)` and `verifyXMLERSPreservation(xml, bytes, policy)` accept these external inputs:
 
 | Input                     | Meaning                                                                                                                                                                                                |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -25,11 +25,11 @@ The example treats one complete package as one archived data object. Later statu
 | `hashValidUntil`          | Explicit exclusive deadlines by hash OID for evidence-record tree hashes                                                                                                                               |
 | `resolveTimestamp(token)` | Authority selection returning the exact TSA certificate, issuer key, policy OID, optional revocation cutoff, `validUntil` and a historical status evaluator                                            |
 
-Each TSA's `validUntil` covers its signature algorithm, CMS digest, issuer path and key/authority acceptability. Certificate expiry and an explicit revocation cutoff further restrict it. The resolver must reject unknown authorities; an embedded certificate cannot establish trust. Its `status({certificate, genTime, stateTime, knowledgeTime})` callback must consider admissible status and incident information at the supplied current knowledge time. Constant success is appropriate only for the synthetic example.
+Each TSA's `validUntil` covers its signature algorithm, CMS digest, issuer path and key/authority acceptability. Certificate expiry and an explicit revocation cutoff further restrict it. The resolver selects each token independently, including tokens signed by a retired TSA whose protection was renewed in time. Unknown authorities are unavailable trust; an embedded certificate cannot establish trust. The preservation resolver retains implementation-owned typed errors; arbitrary exception fields cannot declare a verdict. Its `status({certificate, genTime, stateTime, knowledgeTime})` callback must consider admissible status and incident information at the supplied current knowledge time. Constant success is appropriate only for the synthetic example.
 
 The synchronous status callback returns a plain record with an explicit `overall` and a nonempty `reason`. `VALID` permits the status check; `INVALID`, `INDETERMINATE` and `UNSUPPORTED` retain their exact outcome and reason. Missing, stale or unknown status and insufficient current governance coverage are `INDETERMINATE`. Authenticated revocation applicable at `stateTime` remains `INVALID`, including when its coverage has since become stale. Legacy literal `true` and `false` remain accepted as success and rejection; a boolean bridge cannot retain the distinction between rejection and unavailable evidence. Retained authority resolver decisions must therefore be returned intact.
 
-Promises, thenables, missing/inherited/accessor decision fields and malformed outcomes are rejected. A callback exception produces a fixed unavailable-evaluator result; arbitrary exception fields cannot declare a verdict. The document timestamp verifier uses this same decision boundary and checks its signed accuracy interval separately. ERS verifies the remaining timestamp mathematics and renewal lifetimes before selecting a status failure, with `INVALID` taking precedence over `UNSUPPORTED` and `INDETERMINATE`.
+Promises, thenables, missing/inherited/accessor decision fields and malformed outcomes are rejected. A callback exception produces a fixed unavailable-evaluator result; arbitrary exception fields cannot declare a verdict. The document timestamp verifier uses this same decision boundary and checks its signed accuracy interval separately. Both preservation verifiers check the remaining timestamp mathematics and renewal lifetimes before selecting a status failure, with `INVALID` taking precedence over `UNSUPPORTED` and `INDETERMINATE`.
 
 Every deadline is explicit and finite; missing assessments fail closed. The fixtures' lifetimes are artificial values, not forecasts for SHA-256, SHA-512 or ML-DSA. The reference does not calculate cryptanalytic lifetimes or fetch revocation, governance or incident histories automatically. The [retained-history resolver](historical-validation.md) authenticates supplied history under externally selected roots, publication proofs and deadlines.
 
@@ -37,7 +37,9 @@ Each timestamp requires a stated accuracy interval contained within the TSA cert
 
 The initial proof must precede `dataValidUntil`. Every successor proof must precede the preceding timestamp's protection deadline. A chain's data hash must remain acceptable until the first proof of the next hash-renewal chain, or until `at` for the final chain. The final timestamp must still provide protection at `at`. Equality with a deadline fails. A newly signed token cannot repair a lost protection interval.
 
-The result separates `integrity`, `preservation`, the original `proofOfExistenceUpperBound`, `latestRenewalUpperBound` and `verifiedAt`. Renewal does not move the original bound forward. The older `verifyERS` and `verifyXMLERS` helpers return `preservation: NOT_EVALUATED`; XMLERS does not yet implement this lifetime evaluator.
+The result separates `integrity`, `preservation`, the original `proofOfExistenceUpperBound`, `latestRenewalUpperBound` and `verifiedAt`. Renewal does not move the original bound forward. The older `verifyERS` and `verifyXMLERS` helpers retain `preservation: NOT_EVALUATED`. The lifetime APIs share the `ERS_*` preservation-policy and deadline reasons; XML structural and renewal-mathematics reasons retain their `XMLERS_*` identity.
+
+The XMLERS selection protects one exact byte object, uses SHA-256/SHA-512 and Canonical XML 1.0 without comments, and authenticates the XML timestamp and prior-sequence encodings directly. It never translates an XML record to DER ERS for verification. The retained-document verifier and archive renewal coordinator continue to select DER ERS; this separate XMLERS API does not grant historical authorization, current admissibility or an AdES level.
 
 ## Historical and current results
 
@@ -52,6 +54,8 @@ The complete CMS and native mdoc tests obtain current VALID after issuer retirem
 MTC cosignatures establish the selected issuance commitments. They do not provide document signing time or completeness of later revocation collection. CertConcord's C2SP mirror/witness and RRA governance composition remains separate from the IETF MTC wire draft.
 
 ## Encoding and recovery
+
+The selected XMLERS parser requires the RFC 6283 namespace on every element and permits at most 64 chains with 64 timestamps per chain. These are reference-profile bounds, not limits imposed by RFC 6283. Namespace prefixes may vary without changing the selected namespace.
 
 The RFC 4998 adapter supports bounded nonempty chains, SHA-256/SHA-512 tree hashes, matching timestamp imprint hashes and single-object renewal. An omitted `digestAlgorithm` comes from the timestamp imprint. The first reduced-tree level contains the target hash; later levels contain siblings of the computed node.
 
@@ -73,4 +77,4 @@ The crash regression launches its worker from the repository root, the reference
 
 All clocks, lifetimes, governance and custody in these tests are synthetic. Long-lived RAW_KEY appointments are explicit test policy, not an inference from an expired wrapping certificate. A second complete implementation and independent security assessment remain stability evidence. The separate CAdES adapter has a bounded container profile; additional container profiles, operational clock/custody assurance and distributed archive resilience remain gaps. [Conformance](../spec/conformance.md) records these limits.
 
-The preservation model follows [RFC 4998](https://www.rfc-editor.org/rfc/rfc4998.html), sections 4 and 5. Broader requirements and standards boundaries appear in [MTC document validation](mtc-document-validation.md).
+The preservation model follows [RFC 4998](https://www.rfc-editor.org/rfc/rfc4998.html), sections 4 and 5, and the selected XMLERS path follows [RFC 6283](https://www.rfc-editor.org/rfc/rfc6283.html#section-4.3), section 4.3 and Appendix A. `node --test reference/xmlers-contract.test.mjs` exercises namespace admission, TSA rotation, exact and fractional proof bounds, exclusive deadlines, missing evidence, later compromise and invalid mathematics. Broader requirements and standards boundaries appear in [MTC document validation](mtc-document-validation.md).

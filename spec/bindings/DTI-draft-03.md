@@ -217,7 +217,7 @@ ECP packages preserve exact original certificate representations, proofs, contai
 
 ## 34. Evidence renewal
 
-RFC 4998 ERS and RFC 6283 XMLERS support timestamp and hash renewal. Hash renewal includes the original protected bytes and previous evidence chains. XML canonicalization is fixed and DTD/external-entity processing disabled. Renewals must occur while the preceding chain still supports its security claim. A successful new timestamp cannot manufacture a lost historical chain. The [selected document preservation contract](../../docs/document-preservation.md) fixes the RFC 4998 subset, lifetime inputs, hash-renewal ordering and distinct historical/current results. XMLERS integrity checks do not yet evaluate those lifetimes.
+RFC 4998 ERS and RFC 6283 XMLERS support timestamp and hash renewal. Hash renewal includes the original protected bytes and previous evidence chains. XML canonicalization is fixed and DTD/external-entity processing disabled. Renewals must occur while the preceding chain still supports its security claim. A successful new timestamp cannot manufacture a lost historical chain. The [selected document preservation contract](../../docs/document-preservation.md) fixes the RFC 4998 subset, lifetime inputs, hash-renewal ordering and distinct historical/current results. The separate XMLERS preservation API applies the same external lifetime policy to its canonical XML renewal inputs and per-token TSA selection. Integrity-only helpers do not report completed preservation.
 
 ## 35. Encryption recovery
 
