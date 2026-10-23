@@ -68,6 +68,16 @@ test('schema1 document corpus requires its original verifier', () => {
   );
 });
 
+test('pre-contract RAR2 corpus keeps its original profile and bytes', () => {
+  assert.throws(() => loadVectorCorpus(resolve(defaultVectorDirectory, '..', 'document-acceptance-mtc07-rar2')), { code: 'VECTOR_VERSION' });
+  const corpus = loadVectorCorpus();
+  const legacy = corpus.manifest.documents.find(row => row.id === 'mdoc-original-rar2-http-status');
+  assert.equal(hash(corpus.read(legacy.bytes)), '57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661');
+  const result = runDocumentVectors().find(row => row.id === legacy.id).actual;
+  assert.equal(result.overall, 'INVALID');
+  assert.equal(result.reason, 'MDOC_STATUS_REFERENCE');
+});
+
 test('published CMS and native mdoc originals verify through the public SDK', () => {
   const results = runDocumentVectors();
   for (const format of ['cms', 'mdoc']) {
@@ -408,7 +418,7 @@ function smallCorpus(t) {
   const name = 'files/object.b64';
   const manifest = {
     schemaVersion: 1,
-    profile: 'certconcord-document-acceptance-vectors-draft-03-mtc07-rar2',
+    profile: 'certconcord-document-acceptance-vectors-draft-03-mtc07-rar2-mdoc2',
     description: 'Original fixture',
     files: [
       {

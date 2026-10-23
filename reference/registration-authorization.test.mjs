@@ -16,6 +16,7 @@ import { Mirror, createMTCTBS, issueMTC, logEntryFromTBS, verifyMTC } from './mt
 import { PersonalMdocCA, verifyPersonalMdoc } from './signer-mdoc.mjs';
 import { CredentialIssuer, verifyStatusList } from './openid.mjs';
 import { OpenIDWallet } from './wallet.mjs';
+import { MDOC_CONFIG } from './mdoc.mjs';
 import { verifyDocumentEvidence } from './document-evidence.mjs';
 import { exampleAuthorityResolver } from './example-authorities.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
@@ -506,6 +507,7 @@ for (const [label, statusURI] of [
   ['relative', '/status/1'],
   ['user information', 'https://user:pass@status.example/list'],
   ['fragment', 'https://status.example/list#fragment'],
+  ['empty fragment', 'https://status.example/list#'],
   ['default port', 'https://status.example:443/list'],
   ['uppercase host', 'https://STATUS.example/list'],
   ['empty', ''],
@@ -527,3 +529,49 @@ test('personal mdoc issuer retains a canonical HTTPS status URI with a query', (
   assert.equal(allocated.uri, statusURI);
   assert(Number.isSafeInteger(allocated.idx) && allocated.idx >= 0);
 });
+
+for (const preAuthorized of [false, true]) {
+  test(
+    'restarted personal issuer rejects stale registration commitments for ' +
+      (preAuthorized ? 'pre-authorized' : 'authorization-code') +
+      ' grants',
+    async (t) => {
+      for (const defect of ['missing', 'wrong'])
+        await t.test(defect, (subtest) => {
+          const f = fixture(subtest, 'MDOC'),
+            bytes = f.raw(2);
+          const request = {
+            csr: f.csr,
+            rar: bytes,
+            bindingID: Buffer.alloc(32, 1),
+            preAuthorized,
+            ...(preAuthorized ? { txCode: '123456' } : {}),
+          };
+          const offer = f.issuer.offer(request);
+          assert.deepEqual(c.dcbor(f.issuer.offer(request)), c.dcbor(offer));
+          const id = preAuthorized
+            ? offer.grants['urn:ietf:params:oauth:grant-type:pre-authorized_code'][
+                'pre-authorized_code'
+              ]
+            : offer.grants.authorization_code.issuer_state;
+          const saved = f.issuer.journal.get('offers', id);
+          if (defect === 'missing') delete saved.value.claims.ra_authorization_commitment;
+          else saved.value.claims.ra_authorization_commitment = Buffer.alloc(64);
+          f.issuer.journal.put('offers', id, saved.value, saved.revision);
+          const before = f.allocated();
+          const restarted = new PersonalMdocCA({ ...f.issuer });
+          assert.throws(() => restarted.offer(request), {
+            code: 'PERSONAL_MDOC_REGISTRATION_COMMITMENT',
+          });
+          assert.throws(
+            () => restarted.mint({ offer: saved.value, configurationID: MDOC_CONFIG }),
+            {
+              code: 'PERSONAL_MDOC_REGISTRATION_COMMITMENT',
+            },
+          );
+          assert.deepEqual(f.allocated(), before);
+          assert.deepEqual(f.issuer.journal.list('personal-mdoc'), []);
+        });
+    },
+  );
+}

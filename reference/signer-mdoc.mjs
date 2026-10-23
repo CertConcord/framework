@@ -81,7 +81,11 @@ function canonicalStatusURI(value) {
   try {
     const uri = new URL(value);
     return (
-      uri.protocol === 'https:' && !uri.username && !uri.password && !uri.hash && uri.href === value
+      uri.protocol === 'https:' &&
+      !uri.username &&
+      !uri.password &&
+      !value.includes('#') &&
+      uri.href === value
     );
   } catch {
     return false;
@@ -204,6 +208,17 @@ export class PersonalMdocCA extends CredentialIssuer {
         old = this.journal.get('personal-mdoc-approval', id);
       if (old) {
         requireThat(equal(old.value.inputHash, inputHash), 'ISSUANCE_CONFLICT');
+        const grants = old.value.offer.grants,
+          offerID = preAuthorized
+            ? grants['urn:ietf:params:oauth:grant-type:pre-authorized_code']['pre-authorized_code']
+            : grants.authorization_code.issuer_state,
+          claims = this.journal.get('offers', offerID)?.value.claims;
+        requireThat(
+          claims &&
+            equal(claims.ra_authorization_hash, sha512(rar)) &&
+            equal(claims.ra_authorization_commitment, H('RegistrationAuthorization', r)),
+          'PERSONAL_MDOC_REGISTRATION_COMMITMENT',
+        );
         return old.value.offer;
       }
       const offer = super.offer({
@@ -250,6 +265,13 @@ export class PersonalMdocCA extends CredentialIssuer {
       b64u(offer.claims.ra_authorization_hash),
     );
     requireThat(authorization, 'PERSONAL_MDOC_RA_AUTHORITY');
+    requireThat(
+      equal(
+        offer.claims.ra_authorization_commitment,
+        H('RegistrationAuthorization', authorization.value.request),
+      ),
+      'PERSONAL_MDOC_REGISTRATION_COMMITMENT',
+    );
     requireIssuanceAuthority(authorization.value.request, {
       ...this,
       issuerCertificate: this.certificate,
@@ -499,7 +521,19 @@ function inspectPersonalMdoc(
   );
   evaluationPhase(evaluation, 'status');
   const status = claims.status?.status_list;
-  requireThat(status?.uri === statusURI, 'PERSONAL_MDOC_STATUS');
+  requireThat(
+    claims.status &&
+      Object.keys(claims.status).length === 1 &&
+      status &&
+      typeof status === 'object' &&
+      !Array.isArray(status) &&
+      Object.keys(status).length === 2 &&
+      canonicalStatusURI(status.uri) &&
+      Number.isSafeInteger(status.idx) &&
+      status.idx >= 0,
+    'MDOC_STATUS_REFERENCE',
+  );
+  requireThat(status.uri === statusURI, 'PERSONAL_MDOC_STATUS');
   const assessment = verifyMdocStatusList(statusToken, {
     publicKey: issuerPublicKey,
     uri: statusURI,
