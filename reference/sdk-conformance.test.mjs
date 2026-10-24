@@ -481,12 +481,11 @@ test('missing registration preserves only authenticated subject-bound certificat
   assert.notEqual(unavailable.dimensions.status?.reason, 'ECP_STATUS_REVOKED');
 });
 
-function x509Fixture(f) {
+function x509Fixture(f, at = now()) {
   const ca = c.generate('ml-dsa-87'),
     key = c.generate('ml-dsa-87'),
     control = c.generate('ml-dsa-87');
-  const at = now(),
-    policy = f.trust.expectedPolicy,
+  const policy = f.trust.expectedPolicy,
     trustDomainID = f.trust.trustDomainID;
   const controlCertificate = p.issueCertificate(
     {
@@ -592,7 +591,7 @@ function x509Fixture(f) {
         keyID: sim.keyID,
         tbsHash: c.sha512(prepared.tbs),
         signatureHash: c.sha512(signature),
-        executedAt: at,
+        executedAt: readControl(permit, 'OperationPermit', controlCertificate).issuedAt,
         provider: 'synthetic-sdk-fixture',
       }),
       certificate: controlCertificate,
@@ -816,7 +815,7 @@ for (const format of ['CMS', 'MDOC']) {
 }
 
 test('certificate status fallback never borrows another operation receipt time', async (t) => {
-  const f = x509Fixture(await fixture('CMS')),
+  const f = x509Fixture(await fixture('CMS'), now() - 1),
     receipt = readControl(
       payload(f.bundle, 'ExecutionReceipt'),
       'ExecutionReceipt',
@@ -836,7 +835,8 @@ test('certificate status fallback never borrows another operation receipt time',
     trust = { ...f.trust, knowledgeTime: receipt.executedAt + 3 },
     missing = (value) => without(value, 'RegistrationAuthorization');
   const actual = verdict('CMS', f, missing(bundle), trust);
-  assert.equal(actual.overall, 'INDETERMINATE');
+  assert.ok(receipt.executedAt > decodeCBOR(payload(f.bundle, 'SIM')).issuedAt);
+  assert.equal(actual.overall, 'INDETERMINATE', actual.reason);
   assert.notEqual(actual.dimensions.status?.reason, 'ECP_STATUS_REVOKED');
   await t.test('another signed operation cannot move the revocation evaluation time', () => {
     const unrelated = f.signControl('ExecutionReceipt', {

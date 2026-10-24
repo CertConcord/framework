@@ -1365,8 +1365,8 @@
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
-      "bytes": 39455,
-      "sha256": "5b1dd357fb75bbc52f505da3c033e7c5416498b73095d12a3fa1c6f10f5bacdc"
+      "bytes": 39623,
+      "sha256": "ed323f2b896fdaf75981268d77ef4ebc6932d49735638bf14329d723354adebf"
     },
     {
       "path": "reference/sdk-results.test.mjs",
