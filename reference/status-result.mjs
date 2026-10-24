@@ -17,8 +17,9 @@ export function requireStatusDecision(evaluate, query, code, dimension = 'time')
   if (isProxy(decision))
     throw new VerificationError(code + '_DECISION', 'INVALID', dimension);
   if (isPromise(decision)) {
-    // Observe native rejections without invoking an untrusted thenable method.
-    Promise.prototype.then.call(decision, undefined, () => {});
+    // Observe ordinary native rejections without invoking a supplied thenable.
+    try { Promise.prototype.then.call(decision, undefined, () => {}); }
+    catch { /* Custom constructors/species can prevent rejection observation. */ }
     throw new VerificationError(code + '_DECISION', 'INVALID', dimension);
   }
   let overall, reason;

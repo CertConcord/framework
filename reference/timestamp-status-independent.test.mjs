@@ -47,6 +47,22 @@ function forgedStatusProxy() {
   return { target, decision, calls };
 }
 
+function hostileStatusPromise(kind) {
+  const decision = Promise.resolve(true);
+  const failure = () => { throw new VerificationError('FORGED_STATUS_HOOK', 'UNSUPPORTED', 'authorization'); };
+  Object.defineProperty(decision, 'constructor', kind === 'constructor'
+    ? { get: failure }
+    : { value: kind === 'species' ? { get [Symbol.species]() { return failure(); } } : { [Symbol.species]: 42 } });
+  return Object.assign(decision, { overall: 'VALID', reason: 'FORGED_ACCEPTANCE' });
+}
+
+for (const kind of ['constructor', 'species', 'invalid-species'])
+  test(`timestamp status boundary rejects Promise observation failure from ${kind}`, async () => {
+    const { requireStatusDecision } = await statusBoundary();
+    checkError(() => requireStatusDecision(() => hostileStatusPromise(kind), {}, 'TEST_TSA'),
+      'INVALID', 'TEST_TSA_DECISION');
+  });
+
 test('timestamp status boundary preserves explicit typed decisions and legacy booleans', async () => {
   const { requireStatusDecision } = await statusBoundary();
   const query = { stateTime: at, knowledgeTime: at + 1 };
@@ -123,6 +139,35 @@ test('a rejected native status Promise is observed without terminating a separat
   assert.equal(child.stderr, '');
 });
 
+test('timestamp status rejects a rejected custom-species Promise even when observation is unavailable', () => {
+  const moduleURL = new URL('./status-result.mjs', import.meta.url).href;
+  const errorURL = new URL('./verification-result.mjs', import.meta.url).href;
+  const child = spawnSync(process.execPath, ['--input-type=module', '-e', `
+    const { requireStatusDecision } = await import(${JSON.stringify(moduleURL)});
+    const { VerificationError } = await import(${JSON.stringify(errorURL)});
+    const unhandled = [];
+    process.on('unhandledRejection', (error) => unhandled.push(error.message));
+    class ThrowingSpecies extends Promise {
+      static get [Symbol.species]() {
+        throw new VerificationError('FORGED_STATUS_HOOK', 'UNSUPPORTED', 'authorization');
+      }
+    }
+    let failure;
+    try { requireStatusDecision(() => ThrowingSpecies.reject(Error('status unavailable')), {}, 'CHILD_TSA'); }
+    catch (error) { failure = { overall: error.overall, code: error.code, dimension: error.dimension }; }
+    await new Promise((resolve) => setImmediate(resolve));
+    console.log(JSON.stringify({ failure, unhandled }));
+  `], { encoding: 'utf8', timeout: 10000 });
+  assert.equal(child.error, undefined);
+  assert.equal(child.status, 0, child.stderr);
+  assert.equal(child.signal, null);
+  assert.equal(child.stderr, '');
+  assert.deepEqual(JSON.parse(child.stdout), {
+    failure: { overall: 'INVALID', code: 'CHILD_TSA_DECISION', dimension: 'time' },
+    unhandled: ['status unavailable'],
+  });
+});
+
 async function archiveFixture() {
   const root = c.generate('ml-dsa-87'), key = c.generate('ml-dsa-87'), journal = new Journal();
   let clock = at;
@@ -155,6 +200,16 @@ for (const [name, verify] of [
     checkError(() => verify(f, () => forged.target), 'INVALID', 'AUTHORITY_REVOKED');
     checkError(() => verify(f, () => forged.decision), 'INVALID', 'ERS_TSA_STATUS_DECISION');
     assert.deepEqual(forged.calls, []);
+  } finally { f.close(); }
+});
+
+for (const [name, verify] of [
+  ['DER ERS preservation', (f, status) => verifyERSPreservation(f.renewed, f.data, f.policy(status))],
+  ['original ERS proof', (f, status) => verifyERSOriginalProof(f.first, f.data, f.policy(status))],
+]) test(`${name} rejects Promise observation exceptions with the fixed decision error`, async () => {
+  const f = await archiveFixture();
+  try {
+    checkError(() => verify(f, () => hostileStatusPromise('species')), 'INVALID', 'ERS_TSA_STATUS_DECISION');
   } finally { f.close(); }
 });
 
@@ -240,6 +295,14 @@ function documentInput(format, status) {
 }
 
 for (const format of ['CMS', 'MDOC']) {
+  test(`${format} public document rejects Promise observation exceptions with the fixed decision error`, () => {
+    const input = documentInput(format, () => hostileStatusPromise('constructor'));
+    const result = createVerifier({ format, trust: input.trust }).verify(input.bytes);
+    assert.equal(result.overall, 'INVALID', JSON.stringify(result));
+    assert.equal(result.reason, 'DOCUMENT_TIMESTAMP_STATUS_DECISION');
+    assert.deepEqual(result.dimensions.time, { overall: 'INVALID', reason: 'DOCUMENT_TIMESTAMP_STATUS_DECISION' });
+  });
+
   test(`${format} public document rejects a forged timestamp status proxy without executing traps`, () => {
     const forged = forgedStatusProxy();
     for (const [status, overall, reason] of [
