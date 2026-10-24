@@ -7,7 +7,7 @@ import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import { Journal } from './state.mjs';
 import { TimestampAuthority, timestampRequest, tokenFromResponse, verifyTimestampToken } from './timestamp.mjs';
-import { createERS, renewERS, verifyERSPreservation } from './archive.mjs';
+import { createERS, renewERS, verifyERSOriginalProof, verifyERSPreservation } from './archive.mjs';
 import { VerificationError, verificationOutcome } from './verification-result.mjs';
 import { createAuthorityResolver } from './authority-history.mjs';
 import { createRetainedAuthorityResolver } from './retained-authorities.mjs';
@@ -34,11 +34,27 @@ const checkError = (operation, overall, reason) => assert.throws(operation, (err
   return true;
 });
 
+function forgedStatusProxy() {
+  const target = { overall: 'INVALID', reason: 'AUTHORITY_REVOKED' }, calls = [];
+  const decision = new Proxy(target, {
+    getPrototypeOf(value) { calls.push('prototype'); return Reflect.getPrototypeOf(value); },
+    getOwnPropertyDescriptor(value, key) {
+      calls.push(key);
+      const descriptor = Reflect.getOwnPropertyDescriptor(value, key);
+      return key === 'overall' ? { ...descriptor, value: 'VALID' } : descriptor;
+    },
+  });
+  return { target, decision, calls };
+}
+
 test('timestamp status boundary preserves explicit typed decisions and legacy booleans', async () => {
   const { requireStatusDecision } = await statusBoundary();
   const query = { stateTime: at, knowledgeTime: at + 1 };
   assert.doesNotThrow(() => requireStatusDecision(() => true, query, 'TEST_TSA'));
   assert.doesNotThrow(() => requireStatusDecision(() => ({ overall: 'VALID', reason: 'AUTHORITY_ADMITTED' }), query, 'TEST_TSA'));
+  assert.doesNotThrow(() => requireStatusDecision(() => Object.assign(Object.create(null), {
+    overall: 'VALID', reason: 'AUTHORITY_ADMITTED',
+  }), query, 'TEST_TSA'));
   checkError(() => requireStatusDecision(() => false, query, 'TEST_TSA'), 'INVALID', 'TEST_TSA');
   for (const [, overall, reason] of negative)
     checkError(() => requireStatusDecision(() => ({ overall, reason }), query, 'TEST_TSA'), overall, reason);
@@ -59,6 +75,22 @@ test('timestamp status boundary rejects malformed, inherited, asynchronous and a
   const rejected = Promise.reject(new Error('Unavailable remote status'));
   checkError(() => requireStatusDecision(() => rejected, {}, 'TEST_TSA'), 'INVALID', 'TEST_TSA_DECISION');
   await immediate();
+});
+
+test('timestamp status boundary rejects proxy decisions without executing traps', async () => {
+  const { requireStatusDecision } = await statusBoundary();
+  const forged = forgedStatusProxy();
+  checkError(() => requireStatusDecision(() => forged.target, {}, 'TEST_TSA'), 'INVALID', 'AUTHORITY_REVOKED');
+  checkError(() => requireStatusDecision(() => forged.decision, {}, 'TEST_TSA'), 'INVALID', 'TEST_TSA_DECISION');
+  assert.deepEqual(forged.calls, []);
+  const revoked = Proxy.revocable({ overall: 'VALID', reason: 'AUTHORITY_ADMITTED' }, {});
+  revoked.revoke();
+  for (const decision of [
+    new Proxy({ overall: 'VALID', reason: 'AUTHORITY_ADMITTED' }, {}),
+    new Proxy(Object.assign(Object.create(null), { overall: 'VALID', reason: 'AUTHORITY_ADMITTED' }), {}),
+    new Proxy(forged.decision, {}), revoked.proxy,
+  ]) checkError(() => requireStatusDecision(() => decision, {}, 'TEST_TSA'), 'INVALID', 'TEST_TSA_DECISION');
+  assert.deepEqual(forged.calls, []);
 });
 
 test('timestamp status callback exceptions cannot select a forged result or reason', async () => {
@@ -112,6 +144,19 @@ async function archiveFixture() {
     }) });
   return { data, first, renewed, policy, close() { journal.close(); } };
 }
+
+for (const [name, verify] of [
+  ['DER ERS preservation', (f, status) => verifyERSPreservation(f.renewed, f.data, f.policy(status))],
+  ['original ERS proof', (f, status) => verifyERSOriginalProof(f.first, f.data, f.policy(status))],
+]) test(`${name} rejects a forged status proxy without executing traps`, async () => {
+  const f = await archiveFixture(), forged = forgedStatusProxy();
+  try {
+    assert.equal(verify(f, () => ({ overall: 'VALID', reason: 'AUTHORITY_ADMITTED' })).integrity, 'VALID');
+    checkError(() => verify(f, () => forged.target), 'INVALID', 'AUTHORITY_REVOKED');
+    checkError(() => verify(f, () => forged.decision), 'INVALID', 'ERS_TSA_STATUS_DECISION');
+    assert.deepEqual(forged.calls, []);
+  } finally { f.close(); }
+});
 
 test('real ERS accepts legacy true and typed VALID, and retains legacy false rejection', async () => {
   const f = await archiveFixture();
@@ -195,6 +240,24 @@ function documentInput(format, status) {
 }
 
 for (const format of ['CMS', 'MDOC']) {
+  test(`${format} public document rejects a forged timestamp status proxy without executing traps`, () => {
+    const forged = forgedStatusProxy();
+    for (const [status, overall, reason] of [
+      [() => ({ overall: 'VALID', reason: 'AUTHORITY_ADMITTED' }), 'VALID', null],
+      [() => forged.target, 'INVALID', 'AUTHORITY_REVOKED'],
+      [() => forged.decision, 'INVALID', 'DOCUMENT_TIMESTAMP_STATUS_DECISION'],
+    ]) {
+      const input = documentInput(format, status);
+      const result = createVerifier({ format, trust: input.trust }).verify(input.bytes);
+      assert.equal(result.overall, overall, JSON.stringify(result));
+      if (reason) {
+        assert.equal(result.reason, reason);
+        assert.deepEqual(result.dimensions.time, { overall, reason });
+      }
+    }
+    assert.deepEqual(forged.calls, []);
+  });
+
   for (const [name, overall, reason] of negative)
     test(`${format} public document preserves ${name} timestamp status as ${overall}`, () => {
       const queries = [];
