@@ -18,7 +18,13 @@ export function insist(condition, code, overall = 'INVALID') {
   if (!condition) throw orgError(code, overall);
 }
 export function observePromise(value) {
-  if (types.isPromise(value)) Promise.prototype.then.call(value, undefined, () => {});
+  if (!types.isPromise(value)) return;
+  try {
+    Promise.prototype.then.call(value, undefined, () => {});
+  } catch {
+    // Constructor/species hooks may prevent observation, but cannot replace
+    // the caller's fixed asynchronous-dependency outcome.
+  }
 }
 export function record(value, required, optional = []) {
   insist(

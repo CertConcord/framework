@@ -5,6 +5,8 @@ import { existsSync, statSync } from 'node:fs';
 
 const MiB = 1024 * 1024;
 const namespace = 'organization-history-v1';
+const commitStates = new WeakMap();
+export const knowledgeCommitState = (error) => commitStates.get(error) ?? 'NOT_COMMITTED';
 const hex = /^[a-f0-9]{64}$/;
 const integer = (v) => Number.isSafeInteger(v) && v >= 0;
 const need = (value, code = 'ORG_HISTORY_STORAGE_CORRUPT') => {
@@ -228,6 +230,7 @@ export class OrganizationHistoryKnowledgeStore {
         error instanceof VerificationError ? error.overall : 'INDETERMINATE',
       );
       failure.commitState = entered && bodyComplete ? 'UNKNOWN' : 'NOT_COMMITTED';
+      commitStates.set(failure, failure.commitState);
       throw failure;
     }
   }
