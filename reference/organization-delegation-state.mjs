@@ -23,6 +23,7 @@ export function observePromise(value) {
 export function record(value, required, optional = []) {
   insist(
     value &&
+      !types.isProxy(value) &&
       (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null),
     'ORG_OBJECT_SCHEMA',
   );
@@ -46,6 +47,7 @@ export function record(value, required, optional = []) {
 }
 export function snapshot(value, budget = { bytes: 0, items: 0 }, depth = 0, seen = new Set()) {
   insist(++budget.items <= 100000 && depth <= 32, 'ORG_CAPABILITY_LIMIT', 'UNSUPPORTED');
+  insist(!types.isProxy(value), 'ORG_OBJECT_SCHEMA');
   if (Buffer.isBuffer(value)) {
     budget.bytes += value.length;
     insist(budget.bytes <= 80 * 1024 * 1024, 'ORG_CAPABILITY_LIMIT', 'UNSUPPORTED');
