@@ -53,6 +53,8 @@ Every role query carries explicit `stateTime` and `knowledgeTime`. Original role
 
 The public `verify` method accepts only the original package bytes and EvidenceRecord. It has no operator snapshot, current execution row, caller-selected time, success override or mode to bypass either knowledge view. Unavailable callbacks return typed uncertainty; malformed bounded evidence returns a typed non-VALID result. Constructor configuration errors may throw.
 
+`readKnowledge`, `authorityResolver` and `preservationPolicy.resolveTimestamp` are synchronous dependencies. A native Promise result remains unavailable even if it is already fulfilled or its constructor/species hook throws during rejection observation. Such exceptions cannot choose a different verification outcome or reason. Ordinary native Promise rejections are observed without reading an own `then` property. A custom constructor/species hook can prevent rejection observation; this boundary neither guarantees handling that rejection nor isolates callback side effects.
+
 ## Original authorization and current knowledge
 
 Original workload permission is attested by the signed final authorization, its exact approval request, and the attenuated grant path. Verification checks each original registration, raw ES256 assertion, independent person and key, exact challenge, scope, policy and original execution tuple. It does not reconstruct an `operator.active` database flag, actual nonce consumption or global credential counters. Its counter claim is limited to each signed registration's baseline.

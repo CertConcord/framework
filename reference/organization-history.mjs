@@ -23,7 +23,7 @@ import {
   verifyOrganizationHistoricalEvidence,
   authenticateOrganizationHistoryMaterial,
 } from './organization-delegation-evidence.mjs';
-import { ORGANIZATION_PLAN, record, snapshot } from './organization-delegation-state.mjs';
+import { ORGANIZATION_PLAN, observePromise, record, snapshot } from './organization-delegation-state.mjs';
 import { connectOrganizationHistorySource } from './organization-history-source.mjs';
 import {
   VerificationError,
@@ -65,7 +65,7 @@ function sync(callback, code) {
     throw new VerificationError(code, 'INDETERMINATE');
   }
   if (types.isPromise(value)) {
-    Promise.prototype.then.call(value, undefined, () => {});
+    observePromise(value);
     throw new VerificationError(code, 'INDETERMINATE');
   }
   return value;

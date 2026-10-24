@@ -220,8 +220,8 @@
     },
     {
       "path": "docs/organization-history.md",
-      "bytes": 12996,
-      "sha256": "dfd255e3bb6ed98d1d1e09c1441739149fa418617fc68bbbe0ae17d162150a8c"
+      "bytes": 13575,
+      "sha256": "e780082df5a2723753582fe3ae5f9ec97627f640651a0034a7a74c4a57400c49"
     },
     {
       "path": "docs/pades-preservation.md",
@@ -1120,13 +1120,13 @@
     },
     {
       "path": "reference/organization-history-vectors.test.mjs",
-      "bytes": 8831,
-      "sha256": "57a3d1bc67d9e9da4af2c992b74c4a11030aef12830950c776636c071aa37d06"
+      "bytes": 12607,
+      "sha256": "16497a33fcffb9d085d6ca6196d960b4b8592cbea0c038b8c7f823e211e03a66"
     },
     {
       "path": "reference/organization-history.mjs",
-      "bytes": 38549,
-      "sha256": "864404a7ddabc850d3066560507086d04388d58069c6a18783a8f15c64618256"
+      "bytes": 38531,
+      "sha256": "2e47fea1ea595b6af2b7d023651ad9c926c18a881422d2837ad1b8d1cb828203"
     },
     {
       "path": "reference/organization-vector-corpus.mjs",
