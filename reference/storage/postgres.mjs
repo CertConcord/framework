@@ -48,13 +48,17 @@ export class PostgresJournal {
   rpc(op, args = []) {
     requireThat(!this.poisoned && !this.closed, 'JOURNAL_UNAVAILABLE');
     const memory = this.memory,
-      header = new Int32Array(memory, 0, 2);
+      header = new Int32Array(memory, 0, 2),
+      deadline = performance.now() + this.timeoutMs + 1000;
     Atomics.store(header, 0, 0);
     this.worker.postMessage({ op, args, memory });
-    if (Atomics.wait(header, 0, 0, this.timeoutMs + 1000) === 'timed-out') {
-      this.poisoned = true;
-      this.worker.terminate();
-      throw new ProtocolError('JOURNAL_OUTCOME_UNKNOWN');
+    while (Atomics.load(header, 0) === 0) {
+      const remaining = deadline - performance.now();
+      if (remaining <= 0 || Atomics.wait(header, 0, 0, remaining) === 'timed-out') {
+        this.poisoned = true;
+        this.worker.terminate();
+        throw new ProtocolError('JOURNAL_OUTCOME_UNKNOWN');
+      }
     }
     const result = deserialize(Buffer.from(new Uint8Array(memory, 8, Atomics.load(header, 1))));
     if (!result.ok) {

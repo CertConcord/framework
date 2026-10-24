@@ -30,6 +30,8 @@ Nested transactions use savepoints. Every mutation obtains the same scoped lock.
 
 On transport timeout the facade is poisoned and the worker terminated. Callers must reconcile durable state through a new connection. A lost commit acknowledgement is never treated as permission to repeat a signing invocation. `complete` accepts only a dispatched operation. `reconcile` accepts dispatched or uncertain operations only after the caller has verified the original result; completed records cannot be overwritten. No SQL adapter can make an external HSM call atomic with a database commit.
 
+An atomic wake notification alone does not establish that the current RPC response is ready: a delayed notification from the previous operation can wake a later wait. The facade checks the current response's ready flag before reading its payload, and repeated wakes share one monotonic transport deadline. Waiting again never redispatches the database operation or extends its timeout budget.
+
 ## Indexed logs and snapshots
 
 Append atomically stores the leaf, its idempotency mapping, newly completed subtree hashes and the updated head. Inclusion and consistency proofs read retained hashes at an explicit prefix size. C2SP uploads use bounded 256-entry bundles; mirrors independently verify consistency and keep their own indexed leaves. Total log size is not capped by a single CBOR state value. Per-entry wire limits, safe index ranges, configured capacity and storage quotas still apply.
