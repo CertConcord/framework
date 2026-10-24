@@ -5,6 +5,10 @@ import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { setImmediate as immediate } from 'node:timers/promises';
+import { createOrganizationHistorySource, createOrganizationHistoryVerifier } from './sdk/index.mjs';
+import { connectOrganizationHistorySource } from './organization-history-source.mjs';
+import { VerificationError } from './verification-result.mjs';
 import {
   defaultOrganizationHistoryVectorDirectory,
   loadOrganizationHistoryVectorCorpus,
@@ -18,6 +22,74 @@ import {
 } from './organization-history-vector-semantics.mjs';
 
 const cli = fileURLToPath(new URL('./verify-organization-vectors.mjs', import.meta.url));
+
+for (const [slot, reason] of [
+  ['readKnowledge', 'ORG_HISTORY_KNOWLEDGE_UNAVAILABLE'],
+  ['authorityResolver', 'ORG_AUTHORITY_UNAVAILABLE'],
+  ['resolveTimestamp', 'ORG_TIMESTAMP_TRUST_UNAVAILABLE'],
+]) {
+  test(`saved history ${slot} Promise results retain typed uncertainty and recover`, async (t) => {
+    const corpus = loadOrganizationHistoryVectorCorpus();
+    const entry = corpus.manifest.cases.find((value) => value.id === 'expired-issuer-scoped-successor');
+    const fixture = corpus.input(entry);
+    const input = { originalBytes: fixture.originalBytes, evidenceRecord: fixture.evidenceRecord };
+    const original = { originalBytes: Buffer.from(input.originalBytes), evidenceRecord: Buffer.from(input.evidenceRecord) };
+    const source = createOrganizationHistorySource({
+      configuration: fixture.configuration,
+      readKnowledge: () => fixture.knowledge,
+    });
+    t.after(() => source.close());
+    let options;
+    connectOrganizationHistorySource(source, (value) => { options = value; });
+    let mode = 'synchronous', callbackCalls = 0, hookCalls = 0, thenCalls = 0;
+    const callback = slot === 'resolveTimestamp' ? options.preservationPolicy[slot] : options[slot];
+    const selected = (...args) => {
+      const answer = callback(...args);
+      if (mode === 'synchronous') return answer;
+      callbackCalls++;
+      const value = mode === 'rejected' || mode === 'own-then'
+        ? Promise.reject(new Error('callback unavailable')) : Promise.resolve(answer);
+      if (mode === 'own-then') Object.defineProperty(value, 'then', {
+        get() { thenCalls++; throw new Error('own then must not be read'); },
+      });
+      if (mode.startsWith('constructor-') || mode.startsWith('species-')) {
+        const get = () => {
+          hookCalls++;
+          throw mode.endsWith('-null') ? null
+            : new VerificationError('CALLER_SELECTED_OUTCOME', 'UNSUPPORTED', 'authorization');
+        };
+        Object.defineProperty(value, 'constructor', mode.startsWith('constructor-')
+          ? { get } : { value: Object.defineProperty({}, Symbol.species, { get }) });
+      }
+      return value;
+    };
+    const configured = slot === 'resolveTimestamp'
+      ? { ...options, preservationPolicy: { ...options.preservationPolicy, [slot]: selected } }
+      : { ...options, [slot]: selected };
+    const verifier = createOrganizationHistoryVerifier(configured);
+    const baseline = verifier.verify(input);
+    assert.equal(baseline.overall, 'VALID');
+    assert.deepEqual(baseline, corpus.expected(entry));
+    mode = 'fulfilled';
+    const unavailable = verifier.verify(input);
+    assert.equal(unavailable.overall, 'INDETERMINATE');
+    assert(unavailable.checks.some((row) => row.reason === reason && row.overall === 'INDETERMINATE'));
+    for (const kind of ['fulfilled', 'rejected', 'own-then', 'constructor-null', 'constructor-typed', 'species-null', 'species-typed']) {
+      await t.test(kind, async () => {
+        mode = kind;
+        callbackCalls = hookCalls = thenCalls = 0;
+        assert.deepEqual(verifier.verify(input), unavailable);
+        assert(callbackCalls > 0);
+        assert.equal(hookCalls, kind.startsWith('constructor-') || kind.startsWith('species-') ? callbackCalls : 0);
+        await immediate();
+        assert.equal(thenCalls, 0);
+        mode = 'synchronous';
+        assert.deepEqual(verifier.verify(input), baseline);
+        assert.deepEqual(input, original);
+      });
+    }
+  });
+}
 
 test('schema1 organization corpora require their original verifier', () => {
   for (const name of [
