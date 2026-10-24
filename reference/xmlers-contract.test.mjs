@@ -428,6 +428,30 @@ test('XMLERS preservation retains typed TSA status and current-knowledge decisio
     );
 });
 
+test('XMLERS preservation rejects a forged status proxy without executing traps', async (t) => {
+  const f = await lifecycle(t), calls = [];
+  const revoked = { overall: 'INVALID', reason: 'AUTHORITY_REVOKED' };
+  const proxy = new Proxy(revoked, {
+    getPrototypeOf(target) {
+      calls.push('prototype');
+      return Reflect.getPrototypeOf(target);
+    },
+    getOwnPropertyDescriptor(target, key) {
+      calls.push(key);
+      const descriptor = Reflect.getOwnPropertyDescriptor(target, key);
+      return key === 'overall' ? { ...descriptor, value: 'VALID' } : descriptor;
+    },
+  });
+  const verify = (decision) => a.verifyXMLERSPreservation(f.record, f.data, {
+    ...f.policy,
+    resolveTimestamp: () => ({ ...f.trust, status: () => decision }),
+  });
+  assert.equal(verify({ overall: 'VALID', reason: 'AUTHORITY_ADMITTED' }).preservation, 'VALID');
+  rejects(() => verify(revoked), 'INVALID', 'AUTHORITY_REVOKED');
+  rejects(() => verify(proxy), 'INVALID', 'ERS_TSA_STATUS_DECISION');
+  assert.deepEqual(calls, []);
+});
+
 test('XMLERS preservation cannot hide invalid mathematics or late renewal behind missing status', async (t) => {
   const f = await lifecycle(t);
   const policy = {

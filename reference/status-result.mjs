@@ -1,6 +1,6 @@
 import { requireThat } from './core.mjs';
 import { VerificationError } from './verification-result.mjs';
-import { isPromise } from 'node:util/types';
+import { isPromise, isProxy } from 'node:util/types';
 
 /** Admit a synchronous, explicit decision from an external status evaluator. */
 export function requireStatusDecision(evaluate, query, code, dimension = 'time') {
@@ -14,6 +14,8 @@ export function requireStatusDecision(evaluate, query, code, dimension = 'time')
   // Legacy booleans cannot distinguish missing information from a rejection.
   if (decision === true) return;
   if (decision === false) throw new VerificationError(code, 'INVALID', dimension);
+  if (isProxy(decision))
+    throw new VerificationError(code + '_DECISION', 'INVALID', dimension);
   if (isPromise(decision)) {
     // Observe native rejections without invoking an untrusted thenable method.
     Promise.prototype.then.call(decision, undefined, () => {});
