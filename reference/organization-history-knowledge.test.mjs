@@ -17,6 +17,7 @@ import * as p from './pki.mjs';
 import { Journal, readControl } from './state.mjs';
 import { signOrganizationControl } from './organization-delegation-fixtures.mjs';
 import { OrganizationHistoryKnowledgeStore } from './organization-history-knowledge.mjs';
+import { VerificationError } from './verification-result.mjs';
 import { createIndependentOrganizationHistoryFixture } from './fixtures-history-independent.mjs';
 import {
   createOrganizationHistorySource,
@@ -672,6 +673,189 @@ test('malformed knowledge never advances persisted selected time or admits parti
   assert.equal(retry.overall, 'VALID');
   assert.equal(retry.knowledgeReceipt.revision, valid.knowledgeReceipt.revision);
 });
+
+function storedRows(path) {
+  const journal = new Journal(path);
+  try {
+    return {
+      state: journal.db.prepare('SELECT * FROM state ORDER BY namespace,id').all(),
+      operations: journal.db.prepare('SELECT * FROM operations').all(),
+      nonce: journal.db.prepare('SELECT * FROM nonce').all(),
+    };
+  } finally {
+    journal.close();
+  }
+}
+
+for (const [name, make] of [
+  ['resolved', () => Promise.resolve({ overall: 'VALID' })],
+  ['rejected', () => Promise.reject(new Error('reader unavailable'))],
+  [
+    'constructor null',
+    () => {
+      const value = Promise.resolve();
+      Object.defineProperty(value, 'constructor', {
+        get() {
+          throw null;
+        },
+      });
+      return value;
+    },
+  ],
+  ...['COMMITTED', 'UNKNOWN'].map((commitState) => [
+    `species ${commitState}`,
+    () => {
+      const value = Promise.resolve();
+      Object.defineProperty(value, 'constructor', {
+        value: {
+          get [Symbol.species]() {
+            throw Object.assign(new VerificationError('READER_CLAIM', 'UNSUPPORTED'), {
+              commitState,
+            });
+          },
+        },
+      });
+      return value;
+    },
+  ]),
+  [
+    'invalid species',
+    () => {
+      const value = Promise.resolve();
+      Object.defineProperty(value, 'constructor', { value: { [Symbol.species]: 1 } });
+      return value;
+    },
+  ],
+]) {
+  test(`durable asynchronous reader ${name} cannot commit, advance knowledge or poison recovery`, async (t) => {
+    const h = harness(t),
+      first = h.open(),
+      knowledge = h.value.knowledge;
+    const before = storedRows(h.databasePath);
+    h.value.knowledge = make();
+    const result = first.verifier.verify(fixture.input);
+    assert.equal(result.overall, 'INDETERMINATE', JSON.stringify(result));
+    assert.equal(result.reason, 'ORG_HISTORY_KNOWLEDGE_UNAVAILABLE');
+    assert.ok(
+      result.checks.some(
+        (check) =>
+          check.check === 'durable-knowledge' &&
+          check.reason === 'ORG_HISTORY_SOURCE_ASYNC' &&
+          check.overall === 'INDETERMINATE',
+      ),
+    );
+    assert.equal(result.knowledgeReceipt.state, 'NOT_COMMITTED');
+    assert.equal(result.knowledgeReceipt.revision, null);
+    assert.equal(result.knowledgeReceipt.evidenceID, null);
+    assert.deepEqual(storedRows(h.databasePath), before);
+    h.value.knowledge = knowledge;
+    assert.equal(first.verifier.verify(fixture.input).overall, 'VALID');
+    first.source.close();
+    assert.equal(h.open().verifier.verify(fixture.input).overall, 'VALID');
+    await new Promise((resolve) => setImmediate(resolve));
+  });
+}
+
+for (const claimed of ['COMMITTED', 'UNKNOWN', 'getter']) {
+  test(`durable pretransaction input exception cannot supply ${claimed} commit state`, (t) => {
+    const h = harness(t),
+      first = h.open();
+    const committed = first.verifier.verify(fixture.input);
+    assert.equal(committed.overall, 'VALID');
+    const before = storedRows(h.databasePath);
+    const error = new VerificationError('INPUT_UNAVAILABLE', 'INDETERMINATE');
+    let stateReads = 0;
+    Object.defineProperty(error, 'commitState', {
+      get() {
+        stateReads++;
+        if (claimed === 'getter') throw new Error('untrusted commitState getter');
+        return claimed;
+      },
+    });
+    const bytes = Buffer.from(fixture.input.originalBytes);
+    Object.defineProperty(bytes, 'length', {
+      get() {
+        throw error;
+      },
+    });
+    const result = first.verifier.verify({ ...fixture.input, originalBytes: bytes });
+    assert.notEqual(result.overall, 'VALID');
+    assert.equal(result.knowledgeReceipt.state, 'NOT_COMMITTED');
+    assert.equal(result.knowledgeReceipt.revision, null);
+    assert.equal(result.knowledgeReceipt.evidenceID, null);
+    assert.equal(stateReads, 0);
+    assert.deepEqual(storedRows(h.databasePath), before);
+    const recovered = first.verifier.verify(fixture.input);
+    assert.equal(recovered.overall, 'VALID');
+    assert.equal(recovered.knowledgeReceipt.revision, committed.knowledgeReceipt.revision);
+  });
+}
+
+for (const phase of ['BEGIN', 'COMMIT']) {
+  test(`durable ${phase} failure uses private transaction state even if the public field is replaced`, (t) => {
+    const h = harness(t),
+      first = h.open(),
+      before = storedRows(h.databasePath);
+    const transaction = Journal.prototype.transaction;
+    const transact = OrganizationHistoryKnowledgeStore.prototype.transact;
+    let stateReads = 0;
+    let previousFailure;
+    Journal.prototype.transaction = function (action) {
+      const outer = !this.depth;
+      if (outer && phase === 'BEGIN') throw new Error('begin unavailable');
+      const value = transaction.call(this, action);
+      if (outer) throw new Error('commit acknowledgement unavailable');
+      return value;
+    };
+    OrganizationHistoryKnowledgeStore.prototype.transact = function (action) {
+      try {
+        return transact.call(this, action);
+      } catch (error) {
+        previousFailure = error;
+        Object.defineProperty(error, 'commitState', {
+          get() {
+            stateReads++;
+            throw new Error('public state');
+          },
+        });
+        throw error;
+      }
+    };
+    let result;
+    try {
+      result = first.verifier.verify(fixture.input);
+    } finally {
+      Journal.prototype.transaction = transaction;
+      OrganizationHistoryKnowledgeStore.prototype.transact = transact;
+    }
+    assert.equal(result.overall, 'INDETERMINATE');
+    assert.equal(result.knowledgeReceipt.state, phase === 'BEGIN' ? 'NOT_COMMITTED' : 'UNKNOWN');
+    assert.equal(stateReads, 0);
+    if (phase === 'BEGIN') {
+      assert.deepEqual(storedRows(h.databasePath), before);
+      assert.equal(first.verifier.verify(fixture.input).overall, 'VALID');
+    } else {
+      assert.notDeepEqual(storedRows(h.databasePath), before);
+      assert.notEqual(first.verifier.verify(fixture.input).overall, 'VALID');
+    }
+    first.source.close();
+    const reopened = h.open();
+    assert.equal(reopened.verifier.verify(fixture.input).overall, 'VALID');
+    const retained = storedRows(h.databasePath);
+    const bytes = Buffer.from(fixture.input.originalBytes);
+    Object.defineProperty(bytes, 'length', {
+      get() {
+        throw previousFailure;
+      },
+    });
+    const replayedError = reopened.verifier.verify({ ...fixture.input, originalBytes: bytes });
+    assert.notEqual(replayedError.overall, 'VALID');
+    assert.equal(replayedError.knowledgeReceipt.state, 'NOT_COMMITTED');
+    assert.equal(stateReads, 0);
+    assert.deepEqual(storedRows(h.databasePath), retained);
+    assert.equal(reopened.verifier.verify(fixture.input).overall, 'VALID');
+  });
+}
 
 test('failed commit acknowledgement poisons the source and a new source reauthenticates the commit', (t) => {
   const h = harness(t),

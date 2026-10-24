@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { record, snapshot } from './organization-delegation-state.mjs';
+import { decision, record, snapshot } from './organization-delegation-state.mjs';
 
 function guardedProxy(target, revoke = false) {
   let calls = 0;
@@ -53,4 +53,46 @@ test('organization snapshots retain independent copies of ordinary public record
   bytes[0] = 9;
   original.members[0].value = 8;
   assert.deepEqual(copied, { bytes: Buffer.from([1, 2, 3]), members: [{ value: 7 }] });
+});
+
+for (const hook of ['constructor', 'species']) {
+  for (const thrown of [null, { overall: 'VALID' }, new Error('observation unavailable')]) {
+    test(`organization Promise ${hook} exceptions cannot replace the asynchronous outcome: ${String(thrown)}`, () => {
+      const value = Promise.resolve({ overall: 'VALID', reason: 'caller' });
+      const get = () => {
+        throw thrown;
+      };
+      if (hook === 'constructor') Object.defineProperty(value, 'constructor', { get });
+      else
+        Object.defineProperty(value, 'constructor', {
+          value: {
+            get [Symbol.species]() {
+              return get();
+            },
+          },
+        });
+      assert.deepEqual(decision(value), {
+        overall: 'INDETERMINATE',
+        reason: 'ORG_ASYNC_DEPENDENCY',
+      });
+      assert.throws(() => snapshot(value), {
+        code: 'ORG_ASYNC_DEPENDENCY',
+        overall: 'INDETERMINATE',
+      });
+    });
+  }
+}
+
+test('organization Promise rejection observation ignores an own then accessor', async () => {
+  const value = Promise.reject(new Error('asynchronous dependency'));
+  let calls = 0;
+  Object.defineProperty(value, 'then', {
+    get() {
+      calls++;
+      throw new Error('own then');
+    },
+  });
+  assert.deepEqual(decision(value), { overall: 'INDETERMINATE', reason: 'ORG_ASYNC_DEPENDENCY' });
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(calls, 0);
 });
