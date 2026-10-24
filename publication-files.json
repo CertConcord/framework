@@ -251,6 +251,7 @@
   "reference/person-sign-profile.test.mjs",
   "reference/pkcs11.mjs",
   "reference/pki.mjs",
+  "reference/postgres-rpc.test.mjs",
   "reference/preserved-certificate-status-semantics.mjs",
   "reference/preserved-certificate-status.test.mjs",
   "reference/preserved-delegation-status-semantics.mjs",

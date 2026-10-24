@@ -250,8 +250,8 @@
     },
     {
       "path": "docs/storage.md",
-      "bytes": 6001,
-      "sha256": "cc91994a1900153719c95546a7046a4a1d46c2e37b4ab0b886aa513ea1ac3fda"
+      "bytes": 6395,
+      "sha256": "79ac658854c6be43d76e8bcc13d3602595a61e86862d569c527dcdc08ac3392c"
     },
     {
       "path": "docs/timestamp-application.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 274036,
-      "sha256": "0f136f56db236263199816b7f74d10a0dfb3c2d9c6fe10fa70b63c81e9446482"
+      "bytes": 274073,
+      "sha256": "6d6968bea806eb3639bcb754d2ed4603d4bdaf27863f1d68c6d6a1526d99a2eb"
     },
     {
       "path": "reference/README.md",
@@ -1264,6 +1264,11 @@
       "sha256": "74577501f06d9f06e93e9948114415ae521a8b09e999bda84bd82f85bfa30c18"
     },
     {
+      "path": "reference/postgres-rpc.test.mjs",
+      "bytes": 3856,
+      "sha256": "12277e342ba166fefcc3a265af8a0568c9cf760c65224b893d371263456c8d53"
+    },
+    {
       "path": "reference/preserved-certificate-status-semantics.mjs",
       "bytes": 4412,
       "sha256": "6fae19417f069fb77fbb8b66a2a88d5b4c5059ddc03052a2c54f42107beef4b0"
@@ -1600,8 +1605,8 @@
     },
     {
       "path": "reference/storage/postgres.mjs",
-      "bytes": 5347,
-      "sha256": "20ff863908b9a59730de39e7da1d83e69c7816f6bcace4b3929d6fe60575a35d"
+      "bytes": 5527,
+      "sha256": "ffddfd3e2d76e803e7f354e3313d560f8cdf53c4c7ffba7d4060c5e180f58c63"
     },
     {
       "path": "reference/storage/postgres.test.mjs",
