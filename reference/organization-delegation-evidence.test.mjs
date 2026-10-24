@@ -5,11 +5,13 @@ import * as c from './core.mjs';
 import { readControl } from './state.mjs';
 import { evidenceLeaf } from './evidence-plan.mjs';
 import { issueExecutionBinding } from './execution-binding.mjs';
+import { VerificationError } from './verification-result.mjs';
 import {
   evaluateOrganizationRequest,
   verifyOrganizationApproval,
   verifyOrganizationApprovalSet,
   verifyOrganizationEvidence,
+  verifyOrganizationHistoricalEvidence,
 } from './organization-delegation-evidence.mjs';
 import {
   copy,
@@ -725,6 +727,64 @@ test('organization pure authority rejection stays synchronous and leaves no unha
     f.close();
   }
 });
+
+for (const historical of [false, true]) {
+  test(`organization ${historical ? 'historical' : 'current'} authority Promise hooks cannot select an outcome`, async (t) => {
+    const f = createOrganizationFixture();
+    t.after(() => f.close());
+    let input = historical ? evidenceInput(f) : f.pureInput();
+    if (historical) {
+      const { state, ...retained } = input;
+      const { operator, executionCurrent, ...context } = retained.context;
+      const { currentCertificateStatus, ...credentialTrust } = context.credentialTrust;
+      input = { ...retained, context: { ...context, credentialTrust } };
+    }
+    const original = copy(input);
+    const run = () => historical
+      ? verifyOrganizationHistoricalEvidence(input, { stateTime: f.at, operationTime: f.at })
+      : evaluateOrganizationRequest(input);
+    const baseline = verdict(run(), 'VALID');
+    let mode = 'fulfilled', callbackCalls = 0, hookCalls = 0, thenCalls = 0;
+    f.hooks.authority = () => {
+      callbackCalls++;
+      const value = mode === 'rejected' || mode === 'own-then'
+        ? Promise.reject(new Error('authority unavailable'))
+        : Promise.resolve({ overall: 'VALID', reason: 'EXPLICIT_FIXED_TEST_AUTHORITY' });
+      if (mode === 'own-then') Object.defineProperty(value, 'then', {
+        get() { thenCalls++; throw new Error('own then must not be read'); },
+      });
+      if (mode.startsWith('constructor-') || mode.startsWith('species-')) {
+        const get = () => {
+          hookCalls++;
+          throw mode.endsWith('-null') ? null
+            : new VerificationError('CALLER_SELECTED_OUTCOME', 'UNSUPPORTED', 'authorization');
+        };
+        Object.defineProperty(value, 'constructor', mode.startsWith('constructor-')
+          ? { get } : { value: Object.defineProperty({}, Symbol.species, { get }) });
+      }
+      return value;
+    };
+    const resolver = f.hooks.authority;
+    const unavailable = verdict(run(), 'INDETERMINATE');
+    assert.equal(unavailable.reason, 'ORG_AUTHORITY_ASYNC');
+    for (const kind of ['fulfilled', 'rejected', 'own-then', 'constructor-null', 'constructor-typed', 'species-null', 'species-typed']) {
+      await t.test(kind, async () => {
+        mode = kind;
+        f.hooks.authority = resolver;
+        callbackCalls = hookCalls = thenCalls = 0;
+        assert.deepEqual(verdict(run(), 'INDETERMINATE'), unavailable);
+        assert(callbackCalls > 0);
+        assert.equal(hookCalls, kind.startsWith('constructor-') || kind.startsWith('species-') ? callbackCalls : 0);
+        await immediate();
+        assert.equal(thenCalls, 0);
+        f.hooks.authority = undefined;
+        assert.deepEqual(verdict(run(), 'VALID'), baseline);
+        assert.deepEqual(input, original);
+        assert.equal(f.calls.sign, 0);
+      });
+    }
+  });
+}
 
 for (const [name, mutate, expected] of [
   [
