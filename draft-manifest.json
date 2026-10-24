@@ -210,8 +210,8 @@
     },
     {
       "path": "docs/organization-delegation.md",
-      "bytes": 26497,
-      "sha256": "ba89d4f3f00e135bbbae033915b19132de1e7f8a1b5fabd1d098b4c33594c7ad"
+      "bytes": 26980,
+      "sha256": "ad0ae5580a5c9a97d1be8f633bdd43bc9a601ade2cc084f912bb9cbec80d8d3e"
     },
     {
       "path": "docs/organization-history-source.md",
@@ -1035,13 +1035,13 @@
     },
     {
       "path": "reference/organization-delegation-evidence.mjs",
-      "bytes": 81645,
-      "sha256": "59a9257400e49d0357d013e001067440c2c1827c614e5d2375cb0f2b9a494979"
+      "bytes": 81681,
+      "sha256": "51348c8655ca72725779dd876245ce8a37339e7baa8967d1fd0bd6a3e1641c52"
     },
     {
       "path": "reference/organization-delegation-evidence.test.mjs",
-      "bytes": 25667,
-      "sha256": "8582655ce2e0689a61892b0ad3d26bdf7381ca929f684f75e4be2e2e0c98e3ba"
+      "bytes": 28563,
+      "sha256": "e36008dcacf0ed4a94c2700aefd4c8eda008501cfce1a800e7d75e669e8ffe5a"
     },
     {
       "path": "reference/organization-delegation-fixtures.mjs",

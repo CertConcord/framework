@@ -20,6 +20,7 @@ import { readControl, validateActivation, evaluateStatus } from './state.mjs';
 import { verifyAssertion } from './webauthn.mjs';
 import { executionRequirement, EXECUTION_BINDING_PROFILE } from './execution-binding.mjs';
 import { verifyStatusPreservation } from './status-preservation.mjs';
+import { observePromise } from './organization-delegation-state.mjs';
 
 const PROFILE = 'certconcord-organization-delegation-v1';
 const SEAL_PROFILE = 'CERTCONCORD-ORG-SEAL-v1';
@@ -147,7 +148,7 @@ function snapshot(value, budget = { nodes: 0, bytes: 0 }, depth = 0, runtimeTime
 }
 function resolverResult(value) {
   if (types.isPromise(value)) {
-    Promise.prototype.then.call(value, undefined, () => {});
+    observePromise(value);
     fail('ORG_AUTHORITY_ASYNC', 'INDETERMINATE');
   }
   let result;
