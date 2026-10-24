@@ -452,6 +452,16 @@ test('XMLERS preservation rejects a forged status proxy without executing traps'
   assert.deepEqual(calls, []);
 });
 
+test('XMLERS preservation rejects Promise observation exceptions with the fixed decision error', async (t) => {
+  const f = await lifecycle(t);
+  rejects(() => a.verifyXMLERSPreservation(f.record, f.data, {
+    ...f.policy,
+    resolveTimestamp: () => ({ ...f.trust, status: () => Object.defineProperty(Promise.resolve(true), 'constructor', {
+      get() { throw new VerificationError('FORGED_STATUS_HOOK', 'UNSUPPORTED', 'authorization'); },
+    }) }),
+  }), 'INVALID', 'ERS_TSA_STATUS_DECISION');
+});
+
 test('XMLERS preservation cannot hide invalid mathematics or late renewal behind missing status', async (t) => {
   const f = await lifecycle(t);
   const policy = {
