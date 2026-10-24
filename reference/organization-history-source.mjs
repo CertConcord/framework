@@ -16,8 +16,11 @@ import {
   createRetainedAuthorityResolver,
   authenticateRetainedAuthorityEntry,
 } from './retained-authorities.mjs';
-import { OrganizationHistoryKnowledgeStore } from './organization-history-knowledge.mjs';
-import { record, snapshot } from './organization-delegation-state.mjs';
+import {
+  OrganizationHistoryKnowledgeStore,
+  knowledgeCommitState,
+} from './organization-history-knowledge.mjs';
+import { observePromise, record, snapshot } from './organization-delegation-state.mjs';
 import {
   VerificationError,
   verificationOutcome,
@@ -373,7 +376,7 @@ function readSnapshot(state) {
     throw new VerificationError('ORG_HISTORY_SOURCE_READER_UNAVAILABLE', 'INDETERMINATE');
   }
   if (types.isPromise(raw)) {
-    Promise.prototype.then.call(raw, undefined, () => {});
+    observePromise(raw);
     throw new VerificationError('ORG_HISTORY_SOURCE_ASYNC', 'INDETERMINATE');
   }
   return knowledge(raw);
@@ -594,7 +597,7 @@ function durableVerifier(state, createVerifier) {
     revision,
     evidenceID,
   });
-  const failed = (input, error, base) => {
+  const failed = (input, error, base, commitState) => {
     const decision = verificationOutcome(error);
     const result =
       base ??
@@ -605,14 +608,23 @@ function durableVerifier(state, createVerifier) {
       ).verify(input);
     return verificationResult({
       ...addFailure(result, decision),
-      knowledgeReceipt: receipt(error.commitState ?? 'NOT_COMMITTED'),
+      knowledgeReceipt: receipt(commitState),
     });
   };
   return Object.freeze({
     verify(input) {
       let result,
         captured,
+        commitState = 'NOT_COMMITTED',
         knownOverflow = false;
+      const transact = (action) => {
+        try {
+          return store.transact(action);
+        } catch (error) {
+          commitState = knowledgeCommitState(error);
+          throw error;
+        }
+      };
       state.active = null;
       state.ledger = null;
       try {
@@ -625,7 +637,7 @@ function durableVerifier(state, createVerifier) {
           evidenceRecord: Buffer.from(input.evidenceRecord),
         };
         captured = readSnapshot(state); // The only caller read, before BEGIN IMMEDIATE.
-        const commit = store.transact((row) => {
+        const commit = transact((row) => {
           const head = row.value,
             K = captured.value.knowledgeTime;
           knownOverflow = head.overflow;
@@ -721,8 +733,8 @@ function durableVerifier(state, createVerifier) {
           knowledgeReceipt: receipt('COMMITTED', commit.revision, commit.evidenceID),
         });
       } catch (error) {
-        if (error.commitState === 'UNKNOWN') state.poisoned = true;
-        const failure = failed(input, error, result);
+        if (commitState === 'UNKNOWN') state.poisoned = true;
+        const failure = failed(input, error, result, commitState);
         return knownOverflow &&
           !failure.checks.some((c) => c.reason === 'ORG_HISTORY_KNOWLEDGE_LIMIT')
           ? addFailure(failure, { overall: 'UNSUPPORTED', reason: 'ORG_HISTORY_KNOWLEDGE_LIMIT' })
