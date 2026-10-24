@@ -20,7 +20,7 @@ try {
 }
 ```
 
-The reader returns material, never authority decisions or verification outcomes. The implementation copies the configuration at construction and the reader's snapshot on each verification. Functions, accessors, private key fields, KeyObject values and unknown fields are not accepted in the descriptor. The verifier input cannot replace K or its selected source. An asynchronous or throwing reader produces a typed non-VALID result.
+The reader returns material, never authority decisions or verification outcomes. The implementation copies the configuration at construction and the reader's snapshot on each verification. Functions, accessors, proxy objects, private key fields, KeyObject values and unknown fields are not accepted in the descriptor. Shared organization record and snapshot admission rejects proxies before type inspection or reflection, including nested proxies, without invoking their traps. The verifier input cannot replace K or its selected source. An asynchronous or throwing reader produces a typed non-VALID result.
 
 The source is opaque. Multiple verifiers attached to the same source share its admitted negative observations and monotonic selected K. Closing it prevents further positive verification. Without `databasePath`, a new source starts with new memory, `readEvidence` returns undefined, and results contain no storage receipt. The existing callback constructor also remains memory-only. Durable storage is an explicit option described below.
 
