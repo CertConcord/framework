@@ -1,0 +1,834 @@
+{
+  "schemaVersion": 1,
+  "profile": "certconcord-document-acceptance-vectors-draft-03-mtc07-rar2-mdoc2",
+  "description": "Synthetic fixed CMS lifecycle under an explicitly selected new governance root; original document and archive bytes preserved.",
+  "files": [
+    {
+      "path": "files/021f0a255567c94906745f6703ade6e0079850c1fe0b693dd3638b98af0c9506.json",
+      "bytes": 3228,
+      "sha256": "021f0a255567c94906745f6703ade6e0079850c1fe0b693dd3638b98af0c9506",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "021f0a255567c94906745f6703ade6e0079850c1fe0b693dd3638b98af0c9506"
+    },
+    {
+      "path": "files/029903d1978b2c9ac5f389357fd772e36ccd57ecf49eadd81abc0c06fee8b931.json",
+      "bytes": 10852,
+      "sha256": "029903d1978b2c9ac5f389357fd772e36ccd57ecf49eadd81abc0c06fee8b931",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 10852,
+      "decodedSHA256": "029903d1978b2c9ac5f389357fd772e36ccd57ecf49eadd81abc0c06fee8b931"
+    },
+    {
+      "path": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.cbor.b64",
+      "bytes": 152581,
+      "sha256": "a76693f243bc4c1d00b7bae258a651a0ca624cbb29d7b432a67277761a02f306",
+      "encoding": "base64",
+      "decodedBytes": 114435,
+      "decodedSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+      "mediaType": "application/cbor"
+    },
+    {
+      "path": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.der.b64",
+      "bytes": 152581,
+      "sha256": "a76693f243bc4c1d00b7bae258a651a0ca624cbb29d7b432a67277761a02f306",
+      "encoding": "base64",
+      "decodedBytes": 114435,
+      "decodedSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/0b7e6cc11dd251d15aecd4fb8cc3e255b50b6f773ae6fc54bda1ed2fb67cf827.der.b64",
+      "bytes": 10017,
+      "sha256": "623976e2f23eaca6737bad9193980532963fb59f9a2a0d25f3df1b883f98a61d",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 7510,
+      "decodedSHA256": "0b7e6cc11dd251d15aecd4fb8cc3e255b50b6f773ae6fc54bda1ed2fb67cf827"
+    },
+    {
+      "path": "files/148c25cb9fb9c16846eb14ece6bc8927bdf442444d7ff76168b680236b343050.der.b64",
+      "bytes": 50641,
+      "sha256": "171d6589103bc883f2b01b5a6f26a632dea5c80838d242632002a409829b9117",
+      "encoding": "base64",
+      "decodedBytes": 37979,
+      "decodedSHA256": "148c25cb9fb9c16846eb14ece6bc8927bdf442444d7ff76168b680236b343050",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/14d458631b31ddbd4caa39ab86658de1ca81367a4de31e984626be9329a2f20d.der.b64",
+      "bytes": 9993,
+      "sha256": "e7d5e0d8f1f5c847dab02f76e728754ec354a86d4d9d14bb7cd53b248ad49083",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "14d458631b31ddbd4caa39ab86658de1ca81367a4de31e984626be9329a2f20d",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/2ad3964d5beb9dfe8b7ec8a5374d6943987239fb64c85974d1861a6c1c2b8e4f.json",
+      "bytes": 3228,
+      "sha256": "2ad3964d5beb9dfe8b7ec8a5374d6943987239fb64c85974d1861a6c1c2b8e4f",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "2ad3964d5beb9dfe8b7ec8a5374d6943987239fb64c85974d1861a6c1c2b8e4f"
+    },
+    {
+      "path": "files/2becf7d97d41149ec658a051f06c737154962f6b7f6383759ac3ed5d95f5ff32.der.b64",
+      "bytes": 212805,
+      "sha256": "4683eecb8a671ab5880e37f7f37a84cf6ac7caeeb460a332648d20a9b11dbd0c",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 159603,
+      "decodedSHA256": "2becf7d97d41149ec658a051f06c737154962f6b7f6383759ac3ed5d95f5ff32"
+    },
+    {
+      "path": "files/309d3a5adfddcfae57ac4c5de3c96802babe264dbf28dd01cb1ac5bf6925ca5e.der.b64",
+      "bytes": 9993,
+      "sha256": "ad526049eb41f9dc5f231b73fea642778cc1a92bf728d5f21939e25028a3aa2d",
+      "encoding": "base64",
+      "decodedBytes": 7493,
+      "decodedSHA256": "309d3a5adfddcfae57ac4c5de3c96802babe264dbf28dd01cb1ac5bf6925ca5e",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/3546a977e2f7e83fa4fb8e2df876f380b900f8fbfde3dcfe735b25db86b1edeb.der.b64",
+      "bytes": 152613,
+      "sha256": "0f461d615dd9ef5519f945235952ec7933760c7dd7d7e1ce177b2dbf07ca0ec0",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 114459,
+      "decodedSHA256": "3546a977e2f7e83fa4fb8e2df876f380b900f8fbfde3dcfe735b25db86b1edeb"
+    },
+    {
+      "path": "files/456167c872b5e60e7ed55e199924cf460bea3dd4fb6e91cca80c8f009b219040.der.b64",
+      "bytes": 16885,
+      "sha256": "dff8d0c5dc71ab3fea686a9bf6cc03cb6320ca36335b0964b4ca8c7c723ece4f",
+      "encoding": "base64",
+      "decodedBytes": 12662,
+      "decodedSHA256": "456167c872b5e60e7ed55e199924cf460bea3dd4fb6e91cca80c8f009b219040",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "bytes": 10852,
+      "sha256": "468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2",
+      "encoding": "utf8",
+      "decodedBytes": 10852,
+      "decodedSHA256": "468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/4c6eabfc7a5d5fa555e3fc39b3c36ea9061a9a49a37f2fdfb32fe93a6c2c1ec3.der.b64",
+      "bytes": 3489,
+      "sha256": "9421e9e6b55cf6dcce49731488b25e430ca60cca39419fac0ac1bfddbaa53ee9",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "4c6eabfc7a5d5fa555e3fc39b3c36ea9061a9a49a37f2fdfb32fe93a6c2c1ec3",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/4c6eabfc7a5d5fa555e3fc39b3c36ea9061a9a49a37f2fdfb32fe93a6c2c1ec3.spki.b64",
+      "bytes": 3489,
+      "sha256": "9421e9e6b55cf6dcce49731488b25e430ca60cca39419fac0ac1bfddbaa53ee9",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "4c6eabfc7a5d5fa555e3fc39b3c36ea9061a9a49a37f2fdfb32fe93a6c2c1ec3",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/4cec1fb82b4f2bb5172a0f14a6a6ebbde59af3cb07af1e6f4ca052ffd6bcc036.json",
+      "bytes": 10852,
+      "sha256": "4cec1fb82b4f2bb5172a0f14a6a6ebbde59af3cb07af1e6f4ca052ffd6bcc036",
+      "encoding": "utf8",
+      "decodedBytes": 10852,
+      "decodedSHA256": "4cec1fb82b4f2bb5172a0f14a6a6ebbde59af3cb07af1e6f4ca052ffd6bcc036",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/4cefa8f4652f2c9d500e7b5f772e618a36e34d239a2a181e5c1d42d3619043b3.der.b64",
+      "bytes": 141845,
+      "sha256": "7ebe2afcef062b2852640454fec8c0ebaf4e3f4af5736da0babf725aed523889",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 106383,
+      "decodedSHA256": "4cefa8f4652f2c9d500e7b5f772e618a36e34d239a2a181e5c1d42d3619043b3"
+    },
+    {
+      "path": "files/50ad4ee7356e27d21f240486dbfc72ac3f9e4840b761b12549189acc4d043373.json",
+      "bytes": 3228,
+      "sha256": "50ad4ee7356e27d21f240486dbfc72ac3f9e4840b761b12549189acc4d043373",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "50ad4ee7356e27d21f240486dbfc72ac3f9e4840b761b12549189acc4d043373"
+    },
+    {
+      "path": "files/58fead7449d75a0b0c185e22e39dd7c4656b9412793ed8f3b86ca210e85265ff.der.b64",
+      "bytes": 152613,
+      "sha256": "04642913034c0ddd9078a8a93f358ecbdc7e3bb7f23852f8ef20dc1d8b86e6dd",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 114459,
+      "decodedSHA256": "58fead7449d75a0b0c185e22e39dd7c4656b9412793ed8f3b86ca210e85265ff"
+    },
+    {
+      "path": "files/5f7339946ae53ee86245ad0b11f1f264b136be746886cf2e9cea733f6d82b8fd.der.b64",
+      "bytes": 10017,
+      "sha256": "15a3e1098ca96cd9ec4058f399a8804009e7c6f6f7fe952e444284eaedbf4956",
+      "encoding": "base64",
+      "decodedBytes": 7510,
+      "decodedSHA256": "5f7339946ae53ee86245ad0b11f1f264b136be746886cf2e9cea733f6d82b8fd",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/6293571b6cc3a4cf052d694e8832cad0f02f0441caf722a7d666248f4891c78b.der.b64",
+      "bytes": 152609,
+      "sha256": "33daea74b6ec8702fa91ccc0e3b53fe5bacbb32579cc19252fa145b42a100100",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 114455,
+      "decodedSHA256": "6293571b6cc3a4cf052d694e8832cad0f02f0441caf722a7d666248f4891c78b"
+    },
+    {
+      "path": "files/6a3851994afc0cf36df9ae9668c7ed04b54426fe47deec89d148cfb4086b3230.der.b64",
+      "bytes": 50641,
+      "sha256": "c9fae53d1fc6c144699025b5938e2094703a3b56af6813501a1ef6077706050c",
+      "encoding": "base64",
+      "decodedBytes": 37980,
+      "decodedSHA256": "6a3851994afc0cf36df9ae9668c7ed04b54426fe47deec89d148cfb4086b3230",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/6ce25889cc52c0d05ec357aba82d845ab4027a33084dd3fff7da1a20c99a47c8.der.b64",
+      "bytes": 3489,
+      "sha256": "cc1d8229457634845b7733ff7fb1362187a4d2647f643b464f031f0938016c6f",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "6ce25889cc52c0d05ec357aba82d845ab4027a33084dd3fff7da1a20c99a47c8",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/6ce25889cc52c0d05ec357aba82d845ab4027a33084dd3fff7da1a20c99a47c8.spki.b64",
+      "bytes": 3489,
+      "sha256": "cc1d8229457634845b7733ff7fb1362187a4d2647f643b464f031f0938016c6f",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "6ce25889cc52c0d05ec357aba82d845ab4027a33084dd3fff7da1a20c99a47c8",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/6e134cdba70e30c135f043d61a8825a9f8b3713c0878d01dfb48bcbcb99006fb.json",
+      "bytes": 3228,
+      "sha256": "6e134cdba70e30c135f043d61a8825a9f8b3713c0878d01dfb48bcbcb99006fb",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "6e134cdba70e30c135f043d61a8825a9f8b3713c0878d01dfb48bcbcb99006fb"
+    },
+    {
+      "path": "files/75544c63516d4090b94439f8e559ca2233ee1fe1912043e0882d81eedb1b312d.der.b64",
+      "bytes": 141841,
+      "sha256": "419bd920ceef8608744ed7d08466a104ad7fe875ce7f8e9390cea01607f63f11",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 106380,
+      "decodedSHA256": "75544c63516d4090b94439f8e559ca2233ee1fe1912043e0882d81eedb1b312d"
+    },
+    {
+      "path": "files/75552058db62d99f637237ac1af1deb859e69b214dc1766575873d65ef84c64c.json",
+      "bytes": 3228,
+      "sha256": "75552058db62d99f637237ac1af1deb859e69b214dc1766575873d65ef84c64c",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "75552058db62d99f637237ac1af1deb859e69b214dc1766575873d65ef84c64c"
+    },
+    {
+      "path": "files/7d93cf9bb08c6b3eefcb22e729d82481bd5ac9dd52fe09ae6e33745cea532c12.json",
+      "bytes": 3228,
+      "sha256": "7d93cf9bb08c6b3eefcb22e729d82481bd5ac9dd52fe09ae6e33745cea532c12",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "7d93cf9bb08c6b3eefcb22e729d82481bd5ac9dd52fe09ae6e33745cea532c12"
+    },
+    {
+      "path": "files/7df405641a4f94b0ff57ae418f3a5ddc98d2599d5c1c9990bbff4aa20a51e4b1.json",
+      "bytes": 3112,
+      "sha256": "7df405641a4f94b0ff57ae418f3a5ddc98d2599d5c1c9990bbff4aa20a51e4b1",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3112,
+      "decodedSHA256": "7df405641a4f94b0ff57ae418f3a5ddc98d2599d5c1c9990bbff4aa20a51e4b1"
+    },
+    {
+      "path": "files/835c20941079ff7a11c229024680d67bea757ea88735212e086bb74f9de766ce.json",
+      "bytes": 3228,
+      "sha256": "835c20941079ff7a11c229024680d67bea757ea88735212e086bb74f9de766ce",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "835c20941079ff7a11c229024680d67bea757ea88735212e086bb74f9de766ce"
+    },
+    {
+      "path": "files/852c523a56a264b3fe53392de13aef4796a41a78433802f8d2dcf7a4393ab2f0.json",
+      "bytes": 3228,
+      "sha256": "852c523a56a264b3fe53392de13aef4796a41a78433802f8d2dcf7a4393ab2f0",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "852c523a56a264b3fe53392de13aef4796a41a78433802f8d2dcf7a4393ab2f0"
+    },
+    {
+      "path": "files/85d4be1c53d85c47563614f727ffcf2eeb57490a64fb42790dde958352446bd2.der.b64",
+      "bytes": 133937,
+      "sha256": "f5abd95fde5f93bbd45de7e8f8d7ddaaf846b73d44e455fbee7d3c0f7c30836e",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 100451,
+      "decodedSHA256": "85d4be1c53d85c47563614f727ffcf2eeb57490a64fb42790dde958352446bd2"
+    },
+    {
+      "path": "files/860a8e83a821110b9df4e699e27bc49975319bf7d94e656f30bd750f0bd811ea.json",
+      "bytes": 3228,
+      "sha256": "860a8e83a821110b9df4e699e27bc49975319bf7d94e656f30bd750f0bd811ea",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "860a8e83a821110b9df4e699e27bc49975319bf7d94e656f30bd750f0bd811ea"
+    },
+    {
+      "path": "files/88bca216d164e55cb21af084f87bc9224d3ba07531fdcd536853f84c09bc42b1.json",
+      "bytes": 3228,
+      "sha256": "88bca216d164e55cb21af084f87bc9224d3ba07531fdcd536853f84c09bc42b1",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "88bca216d164e55cb21af084f87bc9224d3ba07531fdcd536853f84c09bc42b1"
+    },
+    {
+      "path": "files/94107017a894f3f410fcced8c15d6516733fd8db696be59dbbd7bc2e5ea0e90a.der.b64",
+      "bytes": 10029,
+      "sha256": "e6c63d83f7207d5f26205a5c66167d0f58785b83e33aa7317cf037414d4d839a",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 7520,
+      "decodedSHA256": "94107017a894f3f410fcced8c15d6516733fd8db696be59dbbd7bc2e5ea0e90a"
+    },
+    {
+      "path": "files/9870966e260b9588279101184ece8ef1d77466fc8bcc066e3691a5773afff0ac.der.b64",
+      "bytes": 212917,
+      "sha256": "fa17d61deff092e6028bb1f671d13c33f5b29d5130a1b3ace312383663ff9c10",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 159687,
+      "decodedSHA256": "9870966e260b9588279101184ece8ef1d77466fc8bcc066e3691a5773afff0ac"
+    },
+    {
+      "path": "files/9c8954f24b1114a1f21be2e5427d0ec9a0a5ec09103ea191a43817105570ebd6.spki.b64",
+      "bytes": 3489,
+      "sha256": "34ba03dcc74254e3631e0178dee29ff7d46bcf47c0a167b1b64a7819470b081c",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "9c8954f24b1114a1f21be2e5427d0ec9a0a5ec09103ea191a43817105570ebd6",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/a441d473c0b99aefa1eb20c32c7654859a52154dcf8513b6185a5ae0c674e71c.der.b64",
+      "bytes": 3489,
+      "sha256": "778b79ed3e338728d642ebea8abfe8a6fc66066308c2e5229b639ca53f9948db",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "a441d473c0b99aefa1eb20c32c7654859a52154dcf8513b6185a5ae0c674e71c",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/a83a44adadfd3b8f3201f25da95571a4698ac78521e59d4b540df07d0c7f7436.der.b64",
+      "bytes": 3489,
+      "sha256": "59bc8927fd8a4f9e3490e7f9aaa593917106e5d6cdf684d7606c31d1404f10ed",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "a83a44adadfd3b8f3201f25da95571a4698ac78521e59d4b540df07d0c7f7436",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/be09a053f70acba4433702ee2c70c7d2084f372f6ec71fb4646707da440e6fba.der.b64",
+      "bytes": 9993,
+      "sha256": "875cc3a15753d81c09ba585ab119268aff28aa6421204dbcb431904ddab83717",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "be09a053f70acba4433702ee2c70c7d2084f372f6ec71fb4646707da440e6fba",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/bf12069fb9906e6fd636fe0cb57961ad6130520c3291c12286b3409d8cacbbe0.json",
+      "bytes": 3228,
+      "sha256": "bf12069fb9906e6fd636fe0cb57961ad6130520c3291c12286b3409d8cacbbe0",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "bf12069fb9906e6fd636fe0cb57961ad6130520c3291c12286b3409d8cacbbe0"
+    },
+    {
+      "path": "files/c3fb1f4a3adb23a2dbab9e6000f07c2877901dab5c4c83abd8dbe27dcf61fcc6.json",
+      "bytes": 3228,
+      "sha256": "c3fb1f4a3adb23a2dbab9e6000f07c2877901dab5c4c83abd8dbe27dcf61fcc6",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "c3fb1f4a3adb23a2dbab9e6000f07c2877901dab5c4c83abd8dbe27dcf61fcc6"
+    },
+    {
+      "path": "files/cdf85410a8bd37c8187a1a6705533c64aa555db6a7911425d3b0d28853bf465c.der.b64",
+      "bytes": 3489,
+      "sha256": "439315273bdebb91aebb3b583e474466e218f688b077cf9285e5981c9f02eb61",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "cdf85410a8bd37c8187a1a6705533c64aa555db6a7911425d3b0d28853bf465c"
+    },
+    {
+      "path": "files/cdf85410a8bd37c8187a1a6705533c64aa555db6a7911425d3b0d28853bf465c.spki.b64",
+      "bytes": 3489,
+      "sha256": "439315273bdebb91aebb3b583e474466e218f688b077cf9285e5981c9f02eb61",
+      "mediaType": "application/pkix-key",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "cdf85410a8bd37c8187a1a6705533c64aa555db6a7911425d3b0d28853bf465c"
+    },
+    {
+      "path": "files/d719ed960b22d5e9ce1983ad4478a1632260ca0e1ff00e7b3277a3636fbe2a7b.der.b64",
+      "bytes": 9993,
+      "sha256": "ad68640c87b0264aa18876e13e0c330b0960511ec9d5c3b0ae2aa17deb9fa1e0",
+      "encoding": "base64",
+      "decodedBytes": 7492,
+      "decodedSHA256": "d719ed960b22d5e9ce1983ad4478a1632260ca0e1ff00e7b3277a3636fbe2a7b",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/d85329b50585967253a17f39f786470cd1b76221e9d83a92057ffa4cfeb9f657.der.b64",
+      "bytes": 141941,
+      "sha256": "61dff06686767448022b81dd88d14ce3696a488bd8410242e8746de1b93bd51e",
+      "mediaType": "application/octet-stream",
+      "encoding": "base64",
+      "decodedBytes": 106454,
+      "decodedSHA256": "d85329b50585967253a17f39f786470cd1b76221e9d83a92057ffa4cfeb9f657"
+    },
+    {
+      "path": "files/e3d0947ff156c581f94c996ee07cff0f27e6a968f60c06cff36eee2cd7f84028.der.b64",
+      "bytes": 3489,
+      "sha256": "e306ddb0ebdee89eb07b660918d2c167b3f2855422eedca63f94b6c2ee2a0ca5",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e3d0947ff156c581f94c996ee07cff0f27e6a968f60c06cff36eee2cd7f84028",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e3e142d2ecdaa8edeff63275edefb452404cb58ee7fd3af01e7f22e4b8249496.der.b64",
+      "bytes": 3489,
+      "sha256": "aac14212cfe3c8a07719c79eec45570079f5d442c3fee97c27c1a0494f0e4cd4",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e3e142d2ecdaa8edeff63275edefb452404cb58ee7fd3af01e7f22e4b8249496",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e3e142d2ecdaa8edeff63275edefb452404cb58ee7fd3af01e7f22e4b8249496.spki.b64",
+      "bytes": 3489,
+      "sha256": "aac14212cfe3c8a07719c79eec45570079f5d442c3fee97c27c1a0494f0e4cd4",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e3e142d2ecdaa8edeff63275edefb452404cb58ee7fd3af01e7f22e4b8249496",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e9f43f4331d245dd1cc33de1b61f65653c990f2a2627146f9efc9f694a1a628f.der.b64",
+      "bytes": 3489,
+      "sha256": "ecf5a214fb550b9829adfcafc62374f10064d40f20030c1a1caae0cd843133f8",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e9f43f4331d245dd1cc33de1b61f65653c990f2a2627146f9efc9f694a1a628f",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/e9f43f4331d245dd1cc33de1b61f65653c990f2a2627146f9efc9f694a1a628f.spki.b64",
+      "bytes": 3489,
+      "sha256": "ecf5a214fb550b9829adfcafc62374f10064d40f20030c1a1caae0cd843133f8",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "e9f43f4331d245dd1cc33de1b61f65653c990f2a2627146f9efc9f694a1a628f",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/eea6ac5c4a2ee4b9fd9cbd2e913f0a5b52081052cc88897cf20f48a82a69bafd.spki.b64",
+      "bytes": 3489,
+      "sha256": "c2cd6236f05afee814fcc10f82d30d5d6c1e2736c588f4caf7693432332c77ef",
+      "encoding": "base64",
+      "decodedBytes": 2614,
+      "decodedSHA256": "eea6ac5c4a2ee4b9fd9cbd2e913f0a5b52081052cc88897cf20f48a82a69bafd",
+      "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/f40e5bc68c2fa82bb7c6c5d0acb176177b4823ae42bd6f6a5e3a089a604a2a74.json",
+      "bytes": 3228,
+      "sha256": "f40e5bc68c2fa82bb7c6c5d0acb176177b4823ae42bd6f6a5e3a089a604a2a74",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "f40e5bc68c2fa82bb7c6c5d0acb176177b4823ae42bd6f6a5e3a089a604a2a74"
+    }
+  ],
+  "documents": [
+    {
+      "id": "cms-valid",
+      "description": "Original ordinary WebAuthn activation and trusted document time.",
+      "format": "CMS",
+      "bytes": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.cbor.b64",
+      "trust": "files/468eebe81e07899d118bdfd063abd48d91a5ef51e7b4fdb1c867deeb05a958c2.json",
+      "expected": {
+        "overall": "VALID",
+        "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+        "coreRevision": "draft-03",
+        "profile": "certconcord-ecp-cms-document-draft-03",
+        "dimensions": {
+          "integrity": {
+            "overall": "VALID",
+            "reason": "SELECTED_SIGNATURES_AND_BINDINGS_VALID"
+          },
+          "issuerTrust": {
+            "overall": "VALID",
+            "reason": "SELECTED_ISSUER_AUTHORITIES_VALID"
+          },
+          "qualification": {
+            "overall": "VALID",
+            "reason": "REGISTRATION_AUTHORIZATION_VALID"
+          },
+          "keyBinding": {
+            "overall": "VALID",
+            "reason": "DOCUMENT_KEY_BINDING_VALID"
+          },
+          "authorization": {
+            "overall": "VALID",
+            "reason": "SELECTED_OPERATION_AUTHORIZATION_VALID"
+          },
+          "status": {
+            "overall": "VALID",
+            "reason": "SELECTED_STATUS_VALID"
+          },
+          "time": {
+            "overall": "VALID",
+            "reason": "TRUSTED_PROOF_OF_EXISTENCE"
+          },
+          "transparency": {
+            "overall": "VALID",
+            "reason": "SELECTED_TRANSPARENCY_VALID"
+          }
+        }
+      }
+    }
+  ],
+  "preservation": [],
+  "retained": [
+    {
+      "id": "cms-retirement-successor",
+      "description": "Original CMS and timely ERS retained; a distinct appointed successor refreshes current status after retirement.",
+      "options": "files/50ad4ee7356e27d21f240486dbfc72ac3f9e4840b761b12549189acc4d043373.json",
+      "expected": {
+        "overall": "VALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-missing",
+      "description": "Same original bytes and successor status with missing appointment.",
+      "options": "files/88bca216d164e55cb21af084f87bc9224d3ba07531fdcd536853f84c09bc42b1.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "overall": "INDETERMINATE",
+          "reason": "AUTHORITY_MISSING"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-wrong-role",
+      "description": "Same original bytes and successor status with wrong-role appointment.",
+      "options": "files/f40e5bc68c2fa82bb7c6c5d0acb176177b4823ae42bd6f6a5e3a089a604a2a74.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_ROLE"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-wrong-scope",
+      "description": "Same original bytes and successor status with wrong-scope appointment.",
+      "options": "files/021f0a255567c94906745f6703ade6e0079850c1fe0b693dd3638b98af0c9506.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_SCOPE"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-stale-current",
+      "description": "No new current status; original bytes stay unchanged.",
+      "options": "files/2ad3964d5beb9dfe8b7ec8a5374d6943987239fb64c85974d1861a6c1c2b8e4f.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "overall": "INDETERMINATE",
+          "reason": "ECP_STATUS_STALE"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-missing-proof",
+      "description": "Successor status cannot prove earlier package existence.",
+      "options": "files/7df405641a4f94b0ff57ae418f3a5ddc98d2599d5c1c9990bbff4aa20a51e4b1.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "INVALID",
+          "reason": "MALFORMED_EVIDENCE"
+        },
+        "currentAdmissibility": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "overall": "INDETERMINATE",
+          "reason": "HISTORICAL_BYTES_UNPROVEN"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-before-first-proof",
+      "description": "Historical knowledge precedes the first package bound.",
+      "options": "files/bf12069fb9906e6fd636fe0cb57961ad6130520c3291c12286b3409d8cacbbe0.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "overall": "INDETERMINATE",
+          "reason": "HISTORICAL_BYTES_NOT_YET_PROVEN"
+        },
+        "historicalKnowledgeTime": 1792454401
+      }
+    },
+    {
+      "id": "cms-retirement-missing-renewal",
+      "description": "Same original CMS with missing-renewal under the same archive policy.",
+      "options": "files/6e134cdba70e30c135f043d61a8825a9f8b3713c0878d01dfb48bcbcb99006fb.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "INVALID",
+          "reason": "ERS_FINAL_PROTECTION_EXPIRED"
+        },
+        "currentAdmissibility": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-late-renewal",
+      "description": "Same original CMS with late-renewal under the same archive policy.",
+      "options": "files/75552058db62d99f637237ac1af1deb859e69b214dc1766575873d65ef84c64c.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "INVALID",
+          "reason": "ERS_HASH_RENEWAL_LATE"
+        },
+        "currentAdmissibility": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-later-compromise",
+      "description": "Later knowledge of compromise survives a subsequent GOOD entry.",
+      "options": "files/7d93cf9bb08c6b3eefcb22e729d82481bd5ac9dd52fe09ae6e33745cea532c12.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-later-historical-compromise",
+      "description": "Later historical knowledge includes the applicable old-key incident.",
+      "options": "files/c3fb1f4a3adb23a2dbab9e6000f07c2877901dab5c4c83abd8dbe27dcf61fcc6.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "historicalKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "cms-retirement-history-conflict",
+      "description": "Authenticated alternative history cannot yield current acceptance.",
+      "options": "files/835c20941079ff7a11c229024680d67bea757ea88735212e086bb74f9de766ce.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "INVALID",
+          "reason": "HISTORY_MANIFEST_CHAIN"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "HISTORY_MANIFEST_CHAIN"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-wrong-target",
+      "description": "A valid successor signature for another certificate does not cover this document.",
+      "options": "files/852c523a56a264b3fe53392de13aef4796a41a78433802f8d2dcf7a4393ab2f0.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "ECP_STATUS_BINDING"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    },
+    {
+      "id": "cms-retirement-changed-operation",
+      "description": "Current supplemental evidence cannot substitute a different original document.",
+      "options": "files/860a8e83a821110b9df4e699e27bc49975319bf7d94e656f30bd750f0bd811ea.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "HISTORICAL_OPERATION_CHANGED"
+        },
+        "currentKnowledgeTime": 1792627202,
+        "historicalAuthorization": {
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED",
+          "overall": "VALID"
+        },
+        "historicalKnowledgeTime": 1792454402
+      }
+    }
+  ]
+}
