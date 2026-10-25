@@ -370,8 +370,8 @@
     },
     {
       "path": "reference/authority-history.mjs",
-      "bytes": 11543,
-      "sha256": "3f67ac80917c03adcb031be5aab0872af36d48fa772060b55ad9507dca885d0a"
+      "bytes": 11628,
+      "sha256": "ab0e4fee1f9c5e6c7aa948ab22406e4b9dc2e6a8d08417c984ef2b1b1d29f781"
     },
     {
       "path": "reference/authority-history.test.mjs",
@@ -555,8 +555,8 @@
     },
     {
       "path": "reference/direct-authority-key-incidents.test.mjs",
-      "bytes": 4955,
-      "sha256": "5734f92bc3d955a5dd3037ae9f67b6962f052a6a2107604287877e5f4cd576c5"
+      "bytes": 6179,
+      "sha256": "2719e48045f6ccbc428a0800240eea2938f5d3c7469042c8a3f996cf143798a1"
     },
     {
       "path": "reference/document-demo.mjs",

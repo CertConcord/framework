@@ -135,7 +135,9 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     if (!known.length) return result('INDETERMINATE', 'AUTHORITY_NOT_YET_KNOWN');
     // Key-wide negative evidence does not admit an unselected encoding or certificate.
     const equivalentRevoked = records.find((record) => record.knownAt <= knowledgeTime &&
-      !equal(record.keyID, requestedKeyID) && record.publicKey.equals(requestedKey) &&
+      !equal(record.keyID, requestedKeyID) &&
+      record.publicKey.asymmetricKeyType === requestedKey.asymmetricKeyType &&
+      record.publicKey.equals(requestedKey) &&
       statusFor(record).overall === 'INVALID' && statusFor(record).reason === 'AUTHORITY_REVOKED');
     if (equivalentRevoked) return statusFor(equivalentRevoked);
     const roles = known.filter((r) => r.roles.includes(role));

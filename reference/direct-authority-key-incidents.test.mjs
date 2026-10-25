@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createPrivateKey } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import * as c from './core.mjs';
 import { createAuthorityResolver } from './authority-history.mjs';
@@ -41,11 +42,13 @@ test('equivalent authority points keep distinct wire IDs and verify the same sig
   assert.equal(c.verify(f.message, f.signature, z), true);
   assert.equal(c.verify(f.message, f.signature, c.publicFromDER(f.other)), false);
   const others = materials.get('additional').comparatorPublicKeys;
-  for (const value of [others.p384, others.ed25519, others.mldsa87]) {
+  for (const value of [others.p384]) {
     const key = c.publicFromDER(value);
     assert.equal(u.equals(key), false);
     assert.equal(key.equals(u), false);
   }
+  for (const value of [others.ed25519, others.mldsa87])
+    assert.notEqual(c.publicFromDER(value).asymmetricKeyType, u.asymmetricKeyType);
   assert.equal(c.publicFromDER(others.mldsa87).equals(c.publicFromDER(others.mldsa87)), true);
 });
 
@@ -97,5 +100,22 @@ for (const row of vectors.cases) {
       }
       assert.deepEqual(c.dcbor(outputs), beforeOutputs);
     } else assert.deepEqual(c.dcbor(records), beforeRecords);
+  });
+}
+
+for (const algorithm of ['ec', 'ml-dsa-87']) {
+  test('mixed direct authority key types preserve private-key import: ' + algorithm, () => {
+    const f = materials.get('additional');
+    const row = vectors.cases.find((row) => row.name === 'callback-own-keyid-and-context');
+    const record = raw(row.records)[1], query = raw(row.query);
+    const pq = clone(record);
+    pq.publicKeyDER = f.comparatorPublicKeys.mldsa87;
+    pq.status.authorityID = c.keyID(c.publicFromDER(pq.publicKeyDER));
+    if (algorithm === 'ml-dsa-87') query.publicKeyDER = pq.publicKeyDER;
+    const encoded = c.generate('ml-dsa-87').privateKey.export({ type: 'pkcs8', format: 'der' });
+    const resolve = createAuthorityResolver({ trustDomainID: f.trustDomainID, authorities: [record, pq] });
+    assert.deepEqual(resolve(query), { overall: 'VALID', reason: 'AUTHORITY_ADMITTED',
+      role: query.role, mode: 'RAW_KEY', coverageUntil: record.status.nextUpdate });
+    assert.equal(createPrivateKey({ key: encoded, type: 'pkcs8', format: 'der' }).asymmetricKeyType, 'ml-dsa-87');
   });
 }
