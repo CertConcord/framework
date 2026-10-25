@@ -43,7 +43,7 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "d6fdc02326a1e535120bc1d491020fcceb1d8ed6",
+      "commit": "18c903b3bcfe6ff9508527a8add61e33294c793d",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [

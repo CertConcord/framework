@@ -106,7 +106,7 @@
     {
       "path": "components.lock.json",
       "bytes": 9359,
-      "sha256": "03e0f28ed823c25a4210ce1fce2d28ec8f72bd6713ceae47e940fda41e768b82"
+      "sha256": "843ddfe95a097f63e8d7f56bd62999e2f0caf5da78eaef0d57869a55bab01ef5"
     },
     {
       "path": "docs/adapters.md",
@@ -141,7 +141,7 @@
     {
       "path": "docs/components.md",
       "bytes": 5283,
-      "sha256": "29f27c6936281ece4b6cda1d431d0e1b0dfe9e63d5676adaa7bdc49f19a6e1e3"
+      "sha256": "23d8ce3cc9dc81484df9b0b96569eb79d8ef04f49ccec763f4abeb1098a47869"
     },
     {
       "path": "docs/composition-review.md",
