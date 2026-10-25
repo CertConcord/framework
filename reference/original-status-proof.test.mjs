@@ -23,6 +23,11 @@ function replaceStatus(bundle, cms) {
   );
 }
 
+function admissions(result) {
+  assert.ok(result.originalStatusAdmission.length > 0, 'selected status admission is recorded');
+  return result.originalStatusAdmission;
+}
+
 function decision(error, overall, code) {
   return error.overall === overall && error.code === code;
 }
@@ -150,7 +155,7 @@ test('original CMS status proof derives its identity and preserves historical bo
             assert.equal(base.result.currentAdmissibility.overall, 'VALID');
             assert.equal(Object.hasOwn(base.result, 'originalStatusProof'), false);
             assert.equal(Object.hasOwn(base.result, 'originalStatusAdmission'), false);
-            const explicit = run({ selected: undefined, omit: true });
+            const explicit = run({ omit: true, options: { originalStatusProof: undefined } });
             assert.deepEqual(explicit, base);
             assert.deepEqual(
               base.queries
@@ -189,7 +194,7 @@ test('original CMS status proof derives its identity and preserves historical bo
             selected: { ...selection, evidenceRecord: equalProof },
           }).result;
           assert.equal(exactPublication.overall, 'VALID');
-          assert.ok(exactPublication.originalStatusAdmission.every((a) => a.S === S && a.B === S));
+          assert.ok(admissions(exactPublication).every((a) => a.S === S && a.B === S));
           assert.equal(
             verifyOriginalStatusProof(
               context,
@@ -208,7 +213,7 @@ test('original CMS status proof derives its identity and preserves historical bo
           assert.equal(result.originalStatusProof.overall, 'VALID');
           assert.equal(result.originalStatusProof.proofOfExistenceUpperBound, P + 1);
           assert.equal(result.historicalAuthorization.reason, 'AUTHORITY_EXPIRED');
-          assert.ok(result.originalStatusAdmission.every((a) => a.B === P));
+          assert.ok(admissions(result).every((a) => a.B === P));
         });
         for (const [label, selected, overall, reason] of [
           [
@@ -275,7 +280,7 @@ test('original CMS status proof derives its identity and preserves historical bo
             assert.equal(result.historicalAuthorization.overall, overall);
             assert.equal(result.historicalAuthorization.reason, reason);
             assert.ok(result.originalStatusAdmission.length > 0);
-            assert.ok(result.originalStatusAdmission.every((a) => a.B === null));
+            assert.ok(admissions(result).every((a) => a.B === null));
             assert.ok(
               queries.some(
                 (q) => q.role === 'STATUS_AUTHORITY' && q.stateTime === S && q.knowledgeTime === H,
@@ -306,11 +311,45 @@ test('original CMS status proof derives its identity and preserves historical bo
             assert.equal(result.historicalAuthorization.overall, 'INVALID');
             assert.equal(result.historicalAuthorization.reason, reason);
             assert.ok(
-              result.originalStatusAdmission.every(
+              admissions(result).every(
                 (a) =>
                   a.B === null &&
                   a.proof.overall === 'INDETERMINATE' &&
                   a.authority.reason === reason,
+              ),
+            );
+            assert.ok(
+              queries.some(
+                (q) => q.role === 'STATUS_AUTHORITY' && q.stateTime === S && q.knowledgeTime === H,
+              ),
+            );
+          });
+        for (const [label, record, overall, reason] of [
+          ['unavailable proof', null, 'UNSUPPORTED', 'UNSUPPORTED_AUTHORITY_POLICY'],
+          ['malformed proof', Buffer.alloc(0), 'INVALID', 'ORIGINAL_STATUS_PROOF'],
+        ])
+          await t.test('unsupported authority is ordered against ' + label, () => {
+            const { result, queries } = run({
+              selected: { ...selection, evidenceRecord: record },
+              authority: (q) =>
+                q.role === 'STATUS_AUTHORITY'
+                  ? { overall: 'UNSUPPORTED', reason: 'UNSUPPORTED_AUTHORITY_POLICY' }
+                  : undefined,
+            });
+            assert.equal(result.historicalAuthorization.overall, overall);
+            assert.equal(result.historicalAuthorization.reason, reason);
+            assert.equal(result.overall, overall);
+            assert.ok(
+              admissions(result).every(
+                (a) =>
+                  a.B === null &&
+                  a.authority.overall === 'UNSUPPORTED' &&
+                  a.authority.reason === 'UNSUPPORTED_AUTHORITY_POLICY' &&
+                  a.proof.overall === (record === null ? 'INDETERMINATE' : 'INVALID') &&
+                  a.proof.reason ===
+                    (record === null
+                      ? 'ORIGINAL_STATUS_EVIDENCE_UNAVAILABLE'
+                      : 'ORIGINAL_STATUS_PROOF'),
               ),
             );
             assert.ok(
@@ -331,7 +370,7 @@ test('original CMS status proof derives its identity and preserves historical bo
             });
             assert.equal(result.historicalAuthorization.overall, 'INDETERMINATE');
             assert.ok(
-              result.originalStatusAdmission.every(
+              admissions(result).every(
                 (a) =>
                   a.authority.reason === 'AUTHORITY_MISSING' &&
                   a.proof.reason === 'ORIGINAL_STATUS_EVIDENCE_UNAVAILABLE',
@@ -348,9 +387,7 @@ test('original CMS status proof derives its identity and preserves historical bo
           });
           assert.equal(result.historicalAuthorization.overall, 'INDETERMINATE');
           assert.equal(result.historicalAuthorization.reason, 'AUTHORITY_DECISION_MISSING');
-          assert.ok(
-            result.originalStatusAdmission.every((a) => a.authority.overall === 'INDETERMINATE'),
-          );
+          assert.ok(admissions(result).every((a) => a.authority.overall === 'INDETERMINATE'));
         });
         for (const [name, options, reason] of [
           ['missing complete proof', { evidenceRecord: null }, 'HISTORICAL_BYTES_UNPROVEN'],
@@ -365,7 +402,7 @@ test('original CMS status proof derives its identity and preserves historical bo
             assert.equal(result.originalStatusProof.overall, 'VALID');
             assert.equal(result.historicalBytesVisibility.overall, 'INDETERMINATE');
             assert.equal(result.historicalBytesVisibility.reason, reason);
-            assert.ok(result.originalStatusAdmission.every((a) => a.B === null));
+            assert.ok(admissions(result).every((a) => a.B === null));
           });
         await t.test('rejected complete-package TSA under H prevents constructing B', () => {
           const Hlater = H + 1;
@@ -387,7 +424,7 @@ test('original CMS status proof derives its identity and preserves historical bo
           });
           assert.equal(result.originalProof.overall, 'VALID');
           assert.equal(result.historicalBytesVisibility.reason, 'AUTHORITY_REVOKED');
-          assert.ok(result.originalStatusAdmission.every((a) => a.B === null));
+          assert.ok(admissions(result).every((a) => a.B === null));
           assert.ok(
             queries.some(
               (q) =>
@@ -410,7 +447,7 @@ test('original CMS status proof derives its identity and preserves historical bo
           });
           assert.equal(result.originalStatusProof.reason, 'AUTHORITY_STATUS_STALE');
           assert.equal(result.historicalAuthorization.overall, 'INDETERMINATE');
-          assert.ok(result.originalStatusAdmission.every((a) => a.B === null));
+          assert.ok(admissions(result).every((a) => a.B === null));
           assert.deepEqual(
             calls.map((q) => [q.stateTime, q.knowledgeTime]),
             [
@@ -435,7 +472,7 @@ test('original CMS status proof derives its identity and preserves historical bo
           });
           assert.equal(result.originalStatusProof.reason, 'ORIGINAL_STATUS_PROOF_NOT_YET_VISIBLE');
           assert.ok(calls.every((q) => q.knowledgeTime >= q.stateTime));
-          assert.ok(result.originalStatusAdmission.every((a) => a.B === null));
+          assert.ok(admissions(result).every((a) => a.B === null));
         });
         await t.test(
           'direct proof check rejects publication after the authenticated CMS bound',

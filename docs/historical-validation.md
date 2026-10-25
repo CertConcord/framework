@@ -63,9 +63,9 @@ admission at Ps under both Ps and H knowledge, and continuous preservation throu
 K. Later renewal timestamps are evaluated with K knowledge. A GOOD status learned
 at K does not fill a missing initial-TSA status interval at H.
 
-Only after the complete original is admitted under H and the supplemental proof
-passes, the status authority is checked at S and B = min(P, Ps), with H knowledge
-in both queries. This permits ordinary status-role retirement after Ps but no
+The status authority is checked independently at S using H knowledge. Only after
+the complete original is admitted under H and the supplemental proof passes is
+the additional B = min(P, Ps) query admitted, also with H knowledge. This permits ordinary status-role retirement after Ps but no
 later than P when the earlier proof and all other requirements pass. A later
 supplemental proof cannot move the bound past P. Neither endpoint establishes an
 exact signing instant or continuous role authorization between the endpoints.

@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 16036,
-      "sha256": "352dc250a4d5f0e7066b7163d1e2527a4b982289d55a098fb9389df8bd3804db"
+      "bytes": 16086,
+      "sha256": "0979f730edb10fabd24bd3ee98d9c821a477acda6d5be9becd047e2f332989ff"
     },
     {
       "path": "docs/implementation.md",
@@ -1155,8 +1155,8 @@
     },
     {
       "path": "reference/original-status-proof.test.mjs",
-      "bytes": 27097,
-      "sha256": "2a19d32a0458b4b67ebebb5d3cce6f61673d12fe384e6cfbaff97b4eea4cb148"
+      "bytes": 28751,
+      "sha256": "a58648df80f3b2777857ac206957dc15da4f6f52788408002204509dd372a224"
     },
     {
       "path": "reference/package.json",
