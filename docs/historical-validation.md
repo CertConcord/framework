@@ -98,6 +98,10 @@ over unavailable evidence; UNSUPPORTED precedes INDETERMINATE, and both diagnose
 remain available. S/B resolver results use the existing SDK decision guard.
 Current status and non-selected roles retain their own validation requirements.
 
+The [saved original-status corpus](../reference/vectors/original-status-proof-mtc07-rar2/README.md)
+replays this three-field interface against unchanged original CMS bytes, separate
+status ERS and authenticated synthetic authority histories at explicit H and K.
+
 The generated `original-status-proof.test.mjs` cases exercise these boundaries
 with synthetic clocks, authorities and real signed CMS/ERS bytes. They do not
 establish operational TSA assurance, a stable interface or an AdES level.

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "format": "CMS",
+  "originalBytes": {
+    "$file": "files/09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133.bin.b64",
+    "type": "bytes"
+  },
+  "currentBytes": {
+    "$file": "files/3546a977e2f7e83fa4fb8e2df876f380b900f8fbfde3dcfe735b25db86b1edeb.bin.b64",
+    "type": "bytes"
+  },
+  "evidenceRecord": {
+    "$file": "files/148c25cb9fb9c16846eb14ece6bc8927bdf442444d7ff76168b680236b343050.bin.b64",
+    "type": "bytes"
+  },
+  "historicalTrust": "files/53256410a650578866f87a03d0f40f20566072023f0f18b45377c841aee3ca70.json",
+  "currentTrust": "files/e77c1fefb400671df805c058bbe05c4cc4c9fa7ec3d429a2063fc1d7253b949d.json",
+  "history": {
+    "$file": "files/4f19c19af0c696ba2e561657dbe781b1564871a091beb62df846df2db8c0fa9c.bin.b64",
+    "type": "bytes"
+  },
+  "historyTrust": {
+    "governance": {
+      "roots": [
+        {
+          "validFrom": 1792454310,
+          "validUntil": 1792727202,
+          "publicKeyDER": {
+            "$file": "files/adb625858a0db7835352c06f55afff8ff1bc5fddb6712e1cfad6c46fec2913f8.bin.b64",
+            "type": "bytes"
+          }
+        }
+      ],
+      "threshold": 1
+    },
+    "trustDomainID": {
+      "$file": "files/105aaee74ce449953110e356b281b1b94d7a669e9d5f24d45776f89fc031d40e.bin.b64",
+      "type": "bytes"
+    },
+    "validationTime": 1792627202,
+    "algorithmDeadlines": {
+      "ec": 1793491202,
+      "ed25519": 1793491202,
+      "ml-dsa-65": 1793491202,
+      "ml-dsa-87": 1793491202
+    }
+  },
+  "publicationTSA": {
+    "certificate": {
+      "$file": "files/417f8fe828b2c6c6527294c160903e5f12da53c5417fa42406c2cd30946553fb.bin.b64",
+      "type": "bytes"
+    },
+    "issuerKey": {
+      "$file": "files/adb625858a0db7835352c06f55afff8ff1bc5fddb6712e1cfad6c46fec2913f8.spki.b64",
+      "type": "spki"
+    },
+    "policy": "1.3.6.1.4.1.32473.99.6"
+  },
+  "preservationPolicy": {
+    "at": 1792627202,
+    "dataValidUntil": 1792540802,
+    "hashValidUntil": {
+      "2.16.840.1.101.3.4.2.1": 1792456902,
+      "2.16.840.1.101.3.4.2.3": 1793491202
+    },
+    "timestampAuthorities": [
+      {
+        "certificate": {
+          "$file": "files/d719ed960b22d5e9ce1983ad4478a1632260ca0e1ff00e7b3277a3636fbe2a7b.bin.b64",
+          "type": "bytes"
+        },
+        "issuerKey": {
+          "$file": "files/eea6ac5c4a2ee4b9fd9cbd2e913f0a5b52081052cc88897cf20f48a82a69bafd.spki.b64",
+          "type": "spki"
+        },
+        "policy": "1.3.6.1.4.1.32473.99.2",
+        "validUntil": 1792457402,
+        "status": {
+          "status": "GOOD",
+          "publishedAt": 1792454370,
+          "nextUpdate": 1793491202
+        }
+      },
+      {
+        "certificate": {
+          "$file": "files/be09a053f70acba4433702ee2c70c7d2084f372f6ec71fb4646707da440e6fba.bin.b64",
+          "type": "bytes"
+        },
+        "issuerKey": {
+          "$file": "files/eea6ac5c4a2ee4b9fd9cbd2e913f0a5b52081052cc88897cf20f48a82a69bafd.spki.b64",
+          "type": "spki"
+        },
+        "policy": "1.3.6.1.4.1.32473.99.2",
+        "validUntil": 1793491202,
+        "status": {
+          "status": "GOOD",
+          "publishedAt": 1792454370,
+          "nextUpdate": 1793491202
+        }
+      }
+    ]
+  },
+  "historicalKnowledgeTime": 1792454402,
+  "currentKnowledgeTime": 1792627202,
+  "originalStatusProof": {
+    "evidenceRecord": null,
+    "preservationPolicy": {
+      "at": 1792627202,
+      "dataValidUntil": 1792727202,
+      "hashValidUntil": {
+        "2.16.840.1.101.3.4.2.1": 1792454500,
+        "2.16.840.1.101.3.4.2.3": 1792727202
+      },
+      "timestampAuthorities": [
+        {
+          "policy": "1.3.6.1.4.1.32473.99.5",
+          "validUntil": 1792454500,
+          "certificate": {
+            "$file": "files/246227bfb5200b921903024dca549a9e2ee59d7bc84a3bd820ae6fecd8d25b7e.bin.b64",
+            "type": "bytes"
+          },
+          "issuerKey": {
+            "$file": "files/d02eca9aebff47aa4190df023b92b6513536db2f2d9bb74c36fef9e3d8be1a24.spki.b64",
+            "type": "spki"
+          }
+        },
+        {
+          "policy": "1.3.6.1.4.1.32473.99.5",
+          "validUntil": 1792727202,
+          "certificate": {
+            "$file": "files/118fa9430a99871fe30b30a9e7a4022c9d0f3ba4aadbf442708887e44c8029c3.bin.b64",
+            "type": "bytes"
+          },
+          "issuerKey": {
+            "$file": "files/d02eca9aebff47aa4190df023b92b6513536db2f2d9bb74c36fef9e3d8be1a24.spki.b64",
+            "type": "spki"
+          }
+        }
+      ]
+    },
+    "protectionTrust": {
+      "keyDeadlines": {
+        "00a490ff8a689876407dacd33cae93eae2b3e4fa2cc967cf2f8b5bda4e65bd1b019e933740e12819c8c7643940110e13a9babd928375e66e3a9a7948f7a30377": 1792727202
+      },
+      "hashDeadlines": {
+        "2.16.840.1.101.3.4.2.1": 1792727202,
+        "2.16.840.1.101.3.4.2.3": 1792727202
+      },
+      "algorithmDeadlines": {
+        "2.16.840.1.101.3.4.3.19": 1792727202
+      }
+    }
+  }
+}
