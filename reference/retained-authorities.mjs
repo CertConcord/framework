@@ -195,6 +195,7 @@ export function createRetainedAuthorityResolver({ trustDomainID, governance, his
           (record.mode === 'RAW_KEY' || equal(record.certificate, query.certificate));
       });
       if (identityKnownAtState && [...incidents].some(([id, status]) =>
+        incidentKeys.get(id).asymmetricKeyType === requestedKey.asymmetricKeyType &&
         incidentKeys.get(id).equals(requestedKey) &&
         Math.min(status.effectiveTime, status.compromiseStart ?? Infinity) <= query.stateTime))
         fail('INVALID', 'AUTHORITY_REVOKED');

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { X509Certificate } from 'node:crypto';
+import { X509Certificate, createPrivateKey } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import * as c from './core.mjs';
 import { createRetainedAuthorityResolver, authenticateRetainedAuthorityEntry } from './retained-authorities.mjs';
@@ -53,8 +53,12 @@ for (const row of vectors.cases) {
   test('retained authority key incident: ' + row.name, () => {
     const fixture = materials.get(row.material), history = fixture.histories[row.history], query = raw(row.query);
     const beforeHistory = c.dcbor(history), beforeQuery = c.dcbor(query), calls = [];
+    const encoded = row.checkPrivateKeyImport
+      ? c.generate('ml-dsa-87').privateKey.export({ type: 'pkcs8', format: 'der' }) : undefined;
     const resolve = createRetainedAuthorityResolver({ ...configuration(fixture, calls), history });
     assert.deepEqual(resolve(query), row.expected);
+    if (encoded)
+      assert.equal(createPrivateKey({ key: encoded, type: 'pkcs8', format: 'der' }).asymmetricKeyType, 'ml-dsa-87');
     const unseen = history.findIndex((entry) => entry.manifest.issuedAt > query.knowledgeTime);
     const traversed = history.slice(0, unseen === -1 ? history.length : unseen + 1);
     assert.deepEqual(calls, traversed.map((entry) => ({ proof: entry.publicationProof,
