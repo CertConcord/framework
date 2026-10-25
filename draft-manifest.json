@@ -106,7 +106,7 @@
     {
       "path": "components.lock.json",
       "bytes": 9359,
-      "sha256": "944c89553850364af55b047dd5212754de3eeeeb103c4ea090596d7b6ec451df"
+      "sha256": "03e0f28ed823c25a4210ce1fce2d28ec8f72bd6713ceae47e940fda41e768b82"
     },
     {
       "path": "docs/adapters.md",
@@ -141,7 +141,7 @@
     {
       "path": "docs/components.md",
       "bytes": 5283,
-      "sha256": "79424e433b09a4d5b5cbb2df78c091a63705771f6efc7cbb96a5bd9b4a92a109"
+      "sha256": "29f27c6936281ece4b6cda1d431d0e1b0dfe9e63d5676adaa7bdc49f19a6e1e3"
     },
     {
       "path": "docs/composition-review.md",
@@ -450,8 +450,8 @@
     },
     {
       "path": "reference/cbor-text-identity.test.mjs",
-      "bytes": 6104,
-      "sha256": "ba2348bfd5078fb8952421af7146a37913e3dc77f133b3ba78d1905c9872c514"
+      "bytes": 6587,
+      "sha256": "7d67c48dea55aeea1b8de6081b4b522027daa0d093d8d5539054faf77b9c5595"
     },
     {
       "path": "reference/certificate-key-usage.test.mjs",
