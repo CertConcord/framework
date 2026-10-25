@@ -6,7 +6,7 @@ Status: independent application draft. Normative keywords describe this proposed
 
 A document may need verifiable signatures after its signing certificate expires or its issuer retires. Certificate issuance, online service availability and document retention have different lifetimes. This draft specifies the retained inputs and validation decisions for that setting. It does not change MTC certificate bytes, introduce an archive-signature object, define a CA governance hierarchy, or replace an AdES container standard.
 
-The published MTC baseline is draft-ietf-plants-merkle-tree-certs-07, an active Internet-Draft dated 7 October 2026. It assigns PKIX identifiers and permits unknown GREASE cosignatures; a deployment MUST select an exact revision and verifier. The retained editor snapshot is a historical comparison. The deployment-use-cases-01 signed-artifact analysis supplies the starting point. This draft adds a document retention horizon, authority/status history, proof closure and explicit renewal deadlines. The published revision has corrected the landmark row bound; that correction is not a new proposal here.
+The published MTC baseline is draft-ietf-plants-merkle-tree-certs-07, an active Internet-Draft dated 7 October 2026. It assigns PKIX identifiers and permits unknown GREASE cosignatures; a deployment MUST select an exact revision and verifier. The retained editor snapshot is a historical comparison. The signed-artifact starting point is [draft-ietf-plants-mtc-deploy-use-cases-00](https://www.ietf.org/archive/id/draft-ietf-plants-mtc-deploy-use-cases-00.txt), an informational WG Internet-Draft published on 23 October 2026. Its body is unchanged from individual draft-gray-plants-mtc-deploy-use-cases-01. This draft adds a document retention horizon, authority/status history, proof closure and explicit renewal deadlines. The published revision has corrected the landmark row bound; that correction is not a new proposal here.
 
 ## 2. Inputs and separate conclusions
 
@@ -51,6 +51,8 @@ The reference lifetime function operates only on already authenticated timestamp
 ## 5. Monitoring, retirement and archive transfer
 
 Issuance monitoring checks issued certificates, log consistency, operator policy and equivocation under the selected MTC composition. It cannot observe arbitrary later signatures produced with an existing private key. Document-operation monitoring requires separately justified application evidence.
+
+The deployment draft already calls for published batch tree heads to remain available for a period at least as long as the maximum certificate validity period in their batch, including after CA retirement. That lower bound need not cover a longer application validation horizon.
 
 An archive policy MUST state the document validation horizon, responsible custodians, retrieval obligations, status/authority-history sources, algorithm review schedule and succession process. Retention cannot end solely because the signing certificate expired.
 

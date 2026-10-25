@@ -4,19 +4,19 @@
     {
       "name": "mtc-document-validation",
       "repository": "https://github.com/CertConcord/mtc-document-validation",
-      "commit": "17f9a5bde8e3bfccb382129b0afed80341b301c6",
+      "commit": "e7569638793e3800d55fa1ef9d5f45e87b546925",
       "edition": "draft-01",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mtc-document-validation/draft.md",
-          "sha256": "dbce7be934de9348ad6aa1b17cd0a39a29aeec665a46424627135b24a270e0f0"
+          "sha256": "fce0b17ebd13845f7ee8efbab7ed29cf33f98b225ee44d728decfbf79e66587f"
         },
         {
           "source": "sources.json",
           "path": "spec/external/mtc-document-validation/sources.json",
-          "sha256": "5f48dbd4ef8732c67c0df6b6505810fd947cfc056a7cba297f4fc50c248ea725"
+          "sha256": "ce8eda15567f7481179a762e0083dae0d82257c1b33bf87b7b5b789fee845ae5"
         },
         {
           "source": "cases.json",
@@ -31,7 +31,7 @@
         {
           "source": "upstream-amendment.md",
           "path": "spec/external/mtc-document-validation/upstream-amendment.md",
-          "sha256": "c8b066d8eb5e4031df53bbf2c52f9935e2ac83fbaa5fd7321b853ea2797e976d"
+          "sha256": "1fa1109943584eba1e5e28966e30ed25d3571ef63921553196dcba3c9123ea79"
         },
         {
           "source": "reference/lifetimes.mjs",

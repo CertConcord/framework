@@ -34,7 +34,7 @@ export const sources = {
   wg10WorkingDraft:
     'https://raw.githubusercontent.com/ISOWG10/ISO-18013/b250e7a64f99e22ceed10d2a5799bed38ee89f85/Working%20Documents/Working%20Draft%20ISO_IEC_18013-5_second-edition_CD_ballot_resolution_v4.pdf',
   mtcDeploymentUseCases:
-    'https://www.ietf.org/archive/id/draft-gray-plants-mtc-deploy-use-cases-01.txt',
+    'https://www.ietf.org/archive/id/draft-ietf-plants-mtc-deploy-use-cases-00.txt',
   cades:
     'https://www.etsi.org/deliver/etsi_EN/319100_319199/31912201/01.03.01_60/en_31912201v010301p.pdf',
   cadesERS:
