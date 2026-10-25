@@ -186,6 +186,8 @@ When sender authenticity is required, the sender signs the defined plaintext doc
 
 For X.509 certificates, complete signed CRLs are mandatory; OCSP is supported as an optional online status adapter. Issuer, serial, time interval, CRL sequence, critical extensions and status signer authority are checked. Delegated responders require their own authorization profile. Complete CRLs, delta CRLs and scoped CRLs must not be confused. UNKNOWN, missing, stale or unsupported status material prevents a GOOD assertion.
 
+The complete-issuer CRL reference profile rejects the presence of `deltaCRLIndicator` or `issuingDistributionPoint`, including encodings without the critical flag. Noncritical occurrences return `UNSUPPORTED` with `DELTA_CRL_UNSUPPORTED` or `SCOPED_CRL_UNSUPPORTED`; critical occurrences retain `STATUS_CRITICAL_EXTENSION`. This classification does not certify the encoding's conformance to the extension's criticality requirements. Unknown noncritical extensions retain their existing handling. [Raw signed scope vectors](../../reference/vectors/crl-scope.json) exercise this boundary independently of issuer certificate-path admission.
+
 ## 29. Range and authority revocation
 
 RRA incident statements can revoke serial/index ranges, an entire issuance log, CAID or governance key. They identify exact scope, authorized publisher, sequence, publication time, effective time and compromiseStart where known. A range statement supplements conventional certificate status; it does not redefine an OCSP GOOD response. Any applicable negative status takes precedence over a narrower positive assertion.

@@ -77,7 +77,11 @@ export function evaluateStatusEvidence(verify, prefix) {
   } catch (error) {
     const reason = error.code ?? prefix + '_MALFORMED';
     return statusResult(
-      ['STATUS_CRITICAL_EXTENSION', 'DELTA_CRL_UNSUPPORTED'].includes(reason)
+      [
+        'STATUS_CRITICAL_EXTENSION',
+        'DELTA_CRL_UNSUPPORTED',
+        'SCOPED_CRL_UNSUPPORTED',
+      ].includes(reason)
         ? 'UNSUPPORTED'
         : 'INVALID',
       reason,
