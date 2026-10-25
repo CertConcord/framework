@@ -163,7 +163,13 @@ export class VerificationEvaluation {
     if (typeof resolver !== 'function') return resolver;
     return (query) => {
       const role = query.role;
-      const input = resolver(query);
+      let input;
+      try {
+        input = resolver(query);
+      } catch (error) {
+        this.failure(error, authorityDimension[role]);
+        throw error;
+      }
       const hasReason = typeof input?.reason === 'string' && input.reason.length > 0;
       const decision =
         !input || !outcomes.includes(input.overall) || (input.overall === 'VALID' && !hasReason)

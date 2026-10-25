@@ -28,6 +28,8 @@ import * as p from './pki.mjs';
 import { readControl, activationContext, issuePermit } from './state.mjs';
 import { createSignaturePackage } from './evidence.mjs';
 import { exampleAuthorityResolver } from './example-authorities.mjs';
+import { AuthorityError } from './authority-history.mjs';
+import { VerificationEvaluation } from './verification-result.mjs';
 
 const fixtures = new Map();
 function fixture(format, trustedTime = false) {
@@ -333,6 +335,36 @@ test('authority dimensions follow the evaluated role rather than shared reason t
   assert.equal(result.dimensions.time.reason, 'AUTHORITY_REVOKED');
   assert.equal(result.dimensions.integrity.overall, 'VALID');
   assert.notEqual(result.dimensions.issuerTrust?.overall, 'VALID');
+});
+
+test('thrown authority decisions retain each evaluated role and the original failure', () => {
+  for (const overall of ['INVALID', 'INDETERMINATE', 'UNSUPPORTED']) {
+    const evaluation = new VerificationEvaluation();
+    const failure = new AuthorityError({ overall, reason: 'TEST_AUTHORITY_DECISION' });
+    const resolver = evaluation.authority(() => {
+      throw failure;
+    });
+    for (const role of ['PERMIT_AUTHORITY', 'STATUS_AUTHORITY'])
+      assert.throws(() => resolver({ role }), (error) => error === failure);
+    evaluation.phase('integrity');
+    evaluation.failure(failure);
+    assert.deepEqual(evaluation.result(), {
+      authorization: { overall, reason: 'TEST_AUTHORITY_DECISION' },
+      status: { overall, reason: 'TEST_AUTHORITY_DECISION' },
+    });
+  }
+});
+
+test('untyped authority exceptions cannot supply an outcome or reason', () => {
+  const evaluation = new VerificationEvaluation();
+  const failure = { overall: 'VALID', reason: 'AUTHORITY_ADMITTED' };
+  const resolver = evaluation.authority(() => {
+    throw failure;
+  });
+  assert.throws(() => resolver({ role: 'STATUS_AUTHORITY' }), (error) => error === failure);
+  assert.deepEqual(evaluation.result(), {
+    status: { overall: 'INVALID', reason: 'MALFORMED_EVIDENCE' },
+  });
 });
 
 test('transparency dimensions reflect the admitted operator quorum rather than every vote', async () => {

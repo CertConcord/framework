@@ -182,8 +182,32 @@ for (const [label, format, type, demo] of variants)
             assert.equal(result.preservation.overall, 'VALID');
             assert.equal(result.historicalAuthorization.overall, 'INVALID');
             assert.equal(result.historicalAuthorization.reason, 'AUTHORITY_REVOKED');
+            assert.deepEqual(result.historicalAuthorization.dimensions.status, {
+              overall: 'INVALID',
+              reason: 'AUTHORITY_REVOKED',
+            });
           },
         );
+        await t.test(label + ' keeps status rejection beside an earlier authority rejection', () => {
+          const result = verifyPreservedDocument({
+            ...options,
+            authorityResolver(query) {
+              if (['PERMIT_AUTHORITY', 'RECEIPT_AUTHORITY', 'STATUS_AUTHORITY'].includes(query.role))
+                return { overall: 'INVALID', reason: 'AUTHORITY_REVOKED' };
+              return r.trust.authorityResolver(query);
+            },
+          });
+          assert.equal(result.preservation.overall, 'VALID');
+          assert.equal(result.historicalAuthorization.overall, 'INVALID');
+          assert.equal(result.historicalAuthorization.reason, 'AUTHORITY_REVOKED');
+          assert.equal(result.currentAdmissibility.overall, 'INVALID');
+          for (const dimension of ['authorization', 'status'])
+            assert.deepEqual(result.historicalAuthorization.dimensions[dimension], {
+              overall: 'INVALID',
+              reason: 'AUTHORITY_REVOKED',
+            });
+          assert.equal(result.historicalAuthorization.dimensions.integrity.overall, 'VALID');
+        });
         for (const overall of ['INVALID', 'INDETERMINATE', 'UNSUPPORTED'])
           await t.test(
             label + ' retains ' + overall + ' TSA knowledge at historical cutoff',
