@@ -191,7 +191,8 @@ export function createRetainedAuthorityResolver({ trustDomainID, governance, his
       const identityKnownAtState = atState.records.some((record) => {
         const publicKey = record.mode === 'CERTIFICATE'
           ? parseCertificate(record.certificate).publicKey : publicFromDER(record.publicKeyDER);
-        return record.knownAt <= query.knowledgeTime && equal(keyID(publicKey), requestedID);
+        return record.knownAt <= query.knowledgeTime && equal(keyID(publicKey), requestedID) &&
+          (record.mode === 'RAW_KEY' || equal(record.certificate, query.certificate));
       });
       if (identityKnownAtState && [...incidents].some(([id, status]) =>
         incidentKeys.get(id).equals(requestedKey) &&

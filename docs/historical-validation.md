@@ -132,8 +132,9 @@ also applies to an equivalent public-key encoding. The earliest applicable
 incident remains effective after the original encoding is withdrawn or a later
 snapshot reports GOOD. Original SPKI-derived KeyIDs, signed status bindings,
 per-encoding rollback/conflict checks and positive appointments stay separate.
-An unselected encoding remains missing, and a later appointment cannot backdate
-admission. The retained resolver reports the same
+An unselected encoding remains missing; a certificate-only appointment requires
+the exact certificate and does not select a bare SPKI query. A later appointment
+cannot backdate admission. The retained resolver reports the same
 `INVALID/AUTHORITY_REVOKED` decision for either selected encoding.
 
 The [fixed retained authority vectors](../reference/vectors/retained-authority-key-incidents.json)

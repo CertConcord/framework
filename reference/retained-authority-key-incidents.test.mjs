@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { X509Certificate } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import * as c from './core.mjs';
 import { createRetainedAuthorityResolver, authenticateRetainedAuthorityEntry } from './retained-authorities.mjs';
@@ -38,6 +39,9 @@ test('retained authority vectors authenticate every frozen publication and hash 
         assert.equal(admitted.serial, serial);
         assert.deepEqual(admitted.hash, c.H('RootTrustManifest', entry.manifest));
         assert.equal(admitted.published, entry.manifest.issuedAt);
+        for (const record of entry.manifest.authorities.filter((record) => record.mode === 'CERTIFICATE'))
+          assert.equal(new X509Certificate(record.certificate).verify(
+            c.publicFromDER(fixture.governance.roots[0].publicKeyDER)), true);
         previous = admitted;
       }
       assert.deepEqual(c.dcbor(history), before);
