@@ -1,5 +1,5 @@
 import { ProtocolError } from './core.mjs';
-import { AuthorityError } from './authority-history.mjs';
+import { AuthorityError, requireAuthority } from './authority-history.mjs';
 import { MdocValidationError } from './vendor/mdoc-signing/errors.mjs';
 
 export const verificationDimensions = Object.freeze([
@@ -170,13 +170,27 @@ export class VerificationEvaluation {
         this.failure(error, authorityDimension[role]);
         throw error;
       }
-      const hasReason = typeof input?.reason === 'string' && input.reason.length > 0;
-      const decision =
-        !input || !outcomes.includes(input.overall) || (input.overall === 'VALID' && !hasReason)
-          ? { overall: 'INDETERMINATE', reason: 'AUTHORITY_DECISION_MISSING' }
-          : hasReason
-            ? input
-            : { ...input, reason: 'AUTHORITY_DECISION_MISSING' };
+      let decision;
+      try {
+        const admitted = requireAuthority(() => input, query);
+        const reason = Object.getOwnPropertyDescriptor(admitted, 'reason');
+        decision =
+          reason &&
+          Object.hasOwn(reason, 'value') &&
+          typeof reason.value === 'string' &&
+          reason.value.length
+            ? admitted
+            : { overall: 'INDETERMINATE', reason: 'AUTHORITY_DECISION_MISSING' };
+      } catch (error) {
+        if (!(error instanceof AuthorityError)) throw error;
+        decision = {
+          overall: error.overall,
+          reason:
+            typeof error.code === 'string' && error.code.length
+              ? error.code
+              : 'AUTHORITY_DECISION_MISSING',
+        };
+      }
       // Quorum members are assessed as a set: an unused rejected vote must not
       // poison a sufficient set of independently admitted operators.
       if (decision && decision.overall !== 'VALID')

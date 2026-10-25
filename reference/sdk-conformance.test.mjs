@@ -28,7 +28,7 @@ import * as p from './pki.mjs';
 import { readControl, activationContext, issuePermit } from './state.mjs';
 import { createSignaturePackage } from './evidence.mjs';
 import { exampleAuthorityResolver } from './example-authorities.mjs';
-import { AuthorityError } from './authority-history.mjs';
+import { AuthorityError, requireAuthority } from './authority-history.mjs';
 import { VerificationEvaluation } from './verification-result.mjs';
 
 const fixtures = new Map();
@@ -345,7 +345,10 @@ test('thrown authority decisions retain each evaluated role and the original fai
       throw failure;
     });
     for (const role of ['PERMIT_AUTHORITY', 'STATUS_AUTHORITY'])
-      assert.throws(() => resolver({ role }), (error) => error === failure);
+      assert.throws(
+        () => resolver({ role }),
+        (error) => error === failure,
+      );
     evaluation.phase('integrity');
     evaluation.failure(failure);
     assert.deepEqual(evaluation.result(), {
@@ -361,10 +364,201 @@ test('untyped authority exceptions cannot supply an outcome or reason', () => {
   const resolver = evaluation.authority(() => {
     throw failure;
   });
-  assert.throws(() => resolver({ role: 'STATUS_AUTHORITY' }), (error) => error === failure);
+  assert.throws(
+    () => resolver({ role: 'STATUS_AUTHORITY' }),
+    (error) => error === failure,
+  );
   assert.deepEqual(evaluation.result(), {
     status: { overall: 'INVALID', reason: 'MALFORMED_EVIDENCE' },
   });
+});
+
+test('authority evaluation rejects malformed decisions before reading result properties', () => {
+  let hooks = 0;
+  const changing = {
+    get overall() {
+      hooks++;
+      return hooks < 3 ? 'INVALID' : 'VALID';
+    },
+  };
+  const proxy = new Proxy(
+    {},
+    {
+      get() {
+        hooks++;
+        return 'VALID';
+      },
+      getPrototypeOf() {
+        hooks++;
+        return Object.prototype;
+      },
+      getOwnPropertyDescriptor() {
+        hooks++;
+        return { value: 'VALID', configurable: true };
+      },
+      has() {
+        hooks++;
+        return false;
+      },
+    },
+  );
+  const revoked = Proxy.revocable({}, {});
+  revoked.revoke();
+  const hiddenThen = Object.defineProperty({ overall: 'VALID' }, 'then', {
+    get() {
+      hooks++;
+      throw Error('must not read then');
+    },
+  });
+  const cases = [
+    changing,
+    proxy,
+    revoked.proxy,
+    hiddenThen,
+    undefined,
+    null,
+    true,
+    'VALID',
+    1,
+    {},
+    { overall: 'UNKNOWN' },
+    Object.create({ overall: 'VALID' }),
+    Object.assign([], { overall: 'VALID' }),
+    Object.assign(new Date(), { overall: 'VALID' }),
+    {
+      overall: 'VALID',
+      reason: 'AUTHORITY_ADMITTED',
+      then() {
+        hooks++;
+      },
+    },
+  ];
+  for (const [index, decision] of cases.entries()) {
+    const evaluation = new VerificationEvaluation();
+    const query = { role: 'STATUS_AUTHORITY' };
+    let calls = 0;
+    const resolver = evaluation.authority((received) => {
+      calls++;
+      assert.equal(received, query);
+      return decision;
+    });
+    assert.throws(
+      () => requireAuthority(resolver, query),
+      {
+        overall: 'INDETERMINATE',
+        code: 'AUTHORITY_DECISION_MISSING',
+      },
+      `case ${index}`,
+    );
+    assert.equal(calls, 1);
+    assert.equal(hooks, 0, `case ${index}`);
+    assert.deepEqual(evaluation.result(), {
+      status: { overall: 'INDETERMINATE', reason: 'AUTHORITY_DECISION_MISSING' },
+    });
+  }
+});
+
+test('authority evaluation preserves safe decision metadata without invoking accessors', () => {
+  let hooks = 0;
+  const unused = {
+    get() {
+      hooks++;
+      throw Error('must not copy metadata');
+    },
+    enumerable: true,
+  };
+  for (const prototype of [Object.prototype, null]) {
+    const decision = Object.assign(Object.create(prototype), {
+      overall: 'VALID',
+      reason: 'AUTHORITY_ADMITTED',
+      coverageUntil: 1800000300,
+    });
+    Object.defineProperty(decision, 'unused', unused);
+    const evaluation = new VerificationEvaluation();
+    assert.equal(
+      requireAuthority(
+        evaluation.authority(() => decision),
+        { role: 'STATUS_AUTHORITY' },
+      ),
+      decision,
+    );
+    assert.equal(decision.coverageUntil, 1800000300);
+    assert.deepEqual(evaluation.result(), {});
+  }
+  for (const overall of ['VALID', 'INVALID', 'INDETERMINATE', 'UNSUPPORTED']) {
+    for (const reason of [undefined, '', 7, Symbol('reason'), 'SELECTED_POLICY_FAILURE']) {
+      const decision = Object.defineProperty({ overall }, 'unused', unused);
+      if (reason !== undefined) decision.reason = reason;
+      const evaluation = new VerificationEvaluation();
+      const resolver = evaluation.authority(() => decision);
+      if (overall === 'VALID' && reason === 'SELECTED_POLICY_FAILURE') {
+        assert.equal(requireAuthority(resolver, { role: 'STATUS_AUTHORITY' }), decision);
+      } else {
+        const expected = {
+          overall: overall === 'VALID' ? 'INDETERMINATE' : overall,
+          reason: reason === 'SELECTED_POLICY_FAILURE' ? reason : 'AUTHORITY_DECISION_MISSING',
+        };
+        assert.throws(() => requireAuthority(resolver, { role: 'STATUS_AUTHORITY' }), {
+          overall: expected.overall,
+          code: expected.reason,
+        });
+        assert.deepEqual(evaluation.result(), { status: expected });
+      }
+      assert.equal(hooks, 0);
+    }
+    const decision = {
+      overall,
+      get reason() {
+        hooks++;
+        throw Error('must not read reason');
+      },
+    };
+    const evaluation = new VerificationEvaluation();
+    const expected = {
+      overall: overall === 'VALID' ? 'INDETERMINATE' : overall,
+      reason: 'AUTHORITY_DECISION_MISSING',
+    };
+    assert.throws(
+      () =>
+        requireAuthority(
+          evaluation.authority(() => decision),
+          { role: 'STATUS_AUTHORITY' },
+        ),
+      {
+        overall: expected.overall,
+        code: expected.reason,
+      },
+    );
+    assert.deepEqual(evaluation.result(), { status: expected });
+    assert.equal(hooks, 0);
+  }
+});
+
+test('authority evaluation observes rejected native promise results', async () => {
+  const decisions = [
+    Promise.resolve({ overall: 'VALID' }),
+    Object.assign(Promise.resolve({ overall: 'INVALID' }), { overall: 'VALID' }),
+    Promise.reject(Error('unavailable asynchronous authority')),
+    Object.assign(Promise.reject(Error('decorated asynchronous authority')), { overall: 'VALID' }),
+  ];
+  for (const decision of decisions) {
+    const evaluation = new VerificationEvaluation();
+    assert.throws(
+      () =>
+        requireAuthority(
+          evaluation.authority(() => decision),
+          { role: 'STATUS_AUTHORITY' },
+        ),
+      {
+        overall: 'INDETERMINATE',
+        code: 'AUTHORITY_DECISION_MISSING',
+      },
+    );
+    assert.deepEqual(evaluation.result(), {
+      status: { overall: 'INDETERMINATE', reason: 'AUTHORITY_DECISION_MISSING' },
+    });
+  }
+  await new Promise((resolve) => setImmediate(resolve));
 });
 
 test('transparency dimensions reflect the admitted operator quorum rather than every vote', async () => {
