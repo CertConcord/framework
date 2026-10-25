@@ -228,6 +228,8 @@
   "reference/organization-history.mjs",
   "reference/organization-vector-corpus.mjs",
   "reference/organization-vector-loader.test.mjs",
+  "reference/original-status-proof.mjs",
+  "reference/original-status-proof.test.mjs",
   "reference/package.json",
   "reference/pades-capabilities.test.mjs",
   "reference/pades-dates.test.mjs",

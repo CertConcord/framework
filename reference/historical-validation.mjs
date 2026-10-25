@@ -1,3 +1,4 @@
+import { originalStatusContext, verifyOriginalStatusProof } from './original-status-proof.mjs';
 import { decodeCBOR, equal, requireThat } from './core.mjs';
 import { verifyERSOriginalProof, verifyERSPreservation } from './archive.mjs';
 import { createVerifier } from './sdk/index.mjs';
@@ -6,6 +7,7 @@ import { requireAuthorities } from './control-authority.mjs';
 import { requireStatusDecision } from './status-result.mjs';
 import {
   VerificationError,
+  VerificationEvaluation,
   verificationOutcome,
   verificationResult,
 } from './verification-result.mjs';
@@ -23,6 +25,7 @@ function evaluate(action) {
 
 /** Preserve original bytes; evaluate refreshed retained evidence without changing the operation. */
 export function verifyPreservedDocument({
+  originalStatusProof,
   format,
   originalBytes,
   currentBytes = originalBytes,
@@ -77,6 +80,24 @@ export function verifyPreservedDocument({
     };
   });
   const P = originalProof.proofOfExistenceUpperBound;
+  const selectedStatusProof = originalStatusProof !== undefined;
+  const statusContext = selectedStatusProof
+    ? evaluate(() => originalStatusContext(format, originalBytes, historicalTrust))
+    : undefined;
+  const statusProof = selectedStatusProof
+    ? evaluate(() =>
+        verifyOriginalStatusProof(
+          statusContext,
+          originalStatusProof,
+          historicalKnowledgeTime,
+          currentKnowledgeTime,
+        ),
+      )
+    : undefined;
+  const statusAdmission = [];
+  const selectedResolver = selectedStatusProof
+    ? new VerificationEvaluation().authority(authorityResolver)
+    : undefined;
   const historicalBytesVisibility = evaluate(() => {
     if (originalProof.overall !== 'VALID') return originalProof;
     if (P > historicalKnowledgeTime)
@@ -114,6 +135,58 @@ export function verifyPreservedDocument({
         ...historicalTrust,
         knowledgeTime: historicalKnowledgeTime,
         authorityResolver(query) {
+          if (
+            statusContext?.overall === 'VALID' &&
+            statusContext.matches(query, historicalKnowledgeTime)
+          ) {
+            const queries = [query],
+              proofFailures = [];
+            if (statusProof.overall !== 'VALID')
+              proofFailures.push(
+                new VerificationError(statusProof.reason, statusProof.overall, 'status'),
+              );
+            if (originalProof.overall === 'VALID' && P <= historicalKnowledgeTime) {
+              if (query.stateTime > P)
+                proofFailures.push(
+                  new VerificationError('HISTORICAL_STATUS_PROOF_TIME', 'INVALID', 'status'),
+                );
+              else if (
+                historicalBytesVisibility.overall === 'VALID' &&
+                statusProof.overall === 'VALID'
+              )
+                queries.push({
+                  ...query,
+                  stateTime: Math.min(P, statusProof.proofOfExistenceUpperBound),
+                });
+            }
+            let claimed, authorityFailure;
+            try {
+              requireAuthorities((selected) => {
+                const result = selectedResolver(selected);
+                if (selected === query) claimed = result;
+                return result;
+              }, queries);
+            } catch (error) {
+              authorityFailure = error;
+            }
+            statusAdmission.push({
+              S: query.stateTime,
+              H: query.knowledgeTime,
+              B: queries[1]?.stateTime ?? null,
+              proof: statusProof,
+              authority: authorityFailure
+                ? verificationOutcome(authorityFailure)
+                : { overall: 'VALID', reason: 'ORIGINAL_STATUS_AUTHORITY_ADMITTED' },
+            });
+            const failures = [...(authorityFailure ? [authorityFailure] : []), ...proofFailures];
+            for (const overall of ['INVALID', 'UNSUPPORTED', 'INDETERMINATE']) {
+              const failure = failures.find(
+                (error) => verificationOutcome(error).overall === overall,
+              );
+              if (failure) throw failure;
+            }
+            return claimed;
+          }
           if (
             query.role !== 'STATUS_AUTHORITY' ||
             originalProof.overall !== 'VALID' ||
@@ -162,12 +235,20 @@ export function verifyPreservedDocument({
           }).verify(currentBytes),
         )
       : binding;
-  const decisions = [preservation, historicalAuthorization, currentAdmissibility];
+  const decisions = [
+    preservation,
+    historicalAuthorization,
+    currentAdmissibility,
+    ...(selectedStatusProof ? [statusProof] : []),
+  ];
   const overall =
     ['INVALID', 'UNSUPPORTED', 'INDETERMINATE'].find((value) =>
       decisions.some((decision) => decision.overall === value),
     ) ?? 'VALID';
   return Object.freeze({
+    ...(selectedStatusProof
+      ? { originalStatusProof: statusProof, originalStatusAdmission: statusAdmission }
+      : {}),
     overall,
     preservation,
     originalProof,

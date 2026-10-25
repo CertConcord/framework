@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 18302,
-      "sha256": "f996367f9cdc2d1f338ef7a972c03975e98a71d265805666f1d41f999cffae5b"
+      "bytes": 18590,
+      "sha256": "588e23b7e68437f3f4f583d8be479d689525c677945f0f8b231057819281d1b0"
     },
     {
       "path": "docs/draft-acceptance.md",
@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 11622,
-      "sha256": "9c0567581c35c4d970151312917d1d8adfb5301c081f5c4c7ebe2d8abfe59371"
+      "bytes": 16036,
+      "sha256": "352dc250a4d5f0e7066b7163d1e2527a4b982289d55a098fb9389df8bd3804db"
     },
     {
       "path": "docs/implementation.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 282290,
-      "sha256": "db249286974d331e93400eebf3c4be8ccebe3ca915e32b67a482e401a61077d4"
+      "bytes": 282377,
+      "sha256": "5020a100c9e8e1edef0838804389b85c4173465c20f3f4cef3b878aec07c6a0d"
     },
     {
       "path": "reference/README.md",
@@ -795,8 +795,8 @@
     },
     {
       "path": "reference/historical-validation.mjs",
-      "bytes": 6165,
-      "sha256": "64424a98fcaa9e9a3f8b90ca30f4f2475711c0bdb2e0ec9eab89facfab7d3d06"
+      "bytes": 9308,
+      "sha256": "1e5d7c402fd1d60eefa95508baebbdeadc423d304fa447f2925848e2eab48efd"
     },
     {
       "path": "reference/http.mjs",
@@ -1147,6 +1147,16 @@
       "path": "reference/organization-vector-loader.test.mjs",
       "bytes": 16533,
       "sha256": "284a252fa83523dbe54f99f5b3161419937682ad28c1071cce6f79b354a73214"
+    },
+    {
+      "path": "reference/original-status-proof.mjs",
+      "bytes": 4582,
+      "sha256": "b61c2069671c85f1816bf837b7953af7e0149cadd74fd91e0d913b09479e0263"
+    },
+    {
+      "path": "reference/original-status-proof.test.mjs",
+      "bytes": 27097,
+      "sha256": "2a19d32a0458b4b67ebebb5d3cce6f61673d12fe384e6cfbaff97b4eea4cb148"
     },
     {
       "path": "reference/package.json",
@@ -12180,8 +12190,8 @@
     },
     {
       "path": "spec/conformance.md",
-      "bytes": 11052,
-      "sha256": "4a83a09c9ecde691e5896f0d68b83ec8b1825ed433b62a58160d7feff3f3c9a7"
+      "bytes": 11683,
+      "sha256": "cde65579feed002f21c7b81388955d2c77e561c44ea81a9238912f485496e4ce"
     },
     {
       "path": "spec/document-baseline.md",
