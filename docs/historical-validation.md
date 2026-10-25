@@ -1,6 +1,6 @@
 # Retained authority history and document preservation
 
-`verifyPreservedDocument` reports three decisions: preservation integrity,
+`verifyPreservedDocument` reports preservation integrity,
 historical authorization under a selected earlier knowledge time, and current
 admissibility under later retained knowledge. Every non-VALID decision prevents
 overall acceptance. A later discovered compromise can invalidate current
@@ -16,11 +16,12 @@ their outcome and reason, even when a later TSA status callback returns GOOD.
 Absent proof and unavailable trust remain distinct INDETERMINATE outcomes.
 Signed `publishedAt` and `iat` fields alone cannot establish that the
 status bytes were available by H. The earlier document timestamp excludes those
-refreshable leaves. This selected interface has no separate per-status publication
-proof input; a later full-package archive cannot backfill an earlier history view,
-even when an application holds additional evidence outside this interface.
+refreshable leaves. A later full-package archive cannot backfill an earlier history
+view. The optional original-status proof below supplies a narrower status-byte
+bound while retaining the complete-original requirement.
 
-Original status authority is checked at its claimed publication time and at P,
+Without an original-status proof selection, original status authority is checked
+at its claimed publication time and at P,
 with H knowledge in both queries. P is an existence upper bound, not an exact
 signing time. A claimed publication after P is rejected, and a known key incident
 or authority retirement by P cannot be bypassed with an earlier claimed time.
@@ -37,6 +38,69 @@ Hash and authority protection intervals must remain continuous; a late timestamp
 cannot repair a lost interval. An issuer outage does not prevent offline
 verification when the retained evidence and selected knowledge coverage suffice.
 It cannot be treated as evidence that an authority or credential is still good.
+
+## Optional original CertificateStatus proof
+
+The selected CMS reference path accepts an optional `originalStatusProof` record
+with three fields:
+
+| Field                | Meaning                                                                                                                                  |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `evidenceRecord`     | RFC 4998 DER ERS over the exact complete original CertificateStatus CMS                                                                  |
+| `preservationPolicy` | Hash deadlines and the existing per-token `resolveTimestamp` callback                                                                    |
+| `protectionTrust`    | External `keyDeadlines`, `algorithmDeadlines` and `hashDeadlines` for the status CMS, as used by the shared status-preservation verifier |
+
+The verifier authenticates the typed original CMS under the exact status signer
+from `historicalTrust`. It derives the target certificate, trust domain, issuer,
+representation, profile and publication time S from the original and its selected
+trust. These identities cannot be overridden by option fields; unknown fields
+are rejected. No new signed object or archive format is introduced.
+
+Let Ps be the first authenticated bound for those exact status bytes, P the
+complete-original bound, H the historical knowledge time and K the current
+knowledge time. The supplemental proof requires S <= Ps <= H, initial TSA
+admission at Ps under both Ps and H knowledge, and continuous preservation through
+K. Later renewal timestamps are evaluated with K knowledge. A GOOD status learned
+at K does not fill a missing initial-TSA status interval at H.
+
+The status authority is checked independently at S using H knowledge. Only after
+the complete original is admitted under H and the supplemental proof passes is
+the additional B = min(P, Ps) query admitted, also with H knowledge. This permits ordinary status-role retirement after Ps but no
+later than P when the earlier proof and all other requirements pass. A later
+supplemental proof cannot move the bound past P. Neither endpoint establishes an
+exact signing instant or continuous role authorization between the endpoints.
+The complete original still requires P <= H and its own TSA admission under H;
+a supplemental status proof cannot make an unproven original historically visible.
+
+The option is limited to a single original CMS CertificateStatus. Native mdoc
+status lists and organization multi-status contexts produce an explicit
+UNSUPPORTED capability result. Missing required original context is
+INDETERMINATE; duplicate context objects are INVALID. An omitted or undefined
+option retains the existing result shape and authority queries. Explicit null,
+an array or unknown option fields are INVALID. Missing proof bytes are
+INDETERMINATE, whereas empty or malformed supplied proof bytes are INVALID.
+Missing preservation policy or protection deadline assessments are INDETERMINATE;
+the latter retains the shared `ORG_PROTECTION_DEADLINE_MISSING` reason.
+
+When selected, `originalStatusProof` reports the proof outcome and, on success,
+`proofOfExistenceUpperBound` Ps. `originalStatusAdmission` records each matching
+status-authority evaluation with S, H, B (null if no bound was admitted), and
+separate `proof` and `authority` outcomes. The SDK may request the same status
+authority more than once. The proof outcome participates in overall acceptance
+even when an unsupported context produces no matching authority query. The
+existing preservation, historical-authorization and current-admissibility results
+remain separate.
+
+For an authenticated original status, S is checked independently even when the
+selected proof is unavailable or invalid. A rejected proof does not invent B or
+silently select another proof. Established INVALID authority takes precedence
+over unavailable evidence; UNSUPPORTED precedes INDETERMINATE, and both diagnoses
+remain available. S/B resolver results use the existing SDK decision guard.
+Current status and non-selected roles retain their own validation requirements.
+
+The generated `original-status-proof.test.mjs` cases exercise these boundaries
+with synthetic clocks, authorities and real signed CMS/ERS bytes. They do not
+establish operational TSA assurance, a stable interface or an AdES level.
 
 The retained resolver reuses the signed RootTrustManifest domain. Its version-2
 snapshot includes domain, contiguous serial and predecessor commitment, issue and
