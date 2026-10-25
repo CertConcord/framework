@@ -1155,8 +1155,8 @@
     },
     {
       "path": "reference/original-status-proof.test.mjs",
-      "bytes": 28751,
-      "sha256": "a58648df80f3b2777857ac206957dc15da4f6f52788408002204509dd372a224"
+      "bytes": 30869,
+      "sha256": "3d44b21d50aa5f1e3ccc6b62ca6c1efa1ba438cdd127259e10bbd96c0f3104d6"
     },
     {
       "path": "reference/package.json",

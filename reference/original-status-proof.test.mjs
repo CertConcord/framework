@@ -475,6 +475,48 @@ test('original CMS status proof derives its identity and preserves historical bo
           assert.ok(admissions(result).every((a) => a.B === null));
         });
         await t.test(
+          'selected status publication cannot follow the complete-original proof',
+          async () => {
+            const claimed = P + 1,
+              selectedH = P + 2;
+            const cms = r.signStatus({ ...context.body, publishedAt: claimed });
+            const changed = replaceStatus(r.bundle, cms);
+            clock = P;
+            const packageProof = await createERS(changed, { tsa: r.timestamp.issue });
+            clock = claimed;
+            const initialProof = await createERS(cms, { tsa: oldTSA.issue });
+            clock = D - 1;
+            const proof = await renewERS(initialProof, cms, { tsa: newTSA.issue });
+            clock = K;
+            const { result, queries } = run({
+              selected: { ...selection, evidenceRecord: proof },
+              options: {
+                originalBytes: changed,
+                evidenceRecord: packageProof,
+                historicalKnowledgeTime: selectedH,
+              },
+              authority: (query) => r.trust.authorityResolver(query),
+            });
+            assert.equal(result.originalStatusProof.overall, 'VALID');
+            assert.equal(result.originalStatusProof.proofOfExistenceUpperBound, claimed);
+            assert.equal(result.originalProof.overall, 'VALID');
+            assert.equal(result.originalProof.proofOfExistenceUpperBound, P);
+            assert.equal(result.historicalBytesVisibility.overall, 'VALID');
+            assert.equal(result.historicalAuthorization.overall, 'INVALID');
+            assert.equal(result.historicalAuthorization.reason, 'HISTORICAL_STATUS_PROOF_TIME');
+            assert.ok(
+              admissions(result).every((a) => a.S === claimed && a.H === selectedH && a.B === null),
+            );
+            const statusQueries = queries.filter(
+              (q) => q.role === 'STATUS_AUTHORITY' && q.knowledgeTime === selectedH,
+            );
+            assert.ok(statusQueries.length > 0);
+            assert.ok(
+              statusQueries.every((q) => q.stateTime === claimed && q.result.overall === 'VALID'),
+            );
+          },
+        );
+        await t.test(
           'direct proof check rejects publication after the authenticated CMS bound',
           () => {
             const changed = originalStatusContext(
