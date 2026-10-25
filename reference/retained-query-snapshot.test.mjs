@@ -227,6 +227,28 @@ test('retained query preserves consumed nonenumerable scope data and ignores unu
   assert.equal(Object.getOwnPropertyDescriptor(f.query.scope, 'purpose').enumerable, false);
 });
 
+test('retained query keeps nonenumerable scope semantics before missing identity decisions', () => {
+  const f = fixture('unselected-raw-key-under-certificate-policy');
+  Object.defineProperty(f.query.scope, 'profileID', { value: null, enumerable: false });
+  assert.deepEqual(f.resolve()(f.query), { overall: 'INDETERMINATE', reason: 'AUTHORITY_MISSING' });
+  assert.equal(f.calls.length, 1);
+  assert.equal(Object.getOwnPropertyDescriptor(f.query.scope, 'profileID').enumerable, false);
+});
+
+test('retained query rejects nonprimitive roles before history and incident decisions', () => {
+  for (const knowledgeTime of [T + 80, T + 110]) {
+    const f = fixture(); let hooks = 0;
+    f.query.knowledgeTime = knowledgeTime;
+    f.query.role = { [Symbol.toPrimitive]() { hooks++; return 'STATUS_AUTHORITY'; } };
+    assert.deepEqual(f.resolve()(f.query), shape);
+    assert.equal(hooks, 0); assert.deepEqual(f.calls, []);
+    f.query.role = 'UNSELECTED_ROLE';
+    assert.deepEqual(f.resolve()(f.query), knowledgeTime === T + 110 ? revoked :
+      { overall: 'UNSUPPORTED', reason: 'AUTHORITY_ROLE_UNSUPPORTED' });
+    assert.equal(f.calls.length, knowledgeTime === T + 110 ? 3 : 2);
+  }
+});
+
 test('retained query ignores unrelated top-level fields without reading them', () => {
   const f = fixture(); let hooks = 0;
   Object.defineProperty(f.query, 'extension', { get() { hooks++; throw Error('unused'); } });
