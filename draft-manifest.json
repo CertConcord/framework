@@ -2070,8 +2070,8 @@
     },
     {
       "path": "reference/vectors/direct-authority-key-incidents.json",
-      "bytes": 604621,
-      "sha256": "ad3c5b88e6a3b0112eedd034e9fb7b81b9b01437b6ac8e1c084386c95c2d6c97"
+      "bytes": 609850,
+      "sha256": "17f64754023838a627fa1c7688151ef0873ad30e00ae28831ef3a98897f147e0"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/README.md",
