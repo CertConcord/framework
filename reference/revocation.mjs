@@ -32,6 +32,8 @@ function parseTime(n) {
       `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}T${s.slice(8, 10)}:${s.slice(10, 12)}:${s.slice(12, 14)}Z`,
     ) / 1000;
   requireThat(Number.isSafeInteger(t), 'STATUS_TIME');
+  const normalized = new Date(t * 1000).toISOString();
+  requireThat(normalized.slice(0, 19).replace(/[-:T]/g, '') + 'Z' === s, 'STATUS_TIME');
   return t;
 }
 function extMap(node) {
