@@ -2117,6 +2117,24 @@
       "decodedBytes": 3229,
       "decodedSHA256": "422bc731e3d470942215425b4aadc417ff2e42490a50edd5a3dc3b18dc1b758e",
       "mediaType": "application/json"
+    },
+    {
+      "path": "files/8384803e227fc868ecef15caad66ffef6b6a0dd515ac6c04d1462143b4b5e65d.json",
+      "bytes": 3228,
+      "sha256": "8384803e227fc868ecef15caad66ffef6b6a0dd515ac6c04d1462143b4b5e65d",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "8384803e227fc868ecef15caad66ffef6b6a0dd515ac6c04d1462143b4b5e65d",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/946a58a67f7dd2f98a263c89d8b59870857a06ef9b612d24093753142704a69e.json",
+      "bytes": 3229,
+      "sha256": "946a58a67f7dd2f98a263c89d8b59870857a06ef9b612d24093753142704a69e",
+      "encoding": "utf8",
+      "decodedBytes": 3229,
+      "decodedSHA256": "946a58a67f7dd2f98a263c89d8b59870857a06ef9b612d24093753142704a69e",
+      "mediaType": "application/json"
     }
   ],
   "documents": [
@@ -2991,6 +3009,48 @@
           "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
         },
         "historicalKnowledgeTime": 1792454401,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "cms-retained-historical-compromise",
+      "description": "Later authenticated compromise knowledge invalidates the preserved original operation without changing its signed bytes.",
+      "options": "files/8384803e227fc868ecef15caad66ffef6b6a0dd515ac6c04d1462143b4b5e65d.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "historicalKnowledgeTime": 1792627202,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "mdoc-retained-historical-compromise",
+      "description": "Later authenticated compromise knowledge invalidates the preserved original operation without changing its signed bytes.",
+      "options": "files/946a58a67f7dd2f98a263c89d8b59870857a06ef9b612d24093753142704a69e.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "currentAdmissibility": {
+          "overall": "INVALID",
+          "reason": "AUTHORITY_REVOKED"
+        },
+        "historicalKnowledgeTime": 1792627202,
         "currentKnowledgeTime": 1792627202
       }
     }

@@ -327,6 +327,97 @@ test('published retained proof vectors preserve exact inputs and component outco
   }
 });
 
+test('published historical knowledge vectors retain separate authority and status outcomes', async (t) => {
+  const corpus = loadVectorCorpus();
+  const results = new Map(runRetainedVectors().map((row) => [row.id, row]));
+  const D = 1792454400,
+    P = 1792454402,
+    K = 1792627202;
+  for (const format of ['cms', 'mdoc'])
+    await t.test(format, () => {
+      const baseline = corpus.manifest.retained.find(
+        (row) => row.id === format + '-retained-known-compromise',
+      );
+      const id = format + '-retained-historical-compromise';
+      const entry = corpus.manifest.retained.find((row) => row.id === id);
+      assert(entry, `Missing published vector: ${id}`);
+      assert.deepEqual(JSON.parse(corpus.read(entry.options)), {
+        ...JSON.parse(corpus.read(baseline.options)),
+        historicalKnowledgeTime: K,
+      });
+      const input = corpus.config(entry.options);
+      const original = corpus.config(baseline.options);
+      for (const name of ['originalBytes', 'currentBytes', 'evidenceRecord', 'history'])
+        assert.deepEqual(input[name], original[name], name);
+      assert.equal(original.historicalKnowledgeTime, P);
+      const previous = results.get(baseline.id).details;
+      const { actual, details } = results.get(id);
+      assert.deepEqual(actual, {
+        overall: 'INVALID',
+        preservation: { overall: 'VALID' },
+        historicalAuthorization: { overall: 'INVALID', reason: 'AUTHORITY_REVOKED' },
+        currentAdmissibility: { overall: 'INVALID', reason: 'AUTHORITY_REVOKED' },
+        historicalKnowledgeTime: K,
+        currentKnowledgeTime: K,
+      });
+      assert.equal(previous.historicalAuthorization.overall, 'VALID');
+      for (const name of [
+        'preservation',
+        'originalProof',
+        'historicalBytesVisibility',
+        'currentAdmissibility',
+      ])
+        assert.deepEqual(details[name], previous[name], name);
+      assert.equal(details.originalProof.proofOfExistenceUpperBound, P);
+      assert.deepEqual(details.historicalAuthorization.dimensions.authorization, {
+        overall: 'INVALID',
+        reason: 'AUTHORITY_REVOKED',
+      });
+      assert.deepEqual(
+        details.historicalAuthorization.dimensions.status,
+        format === 'cms'
+          ? { overall: 'INVALID', reason: 'AUTHORITY_REVOKED' }
+          : { overall: 'INDETERMINATE', reason: 'STATUS_LIST_STALE' },
+      );
+      assert.equal(details.historicalAuthorization.dimensions.integrity.overall, 'VALID');
+
+      const trust = corpus.config(input.historicalTrust).trust;
+      const statusCertificate =
+        format === 'cms' ? trust.statusCertificate : trust.issuerCertificate;
+      assert.equal(statusCertificate.equals(trust.permitCertificate), format === 'cms');
+      const publication = input.publicationTSA;
+      const resolver = createRetainedAuthorityResolver({
+        ...input.historyTrust,
+        history: decodeCBOR(input.history),
+        verifyPublication: ({ imprint, proof, at }) => ({
+          overall: 'VALID',
+          ...verifyTimestampToken(proof, { ...publication, imprint, at, maxFutureSkew: 0 }),
+        }),
+      });
+      const scope = {
+        trustDomainID: trust.trustDomainID,
+        issuerID: trust.issuanceScope.issuerID,
+        representation: trust.issuanceScope.representation,
+        profileID: 'CERTCONCORD-PERSON-SIGN-v1',
+      };
+      let queries = 0;
+      for (const [role, certificate, stateTimes, compromised] of [
+        ['PERMIT_AUTHORITY', trust.permitCertificate, [D], true],
+        ['RECEIPT_AUTHORITY', trust.receiptCertificate, [D], true],
+        ['STATUS_AUTHORITY', statusCertificate, [D, P], format === 'cms'],
+      ])
+        for (const stateTime of stateTimes)
+          for (const knowledgeTime of [K - 1, K]) {
+            const decision = resolver({ certificate, role, scope, stateTime, knowledgeTime });
+            queries++;
+            if (compromised && knowledgeTime === K)
+              assert.deepEqual(decision, { overall: 'INVALID', reason: 'AUTHORITY_REVOKED' });
+            else assert.equal(decision.overall, 'VALID', decision.reason);
+          }
+      assert.equal(queries, 8);
+    });
+});
+
 test('public timestamp status bridge preserves staleness and known revocation for CMS and mdoc', async (t) => {
   for (const format of ['cms', 'mdoc']) {
     for (const revoked of [false, true])
