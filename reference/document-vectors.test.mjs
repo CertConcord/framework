@@ -71,13 +71,156 @@ test('schema1 document corpus requires its original verifier', () => {
 });
 
 test('pre-contract RAR2 corpus keeps its original profile and bytes', () => {
-  assert.throws(() => loadVectorCorpus(resolve(defaultVectorDirectory, '..', 'document-acceptance-mtc07-rar2')), { code: 'VECTOR_VERSION' });
+  assert.throws(
+    () => loadVectorCorpus(resolve(defaultVectorDirectory, '..', 'document-acceptance-mtc07-rar2')),
+    { code: 'VECTOR_VERSION' },
+  );
   const corpus = loadVectorCorpus();
-  const legacy = corpus.manifest.documents.find(row => row.id === 'mdoc-original-rar2-http-status');
-  assert.equal(hash(corpus.read(legacy.bytes)), '57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661');
-  const result = runDocumentVectors().find(row => row.id === legacy.id).actual;
+  const legacy = corpus.manifest.documents.find(
+    (row) => row.id === 'mdoc-original-rar2-http-status',
+  );
+  assert.equal(
+    hash(corpus.read(legacy.bytes)),
+    '57bf0e9588956107dd5f876e4f8b9a78b0faaee0400cdaca1b79170986973661',
+  );
+  const result = runDocumentVectors().find((row) => row.id === legacy.id).actual;
   assert.equal(result.overall, 'INVALID');
   assert.equal(result.reason, 'MDOC_STATUS_REFERENCE');
+});
+
+test('public SDK rejects malformed authority results for fixed CMS and mdoc documents', async (t) => {
+  const corpus = loadVectorCorpus();
+  const originals = corpus.manifest.documents.filter(({ id }) =>
+    ['cms-valid', 'mdoc-valid'].includes(id),
+  );
+  assert.equal(originals.length, 2);
+  const directory = copyCorpus(t);
+  changeManifest(directory, (manifest) => {
+    manifest.documents = originals;
+  });
+  const optionsByID = new Map();
+  let index = 0;
+  const controls = runDocumentVectors({
+    directory,
+    createVerifier(options) {
+      optionsByID.set(originals[index++].id, options);
+      return createVerifier(options);
+    },
+  });
+  assert.equal(index, 2);
+  for (const entry of originals)
+    await t.test(entry.id, () => {
+      const options = optionsByID.get(entry.id);
+      const baseline = controls.find(({ id }) => id === entry.id).actual;
+      assert.equal(baseline.overall, 'VALID');
+      const bytes = corpus.read(entry.bytes),
+        original = Buffer.from(bytes);
+      // Only the locally configured resolver changes. The signed corpus inputs
+      // and the selected authority's positive control remain the same.
+      const cases = [
+        [
+          'changing verdict',
+          (touch) => {
+            let reads = 0;
+            return {
+              get overall() {
+                touch();
+                return ++reads < 3 ? 'INVALID' : 'VALID';
+              },
+            };
+          },
+          'INDETERMINATE',
+          'AUTHORITY_DECISION_MISSING',
+        ],
+        [
+          'proxy result',
+          (touch) =>
+            new Proxy(
+              { overall: 'VALID', reason: 'AUTHORITY_ADMITTED' },
+              {
+                get(target, key) {
+                  touch();
+                  return Reflect.get(target, key);
+                },
+                getPrototypeOf(target) {
+                  touch();
+                  return Reflect.getPrototypeOf(target);
+                },
+                getOwnPropertyDescriptor(target, key) {
+                  touch();
+                  return Reflect.getOwnPropertyDescriptor(target, key);
+                },
+                has(target, key) {
+                  touch();
+                  return Reflect.has(target, key);
+                },
+              },
+            ),
+          'INDETERMINATE',
+          'AUTHORITY_DECISION_MISSING',
+        ],
+        [
+          'accessor reason',
+          (touch) => ({
+            overall: 'VALID',
+            get reason() {
+              touch();
+              return 'AUTHORITY_ADMITTED';
+            },
+          }),
+          'INDETERMINATE',
+          'AUTHORITY_DECISION_MISSING',
+        ],
+        [
+          'unsafe negative reason',
+          (touch) => ({
+            overall: 'INVALID',
+            get reason() {
+              touch();
+              return 'UNSAFE_REASON';
+            },
+          }),
+          'INVALID',
+          'AUTHORITY_DECISION_MISSING',
+        ],
+        [
+          'explicit rejection',
+          () => ({ overall: 'INVALID', reason: 'AUTHORITY_REVOKED' }),
+          'INVALID',
+          'AUTHORITY_REVOKED',
+        ],
+      ];
+      for (const [name, make, overall, reason] of cases) {
+        let hooks = 0;
+        const selected = [];
+        const result = createVerifier({
+          ...options,
+          trust: {
+            ...options.trust,
+            authorityResolver(query) {
+              const decision = options.trust.authorityResolver(query);
+              if (query.role !== 'STATUS_AUTHORITY') return decision;
+              selected.push(decision.overall);
+              return make(() => {
+                hooks++;
+              });
+            },
+          },
+        }).verify(bytes);
+        assert(selected.length > 0, name);
+        assert(
+          selected.every((outcome) => outcome === 'VALID'),
+          name,
+        );
+        assert.equal(result.overall, overall, name);
+        assert.equal(result.reason, reason, name);
+        assert.deepEqual(result.dimensions.status, { overall, reason }, name);
+        assert.equal(result.coreRevision, baseline.coreRevision);
+        assert.equal(result.profile, baseline.profile);
+        assert.equal(hooks, 0, name);
+        assert.deepEqual(bytes, original, name);
+      }
+    });
 });
 
 test('published CMS and native mdoc originals verify through the public SDK', () => {
