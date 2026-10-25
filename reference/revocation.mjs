@@ -243,6 +243,7 @@ function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime 
   const nonce = parseDER(extMap(a[3].children[0]).get(nonceOID)).value;
   requireThat(equal(nonce, expected.nonce), 'OCSP_NONCE');
   requireThat([0x80, 0x82, 0xa1].includes(s[1].tag), 'OCSP_CERT_STATUS');
+  requireThat(s[1].tag === 0xa1 || s[1].value.length === 0, 'OCSP_CERT_STATUS');
   const thisUpdate = parseTime(s[2]), nextUpdate = parseTime(s[3].children[0]),
     producedAt = parseTime(a[1]), revokedAt = s[1].tag === 0xa1 ? parseTime(s[1].children[0]) : undefined;
   requireThat(nextUpdate > thisUpdate && producedAt >= thisUpdate, 'OCSP_INTERVAL');
