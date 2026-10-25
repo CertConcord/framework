@@ -8,6 +8,10 @@ CertConcord selects standalone MTC before document signing, the published draft-
 
 The framework adds subject qualification, signing purpose, exact intent, activation, one-use authorization, organizational grants when required, and operation evidence. Those checks belong to the shared trust core and selected document binding. An issuance proof does not establish a later signing operation, and identity-source acceptance does not appoint a signing issuer.
 
+The selected deployment analysis is the informational [WG use-cases draft-00](https://www.ietf.org/archive/id/draft-ietf-plants-mtc-deploy-use-cases-00.txt). Its body is unchanged from individual draft-01. It already requires retention of published batch tree heads for a period at least as long as the maximum certificate validity period in the batch, including access after CA retirement. The component's [proposed clarification](../spec/external/mtc-document-validation/upstream-amendment.md) addresses application validation beyond that minimum and identifies the additional evidence and retention responsibilities; it remains unsubmitted.
+
+The code-signing `SigningReceipt` proves certificate inclusion in a batch. CertConcord's `ExecutionReceipt` instead binds an operation, permit, exact input and output, and provider statement. The former does not prove that a later document-signing operation occurred or satisfy the latter's contract.
+
 ## Evidence and reference implementation
 
 The [preservation contract](document-preservation.md) maps the independent requirements to the existing CMS evidence package and RFC 4998 adapter. Its lifetime checker is imported from the pinned independent component; TSA verification and historical status resolution remain framework adapter responsibilities.

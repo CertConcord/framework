@@ -693,10 +693,10 @@
     },
     {
       "id": "mtcDeploymentUseCases",
-      "url": "https://www.ietf.org/archive/id/draft-gray-plants-mtc-deploy-use-cases-01.txt",
-      "sha256": "aafbe7ba8fdac9556982712bc0839e6c62d0dbd07710451868f8af7bdff9d4a6",
-      "bytes": 60372,
-      "retrievedAt": "2026-10-05T22:08:27.915Z"
+      "url": "https://www.ietf.org/archive/id/draft-ietf-plants-mtc-deploy-use-cases-00.txt",
+      "sha256": "031f5603786593ab12a3ba1e1c039ce00c20e105751f76e4e4b5bcd4b219e177",
+      "bytes": 60331,
+      "retrievedAt": "2026-10-25T05:24:08.9594438Z"
     },
     {
       "id": "cades",

@@ -106,7 +106,7 @@
     {
       "path": "components.lock.json",
       "bytes": 9134,
-      "sha256": "b3805812272096319805fdeb118f61cb2aebc9ae7014c788b6bea90266cb83d5"
+      "sha256": "a14f250e12d40516ae5a627cb44e49ce34442aea43329f47554aec6ad2e60d8d"
     },
     {
       "path": "docs/adapters.md",
@@ -141,7 +141,7 @@
     {
       "path": "docs/components.md",
       "bytes": 4877,
-      "sha256": "98262e02e19b208887ba94da22ba65a851bb4c9dacf5866b6dd1f23448288928"
+      "sha256": "ae26f1d66c60c7fb7d6df5b81ecaa8387a411437eb1848f709e664bc46f31519"
     },
     {
       "path": "docs/composition-review.md",
@@ -205,8 +205,8 @@
     },
     {
       "path": "docs/mtc-document-validation.md",
-      "bytes": 2921,
-      "sha256": "e34cf41760e7dc41e9a1281a484743f48a83da5ae615c35357342d65f3024a31"
+      "bytes": 3868,
+      "sha256": "5831073303810b0a127e055ca34b101dc76bfadbc8a20d4155498a970b993527"
     },
     {
       "path": "docs/organization-delegation.md",
@@ -260,8 +260,8 @@
     },
     {
       "path": "docs/upstream-baseline.md",
-      "bytes": 38699,
-      "sha256": "983e314278a0fd9bdf984fc905ef72725f723d61e3788d78e7b58ea99a8cc44e"
+      "bytes": 39463,
+      "sha256": "3ef23de98b532a32f5e6806b271760cd25bc8ecf127dfd92376b052f9bc86d57"
     },
     {
       "path": "docs/webauthn-evolution.md",
@@ -1545,13 +1545,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 43513,
-      "sha256": "42e0e592a082a51da577c72981134cb7ed04f69ecf707e23f449b2553a488e9f"
+      "bytes": 43517,
+      "sha256": "30072afb2194a8c2ee4317d400532f0b88f4eaacbd103c1f3b5391e9a874a7b6"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 17051,
-      "sha256": "29af329bb064770a14c711287c9cd739804916331cf64ca27657c08b1b2ca377"
+      "sha256": "77498045ba5b9b2334efc6a3a67d9753e755115df28468428ef020b70af17701"
     },
     {
       "path": "reference/state-security.test.mjs",
@@ -11960,18 +11960,18 @@
     },
     {
       "path": "spec/external/mtc-document-validation/draft.md",
-      "bytes": 8751,
-      "sha256": "dbce7be934de9348ad6aa1b17cd0a39a29aeec665a46424627135b24a270e0f0"
+      "bytes": 9257,
+      "sha256": "fce0b17ebd13845f7ee8efbab7ed29cf33f98b225ee44d728decfbf79e66587f"
     },
     {
       "path": "spec/external/mtc-document-validation/sources.json",
-      "bytes": 3120,
-      "sha256": "5f48dbd4ef8732c67c0df6b6505810fd947cfc056a7cba297f4fc50c248ea725"
+      "bytes": 3426,
+      "sha256": "ce8eda15567f7481179a762e0083dae0d82257c1b33bf87b7b5b789fee845ae5"
     },
     {
       "path": "spec/external/mtc-document-validation/upstream-amendment.md",
-      "bytes": 1338,
-      "sha256": "c8b066d8eb5e4031df53bbf2c52f9935e2ac83fbaa5fd7321b853ea2797e976d"
+      "bytes": 2420,
+      "sha256": "1fa1109943584eba1e5e28966e30ed25d3571ef63921553196dcba3c9123ea79"
     },
     {
       "path": "spec/external/passsign-evidence/NOTICE",
