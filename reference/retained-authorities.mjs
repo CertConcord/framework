@@ -5,11 +5,64 @@ import {
 import { parseCertificate } from './pki.mjs';
 import { createAuthorityResolver, authorityStatus, AuthorityError, requireAuthority } from './authority-history.mjs';
 import { parseTimestampRequest, verifyTimestampToken } from './timestamp.mjs';
-import { isPromise, isProxy } from 'node:util/types';
+import { isPromise, isProxy, isUint8Array, isSharedArrayBuffer } from 'node:util/types';
 
 const copy = (value) => decodeCBOR(dcbor(value));
 const fail = (overall, reason) => { throw new AuthorityError({ overall, reason }); };
 const validTime = (value) => Number.isSafeInteger(value) && value >= 0;
+const instant = (value) => Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
+const queryFields = ['certificate', 'publicKeyDER', 'role', 'scope', 'stateTime', 'knowledgeTime'];
+const queryScopeFields = new Set(['trustDomainID', 'profileID', 'issuerID', 'representation', 'purpose']);
+const typedArray = Object.getPrototypeOf(Uint8Array.prototype);
+const byteLength = Object.getOwnPropertyDescriptor(typedArray, 'byteLength').get;
+const backingBuffer = Object.getOwnPropertyDescriptor(typedArray, 'buffer').get;
+const setBytes = Uint8Array.prototype.set;
+
+function queryRecord(value) {
+  requireThat(value !== null && typeof value === 'object' && !isProxy(value), 'HISTORY_QUERY');
+  const prototype = Object.getPrototypeOf(value);
+  requireThat(prototype === Object.prototype || prototype === null, 'HISTORY_QUERY');
+}
+
+function queryValue(record, key) {
+  const descriptor = Object.getOwnPropertyDescriptor(record, key);
+  requireThat(!descriptor || Object.hasOwn(descriptor, 'value'), 'HISTORY_QUERY');
+  return descriptor?.value;
+}
+
+function queryBytes(value) {
+  requireThat(!isProxy(value) && isUint8Array(value) &&
+    Object.getPrototypeOf(value) === Buffer.prototype, 'HISTORY_QUERY');
+  requireThat(!isSharedArrayBuffer(Reflect.apply(backingBuffer, value, [])), 'HISTORY_QUERY');
+  // Read the view's internal bytes, never caller length/valueOf/constructor hooks.
+  const owned = Buffer.alloc(Reflect.apply(byteLength, value, []));
+  try { Reflect.apply(setBytes, owned, [value]); }
+  catch { requireThat(false, 'HISTORY_QUERY'); }
+  return owned;
+}
+
+function snapshotQuery(input) {
+  queryRecord(input);
+  const query = Object.fromEntries(queryFields.map((key) => [key, queryValue(input, key)]));
+  requireThat(instant(query.stateTime) && instant(query.knowledgeTime), 'HISTORY_TIME');
+  requireThat(query.role === undefined || typeof query.role === 'string', 'HISTORY_QUERY');
+  for (const key of ['certificate', 'publicKeyDER'])
+    if (query[key] !== undefined && query[key] !== null) query[key] = queryBytes(query[key]);
+  queryRecord(query.scope);
+  const scope = Object.create(null);
+  for (const key of Reflect.ownKeys(query.scope)) {
+    if (typeof key !== 'string') continue;
+    const descriptor = Object.getOwnPropertyDescriptor(query.scope, key);
+    if (!descriptor.enumerable && !queryScopeFields.has(key)) continue;
+    const value = queryValue(query.scope, key);
+    requireThat(typeof value !== 'function', 'HISTORY_QUERY');
+    const detached = value !== null && typeof value === 'object' ? queryBytes(value) : value;
+    Object.defineProperty(scope, key, { value: detached, enumerable: descriptor.enumerable });
+  }
+  query.scope = scope;
+  return query;
+}
+
 const outcome = (error) => {
   const failure = { overall: 'INVALID', reason: 'HISTORY_INVALID' };
   if (!error || typeof error !== 'object' || isProxy(error)) return failure;
@@ -131,9 +184,10 @@ export function createRetainedAuthorityResolver({ trustDomainID, governance, his
   'HISTORY_CONFIGURATION');
   const domain = Buffer.from(trustDomainID), retained = copy(history), initial = copy(governance), deadlines = copy(algorithmDeadlines);
   rootPolicy(initial);
-  return Object.freeze((query) => {
+  return Object.freeze((input) => {
     try {
-      requireThat(Number.isFinite(query.knowledgeTime) && query.stateTime <= query.knowledgeTime &&
+      const query = snapshotQuery(input);
+      requireThat(query.stateTime <= query.knowledgeTime &&
         query.knowledgeTime <= validationTime, 'HISTORY_TIME');
       let previous, selected, atState;
       const appointments = new Map();

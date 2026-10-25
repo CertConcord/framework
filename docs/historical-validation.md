@@ -127,6 +127,30 @@ Key compromise is irreversible across subsequent GOOD snapshots, roles, and
 certificate renewals. Appointments first published after the operation cannot be
 backdated to authorize it.
 
+The reference retained resolver takes one detached snapshot of the query before
+calling the publication verifier. Identity bytes, role, scope and both times
+retain their entry values throughout traversal and the final authority decision,
+even if a callback changes the caller's query. `stateTime` and `knowledgeTime`
+must be finite nonnegative numbers no greater than `Number.MAX_SAFE_INTEGER`,
+with `stateTime <= knowledgeTime <= validationTime`. Fractional instants are
+preserved exactly; invalid times return `INVALID/HISTORY_TIME` before publication
+verification.
+
+Query and scope records must be non-Proxy ordinary or null-prototype objects.
+Consumed fields must be own data properties. Unrelated top-level properties are
+ignored. Scope data keeps its enumerability, including nonenumerable selected
+qualifiers; unused nonenumerable properties and symbols are ignored. Ordinary
+scope errors, such as an unknown enumerable field or empty qualifier, retain
+the existing authority decision and known-revocation precedence. Identity and
+scope bytes use owned copies of ordinary `Buffer` views, including nonzero
+offsets, without reading caller conversion, constructor or size properties.
+Buffer subclasses, custom prototypes, other typed-array views, proxies, fake
+Buffer objects and shared backing storage are outside this input profile.
+Accessors on consumed record fields, executable scope values and unsupported
+object or byte shapes return `INVALID/HISTORY_QUERY` before publication
+verification. This data-only boundary does not authenticate a query or select
+new governance, and does not change the direct resolver or configuration APIs.
+
 For an encoding explicitly selected at the operation time, known key compromise
 also applies to an equivalent public-key encoding. The earliest applicable
 incident remains effective after the original encoding is withdrawn or a later

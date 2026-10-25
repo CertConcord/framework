@@ -281,6 +281,7 @@
   "reference/retained-authorities.test.mjs",
   "reference/retained-authority-key-incidents.test.mjs",
   "reference/retained-document.test.mjs",
+  "reference/retained-query-snapshot.test.mjs",
   "reference/revocation.mjs",
   "reference/schemas.cddl",
   "reference/sdk-conformance.test.mjs",
