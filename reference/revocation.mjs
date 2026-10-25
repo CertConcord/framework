@@ -114,8 +114,10 @@ function inspectCRL(
   const thisUpdate = parseTime(a[3]),
     nextUpdate = parseTime(a[4]);
   requireThat(nextUpdate > thisUpdate, 'CRL_INTERVAL');
-  const extensions = extMap(a.at(-1).children[0]),
-    number = intValue(parseDER(extensions.get('2.5.29.20')));
+  const extensions = extMap(a.at(-1).children[0]);
+  requireThat(!extensions.has('2.5.29.27'), 'DELTA_CRL_UNSUPPORTED');
+  requireThat(!extensions.has('2.5.29.28'), 'SCOPED_CRL_UNSUPPORTED');
+  const number = intValue(parseDER(extensions.get('2.5.29.20')));
   requireThat(number >= BigInt(minNumber), 'CRL_ROLLBACK');
   const records = a.length === 7 ? a[5].children : [];
   let result = 'GOOD';

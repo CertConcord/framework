@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294073,
-      "sha256": "3392ad9d0138095013a8e2542b135bdbb2110722abb9cfdb810610d0b16c70b0"
+      "bytes": 294145,
+      "sha256": "02b9616c6ec35951cce8f8b78bccfb0f32d9e45bcb088c1958b63d3e45efe2c6"
     },
     {
       "path": "reference/README.md",
@@ -502,6 +502,11 @@
       "path": "reference/credential-log.mjs",
       "bytes": 4493,
       "sha256": "3f19b75abfdb33f747a3a155f567c4cef6515be49558e5bd2196a4f55e9162ca"
+    },
+    {
+      "path": "reference/crl-scope.test.mjs",
+      "bytes": 2083,
+      "sha256": "ca78a29eb0f2c4de24a0a9638471734ecf26db9146c960a46f05b745fcf005d8"
     },
     {
       "path": "reference/csc.test.mjs",
@@ -1395,8 +1400,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 9263,
-      "sha256": "0389ed7371a4f4e3bbc8be4872f126ddff9eba1e1aa860f2bd87148c7c1ffa98"
+      "bytes": 9408,
+      "sha256": "22922a5ee7ad814712e8809fb023a40ecf16fa7d33c72c2abf174bfbd6817e3f"
     },
     {
       "path": "reference/schemas.cddl",
@@ -1605,8 +1610,8 @@
     },
     {
       "path": "reference/status-result.mjs",
-      "bytes": 3270,
-      "sha256": "1043f12a23063c34e047dd4bb46a3f2da7462c2374fea16ee2c3f45b3f403350"
+      "bytes": 3329,
+      "sha256": "d5b8a901d04e51da17d6fbbf5202c4715075f4fea9087155883d5b47e65a8322"
     },
     {
       "path": "reference/status-results.test.mjs",
@@ -2037,6 +2042,11 @@
       "path": "reference/vectors/cms-retirement-mtc07-rar2/manifest.json",
       "bytes": 33761,
       "sha256": "ed0afec1af59108b62a9a79814f9967a269a421fe6d4fa265e95e7eddfd7656c"
+    },
+    {
+      "path": "reference/vectors/crl-scope.json",
+      "bytes": 13543,
+      "sha256": "cf710b9aef1a8fb5dc2528ebaeaff720892c27eb484c4bbd8aaf568cff4f119f"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/README.md",
@@ -12600,8 +12610,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 45224,
-      "sha256": "645139e3f669977744dfe928ee5a8cca9ea9000f6450db59a13d1f58481139fe"
+      "bytes": 45863,
+      "sha256": "fb19da6c89aef3976c008ef1db53fd5b453f63bf22459ff1976ba4d7f399405b"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
