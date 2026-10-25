@@ -34,6 +34,14 @@ jobs:
           echo "OPENSSL_CONF=$RUNNER_TEMP/certconcord-openssl/ssl/openssl.cnf" >> "$GITHUB_ENV"
           echo 'CERTCONCORD_REQUIRE_OPENSSL=1' >> "$GITHUB_ENV"
           echo 'CERTCONCORD_REQUIRE_CMS_KEM=1' >> "$GITHUB_ENV"
+      - name: Replay pinned BC 1.86 ERS compatibility boundary
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/bc-1.86"
+          node --input-type=module -e 'import fs from "node:fs"; for (const d of JSON.parse(fs.readFileSync("tools/ers-bc186/dependencies.json"))) console.log(d.url + " " + d.file)' | while read -r url file; do
+            curl --fail --location --retry 3 "$url" -o "$RUNNER_TEMP/bc-1.86/$file"
+          done
+          node tools/ers-bc186/replay.mjs "$RUNNER_TEMP/bc-1.86"
       - run: npm test
       - run: node fuzz/differential.mjs
         working-directory: reference

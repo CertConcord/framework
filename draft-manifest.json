@@ -15,8 +15,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "bytes": 3655,
-      "sha256": "4e3af36878c943c334d26ba88a8417758201176cce01a38d6f01e4d7500265d1"
+      "bytes": 4170,
+      "sha256": "bc8cebce4b687c8327fe4bf99a0e057306eadbb91c8c590da2842dd3ea67b0b1"
     },
     {
       "path": ".github/workflows/codeql.yml",
@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 17789,
-      "sha256": "f0655962b72d67f99e2c0ee244b1b44be881ebab5543c100e86002470e3ae483"
+      "bytes": 18302,
+      "sha256": "f996367f9cdc2d1f338ef7a972c03975e98a71d265805666f1d41f999cffae5b"
     },
     {
       "path": "docs/draft-acceptance.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 282071,
-      "sha256": "bd25a8916d4e488c4686b4818748c08871be888dafeeba5cdf3df6aa1c522120"
+      "bytes": 282290,
+      "sha256": "db249286974d331e93400eebf3c4be8ccebe3ca915e32b67a482e401a61077d4"
     },
     {
       "path": "reference/README.md",
@@ -597,6 +597,11 @@
       "path": "reference/enrollment.mjs",
       "bytes": 13080,
       "sha256": "3151a480069e09b48553988cb261e66a91d0ee8739cff5f7555c71aa60afecde"
+    },
+    {
+      "path": "reference/ers-bc186-vectors.test.mjs",
+      "bytes": 5249,
+      "sha256": "d5e3d8d93b287ce72334eb7ad0fe1a8e8830facc29d280111db047d1657ffde8"
     },
     {
       "path": "reference/evidence-plan.mjs",
@@ -12357,6 +12362,31 @@
       "path": "tools/create-mtc-version-vectors.mjs",
       "bytes": 9383,
       "sha256": "3ae8f932bc97fc98b72a648e5d17ee234bf93906f8b8ec4187c64ddec9a3f060"
+    },
+    {
+      "path": "tools/ers-bc186/ErsBc186Probe.java",
+      "bytes": 8384,
+      "sha256": "6aea31faa1483dc322ec1796c6619662a2981e9a4139481908d9389395dec221"
+    },
+    {
+      "path": "tools/ers-bc186/README.md",
+      "bytes": 3891,
+      "sha256": "cd7f6893eda9f908149dd40b7169f0859cf6111bfbcfc62a6df051d488ee0401"
+    },
+    {
+      "path": "tools/ers-bc186/dependencies.json",
+      "bytes": 726,
+      "sha256": "7f971943fac3758d7b321ec2e9a21c3b96783f678706415767e70aafa4fcad13"
+    },
+    {
+      "path": "tools/ers-bc186/observed.json",
+      "bytes": 7905,
+      "sha256": "e5086e8bc6bd708ea412896bef1221165b5e6835c28c773d514ca06b873ad054"
+    },
+    {
+      "path": "tools/ers-bc186/replay.mjs",
+      "bytes": 2515,
+      "sha256": "def619344cdc46a2040d6863ad83c891a67d6a9854a143df953801120c6c39ec"
     },
     {
       "path": "tools/freeze-organization-vectors.mjs",
