@@ -1,0 +1,17 @@
+[
+  {
+    "file": "bcprov-jdk18on-1.86.jar",
+    "sha256": "2af190b300cbb0b35e248ccf5f4a06b6072030aeb3da7a98ec73abe5b4cb371f",
+    "url": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcprov-jdk18on/1.86/bcprov-jdk18on-1.86.jar"
+  },
+  {
+    "file": "bcutil-jdk18on-1.86.jar",
+    "sha256": "1c268e15f785aafb1e4670d8d6e5f856f69475e96c162dadcd1ff9b350e9139f",
+    "url": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcutil-jdk18on/1.86/bcutil-jdk18on-1.86.jar"
+  },
+  {
+    "file": "bcpkix-jdk18on-1.86.jar",
+    "sha256": "8d8b41a4b149bdae8d331f059a578870954d1e3ff29f8269a9eb3ee19a7e4ef7",
+    "url": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcpkix-jdk18on/1.86/bcpkix-jdk18on-1.86.jar"
+  }
+]

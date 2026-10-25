@@ -1,0 +1,241 @@
+[
+  {
+    "case": "initial",
+    "dataSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+    "recordSHA256": "456167c872b5e60e7ed55e199924cf460bea3dd4fb6e91cca80c8f009b219040",
+    "expectedPresence": true,
+    "presence": true,
+    "presencePhase": "complete",
+    "presenceError": "",
+    "expectedValidTokenSignatures": 1,
+    "validTokenSignatures": 1,
+    "totalTokens": 1,
+    "tokenResults": [
+      {
+        "index": 1,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      }
+    ],
+    "tokenParsingError": "",
+    "compatibilityExpectationMatched": true
+  },
+  {
+    "case": "timestamp-only",
+    "dataSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+    "recordSHA256": "ca1a7c665a4e9a7e676050b659257626015b172d27899b0ea3910ba2ce23c43c",
+    "expectedPresence": true,
+    "presence": true,
+    "presencePhase": "complete",
+    "presenceError": "",
+    "expectedValidTokenSignatures": 2,
+    "validTokenSignatures": 2,
+    "totalTokens": 2,
+    "tokenResults": [
+      {
+        "index": 1,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 2,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      }
+    ],
+    "tokenParsingError": "",
+    "compatibilityExpectationMatched": true
+  },
+  {
+    "case": "timely-hash-renewal",
+    "dataSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+    "recordSHA256": "148c25cb9fb9c16846eb14ece6bc8927bdf442444d7ff76168b680236b343050",
+    "expectedPresence": true,
+    "presence": false,
+    "presencePhase": "validate-present",
+    "presenceError": "ArchiveTimeStampValidationException: object hash not found in wrapped timestamp",
+    "expectedValidTokenSignatures": 3,
+    "validTokenSignatures": 3,
+    "totalTokens": 3,
+    "tokenResults": [
+      {
+        "index": 1,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 2,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 3,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      }
+    ],
+    "tokenParsingError": "",
+    "compatibilityExpectationMatched": false
+  },
+  {
+    "case": "late-hash-renewal",
+    "dataSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+    "recordSHA256": "6a3851994afc0cf36df9ae9668c7ed04b54426fe47deec89d148cfb4086b3230",
+    "expectedPresence": true,
+    "presence": false,
+    "presencePhase": "validate-present",
+    "presenceError": "ArchiveTimeStampValidationException: object hash not found in wrapped timestamp",
+    "expectedValidTokenSignatures": 3,
+    "validTokenSignatures": 3,
+    "totalTokens": 3,
+    "tokenResults": [
+      {
+        "index": 1,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 2,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 3,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      }
+    ],
+    "tokenParsingError": "",
+    "compatibilityExpectationMatched": false
+  },
+  {
+    "case": "corrupt-final-signature",
+    "dataSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+    "recordSHA256": "7cf6c978cb56b9629d71f75849960ca94077c0b24d0ae88a9fac26d7e5bf995d",
+    "expectedPresence": true,
+    "presence": false,
+    "presencePhase": "validate-present",
+    "presenceError": "ArchiveTimeStampValidationException: object hash not found in wrapped timestamp",
+    "expectedValidTokenSignatures": 2,
+    "validTokenSignatures": 2,
+    "totalTokens": 3,
+    "tokenResults": [
+      {
+        "index": 1,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 2,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 3,
+        "signatureValid": false,
+        "constraintsValid": false,
+        "error": "TSPValidationException: signature not created by certificate."
+      }
+    ],
+    "tokenParsingError": "",
+    "compatibilityExpectationMatched": false
+  },
+  {
+    "case": "changed-original-initial",
+    "dataSHA256": "10d84756173ab832b0bec3c2f5689ceac743123051eb1679f3ba49e73aed7275",
+    "recordSHA256": "456167c872b5e60e7ed55e199924cf460bea3dd4fb6e91cca80c8f009b219040",
+    "expectedPresence": false,
+    "presence": false,
+    "presencePhase": "validate-present",
+    "presenceError": "ArchiveTimeStampValidationException: object hash not found in wrapped timestamp",
+    "expectedValidTokenSignatures": 1,
+    "validTokenSignatures": 1,
+    "totalTokens": 1,
+    "tokenResults": [
+      {
+        "index": 1,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      }
+    ],
+    "tokenParsingError": "",
+    "compatibilityExpectationMatched": true
+  },
+  {
+    "case": "truncated-record",
+    "dataSHA256": "09e93450939c93b3dce9daa2ab8f278a357701b46d2d93f0c4fba3c9a0839133",
+    "recordSHA256": "5da5b2940d8ddb194ffd91b39ba05d188e5b3313a974841f040e8554fb130458",
+    "expectedPresence": false,
+    "presence": false,
+    "presencePhase": "construct",
+    "presenceError": "ERSException: malformed evidence record: failed to construct sequence from byte[]",
+    "expectedValidTokenSignatures": 0,
+    "validTokenSignatures": 0,
+    "totalTokens": 0,
+    "tokenResults": [],
+    "tokenParsingError": "EOFException: DEF length 37975 object truncated by 1",
+    "compatibilityExpectationMatched": true
+  },
+  {
+    "case": "changed-original-renewed",
+    "dataSHA256": "10d84756173ab832b0bec3c2f5689ceac743123051eb1679f3ba49e73aed7275",
+    "recordSHA256": "148c25cb9fb9c16846eb14ece6bc8927bdf442444d7ff76168b680236b343050",
+    "expectedPresence": false,
+    "presence": false,
+    "presencePhase": "validate-present",
+    "presenceError": "ArchiveTimeStampValidationException: object hash not found in wrapped timestamp",
+    "expectedValidTokenSignatures": 3,
+    "validTokenSignatures": 3,
+    "totalTokens": 3,
+    "tokenResults": [
+      {
+        "index": 1,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 2,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      },
+      {
+        "index": 3,
+        "signatureValid": true,
+        "constraintsValid": true,
+        "error": ""
+      }
+    ],
+    "tokenParsingError": "",
+    "compatibilityExpectationMatched": true
+  },
+  {
+    "diagnostic": true,
+    "dataSHA512": "f409cc3aa766069afcd08f8e9078530f39beb56f412083bde2999f7892940312d69be592f646e1d12c6199c22d239c4e41f9140a4880448c7c40bd8d873aad73",
+    "previousSequenceSHA512": "55a9030f5bb82b94ba037bf1972faca35868baa74872b106a562f884baa965b38e62ae60e6542ed7db32ab9fca8e0f5fe38af04e4ab4946e7729beae3d8b0b14",
+    "sortedPairSHA512": "60dcd352512b401e3cec2bc1ae38a829dd3c067f6dbb13de20466bf007102ee2d045819cd5573cf2bde115b85cb19f3f557a70cdb781a8739ea50c7de28e1242",
+    "dataThenChainSHA512": "30772e8c6844ab82d3f0c7f0fdf9413bc911e0c580ca82aef46badc0fccc1c932ea3240291cb8962fbe76bbecc52b8c488943a653238eda123f1cac1a881424f",
+    "bcERSByteDataHash": "30772e8c6844ab82d3f0c7f0fdf9413bc911e0c580ca82aef46badc0fccc1c932ea3240291cb8962fbe76bbecc52b8c488943a653238eda123f1cac1a881424f",
+    "observedImprint": "60dcd352512b401e3cec2bc1ae38a829dd3c067f6dbb13de20466bf007102ee2d045819cd5573cf2bde115b85cb19f3f557a70cdb781a8739ea50c7de28e1242"
+  },
+  {
+    "cases": 8,
+    "compatibilityExpectationsMatched": 5,
+    "bcVersion": "1.86",
+    "javaVersion": "21.0.12.1",
+    "completeTrustEstablished": false
+  }
+]
