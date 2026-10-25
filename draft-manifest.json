@@ -560,8 +560,8 @@
     },
     {
       "path": "reference/document-vectors.test.mjs",
-      "bytes": 32413,
-      "sha256": "354b16245e687ac028d70804c0b6a428125d20b4b2dc3200178a0ce140e81296"
+      "bytes": 36739,
+      "sha256": "03c95f594d8b8c314a73f96e09288e4d3c0520f028c880499b3bcc89dd0f2e42"
     },
     {
       "path": "reference/draft-domain.test.mjs",
