@@ -24,6 +24,19 @@ conflicting evidence prevents acceptance. Unknown critical semantics are
 unsupported. An established cryptographic or authorization failure remains
 invalid even when other evidence is unavailable.
 
+`KeyID` remains SHA-512 of the original DER SubjectPublicKeyInfo. If an explicitly
+selected policy admits different encodings of the same mathematical public key,
+an applicable `INVALID/AUTHORITY_REVOKED` decision also applies to a known,
+selected identity using an equivalent encoding. This negative lookup does not
+admit a missing or not-yet-known identity, add roles or scopes, or transfer GOOD,
+STALE, unsupported, or malformed status from another encoding. Status callbacks
+receive the original record's KeyID and the operation's unchanged role, scope,
+state time, and knowledge time; raw status remains bound to that record's KeyID
+and trust domain. Existing exact-KeyID negative decisions retain their precedence.
+The [fixed generic-policy vectors](../reference/vectors/direct-authority-key-incidents.json)
+use explicit synthetic P-256 selections; they do not change the governed
+pure ML-DSA-87 profile or authorize an alternative encoding by themselves.
+
 Online issuance and execution and offline CMS/mdoc verification use the same
 resolver contract. Registration decisions are evaluated when issued, issuer roles
 when the credential is issued, status roles when status is published, and permit

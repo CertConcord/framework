@@ -91,7 +91,7 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     }
     if (record.algorithmValidUntil !== undefined)
       requireThat(time(record.algorithmValidUntil), 'AUTHORITY_ALGORITHM_DEADLINE');
-    return { ...record, parsed: certificate, keyID: keyID(publicKey),
+    return { ...record, parsed: certificate, publicKey, keyID: keyID(publicKey),
       status: typeof status === 'function' ? status : status === undefined ? undefined : copy(status) };
   });
   return Object.freeze((query) => {
@@ -101,9 +101,10 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     if (!validScope(scope) || !equal(scope.trustDomainID, domain))
       return result('INVALID', 'AUTHORITY_SCOPE');
     if (!authorityRoles.includes(role)) return result('UNSUPPORTED', 'AUTHORITY_ROLE_UNSUPPORTED');
-    let requestedKeyID;
+    let requestedKey, requestedKeyID;
     try {
-      requestedKeyID = keyID(certificate ? parseCertificate(certificate).publicKey : publicFromDER(publicKeyDER));
+      requestedKey = certificate ? parseCertificate(certificate).publicKey : publicFromDER(publicKeyDER);
+      requestedKeyID = keyID(requestedKey);
     } catch { return result('INVALID', 'AUTHORITY_IDENTITY'); }
     const keyRecords = records.filter((r) => equal(r.keyID, requestedKeyID));
     const knownKeyRecords = keyRecords.filter((r) => r.knownAt <= knowledgeTime);
@@ -113,7 +114,7 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
       let status, decision;
       try {
         status = typeof record.status === 'function'
-          ? record.status(copy({ authorityID: requestedKeyID, role, scope, stateTime, knowledgeTime }))
+          ? record.status(copy({ authorityID: record.keyID, role, scope, stateTime, knowledgeTime }))
           : record.status;
       } catch { decision = result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE'); }
       if (!decision && status?.then) decision = result('INDETERMINATE', 'AUTHORITY_STATUS_UNAVAILABLE');
@@ -121,7 +122,7 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
         decision = ['INVALID', 'INDETERMINATE', 'UNSUPPORTED'].includes(status.overall)
           ? result(status.overall, status.reason ?? 'AUTHORITY_STATUS_UNAVAILABLE')
           : result('INVALID', 'AUTHORITY_STATUS_SCHEMA');
-      decision ??= authorityStatus(status, { authorityID: requestedKeyID, trustDomainID: domain, stateTime, knowledgeTime });
+      decision ??= authorityStatus(status, { authorityID: record.keyID, trustDomainID: domain, stateTime, knowledgeTime });
       statusCache.set(record, decision);
       return decision;
     };
@@ -132,6 +133,13 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     if (!identities.length) return result('INDETERMINATE', 'AUTHORITY_MISSING');
     const known = identities.filter((r) => r.knownAt <= knowledgeTime);
     if (!known.length) return result('INDETERMINATE', 'AUTHORITY_NOT_YET_KNOWN');
+    // Key-wide negative evidence does not admit an unselected encoding or certificate.
+    const equivalentRevoked = records.find((record) => record.knownAt <= knowledgeTime &&
+      !equal(record.keyID, requestedKeyID) &&
+      record.publicKey.asymmetricKeyType === requestedKey.asymmetricKeyType &&
+      record.publicKey.equals(requestedKey) &&
+      statusFor(record).overall === 'INVALID' && statusFor(record).reason === 'AUTHORITY_REVOKED');
+    if (equivalentRevoked) return statusFor(equivalentRevoked);
     const roles = known.filter((r) => r.roles.includes(role));
     if (!roles.length) return result('INVALID', 'AUTHORITY_ROLE');
     const scoped = roles.filter((r) => r.scopes.some((grant) =>
