@@ -127,6 +127,23 @@ Key compromise is irreversible across subsequent GOOD snapshots, roles, and
 certificate renewals. Appointments first published after the operation cannot be
 backdated to authorize it.
 
+For an encoding explicitly selected at the operation time, known key compromise
+also applies to an equivalent public-key encoding. The earliest applicable
+incident remains effective after the original encoding is withdrawn or a later
+snapshot reports GOOD. Original SPKI-derived KeyIDs, signed status bindings,
+per-encoding rollback/conflict checks and positive appointments stay separate.
+An unselected encoding remains missing; a certificate-only appointment requires
+the exact certificate and does not select a bare SPKI query. A later appointment
+cannot backdate admission. The retained resolver reports the same
+`INVALID/AUTHORITY_REVOKED` decision for either selected encoding.
+
+The [fixed retained authority vectors](../reference/vectors/retained-authority-key-incidents.json)
+contain synthetic signed manifests and RFC 3161 publication proofs covering
+both encoding directions, incident-publication and compromise boundaries,
+withdrawal, later GOOD snapshots, admission timing, unrelated keys and incident
+ordering. The EC encodings exercise a generic selected-policy resolver; they do
+not widen governed document algorithm profiles.
+
 `verifyPublication` is synchronous. It must return a non-Proxy plain or
 null-prototype object with its own `overall` data property. A `VALID` decision
 also requires an own finite numeric `poeUpperBound` data property; fractional

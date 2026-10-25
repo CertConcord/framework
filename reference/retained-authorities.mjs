@@ -138,6 +138,7 @@ export function createRetainedAuthorityResolver({ trustDomainID, governance, his
       let previous, selected, atState;
       const appointments = new Map();
       const incidents = new Map();
+      const incidentKeys = new Map();
       const currentStatus = new Map();
       for (const entry of retained) {
         const checkpoint = authenticateRetainedAuthorityEntry({ trustDomainID: domain,
@@ -163,6 +164,7 @@ export function createRetainedAuthorityResolver({ trustDomainID, governance, his
             requireThat(equal(dcbor(priorStatus), dcbor(status)), 'HISTORY_STATUS_CONFLICT');
           currentStatus.set(id, status);
           if (status.status === 'REVOKED') {
+            incidentKeys.set(id, publicKey);
             const prior = incidents.get(id);
             if (!prior || Math.min(status.effectiveTime, status.compromiseStart ?? Infinity) <
               Math.min(prior.effectiveTime, prior.compromiseStart ?? Infinity)) incidents.set(id, status);
@@ -185,6 +187,18 @@ export function createRetainedAuthorityResolver({ trustDomainID, governance, his
       if (incident && Math.min(incident.effectiveTime, incident.compromiseStart ?? Infinity) <= query.stateTime)
         fail('INVALID', 'AUTHORITY_REVOKED');
       if (!atState) fail('INVALID', 'HISTORY_AUTHORITY_NOT_YET_ADMITTED');
+      const requestedID = keyID(requestedKey);
+      const identityKnownAtState = atState.records.some((record) => {
+        const publicKey = record.mode === 'CERTIFICATE'
+          ? parseCertificate(record.certificate).publicKey : publicFromDER(record.publicKeyDER);
+        return record.knownAt <= query.knowledgeTime && equal(keyID(publicKey), requestedID) &&
+          (record.mode === 'RAW_KEY' || equal(record.certificate, query.certificate));
+      });
+      if (identityKnownAtState && [...incidents].some(([id, status]) =>
+        incidentKeys.get(id).asymmetricKeyType === requestedKey.asymmetricKeyType &&
+        incidentKeys.get(id).equals(requestedKey) &&
+        Math.min(status.effectiveTime, status.compromiseStart ?? Infinity) <= query.stateTime))
+        fail('INVALID', 'AUTHORITY_REVOKED');
       const historicalRecords = atState.records.map((record) => {
         const publicKey = record.mode === 'CERTIFICATE'
           ? parseCertificate(record.certificate).publicKey : publicFromDER(record.publicKeyDER);
