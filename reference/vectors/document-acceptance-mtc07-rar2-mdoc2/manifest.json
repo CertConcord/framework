@@ -2063,6 +2063,60 @@
       "decodedBytes": 2614,
       "decodedSHA256": "ffc349cb372c628ce6a72060689fa40b5327822c41b5a606355939a075ee064a",
       "mediaType": "application/octet-stream"
+    },
+    {
+      "path": "files/1acd2d3829f58b04ccab1ab73cc63256fb7534e7e544e1c73adf3d5ef5930714.json",
+      "bytes": 3112,
+      "sha256": "1acd2d3829f58b04ccab1ab73cc63256fb7534e7e544e1c73adf3d5ef5930714",
+      "encoding": "utf8",
+      "decodedBytes": 3112,
+      "decodedSHA256": "1acd2d3829f58b04ccab1ab73cc63256fb7534e7e544e1c73adf3d5ef5930714",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/a32f779740aed01cbccc0c091686ce7028db194cf745d113c0f8a46d100bad0b.json",
+      "bytes": 3128,
+      "sha256": "a32f779740aed01cbccc0c091686ce7028db194cf745d113c0f8a46d100bad0b",
+      "encoding": "utf8",
+      "decodedBytes": 3128,
+      "decodedSHA256": "a32f779740aed01cbccc0c091686ce7028db194cf745d113c0f8a46d100bad0b",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/a43edc07390f8d5da32d3a67aa50ac81d2eba39cd73f953abd71ad8a5700f702.json",
+      "bytes": 3228,
+      "sha256": "a43edc07390f8d5da32d3a67aa50ac81d2eba39cd73f953abd71ad8a5700f702",
+      "encoding": "utf8",
+      "decodedBytes": 3228,
+      "decodedSHA256": "a43edc07390f8d5da32d3a67aa50ac81d2eba39cd73f953abd71ad8a5700f702",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/7c81cd7a70ea7a5cb60bea1f648b8403bb2023c5d9fb370cb79dd2ac606028f5.json",
+      "bytes": 3113,
+      "sha256": "7c81cd7a70ea7a5cb60bea1f648b8403bb2023c5d9fb370cb79dd2ac606028f5",
+      "encoding": "utf8",
+      "decodedBytes": 3113,
+      "decodedSHA256": "7c81cd7a70ea7a5cb60bea1f648b8403bb2023c5d9fb370cb79dd2ac606028f5",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/17fb7cee0bcaced1e14e5e989b93de1708fb31023f1922b9507579cde7d6561a.json",
+      "bytes": 3129,
+      "sha256": "17fb7cee0bcaced1e14e5e989b93de1708fb31023f1922b9507579cde7d6561a",
+      "encoding": "utf8",
+      "decodedBytes": 3129,
+      "decodedSHA256": "17fb7cee0bcaced1e14e5e989b93de1708fb31023f1922b9507579cde7d6561a",
+      "mediaType": "application/json"
+    },
+    {
+      "path": "files/422bc731e3d470942215425b4aadc417ff2e42490a50edd5a3dc3b18dc1b758e.json",
+      "bytes": 3229,
+      "sha256": "422bc731e3d470942215425b4aadc417ff2e42490a50edd5a3dc3b18dc1b758e",
+      "encoding": "utf8",
+      "decodedBytes": 3229,
+      "decodedSHA256": "422bc731e3d470942215425b4aadc417ff2e42490a50edd5a3dc3b18dc1b758e",
+      "mediaType": "application/json"
     }
   ],
   "documents": [
@@ -2807,6 +2861,136 @@
           "reason": "AUTHORITY_REVOKED"
         },
         "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "cms-retained-missing-proof",
+      "description": "Missing ERS proof leaves historical original bytes unproven while current evidence remains admissible.",
+      "options": "files/1acd2d3829f58b04ccab1ab73cc63256fb7534e7e544e1c73adf3d5ef5930714.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "INVALID",
+          "reason": "MALFORMED_EVIDENCE"
+        },
+        "historicalAuthorization": {
+          "overall": "INDETERMINATE",
+          "reason": "HISTORICAL_BYTES_UNPROVEN"
+        },
+        "currentAdmissibility": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "cms-retained-empty-proof",
+      "description": "Empty ERS bytes leave historical original bytes unproven while current evidence remains admissible.",
+      "options": "files/a32f779740aed01cbccc0c091686ce7028db194cf745d113c0f8a46d100bad0b.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "INVALID",
+          "reason": "DER_LIMIT_OR_TRUNCATION"
+        },
+        "historicalAuthorization": {
+          "overall": "INDETERMINATE",
+          "reason": "HISTORICAL_BYTES_UNPROVEN"
+        },
+        "currentAdmissibility": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "cms-retained-before-first-proof",
+      "description": "Historical knowledge precedes the first complete-package proof while the original document and current evidence remain valid.",
+      "options": "files/a43edc07390f8d5da32d3a67aa50ac81d2eba39cd73f953abd71ad8a5700f702.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "INDETERMINATE",
+          "reason": "HISTORICAL_BYTES_NOT_YET_PROVEN"
+        },
+        "currentAdmissibility": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "historicalKnowledgeTime": 1792454401,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "mdoc-retained-missing-proof",
+      "description": "Missing ERS proof leaves historical original bytes unproven while current evidence remains admissible.",
+      "options": "files/7c81cd7a70ea7a5cb60bea1f648b8403bb2023c5d9fb370cb79dd2ac606028f5.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "INVALID",
+          "reason": "MALFORMED_EVIDENCE"
+        },
+        "historicalAuthorization": {
+          "overall": "INDETERMINATE",
+          "reason": "HISTORICAL_BYTES_UNPROVEN"
+        },
+        "currentAdmissibility": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "mdoc-retained-empty-proof",
+      "description": "Empty ERS bytes leave historical original bytes unproven while current evidence remains admissible.",
+      "options": "files/17fb7cee0bcaced1e14e5e989b93de1708fb31023f1922b9507579cde7d6561a.json",
+      "expected": {
+        "overall": "INVALID",
+        "preservation": {
+          "overall": "INVALID",
+          "reason": "DER_LIMIT_OR_TRUNCATION"
+        },
+        "historicalAuthorization": {
+          "overall": "INDETERMINATE",
+          "reason": "HISTORICAL_BYTES_UNPROVEN"
+        },
+        "currentAdmissibility": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "historicalKnowledgeTime": 1792454402,
+        "currentKnowledgeTime": 1792627202
+      }
+    },
+    {
+      "id": "mdoc-retained-before-first-proof",
+      "description": "Historical knowledge precedes the first complete-package proof while the original document and current evidence remain valid.",
+      "options": "files/422bc731e3d470942215425b4aadc417ff2e42490a50edd5a3dc3b18dc1b758e.json",
+      "expected": {
+        "overall": "INDETERMINATE",
+        "preservation": {
+          "overall": "VALID"
+        },
+        "historicalAuthorization": {
+          "overall": "INDETERMINATE",
+          "reason": "HISTORICAL_BYTES_NOT_YET_PROVEN"
+        },
+        "currentAdmissibility": {
+          "overall": "VALID",
+          "reason": "ALL_SELECTED_POLICY_REQUIREMENTS_SATISFIED"
+        },
+        "historicalKnowledgeTime": 1792454401,
         "currentKnowledgeTime": 1792627202
       }
     }
