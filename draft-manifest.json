@@ -12485,8 +12485,8 @@
     },
     {
       "path": "reference/vectors/retained-authority-key-incidents.json",
-      "bytes": 756749,
-      "sha256": "b41bf3b3ec89b48dd96f90cbb026924130e1e800f5dea613af57b759cca65cc2"
+      "bytes": 759366,
+      "sha256": "c0cb6e375b488725cd00f16825e0a9b68b57b053e5de1ba897108cc7ee887512"
     },
     {
       "path": "reference/vectors/status-calendar.json",

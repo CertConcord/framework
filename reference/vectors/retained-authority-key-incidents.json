@@ -372,6 +372,51 @@
         "reason": "AUTHORITY_MISSING",
         "overall": "INDETERMINATE"
       }
+    },
+    {
+      "name": "equivalent-incident-before-compromise-boundary",
+      "material": "additional",
+      "history": "compromised-encoding-withdrawn",
+      "query": {
+        "bytes": 322,
+        "sha256": "f3d0769015e33c3f70203a07a33a72751af63d6538efce38284c27e59eb0097d",
+        "cbor": "pWRyb2xlcFNUQVRVU19BVVRIT1JJVFllc2NvcGWlZ3B1cnBvc2VyZG9jdW1lbnQtc2lnbmF0dXJlaGlzc3VlcklEeCFzeW50aGV0aWMtZXF1aXZhbGVudC1rZXktY29udHJvbHNpcHJvZmlsZUlEeCFDRVJUQ09OQ09SRC1QRVJTT04tREVWSUNFLVNJR04tdjFtdHJ1c3REb21haW5JRFggQJ2u0cEXEb3Z33Ko0j/1rBQr3RXiWLhbGIrhJF3o01RucmVwcmVzZW50YXRpb25kTURPQ2lzdGF0ZVRpbWUaa0nSMWxwdWJsaWNLZXlERVJYOzA5MBMGByqGSM49AgEGCCqGSM49AwEHAyIAA5pAMmju7Jk4/s2k1XUPyZoOnBLi5lEr6OAvNFV15FY+bWtub3dsZWRnZVRpbWUaa0nSbg=="
+      },
+      "expected": {
+        "mode": "RAW_KEY",
+        "role": "STATUS_AUTHORITY",
+        "reason": "AUTHORITY_ADMITTED",
+        "overall": "VALID",
+        "coverageUntil": 1800000500
+      }
+    },
+    {
+      "name": "equivalent-incident-at-compromise-boundary",
+      "material": "additional",
+      "history": "compromised-encoding-withdrawn",
+      "query": {
+        "bytes": 322,
+        "sha256": "baabc63ebf40951ed4e17352dfdbf58b9d3210ce43f568581ff6e55736b08b30",
+        "cbor": "pWRyb2xlcFNUQVRVU19BVVRIT1JJVFllc2NvcGWlZ3B1cnBvc2VyZG9jdW1lbnQtc2lnbmF0dXJlaGlzc3VlcklEeCFzeW50aGV0aWMtZXF1aXZhbGVudC1rZXktY29udHJvbHNpcHJvZmlsZUlEeCFDRVJUQ09OQ09SRC1QRVJTT04tREVWSUNFLVNJR04tdjFtdHJ1c3REb21haW5JRFggQJ2u0cEXEb3Z33Ko0j/1rBQr3RXiWLhbGIrhJF3o01RucmVwcmVzZW50YXRpb25kTURPQ2lzdGF0ZVRpbWUaa0nSMmxwdWJsaWNLZXlERVJYOzA5MBMGByqGSM49AgEGCCqGSM49AwEHAyIAA5pAMmju7Jk4/s2k1XUPyZoOnBLi5lEr6OAvNFV15FY+bWtub3dsZWRnZVRpbWUaa0nSbg=="
+      },
+      "expected": {
+        "overall": "INVALID",
+        "reason": "AUTHORITY_REVOKED"
+      }
+    },
+    {
+      "name": "equivalent-incident-after-compromise-boundary",
+      "material": "additional",
+      "history": "compromised-encoding-withdrawn",
+      "query": {
+        "bytes": 322,
+        "sha256": "dcd33d0001b0fea5f440f0bafe5b4e7f0b2b37d344bb28cb3318b477ecff3b03",
+        "cbor": "pWRyb2xlcFNUQVRVU19BVVRIT1JJVFllc2NvcGWlZ3B1cnBvc2VyZG9jdW1lbnQtc2lnbmF0dXJlaGlzc3VlcklEeCFzeW50aGV0aWMtZXF1aXZhbGVudC1rZXktY29udHJvbHNpcHJvZmlsZUlEeCFDRVJUQ09OQ09SRC1QRVJTT04tREVWSUNFLVNJR04tdjFtdHJ1c3REb21haW5JRFggQJ2u0cEXEb3Z33Ko0j/1rBQr3RXiWLhbGIrhJF3o01RucmVwcmVzZW50YXRpb25kTURPQ2lzdGF0ZVRpbWUaa0nSM2xwdWJsaWNLZXlERVJYOzA5MBMGByqGSM49AgEGCCqGSM49AwEHAyIAA5pAMmju7Jk4/s2k1XUPyZoOnBLi5lEr6OAvNFV15FY+bWtub3dsZWRnZVRpbWUaa0nSbg=="
+      },
+      "expected": {
+        "overall": "INVALID",
+        "reason": "AUTHORITY_REVOKED"
+      }
     }
   ]
 }
