@@ -314,7 +314,7 @@ function archivePolicy(input, resolver, domain) {
     'VECTOR_ARCHIVE_POLICY',
   );
   const authorities = input.timestampAuthorities.map((entry) => {
-    keys(entry, ['certificate', 'issuerKey', 'policy', 'validUntil', 'status'], ['revokedAt']);
+    keys(entry, ['certificate', 'issuerKey', 'policy', 'validUntil'], ['status', 'revokedAt']);
     return {
       ...entry,
       status: resolver
@@ -358,21 +358,25 @@ export function runRetainedVectors({ directory } = {}) {
   const corpus = loadVectorCorpus(directory);
   return corpus.manifest.retained.map((entry) => {
     const input = corpus.config(entry.options);
-    keys(input, [
-      'schemaVersion',
-      'format',
-      'originalBytes',
-      'currentBytes',
-      'evidenceRecord',
-      'historicalTrust',
-      'currentTrust',
-      'history',
-      'historyTrust',
-      'publicationTSA',
-      'preservationPolicy',
-      'historicalKnowledgeTime',
-      'currentKnowledgeTime',
-    ]);
+    keys(
+      input,
+      [
+        'schemaVersion',
+        'format',
+        'originalBytes',
+        'currentBytes',
+        'evidenceRecord',
+        'historicalTrust',
+        'currentTrust',
+        'history',
+        'historyTrust',
+        'publicationTSA',
+        'preservationPolicy',
+        'historicalKnowledgeTime',
+        'currentKnowledgeTime',
+      ],
+      ['originalStatusProof'],
+    );
     need(input.schemaVersion === 1 && ['CMS', 'MDOC'].includes(input.format), 'VECTOR_VERSION');
     const publication = input.publicationTSA;
     const resolver = createRetainedAuthorityResolver({
@@ -394,6 +398,25 @@ export function runRetainedVectors({ directory } = {}) {
       preservationPolicy: policy,
       historicalTrust: loadTrust(corpus, input.historicalTrust),
       currentTrust: loadTrust(corpus, input.currentTrust),
+      ...(Object.hasOwn(input, 'originalStatusProof')
+        ? {
+            originalStatusProof:
+              input.originalStatusProof == null || !object(input.originalStatusProof)
+                ? input.originalStatusProof
+                : {
+                    ...input.originalStatusProof,
+                    ...(input.originalStatusProof.preservationPolicy != null
+                      ? {
+                          preservationPolicy: archivePolicy(
+                            input.originalStatusProof.preservationPolicy,
+                            resolver,
+                            input.historyTrust.trustDomainID,
+                          ),
+                        }
+                      : {}),
+                  },
+          }
+        : {}),
     });
     const decision = (value) => ({
       overall: value.overall,
@@ -406,6 +429,20 @@ export function runRetainedVectors({ directory } = {}) {
       currentAdmissibility: decision(result.currentAdmissibility),
       historicalKnowledgeTime: result.historicalKnowledgeTime,
       currentKnowledgeTime: result.currentKnowledgeTime,
+      ...(Object.hasOwn(result, 'originalStatusProof')
+        ? {
+            originalStatusProof: {
+              ...decision(result.originalStatusProof),
+              ...(result.originalStatusProof.overall === 'VALID'
+                ? {
+                    proofOfExistenceUpperBound:
+                      result.originalStatusProof.proofOfExistenceUpperBound,
+                  }
+                : {}),
+            },
+            historicalBytesVisibility: decision(result.historicalBytesVisibility),
+          }
+        : {}),
     };
     return compare(entry.id, stable, entry.expected, result);
   });
