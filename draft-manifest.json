@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294229,
-      "sha256": "b669b5e4689bd4ced6ecb339954f795f55b6399ef0b0b8d525d511b05d1056d8"
+      "bytes": 294315,
+      "sha256": "4a4c411b26076ef2c1c582c8ab607c51491f8848277cb8f63b2a833aea7069a1"
     },
     {
       "path": "reference/README.md",
@@ -1019,6 +1019,11 @@
       "sha256": "c2b048e3bea05b690cd5aa32b11990d683ff406697e8040ce357eaa023197f07"
     },
     {
+      "path": "reference/ocsp-null-status.test.mjs",
+      "bytes": 1519,
+      "sha256": "b32f09da0c0e318985bf38515f9ca56000a26310242fde18dbbc31ae761a7b88"
+    },
+    {
       "path": "reference/openid.mjs",
       "bytes": 47481,
       "sha256": "f9821ab7eae5eb94983ca9b32cd1fe9ed1dd2a9c2788c7224adbbb829b42e2ad"
@@ -1400,8 +1405,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 9552,
-      "sha256": "7d3067cc4719f39ab323ed363d4033d70675ede40dd2ce79e76f6f1c3df4b067"
+      "bytes": 9633,
+      "sha256": "1a897e2b97667407714931bba61e5ab86db9180f2d2279baf5d1834bf2ea9f10"
     },
     {
       "path": "reference/schemas.cddl",
@@ -4782,6 +4787,11 @@
       "path": "reference/vectors/mtc-versions.json",
       "bytes": 403595,
       "sha256": "87aecd8cc55a0a22f61f43af35a3817f6bfc9592a448ea14a8a61fbe89a941ca"
+    },
+    {
+      "path": "reference/vectors/ocsp-null-status.json",
+      "bytes": 14008,
+      "sha256": "cd24d10c4e87c85b61ae2fd81311dd84aa1effcd35c0e3ba24cd3b82535dbb6b"
     },
     {
       "path": "reference/vectors/organization-history-rar2/README.md",
@@ -12620,8 +12630,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 46466,
-      "sha256": "418fe8bdc1d0985fa459b0ec2242ddc36825a56b6fe4dd1323f0a08940ed55f2"
+      "bytes": 46880,
+      "sha256": "d390d1fa7fdefbd3df99deb9b48714cd14f2bc5573d789b97da6352ad5dcc2ef"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",

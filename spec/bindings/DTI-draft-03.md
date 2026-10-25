@@ -190,6 +190,8 @@ The complete-issuer CRL reference profile rejects the presence of `deltaCRLIndic
 
 Status times in the reference profile use whole-second UTC GeneralizedTime (`YYYYMMDDHHMMSSZ`) with exact calendar components. Impossible dates must return `INVALID` / `STATUS_TIME` rather than be normalized to another date. This applies to CRL `thisUpdate`, `nextUpdate`, entry revocation time and `invalidityDate`, and to OCSP `thisUpdate`, `nextUpdate`, `producedAt` and revocation time. [Raw signed calendar vectors](../../reference/vectors/status-calendar.json) include legal leap and month/year boundaries, impossible dates, and revocation decisions immediately before and at the effective time.
 
+OCSP `CertStatus` values `good [0]` and `unknown [2]` are IMPLICIT NULL encodings and must have zero content octets. Nonempty contents return `INVALID` / `OCSP_CERT_STATUS`; a valid empty `unknown` remains `INDETERMINATE` / `OCSP_UNKNOWN`. [Raw signed OCSP encoding vectors](../../reference/vectors/ocsp-null-status.json) distinguish these cases and retain valid `good`, `revoked` and invalid-signature controls.
+
 ## 29. Range and authority revocation
 
 RRA incident statements can revoke serial/index ranges, an entire issuance log, CAID or governance key. They identify exact scope, authorized publisher, sequence, publication time, effective time and compromiseStart where known. A range statement supplements conventional certificate status; it does not redefine an OCSP GOOD response. Any applicable negative status takes precedence over a narrower positive assertion.

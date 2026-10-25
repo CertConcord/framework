@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "profile": "ocsp-cert-status-null",
+  "description": "Synthetic P-256 signed OCSP responses. good and unknown use zero-content IMPLICIT NULL values; malformed unknown is INVALID rather than INDETERMINATE. Valid empty UNKNOWN remains INDETERMINATE. Raw-key verification does not admit a responder certificate path.",
+  "cases": [
+    {
+      "id": "good-empty",
+      "raw": "MIIBSAoBAKCCAUEwggE9BgkrBgEFBQcwAQEEggEuMIIBKjCB0aIWBBQdTpVvHFG2gMsnqzmVobdzRGCOKxgPMjA1MTAxMDEwMDAwMDBaMIGAMH4wVjALBglghkgBZQMEAgEEIERi4XOTATP6fnfHK1AcJxgRTbKvoHnbnNGghRLYaA8NBCBEGsQtIjueplR1vtAEWlyFWqtwLkLVzHYG/TnrTl/eTQIDAULRgAAYDzIwNTEwMTAxMDAwMDAwWqARGA8yMDUxMDEwMTAwMDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRCMAoGCCqGSM49BAMCA0gAMEUCIQCKjMYjZKXiBV7HClVL8p4KJarKdq0Wux1r+Szo2OM81QIgAvIN9mJaLq8KmBCWZ1r6RWj0R4iS8IpmBPEqC6j4gqw=",
+      "sha256": "0296d8559c284768687f7dd6c18df4c1684d3964a7cf7b50f6af36ae6cff6021",
+      "tbs": "MIHRohYEFB1OlW8cUbaAyyerOZWht3NEYI4rGA8yMDUxMDEwMTAwMDAwMFowgYAwfjBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGAABgPMjA1MTAxMDEwMDAwMDBaoBEYDzIwNTEwMTAxMDAwNTAwWqEjMCEwHwYJKwYBBQUHMAECBBIEEObgCH0kbw+BTmQzlL0jNEI=",
+      "signature": "MEUCIQCKjMYjZKXiBV7HClVL8p4KJarKdq0Wux1r+Szo2OM81QIgAvIN9mJaLq8KmBCWZ1r6RWj0R4iS8IpmBPEqC6j4gqw=",
+      "signatureValid": true,
+      "certStatus": {
+        "tag": 128,
+        "contentHex": ""
+      },
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3gkUE/7yCnO4NJXe3rK2fi+IC8H8jD6NgUTHA77ZCfmMtw5pX7N/Gr7g0qpcoASNtO0B6Kwm0yXksh1ocsUIUw==",
+      "request": "MIGEMIGBMFowWDBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGiIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "at": 2556144010,
+      "knowledgeTime": 2556144010,
+      "expected": {
+        "thisUpdate": 2556144000,
+        "nextUpdate": 2556144300,
+        "producedAt": 2556144000,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "unknown-empty",
+      "raw": "MIIBSAoBAKCCAUEwggE9BgkrBgEFBQcwAQEEggEuMIIBKjCB0aIWBBQdTpVvHFG2gMsnqzmVobdzRGCOKxgPMjA1MTAxMDEwMDAwMDBaMIGAMH4wVjALBglghkgBZQMEAgEEIERi4XOTATP6fnfHK1AcJxgRTbKvoHnbnNGghRLYaA8NBCBEGsQtIjueplR1vtAEWlyFWqtwLkLVzHYG/TnrTl/eTQIDAULRggAYDzIwNTEwMTAxMDAwMDAwWqARGA8yMDUxMDEwMTAwMDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRCMAoGCCqGSM49BAMCA0gAMEUCIHMpw+xkK78nKPR4a7a3ldeYfdc9TtnGr3tL8m/oWn14AiEA3C56Y1bVZ+yDyBulWS9nA6MeMSoaovVP4jXmrzpMhXc=",
+      "sha256": "2961da7925650ea3dd590298f69c6e36cfeb4c15e22429c3f29154afda5f1646",
+      "tbs": "MIHRohYEFB1OlW8cUbaAyyerOZWht3NEYI4rGA8yMDUxMDEwMTAwMDAwMFowgYAwfjBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGCABgPMjA1MTAxMDEwMDAwMDBaoBEYDzIwNTEwMTAxMDAwNTAwWqEjMCEwHwYJKwYBBQUHMAECBBIEEObgCH0kbw+BTmQzlL0jNEI=",
+      "signature": "MEUCIHMpw+xkK78nKPR4a7a3ldeYfdc9TtnGr3tL8m/oWn14AiEA3C56Y1bVZ+yDyBulWS9nA6MeMSoaovVP4jXmrzpMhXc=",
+      "signatureValid": true,
+      "certStatus": {
+        "tag": 130,
+        "contentHex": ""
+      },
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3gkUE/7yCnO4NJXe3rK2fi+IC8H8jD6NgUTHA77ZCfmMtw5pX7N/Gr7g0qpcoASNtO0B6Kwm0yXksh1ocsUIUw==",
+      "request": "MIGEMIGBMFowWDBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGiIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "at": 2556144010,
+      "knowledgeTime": 2556144010,
+      "expected": {
+        "thisUpdate": 2556144000,
+        "nextUpdate": 2556144300,
+        "producedAt": 2556144000,
+        "status": "UNKNOWN",
+        "overall": "INDETERMINATE",
+        "reason": "OCSP_UNKNOWN"
+      }
+    },
+    {
+      "id": "good-one-zero",
+      "raw": "MIIBSQoBAKCCAUIwggE+BgkrBgEFBQcwAQEEggEvMIIBKzCB0qIWBBQdTpVvHFG2gMsnqzmVobdzRGCOKxgPMjA1MTAxMDEwMDAwMDBaMIGBMH8wVjALBglghkgBZQMEAgEEIERi4XOTATP6fnfHK1AcJxgRTbKvoHnbnNGghRLYaA8NBCBEGsQtIjueplR1vtAEWlyFWqtwLkLVzHYG/TnrTl/eTQIDAULRgAEAGA8yMDUxMDEwMTAwMDAwMFqgERgPMjA1MTAxMDEwMDA1MDBaoSMwITAfBgkrBgEFBQcwAQIEEgQQ5uAIfSRvD4FOZDOUvSM0QjAKBggqhkjOPQQDAgNIADBFAiBYM68E9mQBU13p9k1JE+3T2sm5ZMEl4RGJQi9FVZeZ/AIhANWcJ2NgVctw1TC0Y0McphQA21xcS8M0OqspPmkn/tUO",
+      "sha256": "cbbbb98e2b11b302a00c1e56fcdc98abdd2ceb18a5e5645074ae1e25b78c2c56",
+      "tbs": "MIHSohYEFB1OlW8cUbaAyyerOZWht3NEYI4rGA8yMDUxMDEwMTAwMDAwMFowgYEwfzBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGAAQAYDzIwNTEwMTAxMDAwMDAwWqARGA8yMDUxMDEwMTAwMDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "signature": "MEUCIFgzrwT2ZAFTXen2TUkT7dPayblkwSXhEYlCL0VVl5n8AiEA1ZwnY2BVy3DVMLRjQxymFADbXFxLwzQ6qyk+aSf+1Q4=",
+      "signatureValid": true,
+      "certStatus": {
+        "tag": 128,
+        "contentHex": "00"
+      },
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3gkUE/7yCnO4NJXe3rK2fi+IC8H8jD6NgUTHA77ZCfmMtw5pX7N/Gr7g0qpcoASNtO0B6Kwm0yXksh1ocsUIUw==",
+      "request": "MIGEMIGBMFowWDBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGiIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "at": 2556144010,
+      "knowledgeTime": 2556144010,
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_CERT_STATUS"
+      }
+    },
+    {
+      "id": "unknown-one-zero",
+      "raw": "MIIBSQoBAKCCAUIwggE+BgkrBgEFBQcwAQEEggEvMIIBKzCB0qIWBBQdTpVvHFG2gMsnqzmVobdzRGCOKxgPMjA1MTAxMDEwMDAwMDBaMIGBMH8wVjALBglghkgBZQMEAgEEIERi4XOTATP6fnfHK1AcJxgRTbKvoHnbnNGghRLYaA8NBCBEGsQtIjueplR1vtAEWlyFWqtwLkLVzHYG/TnrTl/eTQIDAULRggEAGA8yMDUxMDEwMTAwMDAwMFqgERgPMjA1MTAxMDEwMDA1MDBaoSMwITAfBgkrBgEFBQcwAQIEEgQQ5uAIfSRvD4FOZDOUvSM0QjAKBggqhkjOPQQDAgNIADBFAiA/nMWSoXDQkUEXjPOofuiGonyElh4nTNp2ZofS0MFLfwIhAP2eOKtO4k0EIE6Shrbo57WX1xHA54Rvjcd9J7Viu7Cb",
+      "sha256": "fead3a3af26b32a6b7131be7dd92e73d96445fab0e079eb9d757a543c6849a58",
+      "tbs": "MIHSohYEFB1OlW8cUbaAyyerOZWht3NEYI4rGA8yMDUxMDEwMTAwMDAwMFowgYEwfzBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGCAQAYDzIwNTEwMTAxMDAwMDAwWqARGA8yMDUxMDEwMTAwMDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "signature": "MEUCID+cxZKhcNCRQReM86h+6IaifISWHidM2nZmh9LQwUt/AiEA/Z44q07iTQQgTpKGtujntZfXEcDnhG+Nx30ntWK7sJs=",
+      "signatureValid": true,
+      "certStatus": {
+        "tag": 130,
+        "contentHex": "00"
+      },
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3gkUE/7yCnO4NJXe3rK2fi+IC8H8jD6NgUTHA77ZCfmMtw5pX7N/Gr7g0qpcoASNtO0B6Kwm0yXksh1ocsUIUw==",
+      "request": "MIGEMIGBMFowWDBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGiIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "at": 2556144010,
+      "knowledgeTime": 2556144010,
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_CERT_STATUS"
+      }
+    },
+    {
+      "id": "good-explicit-null-bytes",
+      "raw": "MIIBSwoBAKCCAUQwggFABgkrBgEFBQcwAQEEggExMIIBLTCB1KIWBBQdTpVvHFG2gMsnqzmVobdzRGCOKxgPMjA1MTAxMDEwMDAwMDBaMIGDMIGAMFYwCwYJYIZIAWUDBAIBBCBEYuFzkwEz+n53xytQHCcYEU2yr6B525zRoIUS2GgPDQQgRBrELSI7nqZUdb7QBFpchVqrcC5C1cx2Bv05605f3k0CAwFC0YACBQAYDzIwNTEwMTAxMDAwMDAwWqARGA8yMDUxMDEwMTAwMDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRCMAoGCCqGSM49BAMCA0gAMEUCIFAw48qswoDdWqiMMvgfKqWsyrs1o6zPeMOnQ+M3EnKeAiEAwRO2QGb/lgmMZQA/1IGUlWQgMZewNEGmcAVp3wZCqp8=",
+      "sha256": "2e051feb10019f4b3b88b5157a4dadfc1ff74518bd4f6b64af661384189be0c8",
+      "tbs": "MIHUohYEFB1OlW8cUbaAyyerOZWht3NEYI4rGA8yMDUxMDEwMTAwMDAwMFowgYMwgYAwVjALBglghkgBZQMEAgEEIERi4XOTATP6fnfHK1AcJxgRTbKvoHnbnNGghRLYaA8NBCBEGsQtIjueplR1vtAEWlyFWqtwLkLVzHYG/TnrTl/eTQIDAULRgAIFABgPMjA1MTAxMDEwMDAwMDBaoBEYDzIwNTEwMTAxMDAwNTAwWqEjMCEwHwYJKwYBBQUHMAECBBIEEObgCH0kbw+BTmQzlL0jNEI=",
+      "signature": "MEUCIFAw48qswoDdWqiMMvgfKqWsyrs1o6zPeMOnQ+M3EnKeAiEAwRO2QGb/lgmMZQA/1IGUlWQgMZewNEGmcAVp3wZCqp8=",
+      "signatureValid": true,
+      "certStatus": {
+        "tag": 128,
+        "contentHex": "0500"
+      },
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3gkUE/7yCnO4NJXe3rK2fi+IC8H8jD6NgUTHA77ZCfmMtw5pX7N/Gr7g0qpcoASNtO0B6Kwm0yXksh1ocsUIUw==",
+      "request": "MIGEMIGBMFowWDBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGiIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "at": 2556144010,
+      "knowledgeTime": 2556144010,
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_CERT_STATUS"
+      }
+    },
+    {
+      "id": "unknown-explicit-null-bytes",
+      "raw": "MIIBTAoBAKCCAUUwggFBBgkrBgEFBQcwAQEEggEyMIIBLjCB1KIWBBQdTpVvHFG2gMsnqzmVobdzRGCOKxgPMjA1MTAxMDEwMDAwMDBaMIGDMIGAMFYwCwYJYIZIAWUDBAIBBCBEYuFzkwEz+n53xytQHCcYEU2yr6B525zRoIUS2GgPDQQgRBrELSI7nqZUdb7QBFpchVqrcC5C1cx2Bv05605f3k0CAwFC0YICBQAYDzIwNTEwMTAxMDAwMDAwWqARGA8yMDUxMDEwMTAwMDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRCMAoGCCqGSM49BAMCA0kAMEYCIQD459Oquj5SDMBytq7vcJ5DQGPescr9Dza8q/aeTXvwogIhAOqqF9ethH//hvSivxgU5e9RJi3OlMAJUHvMZDsms8Oj",
+      "sha256": "094386b0be821eabb60a5c022f2f742ae315c5f1b2fb0a347e086d080a46d4cc",
+      "tbs": "MIHUohYEFB1OlW8cUbaAyyerOZWht3NEYI4rGA8yMDUxMDEwMTAwMDAwMFowgYMwgYAwVjALBglghkgBZQMEAgEEIERi4XOTATP6fnfHK1AcJxgRTbKvoHnbnNGghRLYaA8NBCBEGsQtIjueplR1vtAEWlyFWqtwLkLVzHYG/TnrTl/eTQIDAULRggIFABgPMjA1MTAxMDEwMDAwMDBaoBEYDzIwNTEwMTAxMDAwNTAwWqEjMCEwHwYJKwYBBQUHMAECBBIEEObgCH0kbw+BTmQzlL0jNEI=",
+      "signature": "MEYCIQD459Oquj5SDMBytq7vcJ5DQGPescr9Dza8q/aeTXvwogIhAOqqF9ethH//hvSivxgU5e9RJi3OlMAJUHvMZDsms8Oj",
+      "signatureValid": true,
+      "certStatus": {
+        "tag": 130,
+        "contentHex": "0500"
+      },
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3gkUE/7yCnO4NJXe3rK2fi+IC8H8jD6NgUTHA77ZCfmMtw5pX7N/Gr7g0qpcoASNtO0B6Kwm0yXksh1ocsUIUw==",
+      "request": "MIGEMIGBMFowWDBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGiIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "at": 2556144010,
+      "knowledgeTime": 2556144010,
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_CERT_STATUS"
+      }
+    },
+    {
+      "id": "revoked-control",
+      "raw": "MIIBXwoBAKCCAVgwggFUBgkrBgEFBQcwAQEEggFFMIIBQTCB6KIWBBQdTpVvHFG2gMsnqzmVobdzRGCOKxgPMjA1MTAxMDEwMDAwMDBaMIGXMIGUMFYwCwYJYIZIAWUDBAIBBCBEYuFzkwEz+n53xytQHCcYEU2yr6B525zRoIUS2GgPDQQgRBrELSI7nqZUdb7QBFpchVqrcC5C1cx2Bv05605f3k0CAwFC0aEWGA8yMDUwMTIzMTIzNTkzMFqgAwoBARgPMjA1MTAxMDEwMDAwMDBaoBEYDzIwNTEwMTAxMDAwNTAwWqEjMCEwHwYJKwYBBQUHMAECBBIEEObgCH0kbw+BTmQzlL0jNEIwCgYIKoZIzj0EAwIDSAAwRQIhAJD7cP++Ba1b2ycWYBkc4wSa5WThC+dz+b1CzVSdKxFHAiAdiisNckdnPenKasrqr7emIuN8qc1pOtwEyofRjxKtsQ==",
+      "sha256": "735320ae777fb19823f1b8ef3349d9c32aab1ec2f86ee7e2cd1e61c5c4d38801",
+      "tbs": "MIHoohYEFB1OlW8cUbaAyyerOZWht3NEYI4rGA8yMDUxMDEwMTAwMDAwMFowgZcwgZQwVjALBglghkgBZQMEAgEEIERi4XOTATP6fnfHK1AcJxgRTbKvoHnbnNGghRLYaA8NBCBEGsQtIjueplR1vtAEWlyFWqtwLkLVzHYG/TnrTl/eTQIDAULRoRYYDzIwNTAxMjMxMjM1OTMwWqADCgEBGA8yMDUxMDEwMTAwMDAwMFqgERgPMjA1MTAxMDEwMDA1MDBaoSMwITAfBgkrBgEFBQcwAQIEEgQQ5uAIfSRvD4FOZDOUvSM0Qg==",
+      "signature": "MEUCIQCQ+3D/vgWtW9snFmAZHOMEmuVk4Qvnc/m9Qs1UnSsRRwIgHYorDXJHZz3pymrK6q+3piLjfKnNaTrcBMqH0Y8SrbE=",
+      "signatureValid": true,
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303530313233313233353933305aa0030a0101"
+      },
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3gkUE/7yCnO4NJXe3rK2fi+IC8H8jD6NgUTHA77ZCfmMtw5pX7N/Gr7g0qpcoASNtO0B6Kwm0yXksh1ocsUIUw==",
+      "request": "MIGEMIGBMFowWDBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGiIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "at": 2556144010,
+      "knowledgeTime": 2556144010,
+      "expected": {
+        "thisUpdate": 2556144000,
+        "nextUpdate": 2556144300,
+        "producedAt": 2556144000,
+        "revokedAt": 2556143970,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "bad-signature-control",
+      "raw": "MIIBSAoBAKCCAUEwggE9BgkrBgEFBQcwAQEEggEuMIIBKjCB0aIWBBQdTpVvHFG2gMsnqzmVobdzRGCOKxgPMjA1MTAxMDEwMDAwMDBaMIGAMH4wVjALBglghkgBZQMEAgEEIERi4XOTATP6fnfHK1AcJxgRTbKvoHnbnNGghRLYaA8NBCBEGsQtIjueplR1vtAEWlyFWqtwLkLVzHYG/TnrTl/eTQIDAULRgAAYDzIwNTEwMTAxMDAwMDAwWqARGA8yMDUxMDEwMTAwMDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRCMAoGCCqGSM49BAMCA0gAMEUCIQClIJ4LNIhHayXif6Cl1ps8zogM4mby2k7ywQwzO1R6HgIgfcHzrwcNPcs5QUy+tMW0NIw/fcqLKJAXYTzJUUsO7N0=",
+      "sha256": "be5cf681e0f1f65df3193317772d4eee6d6ea5dff25b379b94c3b4909f371ef8",
+      "tbs": "MIHRohYEFB1OlW8cUbaAyyerOZWht3NEYI4rGA8yMDUxMDEwMTAwMDAwMFowgYAwfjBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGAABgPMjA1MTAxMDEwMDAwMDBaoBEYDzIwNTEwMTAxMDAwNTAwWqEjMCEwHwYJKwYBBQUHMAECBBIEEObgCH0kbw+BTmQzlL0jNEI=",
+      "signature": "MEUCIQClIJ4LNIhHayXif6Cl1ps8zogM4mby2k7ywQwzO1R6HgIgfcHzrwcNPcs5QUy+tMW0NIw/fcqLKJAXYTzJUUsO7N0=",
+      "signatureValid": false,
+      "certStatus": {
+        "tag": 128,
+        "contentHex": ""
+      },
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3gkUE/7yCnO4NJXe3rK2fi+IC8H8jD6NgUTHA77ZCfmMtw5pX7N/Gr7g0qpcoASNtO0B6Kwm0yXksh1ocsUIUw==",
+      "request": "MIGEMIGBMFowWDBWMAsGCWCGSAFlAwQCAQQgRGLhc5MBM/p+d8crUBwnGBFNsq+geduc0aCFEthoDw0EIEQaxC0iO56mVHW+0ARaXIVaq3AuQtXMdgb9OetOX95NAgMBQtGiIzAhMB8GCSsGAQUFBzABAgQSBBDm4Ah9JG8PgU5kM5S9IzRC",
+      "at": 2556144010,
+      "knowledgeTime": 2556144010,
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_SIGNATURE"
+      }
+    }
+  ]
+}
