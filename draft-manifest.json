@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 16349,
-      "sha256": "fd5917e6dfa8268257730731877e1e6e462f15a39833679b3fb993eab4d4a166"
+      "bytes": 17395,
+      "sha256": "77df97799cd9a2b25be49182c8b93f9ac009fc72f9abfc2b640c82b888a7638b"
     },
     {
       "path": "docs/implementation.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294429,
-      "sha256": "69d0599615168751f99b36c3323038944f83fe527a425ee07f09435397f7bade"
+      "bytes": 294547,
+      "sha256": "1535e5f75751a5171fdb989206b82f1b927243a6d7720758a1cef0bf8f27b907"
     },
     {
       "path": "reference/README.md",
@@ -1395,13 +1395,18 @@
     },
     {
       "path": "reference/retained-authorities.mjs",
-      "bytes": 19218,
-      "sha256": "9e158a5985284073f81d55ae738158f597af6359c8fbd643136a5259b84664cb"
+      "bytes": 19942,
+      "sha256": "66dbc88d0c5b03dbb72ca212169aa067134e9971edc7bb27446401ca92119341"
     },
     {
       "path": "reference/retained-authorities.test.mjs",
       "bytes": 58045,
       "sha256": "8e50230eb4121656b2db0d2e7114ba7a279e3836e147525548f968779adf7220"
+    },
+    {
+      "path": "reference/retained-authority-key-incidents.test.mjs",
+      "bytes": 3300,
+      "sha256": "8ac717d0de4ee1d5cb2366f265a9ff04a534229fcbc77a71abb5bf201954678b"
     },
     {
       "path": "reference/retained-document.test.mjs",
@@ -12477,6 +12482,11 @@
       "path": "reference/vectors/registration-authorization/contract.json",
       "bytes": 256993,
       "sha256": "06b48829f25488f58e640446483b4e13d2037a0149ff1d29894ec8c2653f51db"
+    },
+    {
+      "path": "reference/vectors/retained-authority-key-incidents.json",
+      "bytes": 649969,
+      "sha256": "36c39c682d7eddb955f0d4debeceff435c8ad0183e249549d6c29ef5a0a36a26"
     },
     {
       "path": "reference/vectors/status-calendar.json",
