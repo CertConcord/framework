@@ -76,6 +76,8 @@ RegistrationAuthorization uses schema version 2 and MUST sign exactly one `issua
 
 Cryptographic pins identify authorities but MUST NOT confer unlimited roles. Online admission and offline verification MUST resolve each required authority by identity, role, scope, operation `stateTime` and evidence `knowledgeTime`. Appointments require explicit admission and validity intervals, scope and authenticated status; certificate appointments also enforce the original certificate lifetime. A RAW_KEY appointment requires its own external lifecycle. RA, issuer, status publisher, activation attestor, receipt provider, organizational authority, TSA, recovery authority and the required transparency participants each require their selected role. A known key compromise applies across appointments, roles and certificates wrapping that key. Unknown or stale authority knowledge cannot establish acceptance; an already established violation remains INVALID. [Authority validation](../../docs/authority-validation.md) defines these boundaries.
 
+Where a selected policy admits equivalent public-key encodings, a known applicable key-wide compromise MUST remain effective across those encodings. This negative comparison MUST NOT rewrite signed KeyIDs, admit an unselected identity, or transfer a positive grant or unrelated status. Each status remains bound to its original KeyID and trust domain. This rule does not broaden an algorithm profile or its accepted parameter encodings.
+
 ## 5. Independent assurance dimensions
 
 An AssuranceVector contains identity, key, activation, custody, recovery and evidenceMode. None is inferred from another.

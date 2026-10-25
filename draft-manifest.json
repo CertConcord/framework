@@ -125,8 +125,8 @@
     },
     {
       "path": "docs/authority-validation.md",
-      "bytes": 3368,
-      "sha256": "bb32388092ea711a05aaa9f43396c0f6a3d7783729b45213f4f088567856e812"
+      "bytes": 4331,
+      "sha256": "71c830bfaaac2ee82bcc9656d1d8b56b49e386c666b2a951332303ec579064e2"
     },
     {
       "path": "docs/benchmarks.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294315,
-      "sha256": "4a4c411b26076ef2c1c582c8ab607c51491f8848277cb8f63b2a833aea7069a1"
+      "bytes": 294429,
+      "sha256": "69d0599615168751f99b36c3323038944f83fe527a425ee07f09435397f7bade"
     },
     {
       "path": "reference/README.md",
@@ -370,8 +370,8 @@
     },
     {
       "path": "reference/authority-history.mjs",
-      "bytes": 11058,
-      "sha256": "cbe099d1e0b151cc4252f6f2b9470185a66d9807fa7534ca1ce5ffa86aa21cee"
+      "bytes": 11543,
+      "sha256": "3f67ac80917c03adcb031be5aab0872af36d48fa772060b55ad9507dca885d0a"
     },
     {
       "path": "reference/authority-history.test.mjs",
@@ -552,6 +552,11 @@
       "path": "reference/device-enrollment.test.mjs",
       "bytes": 10312,
       "sha256": "ce584c6c1c653a4cf9d632afc17d3ea2474feb2e916493667b8f54251ea5a21f"
+    },
+    {
+      "path": "reference/direct-authority-key-incidents.test.mjs",
+      "bytes": 4955,
+      "sha256": "5734f92bc3d955a5dd3037ae9f67b6962f052a6a2107604287877e5f4cd576c5"
     },
     {
       "path": "reference/document-demo.mjs",
@@ -2057,6 +2062,11 @@
       "path": "reference/vectors/crl-scope.json",
       "bytes": 13543,
       "sha256": "cf710b9aef1a8fb5dc2528ebaeaff720892c27eb484c4bbd8aaf568cff4f119f"
+    },
+    {
+      "path": "reference/vectors/direct-authority-key-incidents.json",
+      "bytes": 604621,
+      "sha256": "ad3c5b88e6a3b0112eedd034e9fb7b81b9b01437b6ac8e1c084386c95c2d6c97"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/README.md",
@@ -12605,8 +12615,8 @@
     },
     {
       "path": "spec/bindings/COMMON-draft-03.md",
-      "bytes": 30675,
-      "sha256": "7b4ec8a7601f5c449cea17a8ffaad380811ae52f2b66bf0d0c1ace617c92931c"
+      "bytes": 31113,
+      "sha256": "5489d7f146ad79f39fddbb220a133586a2685cb819f0a376b1ec27e01edad867"
     },
     {
       "path": "spec/bindings/CONFORMANCE-draft-03.md",
