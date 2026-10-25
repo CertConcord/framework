@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 10952,
-      "sha256": "fe922b0764d969d9a5a635728ee12ac13947341665bee10c75cafb7b5f9c78ad"
+      "bytes": 11622,
+      "sha256": "9c0567581c35c4d970151312917d1d8adfb5301c081f5c4c7ebe2d8abfe59371"
     },
     {
       "path": "docs/implementation.md",
@@ -1375,8 +1375,8 @@
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
-      "bytes": 41023,
-      "sha256": "90c0ff741e11a00ec462c6056fcd3b42e3debcf2baabf01d6f7b45916ed225b2"
+      "bytes": 46594,
+      "sha256": "9fe347b0e32add0138b39548538318b68421d3a6a4173b9208e62c6a95159206"
     },
     {
       "path": "reference/sdk-results.test.mjs",
@@ -11775,8 +11775,8 @@
     },
     {
       "path": "reference/verification-result.mjs",
-      "bytes": 7250,
-      "sha256": "700b1e5c24b11c4a27998fb9b751987e82c2eab2f57cd42d002aafdc7d2d6753"
+      "bytes": 7624,
+      "sha256": "7725cf8921c20a0b7f0194f72ba8fc44913e39b4d6277af581c63b54e3b1038e"
     },
     {
       "path": "reference/verify-organization-vectors.mjs",

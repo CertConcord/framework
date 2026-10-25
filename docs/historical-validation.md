@@ -130,6 +130,17 @@ Proxy traps. Ordinary native promise rejections are observed, but custom
 resolver remains responsible for its asynchronous failures. Synchronous resolver
 exceptions propagate unchanged. These result checks do not authenticate policy
 inputs or replace the selected authority's role, scope and status evaluation.
+
+The SDK evaluation wrapper applies the same guard before examining or normalizing
+a returned decision. It additionally requires an admitted decision to have its own
+nonempty string `reason` data property. An absent, empty, non-string or accessor
+reason changes an otherwise `VALID` decision to
+`INDETERMINATE/AUTHORITY_DECISION_MISSING`. Negative decisions keep their outcome
+and use `AUTHORITY_DECISION_MISSING` for absent, empty or unsafe reasons. Accepted
+objects retain their identity and metadata; unrelated metadata is not copied or
+read during normalization. Ordinary rejected promises reach the shared rejection
+observer before a missing decision is returned.
+
 A rejected renewal decision leaves the old archive head and uncertain operation
 intact, so the original token can be reconciled under a valid authority decision
 without repeating the TSA request.
