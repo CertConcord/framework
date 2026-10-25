@@ -8,6 +8,8 @@ import fs from 'node:fs';
 import { syncBuiltinESMExports } from 'node:module';
 import { createVerifier } from './sdk/index.mjs';
 import { dcbor, decodeCBOR } from './core.mjs';
+import { createRetainedAuthorityResolver } from './retained-authorities.mjs';
+import { verifyTimestampToken } from './timestamp.mjs';
 import {
   defaultVectorDirectory,
   loadVectorCorpus,
@@ -207,6 +209,121 @@ test('published retained lifecycle separates preservation from current admissibi
       reason: 'AUTHORITY_REVOKED',
     });
     assert.equal(incident.overall, 'INVALID');
+  }
+});
+
+test('published retained proof vectors preserve exact inputs and component outcomes', async (t) => {
+  const corpus = loadVectorCorpus();
+  const results = new Map(runRetainedVectors().map((row) => [row.id, row]));
+  const P = 1792454402;
+  for (const format of ['cms', 'mdoc']) {
+    const baseline = corpus.manifest.retained.find(
+      (row) => row.id === format + '-retained-renewed',
+    );
+    const baselineOptions = JSON.parse(corpus.read(baseline.options));
+    const baselineInput = corpus.config(baseline.options);
+    const positive = results.get(baseline.id).details;
+    assert.equal(baselineInput.historicalKnowledgeTime, P);
+    assert.equal(positive.originalProof.overall, 'VALID');
+    assert.equal(positive.originalProof.proofOfExistenceUpperBound, P);
+    assert.equal(positive.historicalBytesVisibility.overall, 'VALID');
+    assert.equal(positive.historicalAuthorization.overall, 'VALID');
+
+    for (const [kind, patch, preservationReason] of [
+      ['missing-proof', { evidenceRecord: null }, 'MALFORMED_EVIDENCE'],
+      ['empty-proof', { evidenceRecord: { $hex: '' } }, 'DER_LIMIT_OR_TRUNCATION'],
+      ['before-first-proof', { historicalKnowledgeTime: P - 1 }, null],
+    ])
+      await t.test(`${format}: ${kind}`, (caseTest) => {
+        const id = format + '-retained-' + kind;
+        const entry = corpus.manifest.retained.find((row) => row.id === id);
+        assert(entry, `Missing published vector: ${id}`);
+        assert.deepEqual(JSON.parse(corpus.read(entry.options)), { ...baselineOptions, ...patch });
+        const input = corpus.config(entry.options);
+        for (const name of ['originalBytes', 'currentBytes'])
+          assert.deepEqual(input[name], baselineInput[name], name);
+        const { actual, details } = results.get(id);
+        const reason =
+          kind === 'before-first-proof'
+            ? 'HISTORICAL_BYTES_NOT_YET_PROVEN'
+            : 'HISTORICAL_BYTES_UNPROVEN';
+        assert.deepEqual(actual.historicalAuthorization, { overall: 'INDETERMINATE', reason });
+        assert.deepEqual(details.historicalBytesVisibility, { overall: 'INDETERMINATE', reason });
+        assert.equal(actual.currentAdmissibility.overall, 'VALID');
+        assert.equal(actual.currentKnowledgeTime, baselineInput.currentKnowledgeTime);
+
+        if (kind !== 'before-first-proof') {
+          assert.deepEqual(details.originalProof, { overall: 'INDETERMINATE', reason });
+          assert.deepEqual(actual.preservation, { overall: 'INVALID', reason: preservationReason });
+          assert.equal(actual.overall, 'INVALID');
+          assert.equal(actual.historicalKnowledgeTime, P);
+          return;
+        }
+
+        assert.deepEqual(input.evidenceRecord, baselineInput.evidenceRecord);
+        assert.equal(actual.overall, 'INDETERMINATE');
+        assert.equal(actual.preservation.overall, 'VALID');
+        assert.equal(details.originalProof.overall, 'VALID');
+        assert.equal(details.originalProof.proofOfExistenceUpperBound, P);
+        assert.equal(actual.historicalKnowledgeTime, P - 1);
+        for (const dimension of [
+          'integrity',
+          'issuerTrust',
+          'qualification',
+          'keyBinding',
+          'authorization',
+          'status',
+          'transparency',
+        ])
+          assert.equal(
+            details.historicalAuthorization.dimensions[dimension]?.overall,
+            'VALID',
+            dimension,
+          );
+
+        // At the same H, the original document itself is valid. Its timestamp
+        // does not prove that the complete retained package existed by H.
+        const document = corpus.manifest.documents.find((row) => row.id === format + '-valid');
+        assert.equal(document.trust, input.historicalTrust);
+        assert.deepEqual(corpus.read(document.bytes), input.originalBytes);
+        const directory = copyCorpus(caseTest);
+        changeManifest(directory, (manifest) => {
+          manifest.documents = [document];
+        });
+        const publication = input.publicationTSA;
+        const resolver = createRetainedAuthorityResolver({
+          ...input.historyTrust,
+          history: decodeCBOR(input.history),
+          verifyPublication: ({ imprint, proof, at }) => ({
+            overall: 'VALID',
+            ...verifyTimestampToken(proof, { ...publication, imprint, at, maxFutureSkew: 0 }),
+          }),
+        });
+        let calls = 0;
+        const control = runDocumentVectors({
+          directory,
+          createVerifier: (options) => {
+            calls++;
+            return createVerifier({
+              ...options,
+              trust: { ...options.trust, authorityResolver: resolver, knowledgeTime: P - 1 },
+            });
+          },
+        })[0].actual;
+        assert.equal(calls, 1);
+        assert.equal(control.overall, 'VALID');
+        for (const dimension of [
+          'integrity',
+          'issuerTrust',
+          'qualification',
+          'keyBinding',
+          'authorization',
+          'status',
+          'time',
+          'transparency',
+        ])
+          assert.equal(control.dimensions[dimension]?.overall, 'VALID', dimension);
+      });
   }
 });
 

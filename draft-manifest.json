@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 274073,
-      "sha256": "6d6968bea806eb3639bcb754d2ed4603d4bdaf27863f1d68c6d6a1526d99a2eb"
+      "bytes": 274889,
+      "sha256": "8c0ed3258546f31287882d8782ff83503aa0d89c55dd4d393ea18fd9ae6c56fc"
     },
     {
       "path": "reference/README.md",
@@ -560,8 +560,8 @@
     },
     {
       "path": "reference/document-vectors.test.mjs",
-      "bytes": 22980,
-      "sha256": "5560745e738195eb6730065de394c744ae6a59dc719b3667ef0f2b7d160ef207"
+      "bytes": 28253,
+      "sha256": "741f28f0f517476dac0c6bfda9b3c2de41a46b4276b18d63587e3b71da79c356"
     },
     {
       "path": "reference/draft-domain.test.mjs",
@@ -1735,8 +1735,8 @@
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/README.md",
-      "bytes": 3661,
-      "sha256": "0a46204bf3a8405b8cee32cf3cb18e550c48d30ca92043f3eb9753bd779f0b90"
+      "bytes": 4555,
+      "sha256": "e49c45fc7c760842e2e5b7df3ebcbe1e57c9eb59e5d52fab6b5b4a3a78dbdfc2"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/certified-contract.json",
@@ -1874,6 +1874,11 @@
       "sha256": "16aa998f3f9eb18ad639c2ffdec7ea109a0148fd3bc5044c1066e06fe1bda4af"
     },
     {
+      "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/17fb7cee0bcaced1e14e5e989b93de1708fb31023f1922b9507579cde7d6561a.json",
+      "bytes": 3129,
+      "sha256": "17fb7cee0bcaced1e14e5e989b93de1708fb31023f1922b9507579cde7d6561a"
+    },
+    {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/18bb3fbbc15ff48f5c84bef4f6455e53f76ef7ee17f0d71dec9098a4a8f6101b.json",
       "bytes": 13666,
       "sha256": "18bb3fbbc15ff48f5c84bef4f6455e53f76ef7ee17f0d71dec9098a4a8f6101b"
@@ -1887,6 +1892,11 @@
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/194bbb29f350780c9f85745a97f96c977202f926fc8699201380faf2406bad90.json",
       "bytes": 1617,
       "sha256": "194bbb29f350780c9f85745a97f96c977202f926fc8699201380faf2406bad90"
+    },
+    {
+      "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/1acd2d3829f58b04ccab1ab73cc63256fb7534e7e544e1c73adf3d5ef5930714.json",
+      "bytes": 3112,
+      "sha256": "1acd2d3829f58b04ccab1ab73cc63256fb7534e7e544e1c73adf3d5ef5930714"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/1edd56e21051baa5496416abc49782612246a87fb6502a1096dd6135352bd622.cbor.b64",
@@ -2042,6 +2052,11 @@
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/41f7d1a77cac8b6ff370d48c166a6ed1ccd3dd7d63e059541a313a0ad6a02add.json",
       "bytes": 13666,
       "sha256": "41f7d1a77cac8b6ff370d48c166a6ed1ccd3dd7d63e059541a313a0ad6a02add"
+    },
+    {
+      "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/422bc731e3d470942215425b4aadc417ff2e42490a50edd5a3dc3b18dc1b758e.json",
+      "bytes": 3229,
+      "sha256": "422bc731e3d470942215425b4aadc417ff2e42490a50edd5a3dc3b18dc1b758e"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/42f0563cb513a04c0c1d325d4730ababfe7cce1deb3e0a33cf30cfdab20e32d0.cbor.b64",
@@ -2284,6 +2299,11 @@
       "sha256": "22c84bce47dc299c440326be46c0e3bc7f25f2f3dcd3664b6ec804f013ad5594"
     },
     {
+      "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/7c81cd7a70ea7a5cb60bea1f648b8403bb2023c5d9fb370cb79dd2ac606028f5.json",
+      "bytes": 3113,
+      "sha256": "7c81cd7a70ea7a5cb60bea1f648b8403bb2023c5d9fb370cb79dd2ac606028f5"
+    },
+    {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/7d19b9e1eee451e94bf3a46a4a334d0f73d0b8e8459b579a8e724d9847482cca.der.b64",
       "bytes": 8649,
       "sha256": "c73e931875ca03e9c8a571870a3e8c05967d12f7b057f8b8afa0023321df3e04"
@@ -2444,9 +2464,19 @@
       "sha256": "a22be644bcbf7c3039bcc93b70e27b9880700d28409a9e605854a963ec710b8e"
     },
     {
+      "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/a32f779740aed01cbccc0c091686ce7028db194cf745d113c0f8a46d100bad0b.json",
+      "bytes": 3128,
+      "sha256": "a32f779740aed01cbccc0c091686ce7028db194cf745d113c0f8a46d100bad0b"
+    },
+    {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/a40842ee8498e89d4e54f23ada9a6f26b2896c0482c8e0eb76da418a4323677f.der.b64",
       "bytes": 9981,
       "sha256": "28ea974755d484c27a6f5f0b8ae2822c00a039aae0f2b6a1c3b650cf52b9217f"
+    },
+    {
+      "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/a43edc07390f8d5da32d3a67aa50ac81d2eba39cd73f953abd71ad8a5700f702.json",
+      "bytes": 3228,
+      "sha256": "a43edc07390f8d5da32d3a67aa50ac81d2eba39cd73f953abd71ad8a5700f702"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/files/a441d473c0b99aefa1eb20c32c7654859a52154dcf8513b6185a5ae0c674e71c.der.b64",
@@ -2885,8 +2915,8 @@
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/manifest.json",
-      "bytes": 119703,
-      "sha256": "9b64fc4a75856cf1d95c2702b2743af48629d1f7fccce1c8d2b15b503513ce30"
+      "bytes": 126922,
+      "sha256": "e1b934055c60d106d8892ef550ae26372a78f1bdde5650a46dac676c8ea0176d"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2/README.md",
