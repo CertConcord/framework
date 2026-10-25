@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "profile": "Selected definite CBOR text identity; U+FEFF is a text code point",
+  "text": [
+    {
+      "id": "empty",
+      "value": "",
+      "hex": "60"
+    },
+    {
+      "id": "ascii",
+      "value": "A",
+      "hex": "6141"
+    },
+    {
+      "id": "leading-bom",
+      "value": "\ufeffA",
+      "hex": "64efbbbf41"
+    },
+    {
+      "id": "lone-bom",
+      "value": "\ufeff",
+      "hex": "63efbbbf"
+    },
+    {
+      "id": "embedded-bom",
+      "value": "A\ufeffB",
+      "hex": "6541efbbbf42"
+    },
+    {
+      "id": "repeated-bom",
+      "value": "\ufeff\ufeffA",
+      "hex": "67efbbbfefbbbf41"
+    },
+    {
+      "id": "supplementary-code-point",
+      "value": "😀",
+      "hex": "64f09f9880"
+    }
+  ],
+  "nested": {
+    "value": [
+      "\ufeffA",
+      "B",
+      "\ufeff",
+      "X\ufeffY"
+    ],
+    "hex": "8464efbbbf41614263efbbbf6558efbbbf59"
+  },
+  "maps": [
+    {
+      "id": "ordinary",
+      "entries": [
+        [
+          "role",
+          "x"
+        ]
+      ],
+      "hex": "a164726f6c656178"
+    },
+    {
+      "id": "bom-prefixed",
+      "entries": [
+        [
+          "\ufeffrole",
+          "x"
+        ]
+      ],
+      "hex": "a167efbbbf726f6c656178"
+    },
+    {
+      "id": "distinct",
+      "entries": [
+        [
+          "role",
+          "x"
+        ],
+        [
+          "\ufeffrole",
+          "y"
+        ]
+      ],
+      "hex": "a264726f6c65617867efbbbf726f6c656179"
+    }
+  ],
+  "duplicateMaps": [
+    {
+      "id": "ordinary",
+      "hex": "a264726f6c65617864726f6c656179"
+    },
+    {
+      "id": "bom-prefixed",
+      "hex": "a267efbbbf726f6c65617867efbbbf726f6c656179"
+    }
+  ],
+  "invalidUTF8": [
+    {
+      "id": "invalid-leading-byte",
+      "hex": "61ff"
+    },
+    {
+      "id": "incomplete-sequence",
+      "hex": "61c2"
+    },
+    {
+      "id": "overlong-nul",
+      "hex": "62c080"
+    },
+    {
+      "id": "encoded-surrogate",
+      "hex": "63eda080"
+    },
+    {
+      "id": "above-unicode-maximum",
+      "hex": "64f4908080"
+    },
+    {
+      "id": "incomplete-after-bom",
+      "hex": "64efbbbfc2"
+    },
+    {
+      "id": "invalid-after-bom",
+      "hex": "64efbbbfff"
+    }
+  ],
+  "invalidUTF16": [
+    {
+      "id": "high-surrogate",
+      "value": "\ud800"
+    },
+    {
+      "id": "low-surrogate",
+      "value": "\udc00"
+    }
+  ],
+  "truncated": {
+    "hex": "64efbbbf"
+  },
+  "opaque": {
+    "hex": "44efbbbf41",
+    "valueHex": "efbbbf41"
+  },
+  "nonNFC": {
+    "value": "é",
+    "hex": "6365cc81"
+  },
+  "outerFields": [
+    {
+      "name": "issuerAuth",
+      "keyHex": "6a69737375657241757468",
+      "bomKeyHex": "6defbbbf69737375657241757468"
+    },
+    {
+      "name": "nameSpaces",
+      "keyHex": "6a6e616d65537061636573",
+      "bomKeyHex": "6defbbbf6e616d65537061636573"
+    }
+  ]
+}

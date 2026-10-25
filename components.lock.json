@@ -43,14 +43,14 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "f9ce29a24bbfd093803884fd089b4c19eaeb8ded",
+      "commit": "4010f806e99b5b4febca123c24d8cfadd6dad1a3",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mdoc-signing/draft.md",
-          "sha256": "e0f2345e1051cb28e1784ae50bcd3baab6081cc888341d6d1348e4a57c8d935d"
+          "sha256": "d46475dc193a9e96b648bc4ac603164b8f6d3a6a70afe51006b9a361b6b722ae"
         },
         {
           "source": "sources.json",
@@ -80,7 +80,7 @@
         {
           "source": "reference/cbor.mjs",
           "path": "reference/vendor/mdoc-signing/cbor.mjs",
-          "sha256": "73aa91b4aae2956bf97aca91c4f273b40133525f0745251e6e3899bcb65e718f"
+          "sha256": "4ab9a7b0152818574e192de3cc23a2be16d6a2671052ed1afa486bccbbce5dc8"
         },
         {
           "source": "reference/errors.mjs",
@@ -93,9 +93,14 @@
           "sha256": "8f03dd203c4c09e95a8aa4c1c9ca02047435003406f048519eefc7d1daf3b921"
         },
         {
+          "source": "vectors/cbor-text.json",
+          "path": "spec/external/mdoc-signing/vectors/cbor-text.json",
+          "sha256": "76dfc807d5c0ca9dcf3c439f08656dfe97ed064de22fb70e7a1c18a5b760b570"
+        },
+        {
           "source": "vectors/manifest.json",
           "path": "spec/external/mdoc-signing/vectors/manifest.json",
-          "sha256": "1900c8309529858c61c1e5a25a9c7f41f4b0b233a2e82ea49f544415b587c0f9"
+          "sha256": "cec70e368eac1e35321128c7b2586d0868931695dac13e614dfc03cbffbab120"
         },
         {
           "source": "vectors/classification.json",

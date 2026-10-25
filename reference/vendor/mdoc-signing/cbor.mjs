@@ -42,7 +42,7 @@ export function encode(v, depth = 0) {
   if (Buffer.isBuffer(v) || v instanceof Uint8Array) return Buffer.concat([head(2, v.length), v]);
   if (typeof v === 'string') {
     const b = Buffer.from(v);
-    requireThat(new TextDecoder('utf-8', { fatal: true }).decode(b) === v, 'CBOR_TEXT');
+    requireThat(new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(b) === v, 'CBOR_TEXT');
     return Buffer.concat([head(3, b.length), b]);
   }
   if (Array.isArray(v)) return Buffer.concat([head(4, v.length), ...v.map(e)]);
@@ -96,7 +96,7 @@ export function decode(
     if (m === 2 || m === 3) {
       requireThat(p + l <= b.length, 'CBOR_TRUNCATED');
       const v = b.subarray(p, (p += l));
-      return m === 2 ? Buffer.from(v) : new TextDecoder('utf-8', { fatal: true }).decode(v);
+      return m === 2 ? Buffer.from(v) : new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(v);
     }
     if (m === 4) {
       requireThat(l <= maxItems - items && l <= b.length - p, 'CBOR_ITEM_BUDGET');

@@ -120,7 +120,7 @@ export function decodeCBOR(input, { maxBytes = 16 * 1024 * 1024, maxItems = 1000
     if (major === 2 || major === 3) {
       requireThat(p + size <= b.length, 'CBOR_TRUNCATED');
       const v = b.subarray(p, (p += size));
-      return major === 2 ? Buffer.from(v) : new TextDecoder('utf-8', { fatal: true }).decode(v);
+      return major === 2 ? Buffer.from(v) : new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(v);
     }
     if (major === 4) {
       requireThat(size <= maxItems - items && size <= b.length - p, 'CBOR_ITEM_BUDGET');

@@ -5,12 +5,14 @@ Each component repository owns its draft. The framework selects the immutable co
 | Component               | Canonical source                                                                                                 | Framework role     |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------ |
 | mtc-document-validation | [e7569638](https://github.com/CertConcord/mtc-document-validation/tree/e7569638793e3800d55fa1ef9d5f45e87b546925) | selected-draft     |
-| mdoc-signing            | [f9ce29a2](https://github.com/CertConcord/mdoc-signing/tree/f9ce29a24bbfd093803884fd089b4c19eaeb8ded)            | selected draft-02  |
+| mdoc-signing            | [4010f806](https://github.com/CertConcord/mdoc-signing/tree/4010f806e99b5b4febca123c24d8cfadd6dad1a3)            | selected draft-02  |
 | tlog-cosignature-ml-dsa | [c5266dfe](https://github.com/CertConcord/tlog-cosignature-ml-dsa/tree/c5266dfe267e028b36b0e5aec14cf91193651ffa) | selected draft-02  |
 | signing-context         | [a1e23354](https://github.com/CertConcord/signing-context/tree/a1e233542e927a878ceb8eacf78f4d443cb2f19a)         | proposed-amendment |
 | passsign-evidence       | [38c8dbc9](https://github.com/CertConcord/passsign-evidence/tree/38c8dbc9ec95dcce4b55e209cd6b9dee9a00265a)       | proposed-amendment |
 
 MTC Document Validation owns retained-evidence requirements and the lifetime checker used by the archive adapter. mdoc Signing Certificates owns the executable CBOR codec, issuerAuth/MSO and item checks, certified key/purpose rules, authorization/status interfaces, detached COSE signature and full serialized vectors. Framework mdoc issuance, issuer authentication and detached document signing and verification delegate to that exact component. The framework selects certificate profiles, key purposes and application headers, and converts DER ECDSA signatures at its provider boundary. `cose.mjs` re-exports the component codec so all mdoc paths share the same tag/encoding domain.
+
+Both CBOR text decoders preserve a leading U+FEFF as a code point. The component matches text keys exactly, so a U+FEFF-prefixed name cannot stand in for a required field. The framework core separately retains its NFC text and ASCII-only map-key restrictions. [Fixed text encodings](../spec/external/mdoc-signing/vectors/cbor-text.json) cover these different profiles, malformed UTF-8 and duplicate keys.
 
 Detached document signatures use the component's credential-first critical-header order, followed by application labels in canonical encoded-key order. The earlier framework order has no compatibility fallback. Cross-consumption tests cover P-256 and ML-DSA documents in both directions, including a mathematically valid signature with the rejected earlier order. This records consistency with one shared implementation, not interoperability between independently developed implementations.
 
