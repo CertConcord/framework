@@ -100,6 +100,10 @@ The profile combines the selected IETF MTC draft with separately pinned C2SP pro
 
 An MTC authority is a policy-bound logical issuer and its exact cosigning key. Its certificate inputs, permitted end-entity profiles, namespace, log lifecycle and independent mirror policy are explicit. A conventional certificate wrapping the MTC authority does not bypass MTC verification. An authority prohibited from issuing CA certificates MUST NOT issue one, including a self-issued certificate that might evade a conventional path-length count.
 
+Certificate issuers encode each `notBefore` and `notAfter` independently using RFC 5280 section 4.1.2.5: years 1950 through 2049 use UTCTime, and years 2050 onward use GeneralizedTime, with seconds and a `Z` suffix. The reference retains its prior GeneralizedTime behavior for pre-1950 inputs outside the UTCTime pivot. This issuer choice also applies when constructing new MTC TBSCertificates; it does not change the separate GeneralizedTime encoders for status or timestamp structures.
+
+A reader preserves the signed TBSCertificate and accepts both Time alternatives. It MUST NOT normalize retained certificate dates before signature, certificate-ID, or MTC leaf verification. Equal instants encoded differently produce different signed bytes and MTC commitments. An issuer reopening an existing APPENDED or CERTIFIED journal record retains its stored TBS and certificate; new log entries may use the updated encoding alongside old entries without changing earlier leaves or prefix roots. A proof for a differently encoded TBS is not interchangeable.
+
 ## 8. CA and log identifiers
 
 The CAID is a valid Trust Anchor ID within a legitimately controlled namespace. Draft-06 log, landmark and landmark-group names use `{caID 0 N}`, `{caID 1 N L}` and `{caID 2 N L}`. Display strings are not substitutes for the prescribed RELATIVE-OID bytes. Log numbers range from 1 through 65535 and are not reused under the same CA identity.
