@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294693,
-      "sha256": "e3b755bc3ff4e0cb14cedb31b86ff3518b06f7400f26604accebbbf74db8d1ec"
+      "bytes": 294787,
+      "sha256": "3dd80c6b72e7c3e966ad409cdcf831c4983e0ba43de4a9eebe024c12f03e4158"
     },
     {
       "path": "reference/README.md",
@@ -457,6 +457,11 @@
       "path": "reference/certificate-key-usage.test.mjs",
       "bytes": 3920,
       "sha256": "fec6d87c96a023106bca10f5bae83976574607ca03590bacc0d5bca47e935c46"
+    },
+    {
+      "path": "reference/certificate-validity-time.test.mjs",
+      "bytes": 6044,
+      "sha256": "2a4ad11b03442d01ef1875377ede8b1774d5a4f67b8184c4f8fb30494380b5b0"
     },
     {
       "path": "reference/cmp.mjs",
@@ -959,6 +964,11 @@
       "sha256": "526969fa246a031f378a85f0a9b28605cc5909b56e48b24d5bba378c16c1e408"
     },
     {
+      "path": "reference/mtc-validity-replay.test.mjs",
+      "bytes": 8972,
+      "sha256": "eeea0c95244a7797fdd1df5c639bf6d7267e88012696924702d2211c73b0b86a"
+    },
+    {
       "path": "reference/mtc-version.test.mjs",
       "bytes": 2278,
       "sha256": "777b117202f237c248724f1eaba4f472782f28855eb255076dc5305f38e75b15"
@@ -1305,8 +1315,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 19951,
-      "sha256": "74577501f06d9f06e93e9948114415ae521a8b09e999bda84bd82f85bfa30c18"
+      "bytes": 20230,
+      "sha256": "dedd31f03cc4a9a4b4691952450384370dc7ab427ad02d8f627e065a5b48454a"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -12665,8 +12675,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 46880,
-      "sha256": "d390d1fa7fdefbd3df99deb9b48714cd14f2bc5573d789b97da6352ad5dcc2ef"
+      "bytes": 47934,
+      "sha256": "dc1da85665d82ee960d091f9eced4bd8a2a3ad0388dcc057a5037adc105733cf"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
