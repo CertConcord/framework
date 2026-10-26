@@ -203,10 +203,16 @@
       "cacheRoot": "mtc-draft06"
     },
     {
+      "name": "accepts draft07 exact certificate notAfter",
+      "certificate": "mtc-draft07",
+      "expected": "STANDALONE",
+      "atOffset": 86400
+    },
+    {
       "name": "rejects an expired draft07 certificate",
       "certificate": "mtc-draft07",
       "expected": "MTC_SERIAL_OR_TIME",
-      "atOffset": 86400
+      "atOffset": 86401
     },
     {
       "name": "rejects a revoked draft07 range",

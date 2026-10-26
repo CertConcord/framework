@@ -4825,8 +4825,8 @@
     },
     {
       "path": "reference/vectors/mtc-versions.json",
-      "bytes": 403595,
-      "sha256": "87aecd8cc55a0a22f61f43af35a3817f6bfc9592a448ea14a8a61fbe89a941ca"
+      "bytes": 403760,
+      "sha256": "e01ddb9bee1587daa297ce34fdb1947efe48d125fdef60e0c5d6abd00e9ce939"
     },
     {
       "path": "reference/vectors/ocsp-null-status.json",
@@ -12900,8 +12900,8 @@
     },
     {
       "path": "tools/create-mtc-version-vectors.mjs",
-      "bytes": 9383,
-      "sha256": "3ae8f932bc97fc98b72a648e5d17ee234bf93906f8b8ec4187c64ddec9a3f060"
+      "bytes": 9487,
+      "sha256": "a8b83b4a48fc865442271521052b91b401b7b191c3a93d4eea4b0ae9552d5e6c"
     },
     {
       "path": "tools/ers-bc186/ErsBc186Probe.java",
