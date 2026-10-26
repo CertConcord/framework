@@ -306,7 +306,7 @@ export function validateCertificate(
     'CERTIFICATE_ALGORITHM',
   );
   requireThat(verify(c.tbs, c.signature, issuerKey), 'CERTIFICATE_SIGNATURE');
-  requireThat(at >= c.notBefore && at < c.notAfter, 'CERTIFICATE_TIME');
+  requireThat(at >= c.notBefore && at <= c.notAfter, 'CERTIFICATE_TIME');
   const known = new Set([
     '2.5.29.19',
     '2.5.29.15',

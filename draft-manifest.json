@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294787,
-      "sha256": "3dd80c6b72e7c3e966ad409cdcf831c4983e0ba43de4a9eebe024c12f03e4158"
+      "bytes": 294841,
+      "sha256": "4ce8e0acccb81263203c4a4f8b4f3eeb90809fbf70d58bdea2408f89b4525bfa"
     },
     {
       "path": "reference/README.md",
@@ -459,9 +459,14 @@
       "sha256": "fec6d87c96a023106bca10f5bae83976574607ca03590bacc0d5bca47e935c46"
     },
     {
+      "path": "reference/certificate-validity-endpoint.test.mjs",
+      "bytes": 7318,
+      "sha256": "069f2bc97f5e03a397ef19d4436aa86a1a244ff4535b0c1656945f6c5cec7eea"
+    },
+    {
       "path": "reference/certificate-validity-time.test.mjs",
-      "bytes": 6044,
-      "sha256": "2a4ad11b03442d01ef1875377ede8b1774d5a4f67b8184c4f8fb30494380b5b0"
+      "bytes": 6090,
+      "sha256": "50d35f581c5576e00bc7e002a1b8743cc570511bfe1f7e7641147dcff1ab12b6"
     },
     {
       "path": "reference/cmp.mjs",
@@ -975,8 +980,8 @@
     },
     {
       "path": "reference/mtc.mjs",
-      "bytes": 16786,
-      "sha256": "659c14a785ddfb61d5132a908c82265b2a6bcdca86141dea60d4bd50d507cfb7"
+      "bytes": 16787,
+      "sha256": "0f18e849b7a1b6376af6449a9ea5a69c8af6a840c62560cacdbd7b5fd11640b8"
     },
     {
       "path": "reference/native-driver.mjs",
@@ -1315,8 +1320,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 20230,
-      "sha256": "dedd31f03cc4a9a4b4691952450384370dc7ab427ad02d8f627e065a5b48454a"
+      "bytes": 20231,
+      "sha256": "bb7c1e6625259896439f40389604d4c5b0b37914cd4edcd01e3afeca3eaa1195"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -1350,8 +1355,8 @@
     },
     {
       "path": "reference/protocols.test.mjs",
-      "bytes": 13600,
-      "sha256": "db0b3fbc1917ccc9f3f187989a8f9103034b6e0d88e789dcc39cecdb35eb217a"
+      "bytes": 13819,
+      "sha256": "f891682a32b962749c9123d8090eb74c42c4b4fb2a80eb25694baaaf683a92d7"
     },
     {
       "path": "reference/providers.mjs",
@@ -12675,8 +12680,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 47934,
-      "sha256": "dc1da85665d82ee960d091f9eced4bd8a2a3ad0388dcc057a5037adc105733cf"
+      "bytes": 49088,
+      "sha256": "017386dab1718f237536fbcfb820e877d531691616bdd906c41edeb7cb401881"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
