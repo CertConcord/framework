@@ -91,6 +91,7 @@
   "reference/cbor-text-identity.test.mjs",
   "reference/certificate-key-usage.test.mjs",
   "reference/cmp.mjs",
+  "reference/cms-algorithm-protection.test.mjs",
   "reference/cms-retirement-vectors.test.mjs",
   "reference/component-integration.test.mjs",
   "reference/containers.test.mjs",
