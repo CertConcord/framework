@@ -135,8 +135,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 18398,
-      "sha256": "9fe2e1caf00a919e8e1d2ca14f9444e261a6248f2c27595c40873722613f16f7"
+      "bytes": 18893,
+      "sha256": "91802b77f4f198a5ef1a749ddbe6b3677622415abf506e2eb17f93e0734d9c1c"
     },
     {
       "path": "docs/components.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294742,
-      "sha256": "fecd3a0cb059bb43ad4bf09f3f0e0cb96dfb836df0df60b58c6d60362722823c"
+      "bytes": 294851,
+      "sha256": "1f540308e8f0288c4ab353a396a55ddec78cd0db9c1d13b8241561dff073b53c"
     },
     {
       "path": "reference/README.md",
@@ -462,6 +462,11 @@
       "path": "reference/cmp.mjs",
       "bytes": 11131,
       "sha256": "49f721ef1af7832a557f3926fa7ce477fe2cc58cd9a44eaf263b51fb0f109cc6"
+    },
+    {
+      "path": "reference/cms-algorithm-protection-replay.test.mjs",
+      "bytes": 2848,
+      "sha256": "37a10ed1da310d5a375a75b65a0562d93229b2e089025d9d5bc3b17adcb40fa2"
     },
     {
       "path": "reference/cms-algorithm-protection.test.mjs",
@@ -1802,6 +1807,11 @@
       "path": "reference/vector-corpus.mjs",
       "bytes": 2914,
       "sha256": "b78041f2ee023d067c0f243d5b1dcb7e8c277b3ed04dab32d9c8f31f7ed5fab0"
+    },
+    {
+      "path": "reference/vectors/cms-algorithm-protection.json",
+      "bytes": 177340,
+      "sha256": "490d40ff988bb0035089068a33e115108f0cc895504f4a401d34e7749ff1db03"
     },
     {
       "path": "reference/vectors/cms-retirement-mtc07-rar2/README.md",
