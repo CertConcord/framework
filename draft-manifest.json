@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/historical-validation.md",
-      "bytes": 17492,
-      "sha256": "5846cd1b0861f09dc43dd616ca98c60b8474b99ed8c7eb89deb5661a98283332"
+      "bytes": 19139,
+      "sha256": "b27a715f7db6a65b11127015069dcbbe67e1d2f1df7ae79a30be38856564bfbb"
     },
     {
       "path": "docs/implementation.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294547,
-      "sha256": "1535e5f75751a5171fdb989206b82f1b927243a6d7720758a1cef0bf8f27b907"
+      "bytes": 294595,
+      "sha256": "d1d8894adeca38d125005365c615d58f5ec9a62be3fe5e7567eb5baff1d7e529"
     },
     {
       "path": "reference/README.md",
@@ -1395,8 +1395,8 @@
     },
     {
       "path": "reference/retained-authorities.mjs",
-      "bytes": 20116,
-      "sha256": "b4f0ad2ed668212c41ee2691aeb27fe0c8e4af08339bbf551d5c71b96ad8fe0d"
+      "bytes": 22864,
+      "sha256": "567d5a3a6ba336345054c901c4812bdbe9e8cc0975be7d06c4e30ba4003b6d39"
     },
     {
       "path": "reference/retained-authorities.test.mjs",
@@ -1412,6 +1412,11 @@
       "path": "reference/retained-document.test.mjs",
       "bytes": 13206,
       "sha256": "3a75cbfae86906271e656e1a3b0f19d97ddb343bd89aadbabe9f194f5ed2f98d"
+    },
+    {
+      "path": "reference/retained-query-snapshot.test.mjs",
+      "bytes": 13817,
+      "sha256": "d22a001f9b577a99ec05bb2d56c8b26128adcc86afd21822ee5519515bc76f2a"
     },
     {
       "path": "reference/revocation.mjs",
