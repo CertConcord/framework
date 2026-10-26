@@ -151,6 +151,14 @@ object or byte shapes return `INVALID/HISTORY_QUERY` before publication
 verification. This data-only boundary does not authenticate a query or select
 new governance, and does not change the direct resolver or configuration APIs.
 
+The [fixed query replay vectors](../reference/vectors/retained-query-snapshot.json)
+bind the selected raw signed history, external governance, RFC 3161 proofs and
+complete expected decisions. A named local test adapter applies query changes
+during verified publication callbacks; the vector contains no executable callback
+code or additional policy authority. Earlier/later knowledge controls, restored
+query values, nested byte and reference changes, accessor rejection and fractional
+publication boundaries are evaluated against the same fixed signed material.
+
 For an encoding explicitly selected at the operation time, known key compromise
 also applies to an equivalent public-key encoding. The earliest applicable
 incident remains effective after the original encoding is withdrawn or a later
