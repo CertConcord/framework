@@ -100,6 +100,7 @@
   "reference/cose.mjs",
   "reference/credential-log.mjs",
   "reference/crl-scope.test.mjs",
+  "reference/crl-time-choice.test.mjs",
   "reference/csc.test.mjs",
   "reference/datasets/benchmarks-draft02/results.json",
   "reference/datasets/benchmarks-draft02/samples.csv",

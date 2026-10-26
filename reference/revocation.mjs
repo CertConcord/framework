@@ -36,6 +36,19 @@ function parseTime(n) {
   requireThat(normalized.slice(0, 19).replace(/[-:T]/g, '') + 'Z' === s, 'STATUS_TIME');
   return t;
 }
+function crlTime(seconds) {
+  const encoded = generalizedTime(seconds),
+    value = parseDER(encoded).value;
+  const year = Number(value.subarray(0, 4).toString('ascii'));
+  return year >= 1950 && year <= 2049 ? der(23, value.subarray(2)) : encoded;
+}
+function parseCRLTime(n) {
+  if (n.tag !== 23) return parseTime(n);
+  const s = n.value.toString('utf8');
+  requireThat(/^\d{12}Z$/.test(s), 'STATUS_TIME');
+  const century = Number(s.slice(0, 2)) >= 50 ? '19' : '20';
+  return parseTime({ tag: 24, value: Buffer.from(century + s, 'ascii') });
+}
 function extMap(node) {
   const out = new Map();
   for (const e of node.children) {
@@ -76,14 +89,14 @@ export function issueCRL({
     const extensions = [extension('2.5.29.21', der(10, Buffer.from([e.reason])))];
     if (e.invalidityDate !== undefined)
       extensions.push(extension('2.5.29.24', generalizedTime(e.invalidityDate)));
-    return seq(integer(e.serial), generalizedTime(e.revokedAt), seq(...extensions));
+    return seq(integer(e.serial), crlTime(e.revokedAt), seq(...extensions));
   });
   const tbs = seq(
     integer(1),
     alg,
     issuer,
-    generalizedTime(thisUpdate),
-    generalizedTime(nextUpdate),
+    crlTime(thisUpdate),
+    crlTime(nextUpdate),
     ...(revoked.length ? [seq(...revoked)] : []),
     der(0xa0, seq(extension('2.5.29.20', integer(number)))),
   );
@@ -113,8 +126,8 @@ function inspectCRL(
     intValue(a[0]) === 1n && equal(a[1].raw, algorithm.raw) && equal(a[2].raw, issuer),
     'CRL_SCOPE',
   );
-  const thisUpdate = parseTime(a[3]),
-    nextUpdate = parseTime(a[4]);
+  const thisUpdate = parseCRLTime(a[3]),
+    nextUpdate = parseCRLTime(a[4]);
   requireThat(nextUpdate > thisUpdate, 'CRL_INTERVAL');
   const extensions = extMap(a.at(-1).children[0]);
   requireThat(!extensions.has('2.5.29.27'), 'DELTA_CRL_UNSUPPORTED');
@@ -131,7 +144,7 @@ function inspectCRL(
     requireThat(!seen.has(id), 'CRL_DUPLICATE_SERIAL');
     seen.add(id);
     const ext = ex ? extMap(ex) : new Map(),
-      revokedAt = parseTime(when),
+      revokedAt = parseCRLTime(when),
       invalidityDate = ext.has('2.5.29.24') ? parseTime(parseDER(ext.get('2.5.29.24'))) : revokedAt,
       reason = ext.has('2.5.29.21') ? parseDER(ext.get('2.5.29.21')).value[0] : 0;
     requireThat(reason !== 8, 'DELTA_CRL_UNSUPPORTED');

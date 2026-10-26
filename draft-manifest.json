@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 294693,
-      "sha256": "e3b755bc3ff4e0cb14cedb31b86ff3518b06f7400f26604accebbbf74db8d1ec"
+      "bytes": 294733,
+      "sha256": "cbfbb2f53795448cf4e6484984f206483cedf57923e03aa5360ceaede6cb0ed0"
     },
     {
       "path": "reference/README.md",
@@ -507,6 +507,11 @@
       "path": "reference/crl-scope.test.mjs",
       "bytes": 2083,
       "sha256": "ca78a29eb0f2c4de24a0a9638471734ecf26db9146c960a46f05b745fcf005d8"
+    },
+    {
+      "path": "reference/crl-time-choice.test.mjs",
+      "bytes": 11637,
+      "sha256": "9f6f69f87287429dc105836e1b50fdfce13883b4df966deee7332694edb76d2e"
     },
     {
       "path": "reference/csc.test.mjs",
@@ -1425,8 +1430,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 9633,
-      "sha256": "1a897e2b97667407714931bba61e5ab86db9180f2d2279baf5d1834bf2ea9f10"
+      "bytes": 10165,
+      "sha256": "b64dd3bba4290bfc09bb8774dcf0366e3092dd39f8c1fb4fa87b76e43d669ac0"
     },
     {
       "path": "reference/schemas.cddl",
@@ -12665,8 +12670,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 46880,
-      "sha256": "d390d1fa7fdefbd3df99deb9b48714cd14f2bc5573d789b97da6352ad5dcc2ef"
+      "bytes": 47374,
+      "sha256": "22c567438d955e3c077776ccaced2a4e0149058d72a75071f44ac19825cf031e"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
