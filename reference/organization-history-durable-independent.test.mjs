@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
 import { serialize, deserialize } from 'node:v8';
 import { createHash } from 'node:crypto';
@@ -143,7 +143,7 @@ function scoped(result, overall, current = overall) {
   assert(result.limitations.includes('NO_CURRENT_EXECUTION_PERMISSION'));
 }
 
-function start(a, value, seam) {
+function start(a, value, seam, preloadPath) {
   const paths = a.paths(),
     payload = {
       ...value,
@@ -154,10 +154,19 @@ function start(a, value, seam) {
     };
   assertPublicHistoryData(payload);
   fs.writeFileSync(paths.requestPath, serialize(payload));
-  const child = spawn(process.execPath, [childPath, paths.requestPath, paths.responsePath], {
-    windowsHide: true,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
+  const child = spawn(
+    process.execPath,
+    [
+      ...(preloadPath ? ['--import', pathToFileURL(preloadPath).href] : []),
+      childPath,
+      paths.requestPath,
+      paths.responsePath,
+    ],
+    {
+      windowsHide: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    },
+  );
   a.children.add(child);
   let diagnostics = '';
   child.stdout.on('data', (chunk) => {
@@ -227,6 +236,87 @@ function start(a, value, seam) {
     },
   };
 }
+
+function pauseMarkerWrite(a, name) {
+  const preloadPath = join(a.directory, 'pause-marker-write.mjs'),
+    pausedPath = join(a.directory, 'marker-write-paused'),
+    resumePath = join(a.directory, 'marker-write-resume');
+  fs.writeFileSync(
+    preloadPath,
+    `
+import fs from 'node:fs';
+const writeFile = fs.writeFileSync;
+let paused = false;
+fs.writeFileSync = function(path, data, ...options) {
+  let marker;
+  if (!paused && (typeof data === 'string' || Buffer.isBuffer(data))) {
+    try { marker = JSON.parse(data.toString()); } catch {}
+  }
+  if (marker?.pid !== process.pid || marker.name !== ${JSON.stringify(name)})
+    return writeFile.call(this, path, data, ...options);
+  paused = true;
+  const bytes = Buffer.from(data), split = Math.floor(bytes.length / 2);
+  const fd = fs.openSync(path, 'w');
+  try {
+    writeFile(fd, bytes.subarray(0, split));
+    writeFile(${JSON.stringify(pausedPath)}, '');
+    const wait = new Int32Array(new SharedArrayBuffer(4));
+    while (!fs.existsSync(${JSON.stringify(resumePath)})) Atomics.wait(wait, 0, 0, 20);
+    writeFile(fd, bytes.subarray(split));
+  } finally { fs.closeSync(fd); }
+};
+`,
+  );
+  return {
+    preloadPath,
+    async paused(writer) {
+      const deadline = performance.now() + 60000;
+      while (!fs.existsSync(pausedPath)) {
+        if (writer.child.exitCode !== null || writer.child.signalCode !== null)
+          assert.fail(
+            'Child exited before the partial marker write: ' + JSON.stringify(writer.response()),
+          );
+        assert(performance.now() < deadline, 'Child did not pause its marker write');
+        await new Promise((done) => setTimeout(done, 20));
+      }
+    },
+    resume() {
+      fs.writeFileSync(resumePath, '');
+    },
+  };
+}
+
+for (const kind of ['ready', 'begin'])
+  test('independent durable child publishes complete ' + kind + ' markers', async (t) => {
+    const f = await material(),
+      a = area(t);
+    const pause = pauseMarkerWrite(a, kind === 'ready' ? 'before-commit' : 'before-begin');
+    const writer = start(
+      a,
+      request(f, f.initial, f.first, {
+        databasePath: a.databasePath,
+      }),
+      'before-commit',
+      pause.preloadPath,
+    );
+    await pause.paused(writer);
+    assert.equal(
+      fs.existsSync(writer.paths[kind + 'Path']),
+      false,
+      'A partial JSON write must not publish the final marker',
+    );
+    pause.resume();
+    const ready = await writer.ready();
+    assert(ready.writes > 0);
+    const beginning = await writer.beginning();
+    assert.equal(beginning.outerTransactions, 1);
+    writer.release();
+    assert.deepEqual(await writer.exited, { code: 0, signal: null });
+    const response = writer.response();
+    committed(response, f.first);
+    scoped(response.result, 'VALID');
+    assert.deepEqual(withoutReceipt(response.result), memory(f, [{ knowledge: f.initial }])[0]);
+  });
 
 test('independent durable negative observations survive a different process', async (t) => {
   const f = await material();

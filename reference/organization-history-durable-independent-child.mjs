@@ -44,17 +44,20 @@ registerHooks({
     return resolved;
   },
 });
-const { createOrganizationHistorySource, createOrganizationHistoryVerifier } =
-  await import('./sdk/index.mjs');
+const { createOrganizationHistorySource, createOrganizationHistoryVerifier } = await import(
+  './sdk/index.mjs'
+);
 let reads = 0,
   writes = 0,
   outerTransactions = 0,
   source;
+function publishMarker(path, marker) {
+  const temporaryPath = path + '.tmp';
+  fs.writeFileSync(temporaryPath, JSON.stringify(marker));
+  fs.renameSync(temporaryPath, path);
+}
 const blocked = (name) => {
-  fs.writeFileSync(
-    request.readyPath,
-    JSON.stringify({ pid: process.pid, name, writes, reads, outerTransactions }),
-  );
+  publishMarker(request.readyPath, { pid: process.pid, name, writes, reads, outerTransactions });
   const wait = new Int32Array(new SharedArrayBuffer(4));
   while (!request.releasePath || !fs.existsSync(request.releasePath)) Atomics.wait(wait, 0, 0, 20);
 };
@@ -91,10 +94,12 @@ try {
         const outer = !this.depth;
         if (outer) outerTransactions++;
         if (outer && request.beginPath)
-          fs.writeFileSync(
-            request.beginPath,
-            JSON.stringify({ pid: process.pid, name: 'before-begin', reads, outerTransactions }),
-          );
+          publishMarker(request.beginPath, {
+            pid: process.pid,
+            name: 'before-begin',
+            reads,
+            outerTransactions,
+          });
         const result = originalTransaction.call(this, () => {
           const value = callback();
           if (outer && request.seam === 'before-commit') blocked('before-commit');

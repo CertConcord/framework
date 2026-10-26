@@ -1105,13 +1105,13 @@
     },
     {
       "path": "reference/organization-history-durable-independent-child.mjs",
-      "bytes": 5220,
-      "sha256": "2902da7e3e56a6b7bb06836d0eb824b4b9e47fb263ab2a6edc23c06f4b82780a"
+      "bytes": 5370,
+      "sha256": "d8c8edf7a95a8af6775df94db4dfb1505cf222db3913f86f8446ac1eec03d195"
     },
     {
       "path": "reference/organization-history-durable-independent.test.mjs",
-      "bytes": 40047,
-      "sha256": "4d8252460df651837a6b95ae33d39ddf37eeeb4c6f9d0d8b243293340db21aa3"
+      "bytes": 43071,
+      "sha256": "4811a4b1d6ef8edd61093aeea49ad50426826a55f6e5ee521e65cacb3bbde3e9"
     },
     {
       "path": "reference/organization-history-independent.test.mjs",
