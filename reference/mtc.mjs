@@ -405,7 +405,7 @@ export function verifyMTC(
     validateKeyUsage(c.extensions.get('2.5.29.15'), p.ku, 'MTC_CERTIFICATE_PROFILE');
   }
   requireThat(
-    c.serial > 0n && c.serial <= 0xffffffffffffffffn && at >= c.notBefore && at < c.notAfter,
+    c.serial > 0n && c.serial <= 0xffffffffffffffffn && at >= c.notBefore && at <= c.notAfter,
     'MTC_SERIAL_OR_TIME',
   );
   const logNumber = Number(c.serial >> 48n),

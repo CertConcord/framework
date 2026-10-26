@@ -90,6 +90,7 @@
   "reference/cades.test.mjs",
   "reference/cbor-text-identity.test.mjs",
   "reference/certificate-key-usage.test.mjs",
+  "reference/certificate-validity-endpoint.test.mjs",
   "reference/certificate-validity-time.test.mjs",
   "reference/cmp.mjs",
   "reference/cms-retirement-vectors.test.mjs",

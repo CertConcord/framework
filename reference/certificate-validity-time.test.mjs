@@ -119,9 +119,12 @@ for (const [label, before, after, tags, texts] of periods)
         p.validateCertificate(raw, issuer.publicKey, { at: notBefore, allowCA: ca }).raw,
         raw,
       );
-      // Changing the writer does not change the existing validation-time endpoint contract.
+      assert.deepEqual(
+        p.validateCertificate(raw, issuer.publicKey, { at: notAfter, allowCA: ca }).raw,
+        raw,
+      );
       assert.throws(
-        () => p.validateCertificate(raw, issuer.publicKey, { at: notAfter, allowCA: ca }),
+        () => p.validateCertificate(raw, issuer.publicKey, { at: notAfter + 1, allowCA: ca }),
         { code: 'CERTIFICATE_TIME' },
       );
     });
