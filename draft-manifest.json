@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295026,
-      "sha256": "7b18e102b4506701fb321ad06af372029e800352456fcd2d584de77f564b0dab"
+      "bytes": 295190,
+      "sha256": "aa8cb55d80e2115232f320fb8e9dbae8454358601d7b68de6d54607decdea514"
     },
     {
       "path": "reference/README.md",
@@ -472,6 +472,11 @@
       "path": "reference/certificate-validity-time.test.mjs",
       "bytes": 6090,
       "sha256": "50d35f581c5576e00bc7e002a1b8743cc570511bfe1f7e7641147dcff1ab12b6"
+    },
+    {
+      "path": "reference/certificate-validity-vectors.test.mjs",
+      "bytes": 8402,
+      "sha256": "85f3ced7cad3714dc012356c3887914df8b031883201994c39c20fe5ac2a6c54"
     },
     {
       "path": "reference/cmp.mjs",
@@ -1827,6 +1832,16 @@
       "path": "reference/vectors/certificate-validity-endpoints.json",
       "bytes": 116764,
       "sha256": "13c9ff2268591bf56444c8579b4f3e5d23fd250d4df408bd0372f0d393b30e30"
+    },
+    {
+      "path": "reference/vectors/certificate-validity/README.md",
+      "bytes": 1358,
+      "sha256": "b04951280c40bcaf5526fe1ceedfa2e36c88e81fd42101de58a79807a4305389"
+    },
+    {
+      "path": "reference/vectors/certificate-validity/vectors.json",
+      "bytes": 629024,
+      "sha256": "739e1dc273c5aca1e4f9632d7af6824c78da1582abf3ab23b730a71fdc992bd1"
     },
     {
       "path": "reference/vectors/cms-retirement-mtc07-rar2/README.md",
