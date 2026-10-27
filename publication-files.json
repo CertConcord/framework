@@ -290,6 +290,7 @@
   "reference/retained-query-snapshot.test.mjs",
   "reference/revocation.mjs",
   "reference/schemas.cddl",
+  "reference/sd-jwt-type-claims.test.mjs",
   "reference/sdk-conformance.test.mjs",
   "reference/sdk-results.test.mjs",
   "reference/sdk/README.md",

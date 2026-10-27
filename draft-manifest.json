@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295190,
-      "sha256": "aa8cb55d80e2115232f320fb8e9dbae8454358601d7b68de6d54607decdea514"
+      "bytes": 295233,
+      "sha256": "a15170e816a58aca51abfe6f9ae3611a634e8d9c6ee4459cf744472ba2281f5d"
     },
     {
       "path": "reference/README.md",
@@ -885,8 +885,8 @@
     },
     {
       "path": "reference/jose.mjs",
-      "bytes": 16351,
-      "sha256": "5f47a140878b127cf9791060735243a31e2f252601df1067fd776beb5703025b"
+      "bytes": 17008,
+      "sha256": "4573bec1cc7d8a2e200e466ed201ad9cb45e2d0a73cb078205a72ef42d0c8b91"
     },
     {
       "path": "reference/json.mjs",
@@ -1457,6 +1457,11 @@
       "path": "reference/schemas.cddl",
       "bytes": 20072,
       "sha256": "03aa86f7fd73132a2171e11399d30404bfcd78c43d0cfe4a30fbed60e900650f"
+    },
+    {
+      "path": "reference/sd-jwt-type-claims.test.mjs",
+      "bytes": 5476,
+      "sha256": "6bf39856580c8c6f19c9553cf2fda62cd02b89fe6d2c7534709481eb62a98853"
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
@@ -12695,8 +12700,8 @@
     },
     {
       "path": "spec/bindings/DCP-draft-03.md",
-      "bytes": 56824,
-      "sha256": "d1b703b91e623ca9adc305f19e952292acbe93be8350641213c2a63f4324a512"
+      "bytes": 57670,
+      "sha256": "631c663994cf47f0e87b4c53653f648906228fb5bbd10ccda76efecb02ce204e"
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
