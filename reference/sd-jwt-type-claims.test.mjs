@@ -78,6 +78,8 @@ for (const [label, value] of [
   ['empty member', ['']],
   ['nested member', [[alias]]],
   ['primary type member', [type]],
+  ['sparse array', Array(1)],
+  ['sparse prefix', [, alias]],
 ]) {
   test(`SD-JWT VC rejects additional types containing ${label}`, () => {
     assert.throws(
@@ -148,3 +150,16 @@ test('SD-JWT VC does not infer a hidden claim name from an unprovided digest', (
   assert.equal(Object.hasOwn(result.claims, 'private_extension'), false);
   assert.equal(Object.hasOwn(result.claims, 'aka_vcts'), false);
 });
+
+for (const [label, supplied] of [
+  ['empty digests', []],
+  ['external digest', [digest('unprovided synthetic disclosure')]],
+]) {
+  test('SD-JWT VC zero-disclosure issuer omits caller-supplied ' + label, () => {
+    const issued = issue({ claims: { qualification: 'synthetic', _sd: supplied } });
+    const payload = JSON.parse(decodeJWS(issued.credential.split('~')[0]).payload);
+    assert.equal(Object.hasOwn(payload, '_sd'), false);
+    assert.equal(issued.credential.split('~').length, 2);
+    assert.equal(verify(issued.credential, { vct: type }).claims.qualification, 'synthetic');
+  });
+}

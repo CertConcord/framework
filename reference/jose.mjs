@@ -230,7 +230,7 @@ function validateSDJWTTypes(claims) {
     requireThat(
       Array.isArray(claims.aka_vcts) &&
         claims.aka_vcts.length > 0 &&
-        claims.aka_vcts.every(
+        Array.from(claims.aka_vcts).every(
           (type) => typeof type === 'string' && type.length > 0 && type !== claims.vct,
         ),
       'SD_FORMAT',
@@ -264,7 +264,9 @@ export function issueSDJWT(
       b64u(Buffer.from(JSON.stringify([b64u(random(16)), k, claims[k]]))),
     ),
     payload = {
-      ...Object.fromEntries(Object.entries(claims).filter(([k]) => !disclose.includes(k))),
+      ...Object.fromEntries(
+        Object.entries(claims).filter(([k]) => k !== '_sd' && !disclose.includes(k)),
+      ),
       iss: issuer,
       iat: now(),
       exp: expiresAt,

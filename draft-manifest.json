@@ -885,8 +885,8 @@
     },
     {
       "path": "reference/jose.mjs",
-      "bytes": 17008,
-      "sha256": "4573bec1cc7d8a2e200e466ed201ad9cb45e2d0a73cb078205a72ef42d0c8b91"
+      "bytes": 17052,
+      "sha256": "cb5b9a5ad0c6ca2e9f05960b4add08ba78957d638d2eeb3e6eef6c9007c82de8"
     },
     {
       "path": "reference/json.mjs",
@@ -1460,8 +1460,8 @@
     },
     {
       "path": "reference/sd-jwt-type-claims.test.mjs",
-      "bytes": 5476,
-      "sha256": "6bf39856580c8c6f19c9553cf2fda62cd02b89fe6d2c7534709481eb62a98853"
+      "bytes": 6138,
+      "sha256": "45db1b54ce3b2ac1418b11eca0bf2a6f70a02bb4d71a6cabf67d43c4ba457406"
     },
     {
       "path": "reference/sd-jwt-type-vectors.test.mjs",
