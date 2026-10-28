@@ -135,8 +135,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 18660,
-      "sha256": "4513d46b885fa792e82dd7076604a4d2bb95cfd80a47c6f33bc04e96bd69bb30"
+      "bytes": 20405,
+      "sha256": "b9980e800bbc7c6a809ec8ad58858359b9c07fc8d6bfa4080f9bc4dd14c38b48"
     },
     {
       "path": "docs/components.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295853,
-      "sha256": "3e574a74611ba6fc845edd7811f8470fd145fe6a4a48ed5fb556f26e86090908"
+      "bytes": 296011,
+      "sha256": "4861975b37d126a2c45ab9b2495321517e19eeabcbfee735ee80246d3b75c91b"
     },
     {
       "path": "reference/README.md",
@@ -315,8 +315,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 35355,
-      "sha256": "db462d8447f98a04cfe1263c37f2e14e0764fa07327f54699322503100340786"
+      "bytes": 35735,
+      "sha256": "c5f44b783c9b28b10ab454417da49eeaec4484cd037428b3de838878f27d2f64"
     },
     {
       "path": "reference/annex-verifier.mjs",
@@ -492,6 +492,16 @@
       "path": "reference/cmp.mjs",
       "bytes": 11131,
       "sha256": "49f721ef1af7832a557f3926fa7ce477fe2cc58cd9a44eaf263b51fb0f109cc6"
+    },
+    {
+      "path": "reference/cms-algorithm-protection-replay.test.mjs",
+      "bytes": 2848,
+      "sha256": "37a10ed1da310d5a375a75b65a0562d93229b2e089025d9d5bc3b17adcb40fa2"
+    },
+    {
+      "path": "reference/cms-algorithm-protection.test.mjs",
+      "bytes": 10078,
+      "sha256": "71ae7aaa76edfdd23e8ed987c1d7f230eaf7769990e5788c31757eaeff742984"
     },
     {
       "path": "reference/cms-retirement-vectors.test.mjs",
@@ -1892,6 +1902,11 @@
       "path": "reference/vectors/certificate-validity/vectors.json",
       "bytes": 629024,
       "sha256": "739e1dc273c5aca1e4f9632d7af6824c78da1582abf3ab23b730a71fdc992bd1"
+    },
+    {
+      "path": "reference/vectors/cms-algorithm-protection.json",
+      "bytes": 177340,
+      "sha256": "490d40ff988bb0035089068a33e115108f0cc895504f4a401d34e7749ff1db03"
     },
     {
       "path": "reference/vectors/cms-retirement-mtc07-rar2/README.md",
