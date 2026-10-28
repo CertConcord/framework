@@ -54,6 +54,12 @@ export const generalizedTime = (seconds) =>
         .replace(/\.\d{3}Z$/, 'Z'),
     ),
   );
+function certificateTime(seconds) {
+  const encoded = generalizedTime(seconds),
+    value = parseDER(encoded).value,
+    year = Number(value.subarray(0, 4).toString('ascii'));
+  return value.length === 15 && year >= 1950 && year <= 2049 ? der(23, value.subarray(2)) : encoded;
+}
 export function extension(id, value, critical = false) {
   return seq(oid(id), ...(critical ? [der(1, Buffer.from([255]))] : []), octet(value));
 }
@@ -174,7 +180,7 @@ export function tbsCertificate({
     integer(serial),
     algID(signatureAlgorithm),
     issuer,
-    seq(generalizedTime(notBefore), generalizedTime(notAfter)),
+    seq(certificateTime(notBefore), certificateTime(notAfter)),
     subject,
     spki(publicKey),
     der(0xa3, seq(...extensions)),
@@ -300,7 +306,7 @@ export function validateCertificate(
     'CERTIFICATE_ALGORITHM',
   );
   requireThat(verify(c.tbs, c.signature, issuerKey), 'CERTIFICATE_SIGNATURE');
-  requireThat(at >= c.notBefore && at < c.notAfter, 'CERTIFICATE_TIME');
+  requireThat(at >= c.notBefore && at <= c.notAfter, 'CERTIFICATE_TIME');
   const known = new Set([
     '2.5.29.19',
     '2.5.29.15',

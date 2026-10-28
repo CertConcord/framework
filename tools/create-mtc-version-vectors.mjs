@@ -191,8 +191,11 @@ for (const profile of Object.keys(ids)) {
 add('rejects an old-version root for draft07', 'mtc-draft07-landmark', 'MTC_CACHED_ROOT', {
   cacheRoot: 'mtc-draft06',
 });
-add('rejects an expired draft07 certificate', 'mtc-draft07', 'MTC_SERIAL_OR_TIME', {
+add('accepts draft07 exact certificate notAfter', 'mtc-draft07', 'STANDALONE', {
   atOffset: 86400,
+});
+add('rejects an expired draft07 certificate', 'mtc-draft07', 'MTC_SERIAL_OR_TIME', {
+  atOffset: 86401,
 });
 add('rejects a revoked draft07 range', 'mtc-draft07', 'MTC_REVOKED', { revoked: true });
 for (const [id, options, expected] of [

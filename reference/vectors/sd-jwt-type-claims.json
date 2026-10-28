@@ -1,0 +1,506 @@
+{
+  "schema": "certconcord-sd-jwt-type-vectors-v1",
+  "description": "Synthetic ES256 SD-JWT VC presentations with fixed issuer and holder signatures. Only public JWKs are retained. Each decision concerns the selected fixed-type profile and does not establish full OpenID interoperability or issuer authorization.",
+  "references": [
+    "https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-19.txt",
+    "https://www.rfc-editor.org/rfc/rfc9901.html"
+  ],
+  "issuerPublicJWK": {
+    "kty": "EC",
+    "x": "oq5Ue-HHcec7Chfp1Vvb3-3MeS-DWwzsBMJr6A-BC4E",
+    "y": "Ija0AJbZMlCdpsLC4Z_R3nheOfjJ_TTRFPrFef5Alu0",
+    "crv": "P-256"
+  },
+  "holderPublicJWK": {
+    "kty": "EC",
+    "x": "n8y7tukUN-AinywVxOquH39yzEzIMNZUKlGvAkQYFQY",
+    "y": "d7_lqLHVlHK9Cq4HFwpLX76lGeSQc1L3n-OgzbGBUfE",
+    "crv": "P-256"
+  },
+  "cases": [
+    {
+      "id": "direct-vct",
+      "description": "Selected fixed type with valid issuer and holder signatures.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyJ9.OI0se-srmrUjSzeryr5NGTgNlrjP_caNWixbnXKnzRH3t2mVCAVTslRfSdwqgAz3S2KelJYyazUUGNr6YsvVpg~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoic0FmTTVDNWlPYVE4NDQ1SlNDM0hkWkVjbm9zdURMNDgtNlM0bWpvWnJ4OCJ9.0N6zGzC94zsMESoGt5yV4norlBtUzpE0pwCR6ygowe3X4YQAp9WU0t98_7_58dNSwiad35JKdfruigjrdXiY8A",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": true,
+      "expectedClaims": {
+        "iss": "https://issuer.example",
+        "iat": 1793116790,
+        "exp": 1793120400,
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "cnf": {
+          "jwk": {
+            "kty": "EC",
+            "x": "n8y7tukUN-AinywVxOquH39yzEzIMNZUKlGvAkQYFQY",
+            "y": "d7_lqLHVlHK9Cq4HFwpLX76lGeSQc1L3n-OgzbGBUfE",
+            "crv": "P-256"
+          }
+        },
+        "qualification": "synthetic"
+      }
+    },
+    {
+      "id": "additional-type",
+      "description": "A valid optional additional type does not replace the fixed primary type.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbInVybjpleGFtcGxlOmFkZGl0aW9uYWwtcXVhbGlmaWNhdGlvbiJdfQ.tOGe6kmtr9edhQp0n4RWLtpV8dXo__etYaAR1EA8veTPdRPc-ameKXM4O4EhzFTr97Sfa3NAxlKP_mSdv0eWrA~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiblFyVnBqSUU4NXpSbmNxY1duUFUwMVdfb24tYWRqZW1GMU9pQS1kbzlRUSJ9.loiiwVn562YOPTuKM1p8jEcEWWvTjWyT5Y_XF_1PW9pGTUxg9-6-NmcqP39BjWjYJ0J7qFsb5tT8YEyg89NdGA",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": true,
+      "expectedClaims": {
+        "iss": "https://issuer.example",
+        "iat": 1793116790,
+        "exp": 1793120400,
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "cnf": {
+          "jwk": {
+            "kty": "EC",
+            "x": "n8y7tukUN-AinywVxOquH39yzEzIMNZUKlGvAkQYFQY",
+            "y": "d7_lqLHVlHK9Cq4HFwpLX76lGeSQc1L3n-OgzbGBUfE",
+            "crv": "P-256"
+          }
+        },
+        "qualification": "synthetic",
+        "aka_vcts": [
+          "urn:example:additional-qualification"
+        ]
+      }
+    },
+    {
+      "id": "duplicate-additional-type",
+      "description": "The selected section does not forbid duplicate aliases.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbInVybjpleGFtcGxlOmFkZGl0aW9uYWwtcXVhbGlmaWNhdGlvbiIsInVybjpleGFtcGxlOmFkZGl0aW9uYWwtcXVhbGlmaWNhdGlvbiJdfQ.f4zO241jgN6i7fneGTq7HLKsRKOqajq7oiKjS7ZwPaS18oH1YfemE1QI5NaFHVBHylajmINhioqHbe2DurG-Jg~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoic3dIT3hvREF0R1VEMW1OT1BodHBCalA0eEFFUGVoTDlpcW5VcFJsNUJYWSJ9.VPv9if4_-Ek6zM2fJFUdR3g8Fw17_m8t8YbqykLJ8BYZdWyrtj0FvZwmXi3lvBYxC-26L94pjjF7uZUFfvnaFg",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": true,
+      "expectedClaims": {
+        "iss": "https://issuer.example",
+        "iat": 1793116790,
+        "exp": 1793120400,
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "cnf": {
+          "jwk": {
+            "kty": "EC",
+            "x": "n8y7tukUN-AinywVxOquH39yzEzIMNZUKlGvAkQYFQY",
+            "y": "d7_lqLHVlHK9Cq4HFwpLX76lGeSQc1L3n-OgzbGBUfE",
+            "crv": "P-256"
+          }
+        },
+        "qualification": "synthetic",
+        "aka_vcts": [
+          "urn:example:additional-qualification",
+          "urn:example:additional-qualification"
+        ]
+      }
+    },
+    {
+      "id": "case-distinct-additional-type",
+      "description": "Type comparison is case-sensitive.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbIkhUVFBTOi8vR0lUSFVCLkNPTS9DRVJUQ09OQ09SRC9GUkFNRVdPUksvQ1JFREVOVElBTFMvVFJVU1QtUVVBTElGSUNBVElPTi9WMSJdfQ.d8RXydV8t01Kv3-2QuZuQdF770KoDmv8zcJpc_NDkJ36i6_TkJQnglv0JpIUcvf98BY3hfcV_YNdApaAgpaL-g~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiYW9faTFBQkg0Z2ZkMWJHd19HTW80MUNjdTROWkYzVUNTazh6czN0U0ZMYyJ9.XFCur1JTVcQfK1dwhUqS0sn9GjAaVb4j9c40l9zNJmLVNIa_Neyp4ss294FDVttAnEafEV6weTj5VupkReKmew",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": true,
+      "expectedClaims": {
+        "iss": "https://issuer.example",
+        "iat": 1793116790,
+        "exp": 1793120400,
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "cnf": {
+          "jwk": {
+            "kty": "EC",
+            "x": "n8y7tukUN-AinywVxOquH39yzEzIMNZUKlGvAkQYFQY",
+            "y": "d7_lqLHVlHK9Cq4HFwpLX76lGeSQc1L3n-OgzbGBUfE",
+            "crv": "P-256"
+          }
+        },
+        "qualification": "synthetic",
+        "aka_vcts": [
+          "HTTPS://GITHUB.COM/CERTCONCORD/FRAMEWORK/CREDENTIALS/TRUST-QUALIFICATION/V1"
+        ]
+      }
+    },
+    {
+      "id": "alias-only",
+      "description": "Current fixed-type profile does not use alias matching.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6InVybjpleGFtcGxlOm90aGVyLXByaW1hcnkiLCJjbmYiOnsiandrIjp7Imt0eSI6IkVDIiwieCI6Im44eTd0dWtVTi1BaW55d1Z4T3F1SDM5eXpFeklNTlpVS2xHdkFrUVlGUVkiLCJ5IjoiZDdfbHFMSFZsSEs5Q3E0SEZ3cExYNzZsR2VTUWMxTDNuLU9nemJHQlVmRSIsImNydiI6IlAtMjU2In19LCJfc2RfYWxnIjoic2hhLTI1NiIsInF1YWxpZmljYXRpb24iOiJzeW50aGV0aWMiLCJha2FfdmN0cyI6WyJodHRwczovL2dpdGh1Yi5jb20vQ2VydENvbmNvcmQvZnJhbWV3b3JrL2NyZWRlbnRpYWxzL3RydXN0LXF1YWxpZmljYXRpb24vdjEiXX0.O_6zy3sYNfY8CwV27tdnEeVzQ-UakcS70hVd_lVlXr-iEzZuOfEs8FW0028GSlKghX9ywA_seOmgnWcaMD5Bsg~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiQ01FNGt6RXNGSXhPb21yMjlhbjZ3Y1pJV2N1VVVBeGdFQWdKdExRVHhhVSJ9.IUtJDnFOIEK6-E8tQMeWfEfnxMOhtyvzQ-Ho1PvviLKROodpby88vVmzR_93qO8maTUtfZQL68VmXjFmscmNFA",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "wrong-primary",
+      "description": "Primary type mismatch remains rejected.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6InVybjpleGFtcGxlOm90aGVyLXByaW1hcnkiLCJjbmYiOnsiandrIjp7Imt0eSI6IkVDIiwieCI6Im44eTd0dWtVTi1BaW55d1Z4T3F1SDM5eXpFeklNTlpVS2xHdkFrUVlGUVkiLCJ5IjoiZDdfbHFMSFZsSEs5Q3E0SEZ3cExYNzZsR2VTUWMxTDNuLU9nemJHQlVmRSIsImNydiI6IlAtMjU2In19LCJfc2RfYWxnIjoic2hhLTI1NiIsInF1YWxpZmljYXRpb24iOiJzeW50aGV0aWMifQ.h6zbzW4HZ2-d4Rb6PVyDC3Vx3oJto0Fg9qg3O968ehAzW0-gTAKCoDkJSCDN1zfk3eweqf8oByTBU2_5uS8j4w~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiOUs3NVFROUF5dS1pbmhPenRBc1ZXd24wMHN0OHRoRE9ETG5CN1hYMDEwVSJ9.mHcDYI-tgpVjCi6HGCmvpHSvzreMEcGeN5gJNY1jNcpOAPFvfRSqyTeXFtd91lu2BtJMYWbn6PdhjhbNqGsVIQ",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "aka-null",
+      "description": "Present aka_vcts violates pinned draft 19 section 2.2.2.2.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpudWxsfQ.rsFIIFcQT6C2w0dKEtjneUsfrx71XB6cEgC-XgceSyBB2yQGlwJiszJzKtgvYurzAv_Nu3ZOBB-nzgLIDpOhlg~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoicUh0a01GLUEyRDB0SjgwTVVQck0wTkJxSFVadUJkTHpxRmpGeEtKcGdPWSJ9.uYTiSrsYgTooUlZLWkMKmfWh9-QLBSuoRNzT1wp_caiXsBN5H3NbAW0MXjElzC_kw7YBc-wpJfmovcUVIJPdVg",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "aka-empty",
+      "description": "Present aka_vcts violates pinned draft 19 section 2.2.2.2.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbXX0.P4B_hU1ihMIrzsDkBRYX7cWtcXCnLtYEGUjo1bXCGendH05m2fBCTfb3KWLKYVjf9-bbakBofugyKMRa_KzFvQ~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiTTMwQ1RlVldKSjQtaDBPWEhaNWJQemlvN2ZTejViSm1GcnBKLWVoYUtiUSJ9.poR3qtvrI8XjpH-V-mfC1oeLT4QcVa7AON3rUz4ROGiwJTqpi6UZ2l2PIscuvfDzFIP-W-lJqTKd8aKD6916DA",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "aka-string",
+      "description": "Present aka_vcts violates pinned draft 19 section 2.2.2.2.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjoidXJuOmV4YW1wbGU6YWRkaXRpb25hbC1xdWFsaWZpY2F0aW9uIn0.ro_lCbNZZs-TYL_GEl7kqM4YgUbmvwUfP1V64bZ_Psl8Sn4OX141XinpKfV18nCe2w6cpgbHf5hPCN8oKZh8Og~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiNllQY2pLZzVtVEJaMTNCbXZWcGNnNkx3TEpRNzNpTXVJUUcxQUkyS2JXYyJ9.RvCSqAGIG5hmp6jsAEvYBgwxV9SlOuLDLxN577Uf3HNl49VuzmAqvbo7Fyh7HVnujEE77vDyMdrtl3g_PVowXw",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "aka-number-member",
+      "description": "Present aka_vcts violates pinned draft 19 section 2.2.2.2.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbMV19.8KR5UrGxBFnnTrxAvbE72vt60u2BAXSlhx2I5fUPKihhEgsBiXk-rIogBECffITtRiWw394_qTOstwV6lTf2lA~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoibzRfcXlLWmV6b1lnamVqYVpYOU81UGFKSGpsMVZ2eWxqc1dOQ1EzSDlFdyJ9.L0btPlR7AxWNfdRaK8USK7eg0XISFNfOmTh-s2P-VgV6wi702pY9jJuN6VELmppPFMj_BkvaDlk-5ZEflILEHg",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "aka-empty-member",
+      "description": "Present aka_vcts violates pinned draft 19 section 2.2.2.2.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbIiJdfQ.gRi7NQnGoGOALgELmmZbRFco9qxMF9Ns0wsc3nIg9TCqRHBNoyqtzBfHH1g8TagF_ZGyMGMx7XU3XfTVz7Cx3g~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiWTNxNHA3TjhzTEZ4Y3NOQUlvSVVIRV9LaTY0RGtjTEpCVGlsamcwYjFzbyJ9.VEoaP-fWyA5eZVPtetBpKM6emTMmrFLhKtUIj6pVfvfP76rHxuR_MAB-kTI_AWnj-uu29zfnX9neWp3V8UCseQ",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "aka-nested-member",
+      "description": "Present aka_vcts violates pinned draft 19 section 2.2.2.2.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbWyJ1cm46ZXhhbXBsZTphZGRpdGlvbmFsLXF1YWxpZmljYXRpb24iXV19.VDzYjn92L2z4-SqJdFFYanhz6kWFsBQ698tciXFc7UlGT7yvWbhGsIRh9h2c3gzYDbfp2-DtcOjW5-XJ8zj18g~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiaVVOY1JXZzg3ZXVKVkxRaEttNDVSaldlSERKZjNVSlhpUWEyazdVVGw5NCJ9.OuhocqCykxaU6EIADtxtcoCVQ8wgOz1Pjda0q1yla9dQEEtMA-rYQ6JHzoFcHXXBIRUasqtTBuLhfp-uo4zBgg",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "aka-primary-member",
+      "description": "Present aka_vcts violates pinned draft 19 section 2.2.2.2.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbImh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSJdfQ.6TV0RMUm-Z3_l9xYNNeD4_WX0Bfj7Z4sCUmmpaoHu3sfyCZIXjNEp2uKOnSd2Edih-f2NRW_b9jQdqCI_ukhRQ~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiVzc1MmN3QWhWU1dJZ0l1a2NQZXJnTXVRNjFYZUVlVUVEV3BiLXRSY3NTQSJ9.Lk_Lw3w83XtBr6P6noriJaxY0SHKXwMj8t1zcHyS2H5d9KzChD4p1x6XHZ9Jqmd3M_WqB7a3-wytu1X7mbAXZg",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "disclosed-aka",
+      "description": "A submitted top-level aka_vcts disclosure is forbidden by section 2.2.2.3.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsIl9zZCI6WyJkZ1Buci1SUmFmUFFUaUFjMW44QTE4RHJvVnh0S3JRYlpjN2xEMkVrT21zIl19.nRBi1GUaPxaf0ScQgfC_-NjqMzbEpWlP7z7ZIv5nxcZ6eB_Ja5dSXLdrgEP_wZMPz_NvUQkROs6oD4BczEc6-g~WyJmaXhlZC1zeW50aGV0aWMtc2FsdC1ha2FfdmN0cyIsImFrYV92Y3RzIixbInVybjpleGFtcGxlOmFkZGl0aW9uYWwtcXVhbGlmaWNhdGlvbiJdXQ~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiU2FGVDJNdDQ3dzV1TWpncDh2WDBfUFBhcE1LSE5rVkVOUTdEWmFyZVRzdyJ9.Vw5QMsbPi8AVR9Lz9MjUCBNgloANm96JO-KTeOj-A9OWDGQqvNfOCXXTHqxGi0Z7D-AUgDOsEWE6aU8o1o0X_g",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "disclosed-aka-element",
+      "description": "Selective disclosure of a known aka_vcts array subclaim is forbidden.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbeyIuLi4iOiJ4dmNoTy1LMHozSkhqR0pmUjkwZmRjd0FENjh2Ym4tRHhvVkZkdndzc0VBIn1dfQ.DZJI7FN2YVeGWMzYla6kMOV9YwAkjMtQuUB-k9fPaIBoTvWyP_zaHp6j7btvOj9xg4F9Mzs1yz68QqKfu36Pww~WyJmaXhlZC1zeW50aGV0aWMtYXJyYXktc2FsdCIsInVybjpleGFtcGxlOmFkZGl0aW9uYWwtcXVhbGlmaWNhdGlvbiJd~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoia1pRTmJPY2FYN2I1bE9mX0FKR2tLdWMtb2d4YzQ2bVRLUFFqbGc1TGY0byJ9.g_TnG4VWyuA8YOwOsUytbgYl5l0nn7_b8q8GFnyF9GSC_1-hXb7glw3u0HmENVIvEapMdOIW9M1WXd6HfL5OtQ",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "undisclosed-aka-element",
+      "description": "A visible known-type array placeholder is not a type string.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsImFrYV92Y3RzIjpbeyIuLi4iOiJ4dmNoTy1LMHozSkhqR0pmUjkwZmRjd0FENjh2Ym4tRHhvVkZkdndzc0VBIn1dfQ.atLHA36NmTVx9zIznjoakgZgiOnsuytMUDo041k_XEZkXLuUwdKs7mtg-A_kAtbB2kvgbAvDiifwqlx9OY4pSA~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoibFJCc1U4WHZDRFltaVZFYXV3T2pCbzJpY3gwNmdveHZWQTR6ekRCbElVayJ9.d91ScSBFJilHbYLmb3edB3Jo0JsuFr0n-YqQwndGkdvwQlYU3kogpL4fkhzuADJgyjCh-GARQt-0xEy8-DYXTQ",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "unknown-extension",
+      "description": "Private nested data is outside the registered top-level type claims.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsInByaXZhdGVfZXh0ZW5zaW9uIjp7InZjdCI6ImFwcGxpY2F0aW9uLWxvY2FsLWRhdGEiLCJha2FfdmN0cyI6bnVsbH19.sq2xcBa95ORbJYEPFdnAdhFajjAAyA1CGyJOYcdBjCnz34Afn-PmH_NrogHXPGVgLI7veH3mBp1g6s92y4IJXA~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiWkt3LUY0NzFDbWpzNlJWNUYyVHJtbHNlOUhJZTQ4TG44a0pWZEZLOXJlTSJ9.Fb4ZXcE-uDZGWFiZucbHn3u4ebcUy13uBNao1YRBqnKw58WEWYSRu-xECYaSaAYqsesQpUXSeHfCKclU6AvgtQ",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": true,
+      "expectedClaims": {
+        "iss": "https://issuer.example",
+        "iat": 1793116790,
+        "exp": 1793120400,
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "cnf": {
+          "jwk": {
+            "kty": "EC",
+            "x": "n8y7tukUN-AinywVxOquH39yzEzIMNZUKlGvAkQYFQY",
+            "y": "d7_lqLHVlHK9Cq4HFwpLX76lGeSQc1L3n-OgzbGBUfE",
+            "crv": "P-256"
+          }
+        },
+        "qualification": "synthetic",
+        "private_extension": {
+          "vct": "application-local-data",
+          "aka_vcts": null
+        }
+      }
+    },
+    {
+      "id": "generic-vct-absent",
+      "description": "Even without an expected-type policy, an SD-JWT VC requires a primary type string.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyJ9.piI2YsCkPF3MT9jQ2s1ObT8UQwu_8Z1EL2hbKJrV0rWwd2mbSI5kQeOfn2gicR95VO9mJAiPzVNGaap2MOjZPw~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoidjJtbTIycHlWaWFmd0plY0FyLXVFeE5YQTlxOVMzTE5oaDFLNF9MVXlSayJ9.vB51hRVtENH2vmGGzBni_7ck8Qwb8CkvOnVrPfLbzeeIgSdl1oFFS6365cCk5nQTh5Uc7m-0T7ug927_9GZbSQ",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "generic-vct-empty",
+      "description": "Even without an expected-type policy, an SD-JWT VC requires a primary type string.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6IiIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyJ9.SHWARly6EqPd3yOMxqDa08AfbcXe9-fn1l87DYf8N4KGxcnBm7d0Kes6x01D60czd1OVMK8ePoQM3b0k0VQrtA~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiZjRhbDZCLXJYYkRnOFM3c0VUUEpwWWZiNkdvMEJORU0xaThuRXVKSkgzYyJ9.FWZZzkpCYZlQnwDgOg6gFpwFLAv56daV4TXESlCGxFHFJNQUKGO3mDDwpyj6gK-bHrss3ZJxdkTrBfu3gp8j3A",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "generic-vct-number",
+      "description": "Even without an expected-type policy, an SD-JWT VC requires a primary type string.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6MTcsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyJ9.yv8SHiwNbH7PdQfDoNpT8_csx8B6UY5Ls4iXblrRypzi2GhaZVlHB8GXc09EuAznux8EfGqDlB9hZ36bR8mfeQ~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiNWtINy1PaFFOT1ltdTNteHMxbTF3N2NFZUNkQWd5eng1QzdJTzNrbTVyZyJ9.2u0D1NyxCX10xOPzNYXPc7ciNAPw4oOrg5MA1aMf97v0_T-s3tbUUowCrwBpjpcmSwHow0AclXXv7-zeuNlAfA",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "generic-vct-object",
+      "description": "Even without an expected-type policy, an SD-JWT VC requires a primary type string.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6eyJpZCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSJ9LCJjbmYiOnsiandrIjp7Imt0eSI6IkVDIiwieCI6Im44eTd0dWtVTi1BaW55d1Z4T3F1SDM5eXpFeklNTlpVS2xHdkFrUVlGUVkiLCJ5IjoiZDdfbHFMSFZsSEs5Q3E0SEZ3cExYNzZsR2VTUWMxTDNuLU9nemJHQlVmRSIsImNydiI6IlAtMjU2In19LCJfc2RfYWxnIjoic2hhLTI1NiIsInF1YWxpZmljYXRpb24iOiJzeW50aGV0aWMifQ.aHyEEFvScjZJwPgHw0HnKKOyKTceM3nfkAE0vYi2I_gXhXKolZStzpcd9aqDzGnVZgM6UG0rJIsKv6RaoeS8JQ~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiZld3MnU2dThNVThTR1ltQlR0akFvU1pfUDI5YWtmMzIzZUtET3BWMXpzSSJ9._H8sQR6RPwvfDcvNqIJJl1KQC4_ibMA_-Pt8BvUjO-27GF393kEdaOzQiw49lnILs8Hg5kkprnJzCHrrzjT9NQ",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "SD_FORMAT"
+    },
+    {
+      "id": "issuer-mismatch",
+      "description": "Valid signature cannot replace explicit expected issuer.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL290aGVyLWlzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyJ9.SmlkSqAzGtgu59znjVBNDOSGLsEZIgwK6l8bE8SSl0blxWAm1H2aP6VRZIXXVTyTPMj4LhagB04Zmm6LZ12Hig~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoicHUwVUpzXzJFZzVfU003Q0N2MUIzWG9DcDllbmx3eGtuV2VtYzhPV3BxVSJ9.7KFwUoLpzHoo-_PNR3RIJKvuT-pLuPMBEcIOIrVyz2SVZJkMQJZew0Gdhsi0_hUVquDh0K6tRkLo5XTaFYtW1Q",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "JWT_ISSUER"
+    },
+    {
+      "id": "audience-mismatch",
+      "description": "Valid holder signature with another expected audience is rejected.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyJ9.w5i4UIvu1EdHHrQQ3xKVVcrz53VYqiAZTAGBVT5CEZcdww-hQL5aOoi_tGPIV2bOaCJvwbLlsTG2VKRlXVY7qQ~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiQ2xhMVVlMndyV1dDOVVEUWR3a1JYMGViT0RrdDM4RDVwUTRsaC0xc1ZTSSJ9.XE7BHt9UlRa598k2PCLrC-2Y0KdjeKOg3oSyeCxRhHA4KzNAuPaRkcRJm1I5M6dEPIHXow9VEF1OLDY6oSxGsg",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://another-verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": false,
+      "expectedError": "JWT_AUDIENCE"
+    },
+    {
+      "id": "ordinary-disclosure",
+      "description": "Ordinary referenced private disclosures remain supported.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsIl9zZCI6WyJOeUVXQW9MNVZYSmlxdEdmNE5GY3QzVjBLSktQUEtpSDNuOWcxX0VUTDNzIl19.1U5s7MkrI6V3egtzqtHE8EGMI6TLgYmvgFZT7YzYACsQoDbJsX-yDKmboELGqOzVCanAS-Z3I5qWgzxr3s5ihg~WyJmaXhlZC1zeW50aGV0aWMtc2FsdC1wcml2YXRlX2NsYWltIiwicHJpdmF0ZV9jbGFpbSIsInJldGFpbmVkIl0~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoicU5yd0g1d252Q0xQeWxValkwQmNfTTlGc1VsMlZqZkVJMkhSRGRTOFU0OCJ9.p8sxfGioGTJX_pyLAQbT4u99LbByQkGJ93TZU24xvu-7BSY1BBHPqX6WBO1IRzhxkrTORfCT7lQikDSoFpMbsA",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": true,
+      "expectedClaims": {
+        "iss": "https://issuer.example",
+        "iat": 1793116790,
+        "exp": 1793120400,
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "cnf": {
+          "jwk": {
+            "kty": "EC",
+            "x": "n8y7tukUN-AinywVxOquH39yzEzIMNZUKlGvAkQYFQY",
+            "y": "d7_lqLHVlHK9Cq4HFwpLX76lGeSQc1L3n-OgzbGBUfE",
+            "crv": "P-256"
+          }
+        },
+        "qualification": "synthetic",
+        "private_claim": "retained"
+      }
+    },
+    {
+      "id": "ordinary-undisclosed",
+      "description": "An unknown undisclosed digest cannot be classified as a forbidden type claim.",
+      "credential": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCJ9.eyJpc3MiOiJodHRwczovL2lzc3Vlci5leGFtcGxlIiwiaWF0IjoxNzkzMTE2NzkwLCJleHAiOjE3OTMxMjA0MDAsInZjdCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DZXJ0Q29uY29yZC9mcmFtZXdvcmsvY3JlZGVudGlhbHMvdHJ1c3QtcXVhbGlmaWNhdGlvbi92MSIsImNuZiI6eyJqd2siOnsia3R5IjoiRUMiLCJ4Ijoibjh5N3R1a1VOLUFpbnl3VnhPcXVIMzl5ekV6SU1OWlVLbEd2QWtRWUZRWSIsInkiOiJkN19scUxIVmxISzlDcTRIRndwTFg3NmxHZVNRYzFMM24tT2d6YkdCVWZFIiwiY3J2IjoiUC0yNTYifX0sIl9zZF9hbGciOiJzaGEtMjU2IiwicXVhbGlmaWNhdGlvbiI6InN5bnRoZXRpYyIsIl9zZCI6WyJOeUVXQW9MNVZYSmlxdEdmNE5GY3QzVjBLSktQUEtpSDNuOWcxX0VUTDNzIl19.-jjdYUeEGVKCXl_34txbthgC1f6y1Kniku8ZHumwfrkT-FCLXgo4kfFGqXX6fmlnPnhZmmMDMSyfbZKV43mrUQ~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJpYXQiOjE3OTMxMTY3OTksImF1ZCI6Imh0dHBzOi8vdmVyaWZpZXIuZXhhbXBsZSIsIm5vbmNlIjoiZml4ZWQtc3ludGhldGljLXR5cGUtY29udHJhY3QiLCJzZF9oYXNoIjoiQS0xSmszZVZFaEZVNzB6azZQcHowTXVJN2s4ZFlfR293dXBRczR1U2pmVSJ9.-usNKqhzpr8kodVyvFL8AxKYJm2z9q467dXwmvuEOr27CAHKX8zJmNO5pNuQGALj4cNDb0RDr7giRYYoi-nimw",
+      "policy": {
+        "issuer": "https://issuer.example",
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "at": 1793116800,
+        "requireKeyBinding": true,
+        "audience": "https://verifier.example",
+        "nonce": "fixed-synthetic-type-contract"
+      },
+      "expectedAcceptance": true,
+      "expectedClaims": {
+        "iss": "https://issuer.example",
+        "iat": 1793116790,
+        "exp": 1793120400,
+        "vct": "https://github.com/CertConcord/framework/credentials/trust-qualification/v1",
+        "cnf": {
+          "jwk": {
+            "kty": "EC",
+            "x": "n8y7tukUN-AinywVxOquH39yzEzIMNZUKlGvAkQYFQY",
+            "y": "d7_lqLHVlHK9Cq4HFwpLX76lGeSQc1L3n-OgzbGBUfE",
+            "crv": "P-256"
+          }
+        },
+        "qualification": "synthetic"
+      }
+    }
+  ]
+}

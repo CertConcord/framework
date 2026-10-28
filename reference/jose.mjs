@@ -224,6 +224,19 @@ export function verifyJAdES(
   return r;
 }
 
+function validateSDJWTTypes(claims) {
+  requireThat(typeof claims.vct === 'string' && claims.vct.length > 0, 'SD_FORMAT');
+  if (Object.hasOwn(claims, 'aka_vcts'))
+    requireThat(
+      Array.isArray(claims.aka_vcts) &&
+        claims.aka_vcts.length > 0 &&
+        Array.from(claims.aka_vcts).every(
+          (type) => typeof type === 'string' && type.length > 0 && type !== claims.vct,
+        ),
+      'SD_FORMAT',
+    );
+}
+
 export function issueSDJWT(
   {
     claims,
@@ -243,7 +256,7 @@ export function issueSDJWT(
       disclose.every(
         (k) =>
           Object.hasOwn(claims, k) &&
-          !['_sd', '_sd_alg', 'cnf', 'iss', 'iat', 'exp', 'vct', 'status'].includes(k),
+          !['_sd', '_sd_alg', 'cnf', 'iss', 'iat', 'exp', 'vct', 'aka_vcts', 'status'].includes(k),
       ),
     'SD_DISCLOSURE_NAMES',
   );
@@ -251,22 +264,27 @@ export function issueSDJWT(
       b64u(Buffer.from(JSON.stringify([b64u(random(16)), k, claims[k]]))),
     ),
     payload = {
-      ...Object.fromEntries(Object.entries(claims).filter(([k]) => !disclose.includes(k))),
+      ...Object.fromEntries(
+        Object.entries(claims).filter(([k]) => k !== '_sd' && !disclose.includes(k)),
+      ),
       iss: issuer,
       iat: now(),
       exp: expiresAt,
       vct,
       cnf: { jwk: holderJWK },
       _sd_alg: 'sha-256',
-      _sd: disclosures.map((d) => b64u(sha256(Buffer.from(d)))).sort(),
+      ...(disclosures.length
+        ? { _sd: disclosures.map((d) => b64u(sha256(Buffer.from(d)))).sort() }
+        : {}),
     };
+  validateSDJWTTypes(payload);
   if (status) payload.status = status;
   return {
-    credential:
-      signJWS(payload, key, { typ: 'dc+sd-jwt', ...(x5c ? { x5c } : {}) }) +
-      '~' +
-      disclosures.join('~') +
-      '~',
+    credential: [
+      signJWS(payload, key, { typ: 'dc+sd-jwt', ...(x5c ? { x5c } : {}) }),
+      ...disclosures,
+      '',
+    ].join('~'),
     disclosures,
   };
 }
@@ -290,6 +308,7 @@ export function verifySDJWT(
     kb = parts.pop();
   requireThat(kb !== undefined, 'SD_SERIALIZATION');
   const r = verifyJWT(issuerJWT, issuerKey, { typ: 'dc+sd-jwt', issuer, at });
+  validateSDJWTTypes(r.claims);
   requireThat(
     r.claims._sd_alg === 'sha-256' && r.claims.cnf?.jwk && (!vct || r.claims.vct === vct),
     'SD_FORMAT',
@@ -352,6 +371,10 @@ export function verifySDJWT(
     return d;
   }
   const claims = resolve(r.claims);
+  requireThat(
+    !Object.hasOwn(claims, 'aka_vcts') || Object.hasOwn(r.claims, 'aka_vcts'),
+    'SD_FORMAT',
+  );
   requireThat(used.size === pending.size, 'SD_UNREFERENCED_DISCLOSURE');
   if (requireKeyBinding || kb) {
     requireThat(kb && audience && nonce, 'KEY_BINDING_REQUIRED');

@@ -73,8 +73,11 @@ test('CMS reads current time only when certificate validation needs a default', 
   assert.equal(p.verifyCMS(cms, { issuerKey: f.root.publicKey }).cryptographicValidity, 'VALID');
   assert.equal(current.mock.callCount(), 1);
   current.mock.mockImplementation(() => certificate.notAfter * 1000);
-  assert.throws(() => p.verifyCMS(cms, { issuerKey: f.root.publicKey }), /CERTIFICATE_TIME/);
+  assert.equal(p.verifyCMS(cms, { issuerKey: f.root.publicKey }).cryptographicValidity, 'VALID');
   assert.equal(current.mock.callCount(), 2);
+  current.mock.mockImplementation(() => (certificate.notAfter + 1) * 1000);
+  assert.throws(() => p.verifyCMS(cms, { issuerKey: f.root.publicKey }), /CERTIFICATE_TIME/);
+  assert.equal(current.mock.callCount(), 3);
 });
 test('CMS detached content, ESS representation, signed SIM and policy substitution', () => {
   const f = fixture(),
