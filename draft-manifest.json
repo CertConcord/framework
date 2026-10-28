@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295455,
-      "sha256": "b14ea130acf33bbfa89ad5bfeca411854fef664a28c1b78a3128824d6ff4f50e"
+      "bytes": 295541,
+      "sha256": "8b8d6e849630f4c24dc4d42ff629524eb9954f02f70cfccb3502e9e4211f950d"
     },
     {
       "path": "reference/README.md",
@@ -522,6 +522,11 @@
       "path": "reference/credential-log.mjs",
       "bytes": 4493,
       "sha256": "3f19b75abfdb33f747a3a155f567c4cef6515be49558e5bd2196a4f55e9162ca"
+    },
+    {
+      "path": "reference/crl-reason-codes.test.mjs",
+      "bytes": 2096,
+      "sha256": "90bbdc36856bf04ec335c83dc81f488e07dd1d9da3e1fbbe4bf7b6550628e7a8"
     },
     {
       "path": "reference/crl-scope.test.mjs",
@@ -1460,8 +1465,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 10165,
-      "sha256": "b64dd3bba4290bfc09bb8774dcf0366e3092dd39f8c1fb4fa87b76e43d669ac0"
+      "bytes": 10399,
+      "sha256": "c17c77dfe809f26357a2b3e6c98d8b1c29fb7b13d62398e807e6b73b96dd507d"
     },
     {
       "path": "reference/schemas.cddl",
@@ -2137,6 +2142,11 @@
       "path": "reference/vectors/cms-retirement-mtc07-rar2/manifest.json",
       "bytes": 33761,
       "sha256": "ed0afec1af59108b62a9a79814f9967a269a421fe6d4fa265e95e7eddfd7656c"
+    },
+    {
+      "path": "reference/vectors/crl-reason-codes.json",
+      "bytes": 32974,
+      "sha256": "bc6f38d59771c645e651d0b1807511d5b3500db90a74f08d6f762e613f506826"
     },
     {
       "path": "reference/vectors/crl-scope.json",
@@ -12740,8 +12750,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 50028,
-      "sha256": "96c7e6cf7275c5cc27ae9198575bb417bf8e858757fd7e3d423253299c8d0a37"
+      "bytes": 50779,
+      "sha256": "a0280df1b6f30e22eafd7273a1b43bcf4a19c83c7ef4f05f2c7c0e5c5382d9ae"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",

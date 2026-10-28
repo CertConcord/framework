@@ -49,6 +49,15 @@ function parseCRLTime(n) {
   const century = Number(s.slice(0, 2)) >= 50 ? '19' : '20';
   return parseTime({ tag: 24, value: Buffer.from(century + s, 'ascii') });
 }
+function parseCRLReason(raw) {
+  const reason = parseDER(raw);
+  requireThat(
+    reason.tag === 10 && reason.value.length === 1 &&
+      reason.value[0] <= 10 && reason.value[0] !== 7,
+    'CRL_REASON',
+  );
+  return reason.value[0];
+}
 function extMap(node) {
   const out = new Map();
   for (const e of node.children) {
@@ -146,7 +155,7 @@ function inspectCRL(
     const ext = ex ? extMap(ex) : new Map(),
       revokedAt = parseCRLTime(when),
       invalidityDate = ext.has('2.5.29.24') ? parseTime(parseDER(ext.get('2.5.29.24'))) : revokedAt,
-      reason = ext.has('2.5.29.21') ? parseDER(ext.get('2.5.29.21')).value[0] : 0;
+      reason = ext.has('2.5.29.21') ? parseCRLReason(ext.get('2.5.29.21')) : 0;
     requireThat(reason !== 8, 'DELTA_CRL_UNSUPPORTED');
     if (s === BigInt(serial) && Math.min(revokedAt, invalidityDate) <= at) result = 'REVOKED';
   }
