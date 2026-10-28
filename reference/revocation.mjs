@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, createPublicKey } from 'node:crypto';
 import { statusResult, evaluateStatusEvidence } from './status-result.mjs';
 import {
   seq,
@@ -76,12 +76,19 @@ function extMap(node) {
 export function issueCRL({
   issuer,
   privateKey,
+  authorityKeyIdentifier,
   number,
   entries = [],
   thisUpdate = now(),
   nextUpdate = thisUpdate + 300,
 }) {
   requireThat(nextUpdate > thisUpdate && nextUpdate - thisUpdate <= 86400, 'CRL_INTERVAL');
+  const keyIdentifier = authorityKeyIdentifier === undefined
+    ? sha256(spki(createPublicKey(privateKey))) : authorityKeyIdentifier;
+  requireThat(
+    keyIdentifier instanceof Uint8Array && keyIdentifier.length > 0,
+    'CRL_AUTHORITY_KEY_IDENTIFIER',
+  );
   const alg = algID(privateKey.asymmetricKeyType),
     seen = new Set();
   const revoked = entries.map((e) => {
@@ -107,7 +114,10 @@ export function issueCRL({
     crlTime(thisUpdate),
     crlTime(nextUpdate),
     ...(revoked.length ? [seq(...revoked)] : []),
-    der(0xa0, seq(extension('2.5.29.20', integer(number)))),
+    der(0xa0, seq(
+      extension('2.5.29.20', integer(number)),
+      extension('2.5.29.35', seq(der(0x80, Buffer.from(keyIdentifier)))),
+    )),
   );
   return seq(tbs, alg, bit(sign(tbs, privateKey)));
 }

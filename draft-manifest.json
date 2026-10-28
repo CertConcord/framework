@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295541,
-      "sha256": "8b8d6e849630f4c24dc4d42ff629524eb9954f02f70cfccb3502e9e4211f950d"
+      "bytes": 295712,
+      "sha256": "7cd64bf8062739400fd263467d7476f4ad1b79b67eb171881093d1220f230304"
     },
     {
       "path": "reference/README.md",
@@ -522,6 +522,16 @@
       "path": "reference/credential-log.mjs",
       "bytes": 4493,
       "sha256": "3f19b75abfdb33f747a3a155f567c4cef6515be49558e5bd2196a4f55e9162ca"
+    },
+    {
+      "path": "reference/crl-authority-key-identifier-vectors.test.mjs",
+      "bytes": 2493,
+      "sha256": "a9cfea23465898ace6dfad6782c8c66e451f45e21fd4e90e5bcd4ad60e1f668e"
+    },
+    {
+      "path": "reference/crl-authority-key-identifier.test.mjs",
+      "bytes": 4012,
+      "sha256": "f6bbc3808fde8183462065287a1d64f2ab0b96862d166816cbc4f8b129788171"
     },
     {
       "path": "reference/crl-reason-codes.test.mjs",
@@ -1465,8 +1475,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 10399,
-      "sha256": "c17c77dfe809f26357a2b3e6c98d8b1c29fb7b13d62398e807e6b73b96dd507d"
+      "bytes": 10789,
+      "sha256": "0fabdf49bf92f4e2891a0be451274c3e9ac56bcdb0d3140f5e32a5197c7bece5"
     },
     {
       "path": "reference/schemas.cddl",
@@ -2142,6 +2152,11 @@
       "path": "reference/vectors/cms-retirement-mtc07-rar2/manifest.json",
       "bytes": 33761,
       "sha256": "ed0afec1af59108b62a9a79814f9967a269a421fe6d4fa265e95e7eddfd7656c"
+    },
+    {
+      "path": "reference/vectors/crl-authority-key-identifier.json",
+      "bytes": 6397,
+      "sha256": "7622964bd460dee7212554d71e52451d2e5fd3ce725933b0f4fefafed6940283"
     },
     {
       "path": "reference/vectors/crl-reason-codes.json",
@@ -12750,8 +12765,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 50779,
-      "sha256": "a0280df1b6f30e22eafd7273a1b43bcf4a19c83c7ef4f05f2c7c0e5c5382d9ae"
+      "bytes": 51748,
+      "sha256": "e7b99b2d0c3f4cad2bbe56867f3b2d131a734bb3f480509504afbf27c70e1677"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
