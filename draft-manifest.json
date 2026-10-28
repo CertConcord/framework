@@ -570,8 +570,8 @@
     },
     {
       "path": "reference/crl-time-choice.test.mjs",
-      "bytes": 11637,
-      "sha256": "9f6f69f87287429dc105836e1b50fdfce13883b4df966deee7332694edb76d2e"
+      "bytes": 11664,
+      "sha256": "246dcf1ec2e8d0a49a69706851803d1fd06bcbe06d486ea86f97e5c134a28146"
     },
     {
       "path": "reference/csc.test.mjs",

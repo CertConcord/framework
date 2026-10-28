@@ -278,6 +278,7 @@ for (const field of ['producedAt', 'thisUpdate', 'nextUpdate', 'revokedAt'])
       nextUpdate: t.nextUpdate,
       producedAt: t.thisUpdate,
       revokedAt: t.revokedAt,
+      revocationReason: 1,
       status: 'REVOKED',
       overall: 'INVALID',
       reason: 'OCSP_REVOKED',
