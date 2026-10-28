@@ -135,8 +135,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 17148,
-      "sha256": "25a68eddc9904f19ab747ebcd713604b6ba2cf2f7ae1090561449a342873d49d"
+      "bytes": 18660,
+      "sha256": "4513d46b885fa792e82dd7076604a4d2bb95cfd80a47c6f33bc04e96bd69bb30"
     },
     {
       "path": "docs/components.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295324,
-      "sha256": "ad42b391e2e1e46243a3ec6a7de3ffc468223f2d6c8af296b991a345a64dcc57"
+      "bytes": 295853,
+      "sha256": "3e574a74611ba6fc845edd7811f8470fd145fe6a4a48ed5fb556f26e86090908"
     },
     {
       "path": "reference/README.md",
@@ -419,6 +419,16 @@
       "sha256": "527d5cf42ea950984ea27a3cea658da38670dccf09204394c810e0a4b2b60c78"
     },
     {
+      "path": "reference/cades-hold-release-vectors.test.mjs",
+      "bytes": 2894,
+      "sha256": "10a1f6fe156f4228130c8e637416121d8163cdf02b82c1830d0a29a259f3b7a9"
+    },
+    {
+      "path": "reference/cades-hold-release.test.mjs",
+      "bytes": 11041,
+      "sha256": "e8651d0c81a8a3add1e69dd979bf58c378541e7c21378ca90076d371608fcf52"
+    },
+    {
       "path": "reference/cades-interop.test.mjs",
       "bytes": 6038,
       "sha256": "545a890655abeb8833672aa9885ba4de2ef3ff80eced88410d96319175df6e3e"
@@ -435,8 +445,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 29713,
-      "sha256": "06a1025900e83483299b7651ea6a344da46e3965c3e97807e56c6020de137acc"
+      "bytes": 30828,
+      "sha256": "1785314dc9a63243c45083b2d37e8f3bee4c13b060b8524d472d99d0d4887529"
     },
     {
       "path": "reference/cades.mjs",
@@ -524,9 +534,34 @@
       "sha256": "3f19b75abfdb33f747a3a155f567c4cef6515be49558e5bd2196a4f55e9162ca"
     },
     {
+      "path": "reference/crl-authority-key-identifier-vectors.test.mjs",
+      "bytes": 2493,
+      "sha256": "a9cfea23465898ace6dfad6782c8c66e451f45e21fd4e90e5bcd4ad60e1f668e"
+    },
+    {
+      "path": "reference/crl-authority-key-identifier.test.mjs",
+      "bytes": 4012,
+      "sha256": "f6bbc3808fde8183462065287a1d64f2ab0b96862d166816cbc4f8b129788171"
+    },
+    {
+      "path": "reference/crl-reason-codes.test.mjs",
+      "bytes": 2096,
+      "sha256": "90bbdc36856bf04ec335c83dc81f488e07dd1d9da3e1fbbe4bf7b6550628e7a8"
+    },
+    {
       "path": "reference/crl-scope.test.mjs",
       "bytes": 2083,
       "sha256": "ca78a29eb0f2c4de24a0a9638471734ecf26db9146c960a46f05b745fcf005d8"
+    },
+    {
+      "path": "reference/crl-time-choice-replay.test.mjs",
+      "bytes": 3839,
+      "sha256": "b603899a13d849be4b3fcb32d1608b95d914f5531b4d5625e780f34e3842fe43"
+    },
+    {
+      "path": "reference/crl-time-choice.test.mjs",
+      "bytes": 11637,
+      "sha256": "9f6f69f87287429dc105836e1b50fdfce13883b4df966deee7332694edb76d2e"
     },
     {
       "path": "reference/csc.test.mjs",
@@ -1450,8 +1485,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 9633,
-      "sha256": "1a897e2b97667407714931bba61e5ab86db9180f2d2279baf5d1834bf2ea9f10"
+      "bytes": 10789,
+      "sha256": "0fabdf49bf92f4e2891a0be451274c3e9ac56bcdb0d3140f5e32a5197c7bece5"
     },
     {
       "path": "reference/schemas.cddl",
@@ -1834,6 +1869,11 @@
       "sha256": "b78041f2ee023d067c0f243d5b1dcb7e8c277b3ed04dab32d9c8f31f7ed5fab0"
     },
     {
+      "path": "reference/vectors/cades-hold-release.json",
+      "bytes": 25763,
+      "sha256": "4ddb578c800acd3249ebaef81525bd1440da34283065f450cac9616cb6be4d9b"
+    },
+    {
       "path": "reference/vectors/certificate-validity-endpoints.README.md",
       "bytes": 1693,
       "sha256": "d70dcb9f976bb5df1993d2ae96e98676b0e2ba65b5afb212e80c867f58b0dc8c"
@@ -2129,9 +2169,24 @@
       "sha256": "ed0afec1af59108b62a9a79814f9967a269a421fe6d4fa265e95e7eddfd7656c"
     },
     {
+      "path": "reference/vectors/crl-authority-key-identifier.json",
+      "bytes": 6397,
+      "sha256": "7622964bd460dee7212554d71e52451d2e5fd3ce725933b0f4fefafed6940283"
+    },
+    {
+      "path": "reference/vectors/crl-reason-codes.json",
+      "bytes": 32974,
+      "sha256": "bc6f38d59771c645e651d0b1807511d5b3500db90a74f08d6f762e613f506826"
+    },
+    {
       "path": "reference/vectors/crl-scope.json",
       "bytes": 13543,
       "sha256": "cf710b9aef1a8fb5dc2528ebaeaff720892c27eb484c4bbd8aaf568cff4f119f"
+    },
+    {
+      "path": "reference/vectors/crl-time-choice.json",
+      "bytes": 86543,
+      "sha256": "eea36b351ef17065d6c499d7f6156178cc96f79fab3197ba41dd7e05814e2c48"
     },
     {
       "path": "reference/vectors/direct-authority-key-incidents.json",
@@ -12725,8 +12780,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 49088,
-      "sha256": "017386dab1718f237536fbcfb820e877d531691616bdd906c41edeb7cb401881"
+      "bytes": 51748,
+      "sha256": "e7b99b2d0c3f4cad2bbe56867f3b2d131a734bb3f480509504afbf27c70e1677"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",

@@ -1,0 +1,1936 @@
+{
+  "schemaVersion": 1,
+  "profile": "crl-time-choice",
+  "description": "Synthetic signed raw-key status controls for CRL Time choice. Whole-second UTC years 1950-2049 use UTCTime; later years and pre-1950 compatibility use GeneralizedTime. Legacy GeneralizedTime CRLs remain readable. invalidityDate and OCSP remain GeneralizedTime-only. Expected full decisions include operational and knowledge-time boundaries. Signature math does not admit an issuer/responder path or establish complete document trust. Pre-1950 compatibility is not an RFC issuer-profile conformance claim.",
+  "cases": [
+    {
+      "id": "crl-before-1950",
+      "protocol": "CRL",
+      "raw": "MIIBCDCBrwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzE5NDkxMjMxMjM1MDAwWhgPMTk0OTEyMzEyMzU1MDBaMD4wPAIBBxgPMTk0OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzE5NDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSAAwRQIhALZeNbOTlVWQ1IW96asUOI53i0Rwtdymy5SM30BbM1ipAiAV/KA7SH4/iDh9d0EbV/uezkwoB3QX6i3bEJ9JeOVSQw==",
+      "sha256": "36628116f62eebb0f182cc6feaa4c31fe57a35d3ea487895790759aede2aef9c",
+      "tbs": "MIGvAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMTk0OTEyMzEyMzUwMDBaGA8xOTQ5MTIzMTIzNTUwMFowPjA8AgEHGA8xOTQ5MTIzMTIzNDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMTk0OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEUCIQC2XjWzk5VVkNSFvemrFDiOd4tEcLXcpsuUjN9AWzNYqQIgFfygO0h+P4g4fXdBG1f7ns5MKAd0F+ot2xCfSXjlUkM=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "19491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "19491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "19491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "19491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": -631152570,
+          "knowledgeTime": -631152570,
+          "expected": {
+            "number": "23",
+            "thisUpdate": -631152600,
+            "nextUpdate": -631152300,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": -631152570,
+          "knowledgeTime": -631152570,
+          "expected": {
+            "number": "23",
+            "thisUpdate": -631152600,
+            "nextUpdate": -631152300,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-cross-1950",
+      "protocol": "CRL",
+      "raw": "MIIBBTCBrQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzE5NDkxMjMxMjM1OTMwWhcNNTAwMTAxMDAwNDMwWjA+MDwCAQcYDzE5NDkxMjMxMjM1ODMwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8xOTQ5MTIzMTIzNTgzMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0cAMEQCIGDuFN2U0Jv+eOg/vM8Yhr2QKX3L+w+ASnsZ2egMxtOXAiAiyU0bk/xTgMFJdrrdEKCUS2uuY0XS4IhrdsIH6tcJMg==",
+      "sha256": "514b1be8589f9bb19155e02260964401f979f6dc9e7df53a78fbcc34c391a9ba",
+      "tbs": "MIGtAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMTk0OTEyMzEyMzU5MzBaFw01MDAxMDEwMDA0MzBaMD4wPAIBBxgPMTk0OTEyMzEyMzU4MzBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzE5NDkxMjMxMjM1ODMwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEQCIGDuFN2U0Jv+eOg/vM8Yhr2QKX3L+w+ASnsZ2egMxtOXAiAiyU0bk/xTgMFJdrrdEKCUS2uuY0XS4IhrdsIH6tcJMg==",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "19491231235930Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "500101000430Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "19491231235830Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "19491231235830Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": -631152000,
+          "knowledgeTime": -631152000,
+          "expected": {
+            "number": "23",
+            "thisUpdate": -631152030,
+            "nextUpdate": -631151730,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": -631152000,
+          "knowledgeTime": -631152000,
+          "expected": {
+            "number": "23",
+            "thisUpdate": -631152030,
+            "nextUpdate": -631151730,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-exact-1950-revocation",
+      "protocol": "CRL",
+      "raw": "MIIBAjCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTUwMDEwMTAwMDEwMFoXDTUwMDEwMTAwMDYwMFowPDA6AgEHFw01MDAxMDEwMDAwMDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzE5NTAwMTAxMDAwMDAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSAAwRQIhAKftY8QlTyFN2ce+vFAZxUz+KnMp/ci3lpbc3vG8b9LcAiA74QRIlYwGwVuH+9G5xm+P8SovGpGeS4JjdlDOeJpg2A==",
+      "sha256": "b4940ddf66d347b5fdb5772aa53a2451596a55a289f52895d0630e0b465fa4aa",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNTAwMTAxMDAwMTAwWhcNNTAwMTAxMDAwNjAwWjA8MDoCAQcXDTUwMDEwMTAwMDAwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMTk1MDAxMDEwMDAwMDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEUCIQCn7WPEJU8hTdnHvrxQGcVM/ipzKf3It5aW3N7xvG/S3AIgO+EESJWMBsFbh/vRucZvj/EqLxqRnkuCY3ZQzniaYNg=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "500101000100Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "500101000600Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "500101000000Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "19500101000000Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": -631151910,
+          "knowledgeTime": -631151910,
+          "expected": {
+            "number": "23",
+            "thisUpdate": -631151940,
+            "nextUpdate": -631151640,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": -631151910,
+          "knowledgeTime": -631151910,
+          "expected": {
+            "number": "23",
+            "thisUpdate": -631151940,
+            "nextUpdate": -631151640,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-negative-unix-to-epoch",
+      "protocol": "CRL",
+      "raw": "MIIBAzCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTY5MTIzMTIzNTkzMFoXDTcwMDEwMTAwMDQzMFowPDA6AgEHFw02OTEyMzEyMzU4MzBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzE5NjkxMjMxMjM1ODMwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSQAwRgIhAOL50nbZncrkgbCaN8P/OHTinn6+3JCcJ9w9kun9RQGZAiEA8UTp9QAXs737sbx8GoAgelax5eWna6hncyAK223r7Ug=",
+      "sha256": "883723f013fa297abd48bbedbceb31ed1d47fd58fa1e449bf6f977801518df0b",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNjkxMjMxMjM1OTMwWhcNNzAwMTAxMDAwNDMwWjA8MDoCAQcXDTY5MTIzMTIzNTgzMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMTk2OTEyMzEyMzU4MzBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEYCIQDi+dJ22Z3K5IGwmjfD/zh04p5+vtyQnCfcPZLp/UUBmQIhAPFE6fUAF7O9+7G8fBqAIHpWseXlp2uoZ3MgCttt6+1I",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "691231235930Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "700101000430Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "691231235830Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "19691231235830Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 0,
+          "knowledgeTime": 0,
+          "expected": {
+            "number": "23",
+            "thisUpdate": -30,
+            "nextUpdate": 270,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 0,
+          "knowledgeTime": 0,
+          "expected": {
+            "number": "23",
+            "thisUpdate": -30,
+            "nextUpdate": 270,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-year-1999",
+      "protocol": "CRL",
+      "raw": "MIIBATCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTk5MTIzMTIzNTAwMFoXDTk5MTIzMTIzNTUwMFowPDA6AgEHFw05OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzE5OTkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDRwAwRAIgUbPx2cq8hiq9pTlga/GbR3TYxrxqC7YrAb428twtLPUCIBzLMeFQXoeAltgNlyiu2m1p5Yb0sOkG8BVA8SE6Yp/O",
+      "sha256": "c791b72a7327b99a96fb9d4d91c63a71e7a979c84159441fb1bc257ea34b6d85",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNOTkxMjMxMjM1MDAwWhcNOTkxMjMxMjM1NTAwWjA8MDoCAQcXDTk5MTIzMTIzNDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMTk5OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEQCIFGz8dnKvIYqvaU5YGvxm0d02Ma8agu2KwG+NvLcLSz1AiAcyzHhUF6HgJbYDZcortptaeWG9LDpBvAVQPEhOmKfzg==",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "991231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "991231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "991231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "19991231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 946684230,
+          "knowledgeTime": 946684230,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 946684200,
+            "nextUpdate": 946684500,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 946684230,
+          "knowledgeTime": 946684230,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 946684200,
+            "nextUpdate": 946684500,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-year-2000-leap",
+      "protocol": "CRL",
+      "raw": "MIIBAzCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTAwMDIyOTEyMDAwMFoXDTAwMDIyOTEyMDUwMFowPDA6AgEHFw0wMDAyMjkxMTU5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwMDAwMjI5MTE1OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSQAwRgIhAPmzoWLO7CPZkPXsic5Ee/mbI7tgN8pY2yu8axUFlDZpAiEAoVt5RXxgK4hWc6PNUq7CHRKrwuoVoO7HdNMKvi6Cikw=",
+      "sha256": "594fbcca6d52fa4c8305937ac15048ce5ad6eac369dc09a00ab51b2d31d01dc7",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNMDAwMjI5MTIwMDAwWhcNMDAwMjI5MTIwNTAwWjA8MDoCAQcXDTAwMDIyOTExNTkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjAwMDAyMjkxMTU5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEYCIQD5s6Fizuwj2ZD17InORHv5myO7YDfKWNsrvGsVBZQ2aQIhAKFbeUV8YCuIVnOjzVKuwh0Sq8LqFaDux3TTCr4ugopM",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "000229120000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "000229120500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "000229115900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20000229115900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 951825630,
+          "knowledgeTime": 951825630,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 951825600,
+            "nextUpdate": 951825900,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 951825630,
+          "knowledgeTime": 951825630,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 951825600,
+            "nextUpdate": 951825900,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-year-2049",
+      "protocol": "CRL",
+      "raw": "MIIBAjCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXDTQ5MTIzMTIzNTUwMFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSAAwRQIhAIVWrdgumvSkFDpcfgd4R9wnw46nGMl1aTWHj5Ah3Iz9AiBTJoFerygXmKnwZZaj3Ah8akGN6EDK38hMPLDOEvS8Ow==",
+      "sha256": "0c4fd7d075984aa96d74a29b245404976172e220f27c638208d3dc9b8a52ef6b",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcNNDkxMjMxMjM1NTAwWjA8MDoCAQcXDTQ5MTIzMTIzNDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA0OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEUCIQCFVq3YLpr0pBQ6XH4HeEfcJ8OOpxjJdWk1h4+QIdyM/QIgUyaBXq8oF5ip8GWWo9wIfGpBjehAyt/ITDywzhL0vDs=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        },
+        {
+          "id": "before-revocation",
+          "serial": "7",
+          "at": 2524607339,
+          "knowledgeTime": 2524607401,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "id": "at-revocation",
+          "serial": "7",
+          "at": 2524607340,
+          "knowledgeTime": 2524607401,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        },
+        {
+          "id": "not-yet-known",
+          "serial": "8",
+          "at": 2524607400,
+          "knowledgeTime": 2524607399,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "UNKNOWN",
+            "overall": "INDETERMINATE",
+            "reason": "CRL_NOT_YET_KNOWN"
+          }
+        },
+        {
+          "id": "before-expiry",
+          "serial": "8",
+          "at": 2524607400,
+          "knowledgeTime": 2524607699,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "id": "at-expiry",
+          "serial": "8",
+          "at": 2524607400,
+          "knowledgeTime": 2524607700,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "STALE",
+            "overall": "INDETERMINATE",
+            "reason": "CRL_STALE"
+          }
+        },
+        {
+          "id": "revocation-after-expiry",
+          "serial": "7",
+          "at": 2524607400,
+          "knowledgeTime": 2524607700,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-cross-2050-update",
+      "protocol": "CRL",
+      "raw": "MIIBAzCBqwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTkzMFoYDzIwNTAwMTAxMDAwNDMwWjA8MDoCAQcXDTQ5MTIzMTIzNTgzMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA0OTEyMzEyMzU4MzBaoA4wDDAKBgNVHRQEAwIBFzAKBggqhkjOPQQDAgNHADBEAiAxKYzaIoyEiWhr7/CQdNFwyP3fB13+Un1EXrqpRJn23QIgD8IcFVop79D/OPQpn6+e805ADf8mdLbkKfHXaZUsz2w=",
+      "sha256": "18a500cbb93e72277504a603074940c98fce92b9ecb4d15c6493d20cf76f8346",
+      "tbs": "MIGrAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1OTMwWhgPMjA1MDAxMDEwMDA0MzBaMDwwOgIBBxcNNDkxMjMxMjM1ODMwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNTgzMFqgDjAMMAoGA1UdFAQDAgEX",
+      "signature": "MEQCIDEpjNoijISJaGvv8JB00XDI/d8HXf5SfUReuqlEmfbdAiAPwhwVWinv0P849Cmfr57zTkAN/yZ0tuQp8ddplSzPbA==",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235930Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20500101000430Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231235830Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231235830Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524608000,
+          "knowledgeTime": 2524608000,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607970,
+            "nextUpdate": 2524608270,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524608000,
+          "knowledgeTime": 2524608000,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607970,
+            "nextUpdate": 2524608270,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-cross-2050-revocation",
+      "protocol": "CRL",
+      "raw": "MIIBBjCBrQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzIwNTAwMTAxMDAwMDMwWhgPMjA1MDAxMDEwMDA1MzBaMDwwOgIBBxcNNDkxMjMxMjM1OTMwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNTkzMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0gAMEUCIQC6MfHfTGPlYABT2YzCpOKO5ToQATtuu4uWfnxasUqBzgIgTdm7kExISpNFVf/G3P71ZbnMSmbSaWkV9IJwseQHSg8=",
+      "sha256": "3d45fccc6be2834069b6962f8bcc9a456b70c01a4b97126debd3d84c8a8df0d1",
+      "tbs": "MIGtAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMjA1MDAxMDEwMDAwMzBaGA8yMDUwMDEwMTAwMDUzMFowPDA6AgEHFw00OTEyMzEyMzU5MzBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM1OTMwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEUCIQC6MfHfTGPlYABT2YzCpOKO5ToQATtuu4uWfnxasUqBzgIgTdm7kExISpNFVf/G3P71ZbnMSmbSaWkV9IJwseQHSg8=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20500101000030Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20500101000530Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231235930Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231235930Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524608060,
+          "knowledgeTime": 2524608060,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524608030,
+            "nextUpdate": 2524608330,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524608060,
+          "knowledgeTime": 2524608060,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524608030,
+            "nextUpdate": 2524608330,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-year-2050",
+      "protocol": "CRL",
+      "raw": "MIIBCDCBrwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzIwNTAwMTAxMDAxMDAwWhgPMjA1MDAxMDEwMDE1MDBaMD4wPAIBBxgPMjA1MDAxMDEwMDA5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNTAwMTAxMDAwOTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSAAwRQIgGJ+Bmwv0c09YdjEB/foMbPTtpILA44Zn4h74XlUMKRQCIQD18USnYhaCozvBU9HqfipUPJmIjhr4CujnX8VECV1dSQ==",
+      "sha256": "2a800db62ae564749a4ae64bf9bb2da14c0b3e8f3003153273f30cf4b610fa55",
+      "tbs": "MIGvAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMjA1MDAxMDEwMDEwMDBaGA8yMDUwMDEwMTAwMTUwMFowPjA8AgEHGA8yMDUwMDEwMTAwMDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA1MDAxMDEwMDA5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEUCIBifgZsL9HNPWHYxAf36DGz07aSCwOOGZ+Ie+F5VDCkUAiEA9fFEp2IWgqM7wVPR6n4qVDyZiI4a+Aro51/FRAldXUk=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20500101001000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20500101001500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20500101000900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20500101000900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524608630,
+          "knowledgeTime": 2524608630,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524608600,
+            "nextUpdate": 2524608900,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524608630,
+          "knowledgeTime": 2524608630,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524608600,
+            "nextUpdate": 2524608900,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-generalized-2049",
+      "protocol": "CRL",
+      "raw": "MIIBCTCBrwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzIwNDkxMjMxMjM1MDAwWhgPMjA0OTEyMzEyMzU1MDBaMD4wPAIBBxgPMjA0OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSQAwRgIhAKC/3+vOFeFgZ8Zx9qJwcPAqO0kQm9t+2bXNMggKUywGAiEAlq0A2apRaj4onE6jKktgpQ8V7w9P6RyECDg0ZDY9ZZc=",
+      "sha256": "260744a0eedf008135eaf6c62250b8cef04797c486a42d3bcc96c5b443456237",
+      "tbs": "MIGvAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMjA0OTEyMzEyMzUwMDBaGA8yMDQ5MTIzMTIzNTUwMFowPjA8AgEHGA8yMDQ5MTIzMTIzNDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA0OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEYCIQCgv9/rzhXhYGfGcfaicHDwKjtJEJvbftm1zTIIClMsBgIhAJatANmqUWo+KJxOoypLYKUPFe8PT+kchAg4NGQ2PWWX",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-isolated-utc-thisUpdate",
+      "protocol": "CRL",
+      "raw": "MIIBBzCBrQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoYDzIwNDkxMjMxMjM1NTAwWjA+MDwCAQcYDzIwNDkxMjMxMjM0OTAwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0kAMEYCIQDAiVYsmjNzfdEeY4CR9kI7S681sYvMnRjMTIDVcgD6sgIhAO85ddDQK4Gtd5ihlv1KJtrJ2kyApVgSULL/AScKUMxU",
+      "sha256": "cd162aea09cbcfed3e7dd38469597f850cd2813837b600418504f8d59e760567",
+      "tbs": "MIGtAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhgPMjA0OTEyMzEyMzU1MDBaMD4wPAIBBxgPMjA0OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEYCIQDAiVYsmjNzfdEeY4CR9kI7S681sYvMnRjMTIDVcgD6sgIhAO85ddDQK4Gtd5ihlv1KJtrJ2kyApVgSULL/AScKUMxU",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-isolated-utc-nextUpdate",
+      "protocol": "CRL",
+      "raw": "MIIBBzCBrQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzIwNDkxMjMxMjM1MDAwWhcNNDkxMjMxMjM1NTAwWjA+MDwCAQcYDzIwNDkxMjMxMjM0OTAwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0kAMEYCIQCMuh73FNK6Fp45M4Rxv490WkDn9NzPwMR3szdTwTW5TAIhAOpMzArEWgAcdT6+Us3bahMPBfclyqoOR+RTrNuNPDKU",
+      "sha256": "2e93e9af00f6a10f83b24ad7ecf3515f62fc37463529671813854bbb62a75856",
+      "tbs": "MIGtAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMjA0OTEyMzEyMzUwMDBaFw00OTEyMzEyMzU1MDBaMD4wPAIBBxgPMjA0OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEYCIQCMuh73FNK6Fp45M4Rxv490WkDn9NzPwMR3szdTwTW5TAIhAOpMzArEWgAcdT6+Us3bahMPBfclyqoOR+RTrNuNPDKU",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-isolated-utc-revokedAt",
+      "protocol": "CRL",
+      "raw": "MIIBBTCBrQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzIwNDkxMjMxMjM1MDAwWhgPMjA0OTEyMzEyMzU1MDBaMDwwOgIBBxcNNDkxMjMxMjM0OTAwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0cAMEQCIHDZpdMQbNIccrzjySNOeZh1rajAE3FqZjkwFLv0TIl2AiB4oMRj9FgfD2U0pABXzzwfu37qNGbOnrPSsUDBlgUEyA==",
+      "sha256": "12fe723e7df1b317c968e8c4350510941b9cf895ea0526639277e7c9e2ec0015",
+      "tbs": "MIGtAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMjA0OTEyMzEyMzUwMDBaGA8yMDQ5MTIzMTIzNTUwMFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEQCIHDZpdMQbNIccrzjySNOeZh1rajAE3FqZjkwFLv0TIl2AiB4oMRj9FgfD2U0pABXzzwfu37qNGbOnrPSsUDBlgUEyA==",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-thisUpdate-nonleap-day",
+      "protocol": "CRL",
+      "raw": "MIIBAjCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MDIyOTEyMDAwMFoXDTQ5MTIzMTIzNTUwMFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSAAwRQIgYQiFslIS36pdBNM13Lyj/0R8s7WzQ4I09zevjmw5HngCIQDG2T2iw1eS52BL/ZSZ3FwZUjgCH0ED+mt2AF0avHXD4Q==",
+      "sha256": "b0fb36fa3b54137ad8b2f66a5b07cf1a3ed4f921972520b41f6ddc892c9c8dd9",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkwMjI5MTIwMDAwWhcNNDkxMjMxMjM1NTAwWjA8MDoCAQcXDTQ5MTIzMTIzNDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA0OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEUCIGEIhbJSEt+qXQTTNdy8o/9EfLO1s0OCNPc3r45sOR54AiEAxtk9osNXkudgS/2UmdxcGVI4Ah9BA/prdgBdGrx1w+E=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "490229120000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-thisUpdate-missing-seconds",
+      "protocol": "CRL",
+      "raw": "MIH/MIGnAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcLNDkxMjMxMjM1MFoXDTQ5MTIzMTIzNTUwMFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDRwAwRAIgZhbkAKRac2seZ9hJouSZ9q5S9QMUXmIQbAXRzMTcBToCIChAtUv3tBq/b/GUI5CTkfPhUQkLvYvtzgJT7byDfmyi",
+      "sha256": "3daa59f82fbd7ef66c1de226d341d704705dbf9ee36f73e39519776ea0582afa",
+      "tbs": "MIGnAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcLNDkxMjMxMjM1MFoXDTQ5MTIzMTIzNTUwMFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEQCIGYW5ACkWnNrHmfYSaLkmfauUvUDFF5iEGwF0czE3AU6AiAoQLVL97Qav2/xlCOQk5Hz4VEJC72L7c4CU+28g35sog==",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "4912312350Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-thisUpdate-offset",
+      "protocol": "CRL",
+      "raw": "MIIBBjCBrQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXETQ5MTIzMTIzNTAwMCswMDAwFw00OTEyMzEyMzU1MDBaMDwwOgIBBxcNNDkxMjMxMjM0OTAwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0gAMEUCICOyJPdxecBJyWI5KEHphhVEQgI5tLZSN6nMmbAHaIuwAiEAnDA3LNCA0LURlVu7zDIFB60p+CFaZEeYq7pnI5mzkxk=",
+      "sha256": "1dcf9ecbd4d9089499cd621c710456c42512edc48bad6fc8301c20d2296251d3",
+      "tbs": "MIGtAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcRNDkxMjMxMjM1MDAwKzAwMDAXDTQ5MTIzMTIzNTUwMFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEUCICOyJPdxecBJyWI5KEHphhVEQgI5tLZSN6nMmbAHaIuwAiEAnDA3LNCA0LURlVu7zDIFB60p+CFaZEeYq7pnI5mzkxk=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000+0000"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-nextUpdate-nonleap-day",
+      "protocol": "CRL",
+      "raw": "MIIBAjCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXDTQ5MDIyOTEyMDAwMFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSAAwRQIgDl9IA6LAxAXB0pUtqbCUpmxBEdRvkUbCTT/3q7CMMy0CIQDZgL0y+LIgz0XFVHVRq9W9TQuNhhuUBGk1QXVmIqg5lA==",
+      "sha256": "bf1da5538180899df971ac39cd0da56dcdc16b18a13ceef53319c0d5832c47b3",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcNNDkwMjI5MTIwMDAwWjA8MDoCAQcXDTQ5MTIzMTIzNDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA0OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEUCIA5fSAOiwMQFwdKVLamwlKZsQRHUb5FGwk0/96uwjDMtAiEA2YC9MviyIM9FxVR1UavVvU0LjYYblARpNUF1ZiKoOZQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "490229120000Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-nextUpdate-missing-seconds",
+      "protocol": "CRL",
+      "raw": "MIIBADCBpwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXCzQ5MTIzMTIzNTBaMDwwOgIBBxcNNDkxMjMxMjM0OTAwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0gAMEUCICbFV9YLdnItOQBLSCSY3yBYddT8DMTn2bIvKR4v4NlfAiEAzV8B2dWgXk96BaJqSqetvQU+Q9y5OFNpzPDuV4QgzqY=",
+      "sha256": "0b4baa4ba18fe38c36001a2e7622b8911bb33a3a06e7035843c3fba551baa42c",
+      "tbs": "MIGnAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcLNDkxMjMxMjM1MFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEUCICbFV9YLdnItOQBLSCSY3yBYddT8DMTn2bIvKR4v4NlfAiEAzV8B2dWgXk96BaJqSqetvQU+Q9y5OFNpzPDuV4QgzqY=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "4912312350Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-nextUpdate-offset",
+      "protocol": "CRL",
+      "raw": "MIIBBzCBrQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXETQ5MTIzMTIzNTAwMCswMDAwMDwwOgIBBxcNNDkxMjMxMjM0OTAwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0kAMEYCIQDBfOkgQX2fiKd1Qgdgcb0FtevPgG82Bri1Tt+IuqaQywIhALiPKRqOt5H7zbFv0v8oyf984GseAm8qS+QWKzMnwWAW",
+      "sha256": "4979ed4e09e77beccf659b9b1b2356e339c6f97fbd552d3efa2215709db3e93f",
+      "tbs": "MIGtAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcRNDkxMjMxMjM1MDAwKzAwMDAwPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEYCIQDBfOkgQX2fiKd1Qgdgcb0FtevPgG82Bri1Tt+IuqaQywIhALiPKRqOt5H7zbFv0v8oyf984GseAm8qS+QWKzMnwWAW",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235000+0000"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-revokedAt-nonleap-day",
+      "protocol": "CRL",
+      "raw": "MIIBAjCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXDTQ5MTIzMTIzNTUwMFowPDA6AgEHFw00OTAyMjkxMjAwMDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSAAwRQIhAJZAM8T5HxlKVevB04o7mpshW1JEzX9KmBe//UcEawbAAiA5zH1bPgO318Do2lgwJRzS8QKBGsTMBKq9PO0JZkf04Q==",
+      "sha256": "bb21115a1e8a7f33c5d12d01930d3c39b906357b7e9a362377531b850e52e41f",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcNNDkxMjMxMjM1NTAwWjA8MDoCAQcXDTQ5MDIyOTEyMDAwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA0OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEUCIQCWQDPE+R8ZSlXrwdOKO5qbIVtSRM1/SpgXv/1HBGsGwAIgOcx9Wz4Dt9fA6NpYMCUc0vECgRrEzASqvTztCWZH9OE=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "490229120000Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-revokedAt-missing-seconds",
+      "protocol": "CRL",
+      "raw": "MIIBATCBpwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXDTQ5MTIzMTIzNTUwMFowOjA4AgEHFws0OTEyMzEyMzUwWjAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0kAMEYCIQCohYupGl1JzUC1QqwTLGcC5keCkxaKB1YVmFfOFm4nFwIhAPROwqdzMZxAX6+BKv2uga60SGh86R2OtYAadJlOYXv1",
+      "sha256": "6cbc7a8ea4365e6e2f5b5c4ebae909af6379d15b0653b7e2ba10126b171f1105",
+      "tbs": "MIGnAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcNNDkxMjMxMjM1NTAwWjA6MDgCAQcXCzQ5MTIzMTIzNTBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEYCIQCohYupGl1JzUC1QqwTLGcC5keCkxaKB1YVmFfOFm4nFwIhAPROwqdzMZxAX6+BKv2uga60SGh86R2OtYAadJlOYXv1",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "4912312350Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-revokedAt-offset",
+      "protocol": "CRL",
+      "raw": "MIIBBzCBrQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXDTQ5MTIzMTIzNTUwMFowQDA+AgEHFxE0OTEyMzEyMzUwMDArMDAwMDAmMAoGA1UdFQQDCgEBMBgGA1UdGAQRGA8yMDQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0kAMEYCIQC0gYAjLEfTOKXby8Q7ygAGvpmBtjZNm99ELU30dOpT9wIhAJjw7YP1qXRslzUOQEzMWJ0WSiLqysvO/ggz2YWX41yO",
+      "sha256": "224f63441bf8300af244d5e8fc3a92733e2d7b45dc25869951db2cc26136aefb",
+      "tbs": "MIGtAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcNNDkxMjMxMjM1NTAwWjBAMD4CAQcXETQ5MTIzMTIzNTAwMCswMDAwMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEYCIQC0gYAjLEfTOKXby8Q7ygAGvpmBtjZNm99ELU30dOpT9wIhAJjw7YP1qXRslzUOQEzMWJ0WSiLqysvO/ggz2YWX41yO",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231235000+0000"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-wrong-key-2049",
+      "protocol": "CRL",
+      "raw": "MIIBAjCBqQIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXDTQ5MTIzMTIzNTUwMFowPDA6AgEHFw00OTEyMzEyMzQ5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSAAwRQIgavBp2eFCNkJOmEke+GrKY7xdpjVKoA8n5q7WsXxpTeACIQDF9RQ3GsrDf2rkUosTTgcKe7+3ubsMOwssod9c1TfTfw==",
+      "sha256": "5e4b5aba8e7448ee5a0c7b5ad02ea1bb4592a4a1969a24de5ec5c1c4726954e8",
+      "tbs": "MIGpAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcNNDkxMjMxMjM1NTAwWjA8MDoCAQcXDTQ5MTIzMTIzNDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA0OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEUCIGrwadnhQjZCTphJHvhqymO8XaY1SqAPJ+au1rF8aU3gAiEAxfUUNxrKw39q5FKLE04HCnu/t7m7DDsLLKHfXNU3038=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEGrtfCHzBB+4kXeVk8OflRd+YeSrUI0uR169FOHV34Lzv/3ne+lKYpGzInCWPg/kaQAgXTzk1j/NCQpKXKbzdqg==",
+      "signatureValidForSelectedKey": false,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "CRL_SIGNATURE"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "CRL_SIGNATURE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-wrong-key-2050",
+      "protocol": "CRL",
+      "raw": "MIIBCTCBrwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzIwNTAwMTAxMDAxMDAwWhgPMjA1MDAxMDEwMDE1MDBaMD4wPAIBBxgPMjA1MDAxMDEwMDA5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNTAwMTAxMDAwOTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDSQAwRgIhANd9LIvOMNXsh541+Yu+iP36Xl2oXGZnSUjUw/hJ85jlAiEAsXZVaBqjVhTgW7Rj//Rny1wWmOmpByewlnb9lEHTNvY=",
+      "sha256": "4dbf2a6d39f19af5276223fc9fed5f1194b3dd897da8a0aafc338b8a799ed63b",
+      "tbs": "MIGvAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMjA1MDAxMDEwMDEwMDBaGA8yMDUwMDEwMTAwMTUwMFowPjA8AgEHGA8yMDUwMDEwMTAwMDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA1MDAxMDEwMDA5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEYCIQDXfSyLzjDV7IeeNfmLvoj9+l5dqFxmZ0lI1MP4SfOY5QIhALF2VWgao1YU4Fu0Y//0Z8tcFpjpqQcnsJZ2/ZRB0zb2",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEGrtfCHzBB+4kXeVk8OflRd+YeSrUI0uR169FOHV34Lzv/3ne+lKYpGzInCWPg/kaQAgXTzk1j/NCQpKXKbzdqg==",
+      "signatureValidForSelectedKey": false,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20500101001000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20500101001500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20500101000900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20500101000900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524608630,
+          "knowledgeTime": 2524608630,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "CRL_SIGNATURE"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524608630,
+          "knowledgeTime": 2524608630,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "CRL_SIGNATURE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-utc-invalidityDate",
+      "protocol": "CRL",
+      "raw": "MIIBATCBpwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMXDTQ5MTIzMTIzNTAwMFoXDTQ5MTIzMTIzNTUwMFowOjA4AgEHFw00OTEyMzEyMzQ5MDBaMCQwCgYDVR0VBAMKAQEwFgYDVR0YBA8XDTQ5MTIzMTIzNDkwMFqgDjAMMAoGA1UdFAQDAgEXMAoGCCqGSM49BAMCA0kAMEYCIQDcrlrCag6DfiB/6Qg4d88oFD8w8n3qj8G/A1QPV0U69AIhAPo9gekL1rqFk/R6iFdmppfQv6A8/P5YavviiJRjyIXI",
+      "sha256": "4c04c70f9fd4f28ba966446801a14cd17b0e913b975021450c1d1bba1148b824",
+      "tbs": "MIGnAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxcNNDkxMjMxMjM1MDAwWhcNNDkxMjMxMjM1NTAwWjA6MDgCAQcXDTQ5MTIzMTIzNDkwMFowJDAKBgNVHRUEAwoBATAWBgNVHRgEDxcNNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARc=",
+      "signature": "MEYCIQDcrlrCag6DfiB/6Qg4d88oFD8w8n3qj8G/A1QPV0U69AIhAPo9gekL1rqFk/R6iFdmppfQv6A8/P5YavviiJRjyIXI",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        },
+        "invalidityDate": {
+          "tag": 23,
+          "text": "491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crl-2050-generalized-invalidityDate-2049",
+      "protocol": "CRL",
+      "raw": "MIIBBzCBrwIBATAKBggqhkjOPQQDAjAsMSowKAYDVQQDDCFTeW50aGV0aWMgQ1JMIFRpbWUgY2hvaWNlIHZlY3RvcnMYDzIwNTAwMTAxMDAxMDAwWhgPMjA1MDAxMDEwMDE1MDBaMD4wPAIBBxgPMjA1MDAxMDEwMDA5MDBaMCYwCgYDVR0VBAMKAQEwGAYDVR0YBBEYDzIwNDkxMjMxMjM0OTAwWqAOMAwwCgYDVR0UBAMCARcwCgYIKoZIzj0EAwIDRwAwRAIgKAOZwb+hvVh8BMmxntEAJIXbD+26VylzAoNrlrs3BQkCIAzTp7shb0ApbbTBuaL4h3G8Ay26IdQV/KQ75CTuFYUj",
+      "sha256": "78d4c2e402a589b6848ab3d7dd31c7df87936f9649174a8aa2e46e793abc8b65",
+      "tbs": "MIGvAgEBMAoGCCqGSM49BAMCMCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycxgPMjA1MDAxMDEwMDEwMDBaGA8yMDUwMDEwMTAwMTUwMFowPjA8AgEHGA8yMDUwMDEwMTAwMDkwMFowJjAKBgNVHRUEAwoBATAYBgNVHRgEERgPMjA0OTEyMzEyMzQ5MDBaoA4wDDAKBgNVHRQEAwIBFw==",
+      "signature": "MEQCICgDmcG/ob1YfATJsZ7RACSF2w/tulcpcwKDa5a7NwUJAiAM06e7IW9AKW20wbmi+IdxvAMtuiHUFfykO+Qk7hWFIw==",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20500101001000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20500101001500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20500101000900Z"
+        },
+        "invalidityDate": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "issuer": "MCwxKjAoBgNVBAMMIVN5bnRoZXRpYyBDUkwgVGltZSBjaG9pY2UgdmVjdG9ycw==",
+      "checks": [
+        {
+          "serial": "8",
+          "at": 2524608630,
+          "knowledgeTime": 2524608630,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524608600,
+            "nextUpdate": 2524608900,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "serial": "7",
+          "at": 2524608630,
+          "knowledgeTime": 2524608630,
+          "expected": {
+            "number": "23",
+            "thisUpdate": 2524608600,
+            "nextUpdate": 2524608900,
+            "scope": "COMPLETE_ISSUER_CRL",
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "CRL_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocsp-2049-good",
+      "protocol": "OCSP",
+      "raw": "MIIBSgoBAKCCAUMwggE/BgkrBgEFBQcwAQEEggEwMIIBLDCB0qIWBBRxb04ypEAKZXWcZghzfFR00U4xcBgPMjA0OTEyMzEyMzUwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHgAAYDzIwNDkxMjMxMjM1MDAwWqARGA8yMDQ5MTIzMTIzNTUwMFqhJzAlMCMGCSsGAQUFBzABAgQWBBRjY2NjY2NjY2NjY2NjY2NjY2NjYzAKBggqhkjOPQQDAgNJADBGAiEAp3C03aYZeegkHcvaA/TfkPBhBXT0YLQIaS5wcBBTH9sCIQCGleyhBGVxo3fJeyxZGK6lJuVePxbhyoJmZG5cT2l+gA==",
+      "sha256": "7ec9c88db7f9d2e92460b1ba8a49d5c0b3f283e100470736f6a1ce9709018469",
+      "tbs": "MIHSohYEFHFvTjKkQApldZxmCHN8VHTRTjFwGA8yMDQ5MTIzMTIzNTAwMFowfjB8MFQwCwYJYIZIAWUDBAIBBCA4TktZfba7rSkcfhzFchlih4GGRA8XpK2VHrYLjsX8LAQgJp5wh+XfqGa/okE4Y6W8HW5D86Vml6edL96KbCzRdx8CAQeAABgPMjA0OTEyMzEyMzUwMDBaoBEYDzIwNDkxMjMxMjM1NTAwWqEnMCUwIwYJKwYBBQUHMAECBBYEFGNjY2NjY2NjY2NjY2NjY2NjY2Nj",
+      "signature": "MEYCIQCncLTdphl56CQdy9oD9N+Q8GEFdPRgtAhpLnBwEFMf2wIhAIaV7KEEZXGjd8l7LFkYrqUm5V4/FuHKgmZkblxPaX6A",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "producedAt": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20491231235500Z"
+        }
+      },
+      "request": "MIGGMIGDMFgwVjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoicwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2M=",
+      "checks": [
+        {
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "producedAt": 2524607400,
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocsp-2049-revoked",
+      "protocol": "OCSP",
+      "raw": "MIIBYQoBAKCCAVowggFWBgkrBgEFBQcwAQEEggFHMIIBQzCB6qIWBBRxb04ypEAKZXWcZghzfFR00U4xcBgPMjA0OTEyMzEyMzUwMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCA4TktZfba7rSkcfhzFchlih4GGRA8XpK2VHrYLjsX8LAQgJp5wh+XfqGa/okE4Y6W8HW5D86Vml6edL96KbCzRdx8CAQehFhgPMjA0OTEyMzEyMzQ5MDBaoAMKAQEYDzIwNDkxMjMxMjM1MDAwWqARGA8yMDQ5MTIzMTIzNTUwMFqhJzAlMCMGCSsGAQUFBzABAgQWBBRjY2NjY2NjY2NjY2NjY2NjY2NjYzAKBggqhkjOPQQDAgNIADBFAiBreDL2pYErmLnsyKFS6Z9djR5Cw03yMrZYYTWE5MroRwIhAIy8w6pAALeSWkxXSSru+ghVIIM8scMUE090+iD19PoP",
+      "sha256": "e4e7320ce5fd18cee08f0083eb713ecb0f76eadc44e34e79aaf1648fe0967db3",
+      "tbs": "MIHqohYEFHFvTjKkQApldZxmCHN8VHTRTjFwGA8yMDQ5MTIzMTIzNTAwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIDhOS1l9trutKRx+HMVyGWKHgYZEDxekrZUetguOxfwsBCAmnnCH5d+oZr+iQThjpbwdbkPzpWaXp50v3opsLNF3HwIBB6EWGA8yMDQ5MTIzMTIzNDkwMFqgAwoBARgPMjA0OTEyMzEyMzUwMDBaoBEYDzIwNDkxMjMxMjM1NTAwWqEnMCUwIwYJKwYBBQUHMAECBBYEFGNjY2NjY2NjY2NjY2NjY2NjY2Nj",
+      "signature": "MEUCIGt4MvalgSuYuezIoVLpn12NHkLDTfIytlhhNYTkyuhHAiEAjLzDqkAAt5JaTFdJKu76CFUggzyxwxQTT3T6IPX0+g8=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "producedAt": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "request": "MIGGMIGDMFgwVjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoicwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2M=",
+      "checks": [
+        {
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "thisUpdate": 2524607400,
+            "nextUpdate": 2524607700,
+            "producedAt": 2524607400,
+            "revokedAt": 2524607340,
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "OCSP_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocsp-2050-good",
+      "protocol": "OCSP",
+      "raw": "MIIBSAoBAKCCAUEwggE9BgkrBgEFBQcwAQEEggEuMIIBKjCB0qIWBBRxb04ypEAKZXWcZghzfFR00U4xcBgPMjA1MDAxMDEwMDEwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHgAAYDzIwNTAwMTAxMDAxMDAwWqARGA8yMDUwMDEwMTAwMTUwMFqhJzAlMCMGCSsGAQUFBzABAgQWBBRjY2NjY2NjY2NjY2NjY2NjY2NjYzAKBggqhkjOPQQDAgNHADBEAiAJAUtWTlvn85SWvuqjKZAIS5snOB70UbqZX+fV7XNgvgIgWskHkpKoGCHojF0E1bC2Fpcd5tJkQlpuoFtamhmT5PQ=",
+      "sha256": "f7f0fe237950492e0c53874c389a9de767817ad1463cd9351b4e8615dc43ca81",
+      "tbs": "MIHSohYEFHFvTjKkQApldZxmCHN8VHTRTjFwGA8yMDUwMDEwMTAwMTAwMFowfjB8MFQwCwYJYIZIAWUDBAIBBCA4TktZfba7rSkcfhzFchlih4GGRA8XpK2VHrYLjsX8LAQgJp5wh+XfqGa/okE4Y6W8HW5D86Vml6edL96KbCzRdx8CAQeAABgPMjA1MDAxMDEwMDEwMDBaoBEYDzIwNTAwMTAxMDAxNTAwWqEnMCUwIwYJKwYBBQUHMAECBBYEFGNjY2NjY2NjY2NjY2NjY2NjY2Nj",
+      "signature": "MEQCIAkBS1ZOW+fzlJa+6qMpkAhLmyc4HvRRuplf59Xtc2C+AiBayQeSkqgYIeiMXQTVsLYWlx3m0mRCWm6gW1qaGZPk9A==",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "producedAt": {
+          "tag": 24,
+          "text": "20500101001000Z"
+        },
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20500101001000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20500101001500Z"
+        }
+      },
+      "request": "MIGGMIGDMFgwVjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoicwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2M=",
+      "checks": [
+        {
+          "at": 2524608630,
+          "knowledgeTime": 2524608630,
+          "expected": {
+            "thisUpdate": 2524608600,
+            "nextUpdate": 2524608900,
+            "producedAt": 2524608600,
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocsp-2050-revoked",
+      "protocol": "OCSP",
+      "raw": "MIIBYQoBAKCCAVowggFWBgkrBgEFBQcwAQEEggFHMIIBQzCB6qIWBBRxb04ypEAKZXWcZghzfFR00U4xcBgPMjA1MDAxMDEwMDEwMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCA4TktZfba7rSkcfhzFchlih4GGRA8XpK2VHrYLjsX8LAQgJp5wh+XfqGa/okE4Y6W8HW5D86Vml6edL96KbCzRdx8CAQehFhgPMjA1MDAxMDEwMDA5MDBaoAMKAQEYDzIwNTAwMTAxMDAxMDAwWqARGA8yMDUwMDEwMTAwMTUwMFqhJzAlMCMGCSsGAQUFBzABAgQWBBRjY2NjY2NjY2NjY2NjY2NjY2NjYzAKBggqhkjOPQQDAgNIADBFAiBrk95fq2No3N0Z3eeXw6VZe6geviu0V+Ly8jFWZqcBZAIhAMNwl9By8VLtbx9LreLqVhCYBmht0pnGJ5zlSirjNtI1",
+      "sha256": "93f86fc53b6b1e863edd51d817d0bd9729077f29f2ac8e1308a8f61df8b17d8e",
+      "tbs": "MIHqohYEFHFvTjKkQApldZxmCHN8VHTRTjFwGA8yMDUwMDEwMTAwMTAwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIDhOS1l9trutKRx+HMVyGWKHgYZEDxekrZUetguOxfwsBCAmnnCH5d+oZr+iQThjpbwdbkPzpWaXp50v3opsLNF3HwIBB6EWGA8yMDUwMDEwMTAwMDkwMFqgAwoBARgPMjA1MDAxMDEwMDEwMDBaoBEYDzIwNTAwMTAxMDAxNTAwWqEnMCUwIwYJKwYBBQUHMAECBBYEFGNjY2NjY2NjY2NjY2NjY2NjY2Nj",
+      "signature": "MEUCIGuT3l+rY2jc3Rnd55fDpVl7qB6+K7RX4vLyMVZmpwFkAiEAw3CX0HLxUu1vH0ut4upWEJgGaG3SmcYnnOVKKuM20jU=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "producedAt": {
+          "tag": 24,
+          "text": "20500101001000Z"
+        },
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20500101001000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20500101001500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20500101000900Z"
+        }
+      },
+      "request": "MIGGMIGDMFgwVjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoicwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2M=",
+      "checks": [
+        {
+          "at": 2524608630,
+          "knowledgeTime": 2524608630,
+          "expected": {
+            "thisUpdate": 2524608600,
+            "nextUpdate": 2524608900,
+            "producedAt": 2524608600,
+            "revokedAt": 2524608540,
+            "status": "REVOKED",
+            "overall": "INVALID",
+            "reason": "OCSP_REVOKED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocsp-utc-producedAt",
+      "protocol": "OCSP",
+      "raw": "MIIBXwoBAKCCAVgwggFUBgkrBgEFBQcwAQEEggFFMIIBQTCB6KIWBBRxb04ypEAKZXWcZghzfFR00U4xcBcNNDkxMjMxMjM1MDAwWjCBlTCBkjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoRYYDzIwNDkxMjMxMjM0OTAwWqADCgEBGA8yMDQ5MTIzMTIzNTAwMFqgERgPMjA0OTEyMzEyMzU1MDBaoScwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2MwCgYIKoZIzj0EAwIDSAAwRQIhAL9sxfOv7TPYN0TQH+qh9vcv7MEZU1stFDDy5fSpfM8CAiBH4dy6JiEL7erMtyBYzzIPTiQkkX0HwaPRMinQnM4CpA==",
+      "sha256": "a234a49c6051f8f72da4f9c38cc1e0ba9c4c06d3b1c34472b2b1e3f29918e05b",
+      "tbs": "MIHoohYEFHFvTjKkQApldZxmCHN8VHTRTjFwFw00OTEyMzEyMzUwMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCA4TktZfba7rSkcfhzFchlih4GGRA8XpK2VHrYLjsX8LAQgJp5wh+XfqGa/okE4Y6W8HW5D86Vml6edL96KbCzRdx8CAQehFhgPMjA0OTEyMzEyMzQ5MDBaoAMKAQEYDzIwNDkxMjMxMjM1MDAwWqARGA8yMDQ5MTIzMTIzNTUwMFqhJzAlMCMGCSsGAQUFBzABAgQWBBRjY2NjY2NjY2NjY2NjY2NjY2NjYw==",
+      "signature": "MEUCIQC/bMXzr+0z2DdE0B/qofb3L+zBGVNbLRQw8uX0qXzPAgIgR+HcuiYhC+3qzLcgWM8yD04kJJF9B8Gj0TIp0JzOAqQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "producedAt": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "request": "MIGGMIGDMFgwVjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoicwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2M=",
+      "checks": [
+        {
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocsp-utc-thisUpdate",
+      "protocol": "OCSP",
+      "raw": "MIIBXwoBAKCCAVgwggFUBgkrBgEFBQcwAQEEggFFMIIBQTCB6KIWBBRxb04ypEAKZXWcZghzfFR00U4xcBgPMjA0OTEyMzEyMzUwMDBaMIGTMIGQMFQwCwYJYIZIAWUDBAIBBCA4TktZfba7rSkcfhzFchlih4GGRA8XpK2VHrYLjsX8LAQgJp5wh+XfqGa/okE4Y6W8HW5D86Vml6edL96KbCzRdx8CAQehFhgPMjA0OTEyMzEyMzQ5MDBaoAMKAQEXDTQ5MTIzMTIzNTAwMFqgERgPMjA0OTEyMzEyMzU1MDBaoScwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2MwCgYIKoZIzj0EAwIDSAAwRQIhAJ2/ZAQ/B0A1kgbLlbhzqszWl5nUW4iKnhuS7GD+rOWTAiAVE8AKvsnPg1+OJDIv/NytxJDS32V8Rb9QQu7+C5byWw==",
+      "sha256": "19b0d3c148309ca5b36360cbc7772db8bd97a543d7b5ee5a0e4a765fe8388a15",
+      "tbs": "MIHoohYEFHFvTjKkQApldZxmCHN8VHTRTjFwGA8yMDQ5MTIzMTIzNTAwMFowgZMwgZAwVDALBglghkgBZQMEAgEEIDhOS1l9trutKRx+HMVyGWKHgYZEDxekrZUetguOxfwsBCAmnnCH5d+oZr+iQThjpbwdbkPzpWaXp50v3opsLNF3HwIBB6EWGA8yMDQ5MTIzMTIzNDkwMFqgAwoBARcNNDkxMjMxMjM1MDAwWqARGA8yMDQ5MTIzMTIzNTUwMFqhJzAlMCMGCSsGAQUFBzABAgQWBBRjY2NjY2NjY2NjY2NjY2NjY2NjYw==",
+      "signature": "MEUCIQCdv2QEPwdANZIGy5W4c6rM1peZ1FuIip4bkuxg/qzlkwIgFRPACr7Jz4NfjiQyL/zcrcSQ0t9lfEW/UELu/guW8ls=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "producedAt": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "thisUpdate": {
+          "tag": 23,
+          "text": "491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "request": "MIGGMIGDMFgwVjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoicwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2M=",
+      "checks": [
+        {
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocsp-utc-nextUpdate",
+      "protocol": "OCSP",
+      "raw": "MIIBXwoBAKCCAVgwggFUBgkrBgEFBQcwAQEEggFFMIIBQTCB6KIWBBRxb04ypEAKZXWcZghzfFR00U4xcBgPMjA0OTEyMzEyMzUwMDBaMIGTMIGQMFQwCwYJYIZIAWUDBAIBBCA4TktZfba7rSkcfhzFchlih4GGRA8XpK2VHrYLjsX8LAQgJp5wh+XfqGa/okE4Y6W8HW5D86Vml6edL96KbCzRdx8CAQehFhgPMjA0OTEyMzEyMzQ5MDBaoAMKAQEYDzIwNDkxMjMxMjM1MDAwWqAPFw00OTEyMzEyMzU1MDBaoScwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2MwCgYIKoZIzj0EAwIDSAAwRQIgBH42Dz+MlEDAGq7GRuPYYkFynUk4vBpkV0On8AItjiECIQCbRfxqRsRKEBth0IMMAFQFd0hRB+7iPOzISFGBGPLVXw==",
+      "sha256": "fc714f565b27ea04bed067d615c7d3f28da65081759f96f5e53c3787770e0141",
+      "tbs": "MIHoohYEFHFvTjKkQApldZxmCHN8VHTRTjFwGA8yMDQ5MTIzMTIzNTAwMFowgZMwgZAwVDALBglghkgBZQMEAgEEIDhOS1l9trutKRx+HMVyGWKHgYZEDxekrZUetguOxfwsBCAmnnCH5d+oZr+iQThjpbwdbkPzpWaXp50v3opsLNF3HwIBB6EWGA8yMDQ5MTIzMTIzNDkwMFqgAwoBARgPMjA0OTEyMzEyMzUwMDBaoA8XDTQ5MTIzMTIzNTUwMFqhJzAlMCMGCSsGAQUFBzABAgQWBBRjY2NjY2NjY2NjY2NjY2NjY2NjYw==",
+      "signature": "MEUCIAR+Ng8/jJRAwBquxkbj2GJBcp1JOLwaZFdDp/ACLY4hAiEAm0X8akbEShAbYdCDDABUBXdIUQfu4jzsyEhRgRjy1V8=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "producedAt": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 23,
+          "text": "491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 24,
+          "text": "20491231234900Z"
+        }
+      },
+      "request": "MIGGMIGDMFgwVjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoicwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2M=",
+      "checks": [
+        {
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocsp-utc-revokedAt",
+      "protocol": "OCSP",
+      "raw": "MIIBXwoBAKCCAVgwggFUBgkrBgEFBQcwAQEEggFFMIIBQTCB6KIWBBRxb04ypEAKZXWcZghzfFR00U4xcBgPMjA0OTEyMzEyMzUwMDBaMIGTMIGQMFQwCwYJYIZIAWUDBAIBBCA4TktZfba7rSkcfhzFchlih4GGRA8XpK2VHrYLjsX8LAQgJp5wh+XfqGa/okE4Y6W8HW5D86Vml6edL96KbCzRdx8CAQehFBcNNDkxMjMxMjM0OTAwWqADCgEBGA8yMDQ5MTIzMTIzNTAwMFqgERgPMjA0OTEyMzEyMzU1MDBaoScwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2MwCgYIKoZIzj0EAwIDSAAwRQIhAPknxEJ3uNEvdToAyFJHnLgZDbwEIi5DpRwvRmzi3u21AiB73tS16hboqWBQkhaY117Dif1qcMeFpdpIPkFXYyaQpQ==",
+      "sha256": "507177aace656d065ba7761d5db990e75822713e7d907e3dde73976c002c70dc",
+      "tbs": "MIHoohYEFHFvTjKkQApldZxmCHN8VHTRTjFwGA8yMDQ5MTIzMTIzNTAwMFowgZMwgZAwVDALBglghkgBZQMEAgEEIDhOS1l9trutKRx+HMVyGWKHgYZEDxekrZUetguOxfwsBCAmnnCH5d+oZr+iQThjpbwdbkPzpWaXp50v3opsLNF3HwIBB6EUFw00OTEyMzEyMzQ5MDBaoAMKAQEYDzIwNDkxMjMxMjM1MDAwWqARGA8yMDQ5MTIzMTIzNTUwMFqhJzAlMCMGCSsGAQUFBzABAgQWBBRjY2NjY2NjY2NjY2NjY2NjY2NjYw==",
+      "signature": "MEUCIQD5J8RCd7jRL3U6AMhSR5y4GQ28BCIuQ6UcL0Zs4t7ttQIge97UteoW6KlgUJIWmNdew4n9anDHhaXaSD5BV2MmkKU=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWiz6XV5JV8nTfbxpC7Wv5mi8NbRreBZAVslov6mnlaMDtueGHzUuk2JRGQdmlGtpU15NcxrwXa4jrBUDbHhteg==",
+      "signatureValidForSelectedKey": true,
+      "timeNodes": {
+        "producedAt": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "thisUpdate": {
+          "tag": 24,
+          "text": "20491231235000Z"
+        },
+        "nextUpdate": {
+          "tag": 24,
+          "text": "20491231235500Z"
+        },
+        "revokedAt": {
+          "tag": 23,
+          "text": "491231234900Z"
+        }
+      },
+      "request": "MIGGMIGDMFgwVjBUMAsGCWCGSAFlAwQCAQQgOE5LWX22u60pHH4cxXIZYoeBhkQPF6StlR62C47F/CwEICaecIfl36hmv6JBOGOlvB1uQ/OlZpennS/eimws0XcfAgEHoicwJTAjBgkrBgEFBQcwAQIEFgQUY2NjY2NjY2NjY2NjY2NjY2NjY2M=",
+      "checks": [
+        {
+          "at": 2524607430,
+          "knowledgeTime": 2524607430,
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "STATUS_TIME"
+          }
+        }
+      ]
+    }
+  ]
+}
