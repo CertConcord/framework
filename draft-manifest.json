@@ -135,8 +135,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 17148,
-      "sha256": "25a68eddc9904f19ab747ebcd713604b6ba2cf2f7ae1090561449a342873d49d"
+      "bytes": 18660,
+      "sha256": "4513d46b885fa792e82dd7076604a4d2bb95cfd80a47c6f33bc04e96bd69bb30"
     },
     {
       "path": "docs/components.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295712,
-      "sha256": "7cd64bf8062739400fd263467d7476f4ad1b79b67eb171881093d1220f230304"
+      "bytes": 295853,
+      "sha256": "3e574a74611ba6fc845edd7811f8470fd145fe6a4a48ed5fb556f26e86090908"
     },
     {
       "path": "reference/README.md",
@@ -419,6 +419,16 @@
       "sha256": "527d5cf42ea950984ea27a3cea658da38670dccf09204394c810e0a4b2b60c78"
     },
     {
+      "path": "reference/cades-hold-release-vectors.test.mjs",
+      "bytes": 2894,
+      "sha256": "10a1f6fe156f4228130c8e637416121d8163cdf02b82c1830d0a29a259f3b7a9"
+    },
+    {
+      "path": "reference/cades-hold-release.test.mjs",
+      "bytes": 11041,
+      "sha256": "e8651d0c81a8a3add1e69dd979bf58c378541e7c21378ca90076d371608fcf52"
+    },
+    {
       "path": "reference/cades-interop.test.mjs",
       "bytes": 6038,
       "sha256": "545a890655abeb8833672aa9885ba4de2ef3ff80eced88410d96319175df6e3e"
@@ -435,8 +445,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 29713,
-      "sha256": "06a1025900e83483299b7651ea6a344da46e3965c3e97807e56c6020de137acc"
+      "bytes": 30828,
+      "sha256": "1785314dc9a63243c45083b2d37e8f3bee4c13b060b8524d472d99d0d4887529"
     },
     {
       "path": "reference/cades.mjs",
@@ -1857,6 +1867,11 @@
       "path": "reference/vector-corpus.mjs",
       "bytes": 2914,
       "sha256": "b78041f2ee023d067c0f243d5b1dcb7e8c277b3ed04dab32d9c8f31f7ed5fab0"
+    },
+    {
+      "path": "reference/vectors/cades-hold-release.json",
+      "bytes": 25763,
+      "sha256": "4ddb578c800acd3249ebaef81525bd1440da34283065f450cac9616cb6be4d9b"
     },
     {
       "path": "reference/vectors/certificate-validity-endpoints.README.md",
