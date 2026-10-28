@@ -769,6 +769,26 @@ function validateMaterial(
   const available = unique([...positive, ...knownCRLs, ...(policy.currentMaterial?.crls ?? [])]);
   const records = available.map((raw) => capture(() => parseCRL(raw, root))).filter(Boolean);
   const known = records.filter((record) => record.thisUpdate <= knowledgeTime);
+  const groups = new Map(),
+    conflicts = new Set();
+  for (const record of known) {
+    const number = record.number.toString();
+    if (groups.has(number) && !equal(groups.get(number), record.tbs)) conflicts.add(number);
+    groups.set(number, record.tbs);
+  }
+  const freshnessTime = evidenceTime ?? knowledgeTime;
+  const eligible = records.filter(
+    (record) =>
+      positive.some((raw) => equal(raw, record.raw)) &&
+      record.thisUpdate <= freshnessTime &&
+      freshnessTime < record.nextUpdate &&
+      record.thisUpdate <= knowledgeTime &&
+      record.thisUpdate < leaf.notAfter,
+  );
+  eligible.sort((a, b) =>
+    a.number === b.number ? b.thisUpdate - a.thisUpdate : a.number > b.number ? -1 : 1,
+  );
+  const selected = eligible[0];
   let revoked = false;
   const decisions = new Map();
   for (const record of known) {
@@ -795,6 +815,9 @@ function validateMaterial(
         ? authorityResult
         : outcome('INDETERMINATE', 'CADES_CRL_AUTHENTICITY_UNPROVEN');
     decisions.set(record, authenticity);
+  }
+  for (const record of known) {
+    const authenticity = decisions.get(record);
     const entry = record.revoked.get(leaf.serial.toString());
     if (entry) {
       const revokedAtUse = entry.effectiveTime <= stateTime;
@@ -808,31 +831,32 @@ function validateMaterial(
         !(signatureEvidenceTime !== undefined && signatureEvidenceTime < entry.effectiveTime);
       if (revokedAtUse || unprovenTSA) {
         if (authenticity.overall !== 'VALID') checks.push(authenticity);
-        else if (revokedAtUse) revoked = true;
-        else checks.push(outcome('INDETERMINATE', 'CADES_TSA_REVOKED_NO_POE'));
+        else if (revokedAtUse) {
+          // A later complete snapshot proves absence at thisUpdate, not the
+          // release instant. Hold-release acceptance is outside this profile.
+          const unselectedHoldRelease =
+            purpose !== 'TSA' &&
+            entry.reasonPresent &&
+            entry.reason === 6 &&
+            selected &&
+            conflicts.size === 0 &&
+            decisions.get(selected)?.overall === 'VALID' &&
+            selected.number > record.number &&
+            selected.thisUpdate > record.thisUpdate &&
+            selected.thisUpdate >= entry.revocationTime &&
+            selected.thisUpdate <= stateTime &&
+            selected.thisUpdate >= root.notBefore &&
+            selected.thisUpdate < root.notAfter &&
+            !selected.revoked.has(leaf.serial.toString());
+          if (unselectedHoldRelease)
+            checks.push(outcome('UNSUPPORTED', 'CADES_CRL_HOLD_RELEASE_UNSUPPORTED'));
+          else revoked = true;
+        } else checks.push(outcome('INDETERMINATE', 'CADES_TSA_REVOKED_NO_POE'));
       }
     }
   }
   if (revoked) checks.push(outcome('INVALID', 'CADES_CERTIFICATE_REVOKED'));
-  const groups = new Map();
-  for (const record of known) {
-    const number = record.number.toString();
-    if (groups.has(number) && !equal(groups.get(number), record.tbs))
-      checks.push(outcome('INDETERMINATE', 'CADES_CRL_CONFLICT'));
-    groups.set(number, record.tbs);
-  }
-  const freshnessTime = evidenceTime ?? knowledgeTime;
-  const eligible = records.filter(
-    (record) =>
-      positive.some((raw) => equal(raw, record.raw)) &&
-      record.thisUpdate <= freshnessTime &&
-      freshnessTime < record.nextUpdate &&
-      record.thisUpdate <= knowledgeTime &&
-      record.thisUpdate < leaf.notAfter,
-  );
-  eligible.sort((a, b) =>
-    a.number === b.number ? b.thisUpdate - a.thisUpdate : a.number > b.number ? -1 : 1,
-  );
+  if (conflicts.size) checks.push(outcome('INDETERMINATE', 'CADES_CRL_CONFLICT'));
   if (!eligible.length)
     checks.push(outcome('INDETERMINATE', records.length ? 'CADES_CRL_STALE' : 'CADES_CRL_MISSING'));
   else {

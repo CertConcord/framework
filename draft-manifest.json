@@ -21,7 +21,7 @@
     {
       "path": ".github/workflows/codeql.yml",
       "bytes": 2194,
-      "sha256": "d05fa7ddf1f1e69fa64e08b607ad2e36a7212d986e7587a0b71a64227960100a"
+      "sha256": "561899f0353ba41ba423448eedf62cc5b22bdb391279743b46556417bd94ac3d"
     },
     {
       "path": ".github/workflows/contributions.yml",
@@ -135,8 +135,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 17148,
-      "sha256": "25a68eddc9904f19ab747ebcd713604b6ba2cf2f7ae1090561449a342873d49d"
+      "bytes": 18660,
+      "sha256": "4513d46b885fa792e82dd7076604a4d2bb95cfd80a47c6f33bc04e96bd69bb30"
     },
     {
       "path": "docs/components.md",
@@ -275,8 +275,8 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 94048,
-      "sha256": "ea7f90d6e53a438a138e4524756b102dbc0221b1f94e54ce23eaf7e2a7397056"
+      "bytes": 94268,
+      "sha256": "078aed5cda32435a115e5dc16861c70948f390caf8b4dfcf3d7165213745d720"
     },
     {
       "path": "package.json",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295233,
-      "sha256": "a15170e816a58aca51abfe6f9ae3611a634e8d9c6ee4459cf744472ba2281f5d"
+      "bytes": 295853,
+      "sha256": "3e574a74611ba6fc845edd7811f8470fd145fe6a4a48ed5fb556f26e86090908"
     },
     {
       "path": "reference/README.md",
@@ -306,7 +306,7 @@
     {
       "path": "reference/adapter-lock.json",
       "bytes": 46594,
-      "sha256": "9cd7dbc85936a83cb0dad8adcf7ecaadeeddf6fdfabf0b433fa034f9454c5b7f"
+      "sha256": "0263cedcff96f5835433b4914cdb8a829c0d7108a7625b98f199e54436d7a4a8"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -419,6 +419,16 @@
       "sha256": "527d5cf42ea950984ea27a3cea658da38670dccf09204394c810e0a4b2b60c78"
     },
     {
+      "path": "reference/cades-hold-release-vectors.test.mjs",
+      "bytes": 2894,
+      "sha256": "10a1f6fe156f4228130c8e637416121d8163cdf02b82c1830d0a29a259f3b7a9"
+    },
+    {
+      "path": "reference/cades-hold-release.test.mjs",
+      "bytes": 11041,
+      "sha256": "e8651d0c81a8a3add1e69dd979bf58c378541e7c21378ca90076d371608fcf52"
+    },
+    {
       "path": "reference/cades-interop.test.mjs",
       "bytes": 6038,
       "sha256": "545a890655abeb8833672aa9885ba4de2ef3ff80eced88410d96319175df6e3e"
@@ -435,8 +445,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 29713,
-      "sha256": "06a1025900e83483299b7651ea6a344da46e3965c3e97807e56c6020de137acc"
+      "bytes": 30828,
+      "sha256": "1785314dc9a63243c45083b2d37e8f3bee4c13b060b8524d472d99d0d4887529"
     },
     {
       "path": "reference/cades.mjs",
@@ -524,9 +534,34 @@
       "sha256": "3f19b75abfdb33f747a3a155f567c4cef6515be49558e5bd2196a4f55e9162ca"
     },
     {
+      "path": "reference/crl-authority-key-identifier-vectors.test.mjs",
+      "bytes": 2493,
+      "sha256": "a9cfea23465898ace6dfad6782c8c66e451f45e21fd4e90e5bcd4ad60e1f668e"
+    },
+    {
+      "path": "reference/crl-authority-key-identifier.test.mjs",
+      "bytes": 4012,
+      "sha256": "f6bbc3808fde8183462065287a1d64f2ab0b96862d166816cbc4f8b129788171"
+    },
+    {
+      "path": "reference/crl-reason-codes.test.mjs",
+      "bytes": 2096,
+      "sha256": "90bbdc36856bf04ec335c83dc81f488e07dd1d9da3e1fbbe4bf7b6550628e7a8"
+    },
+    {
       "path": "reference/crl-scope.test.mjs",
       "bytes": 2083,
       "sha256": "ca78a29eb0f2c4de24a0a9638471734ecf26db9146c960a46f05b745fcf005d8"
+    },
+    {
+      "path": "reference/crl-time-choice-replay.test.mjs",
+      "bytes": 3839,
+      "sha256": "b603899a13d849be4b3fcb32d1608b95d914f5531b4d5625e780f34e3842fe43"
+    },
+    {
+      "path": "reference/crl-time-choice.test.mjs",
+      "bytes": 11637,
+      "sha256": "9f6f69f87287429dc105836e1b50fdfce13883b4df966deee7332694edb76d2e"
     },
     {
       "path": "reference/csc.test.mjs",
@@ -1211,7 +1246,7 @@
     {
       "path": "reference/package.json",
       "bytes": 1488,
-      "sha256": "5c957aab74bbff7d5f6955ef3142c8b3f6908a77d1eba1c862990e9fd69adf5e"
+      "sha256": "5f9e1290b700dd03d98a88790b890242b636cbed2b31b78d3c303fae3597b16c"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
@@ -1450,8 +1485,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 9633,
-      "sha256": "1a897e2b97667407714931bba61e5ab86db9180f2d2279baf5d1834bf2ea9f10"
+      "bytes": 10789,
+      "sha256": "0fabdf49bf92f4e2891a0be451274c3e9ac56bcdb0d3140f5e32a5197c7bece5"
     },
     {
       "path": "reference/schemas.cddl",
@@ -1462,6 +1497,11 @@
       "path": "reference/sd-jwt-type-claims.test.mjs",
       "bytes": 6138,
       "sha256": "45db1b54ce3b2ac1418b11eca0bf2a6f70a02bb4d71a6cabf67d43c4ba457406"
+    },
+    {
+      "path": "reference/sd-jwt-type-vectors.test.mjs",
+      "bytes": 2570,
+      "sha256": "56d144c684d29ffc3ad00c0e1e8fa90f0a003be3bda714df37616c5720ca3ac9"
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
@@ -1635,13 +1675,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 43517,
-      "sha256": "30072afb2194a8c2ee4317d400532f0b88f4eaacbd103c1f3b5391e9a874a7b6"
+      "bytes": 43513,
+      "sha256": "10a656d02a46fafcfeec7ffd0430e5770f19281f3554e21286fa517e23f35b51"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 17051,
-      "sha256": "77498045ba5b9b2334efc6a3a67d9753e755115df28468428ef020b70af17701"
+      "sha256": "3403ed42248ad6b4d2a02d932e50a86664a786283631e716abdcc299bc63ac68"
     },
     {
       "path": "reference/state-security.test.mjs",
@@ -1827,6 +1867,11 @@
       "path": "reference/vector-corpus.mjs",
       "bytes": 2914,
       "sha256": "b78041f2ee023d067c0f243d5b1dcb7e8c277b3ed04dab32d9c8f31f7ed5fab0"
+    },
+    {
+      "path": "reference/vectors/cades-hold-release.json",
+      "bytes": 25763,
+      "sha256": "4ddb578c800acd3249ebaef81525bd1440da34283065f450cac9616cb6be4d9b"
     },
     {
       "path": "reference/vectors/certificate-validity-endpoints.README.md",
@@ -2124,9 +2169,24 @@
       "sha256": "ed0afec1af59108b62a9a79814f9967a269a421fe6d4fa265e95e7eddfd7656c"
     },
     {
+      "path": "reference/vectors/crl-authority-key-identifier.json",
+      "bytes": 6397,
+      "sha256": "7622964bd460dee7212554d71e52451d2e5fd3ce725933b0f4fefafed6940283"
+    },
+    {
+      "path": "reference/vectors/crl-reason-codes.json",
+      "bytes": 32974,
+      "sha256": "bc6f38d59771c645e651d0b1807511d5b3500db90a74f08d6f762e613f506826"
+    },
+    {
       "path": "reference/vectors/crl-scope.json",
       "bytes": 13543,
       "sha256": "cf710b9aef1a8fb5dc2528ebaeaff720892c27eb484c4bbd8aaf568cff4f119f"
+    },
+    {
+      "path": "reference/vectors/crl-time-choice.json",
+      "bytes": 86543,
+      "sha256": "eea36b351ef17065d6c499d7f6156178cc96f79fab3197ba41dd7e05814e2c48"
     },
     {
       "path": "reference/vectors/direct-authority-key-incidents.json",
@@ -12554,6 +12614,11 @@
       "sha256": "2b7526ef92d1d2a3ffc737a56c7fdd576cb082b22a47b2f70ba844b8c66f60cb"
     },
     {
+      "path": "reference/vectors/sd-jwt-type-claims.json",
+      "bytes": 41820,
+      "sha256": "90584a93cb612747e7ba524ec1a9043bd49f48e4369607e3cfb00d3c283b7b4d"
+    },
+    {
       "path": "reference/vectors/status-calendar.json",
       "bytes": 49240,
       "sha256": "f2178efdbeb36cea556b207c7e978c4c327e5d8fe42de42b8632da82efab6f86"
@@ -12715,8 +12780,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 49088,
-      "sha256": "017386dab1718f237536fbcfb820e877d531691616bdd906c41edeb7cb401881"
+      "bytes": 51748,
+      "sha256": "e7b99b2d0c3f4cad2bbe56867f3b2d131a734bb3f480509504afbf27c70e1677"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
