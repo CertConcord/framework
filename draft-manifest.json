@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 40394,
-      "sha256": "826039ad0419b90ef377b871f91c60061ee72b89947a98d86b53e531874291fa"
+      "bytes": 40504,
+      "sha256": "e05bf3b7cb0477e01046777044cad398ef8a038f4d9e1105bfbf24fe608f41ff"
     },
     {
       "path": "docs/apple-identity.md",
@@ -1390,8 +1390,8 @@
     },
     {
       "path": "reference/pkcs11.mjs",
-      "bytes": 12602,
-      "sha256": "197faf1160a85a8466c269607028e0741c23e587a1353310f19876876f4b4735"
+      "bytes": 12654,
+      "sha256": "a0032959ffe80fc6e510b3eebb1e58a0d811ff458518c1208a8d14a5cc99e8ad"
     },
     {
       "path": "reference/pki.mjs",
@@ -7425,8 +7425,8 @@
     },
     {
       "path": "reference/vectors/pkcs11-capability.json",
-      "bytes": 18430,
-      "sha256": "355444935c131b4395f803bbfff022e94350ff899317065caae549d3095b72b7"
+      "bytes": 19034,
+      "sha256": "c5e585f4f0fa889a3d3dec1fab3de21655bd41a6a4a5b2213480f6d4bde49cf9"
     },
     {
       "path": "reference/vectors/preserved-certificate-status-rar2/README.md",

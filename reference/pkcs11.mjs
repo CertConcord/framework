@@ -142,7 +142,10 @@ export class PKCS11Provider {
     }
   }
   #admit(algorithm, generate = false) {
-    requireThat(Object.hasOwn(ALGORITHMS, algorithm), 'PKCS11_ALGORITHM');
+    requireThat(
+      typeof algorithm === 'string' && Object.hasOwn(ALGORITHMS, algorithm),
+      'PKCS11_ALGORITHM',
+    );
     requireThat(
       algorithm === 'ec' || (this.#version.major === 3 && this.#version.minor === 2),
       'PKCS11_ALGORITHM_VERSION',

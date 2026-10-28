@@ -877,6 +877,36 @@
         "close",
         "finalize"
       ]
+    },
+    {
+      "name": "Array algorithm ec is rejected before login",
+      "mode": 0,
+      "algorithm": [
+        "ec"
+      ],
+      "error": "PKCS11_ALGORITHM",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Array algorithm ml-dsa-87 is rejected before login",
+      "mode": 0,
+      "algorithm": [
+        "ml-dsa-87"
+      ],
+      "error": "PKCS11_ALGORITHM",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
     }
   ]
 }
