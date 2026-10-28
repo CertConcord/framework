@@ -18,6 +18,16 @@ const Context = koffi.struct('CERTCONCORD_CK_SIGN_ADDITIONAL_CONTEXT', {
   pContext: 'void *',
   ulContextLen: 'ulong',
 });
+const MechanismInfo = koffi.struct('CERTCONCORD_CK_MECHANISM_INFO', {
+  minKeySize: 'ulong',
+  maxKeySize: 'ulong',
+  flags: 'ulong',
+});
+const ALGORITHMS = Object.freeze({
+  ec: { generate: 0x1040, sign: 0x1041, size: 256 },
+  'ml-dsa-65': { generate: 0x1c, sign: 0x1d, size: 1952 },
+  'ml-dsa-87': { generate: 0x1c, sign: 0x1d, size: 2592 },
+});
 const ckLong = (n) => {
   const b = Buffer.alloc(koffi.sizeof('ulong'));
   if (b.length === 8) b.writeBigUInt64LE(BigInt(n));
@@ -28,8 +38,11 @@ const attrs = (values) =>
   values.map(([type, value]) => ({ type, pValue: value, ulValueLen: value.length }));
 // One session per instance. Callers serialize operations on a token session.
 export class PKCS11Provider {
+  #version;
+  #slot;
+  #mechanisms;
   constructor({ library, slot, pin, contextAuthentication, keys = new Map() }) {
-    this.id = 'pkcs11-v3.2';
+    this.#slot = slot;
     this.keys = keys;
     this.contextAuthentication = contextAuthentication;
     this.library = koffi.load(library);
@@ -37,6 +50,15 @@ export class PKCS11Provider {
     this.f = {
       initialize: f('C_Initialize', 'void * args'),
       finalize: f('C_Finalize', 'void * reserved'),
+      getInfo: f('C_GetInfo', '_Out_ uint8_t * info'),
+      mechanismList: f(
+        'C_GetMechanismList',
+        'ulong slot, _Out_ ulong * mechanisms, _Inout_ ulong * count',
+      ),
+      mechanismInfo: f(
+        'C_GetMechanismInfo',
+        'ulong slot, ulong mechanism, _Out_ CERTCONCORD_CK_MECHANISM_INFO * info',
+      ),
       open: f(
         'C_OpenSession',
         'ulong slot, ulong flags, void * application, void * notify, _Out_ ulong * session',
@@ -44,7 +66,10 @@ export class PKCS11Provider {
       close: f('C_CloseSession', 'ulong session'),
       login: f('C_Login', 'ulong session, ulong userType, uint8_t * pin, ulong length'),
       logout: f('C_Logout', 'ulong session'),
-      findInit: f('C_FindObjectsInit', 'ulong session, CERTCONCORD_CK_ATTRIBUTE * attrs, ulong count'),
+      findInit: f(
+        'C_FindObjectsInit',
+        'ulong session, CERTCONCORD_CK_ATTRIBUTE * attrs, ulong count',
+      ),
       find: f(
         'C_FindObjects',
         'ulong session, _Out_ ulong * objects, ulong count, _Out_ ulong * found',
@@ -67,15 +92,86 @@ export class PKCS11Provider {
     const status = this.f.initialize(null);
     this.ownsInitialization = status === 0;
     requireThat(status === 0 || status === 0x191, 'PKCS11_INITIALIZE');
-    const h = [0];
-    this.check(this.f.open(slot, 6, null, null, h));
-    this.session = h[0];
-    const secret = Buffer.from(pin);
     try {
-      const r = this.f.login(this.session, 1, secret, secret.length);
-      requireThat(r === 0 || r === 0x100, 'PKCS11_LOGIN');
-    } finally {
-      secret.fill(0);
+      // Only CK_INFO's initial CK_VERSION bytes are interpreted. The rest is opaque
+      // across the selected packed/naturally aligned 32/64-bit CK_ULONG layouts.
+      const info = Buffer.alloc(128);
+      this.check(this.f.getInfo(info));
+      const version = Object.freeze({ major: info[0], minor: info[1] });
+      requireThat(
+        (version.major === 2 && version.minor === 40) ||
+          (version.major === 3 && [0, 1, 2].includes(version.minor)),
+        'PKCS11_VERSION',
+      );
+      this.#version = version;
+      Object.defineProperty(this, 'cryptokiVersion', { value: version, enumerable: true });
+      this.id = 'pkcs11-v' + version.major + '.' + version.minor;
+      const count = [0];
+      this.check(this.f.mechanismList(this.#slot, null, count));
+      requireThat(
+        Number.isSafeInteger(count[0]) && count[0] > 0 && count[0] <= 4096,
+        'PKCS11_MECHANISM_COUNT',
+      );
+      const mechanisms = Array(count[0]).fill(0);
+      this.check(this.f.mechanismList(this.#slot, mechanisms, count));
+      requireThat(
+        Number.isSafeInteger(count[0]) && count[0] > 0 && count[0] <= mechanisms.length,
+        'PKCS11_MECHANISM_COUNT',
+      );
+      const selected = mechanisms.slice(0, count[0]);
+      requireThat(
+        selected.every((m) => Number.isSafeInteger(m) && m >= 0),
+        'PKCS11_MECHANISM_VALUE',
+      );
+      this.#mechanisms = new Set(selected);
+      requireThat(this.#mechanisms.size === selected.length, 'PKCS11_MECHANISM_DUPLICATE');
+      for (const key of keys.values()) this.#admit(key.algorithm);
+      const h = [0];
+      this.check(this.f.open(this.#slot, 6, null, null, h));
+      this.session = h[0];
+      const secret = Buffer.from(pin);
+      try {
+        const r = this.f.login(this.session, 1, secret, secret.length);
+        requireThat(r === 0 || r === 0x100, 'PKCS11_LOGIN');
+      } finally {
+        secret.fill(0);
+      }
+    } catch (error) {
+      this.close();
+      throw error;
+    }
+  }
+  #admit(algorithm, generate = false) {
+    requireThat(Object.hasOwn(ALGORITHMS, algorithm), 'PKCS11_ALGORITHM');
+    requireThat(
+      algorithm === 'ec' || (this.#version.major === 3 && this.#version.minor === 2),
+      'PKCS11_ALGORITHM_VERSION',
+    );
+    const selected = ALGORITHMS[algorithm];
+    for (const [mechanism, flag] of [
+      [selected.sign, 0x800],
+      ...(generate ? [[selected.generate, 0x10000]] : []),
+    ]) {
+      requireThat(this.#mechanisms.has(mechanism), 'PKCS11_MECHANISM_MISSING');
+      const memory = koffi.alloc(MechanismInfo, 1);
+      try {
+        this.check(this.f.mechanismInfo(this.#slot, mechanism, memory));
+        const { minKeySize, maxKeySize, flags } = koffi.decode(memory, MechanismInfo);
+        requireThat(
+          Number.isSafeInteger(flags) && flags >= 0 && (flags & flag) === flag,
+          'PKCS11_MECHANISM_FLAGS',
+        );
+        requireThat(
+          Number.isSafeInteger(minKeySize) &&
+            Number.isSafeInteger(maxKeySize) &&
+            minKeySize >= 0 &&
+            minKeySize <= selected.size &&
+            selected.size <= maxKeySize,
+          'PKCS11_MECHANISM_SIZE',
+        );
+      } finally {
+        koffi.free(memory);
+      }
     }
   }
   check(rv) {
@@ -139,6 +235,8 @@ export class PKCS11Provider {
     });
   }
   generate({ keyRef, id, algorithm }) {
+    requireThat(this.session !== undefined, 'PKCS11_CLOSED');
+    this.#admit(algorithm, true);
     requireThat(!this.keys.has(keyRef) && Buffer.isBuffer(id) && id.length >= 16, 'PKCS11_KEY_ID');
     const common = [
         [1, Buffer.from([1])],
@@ -185,6 +283,8 @@ export class PKCS11Provider {
   async capabilities(keyRef) {
     const key = this.keys.get(keyRef);
     requireThat(key, 'PKCS11_KEY_PIN');
+    requireThat(this.session !== undefined, 'PKCS11_CLOSED');
+    this.#admit(key.algorithm);
     const pub = this.publicKey(key.id, key.algorithm);
     requireThat(
       pub
@@ -214,8 +314,9 @@ export class PKCS11Provider {
   }
   async signInternal({ keyRef, tbs }) {
     const c = await this.capabilities(keyRef),
-      key = this.keys.get(keyRef),
-      handle = this.find(key.id, 3),
+      key = this.keys.get(keyRef);
+    this.#admit(key.algorithm);
+    const handle = this.find(key.id, 3),
       ec = key.algorithm === 'ec',
       ctx = koffi.alloc(Context, 1);
     try {

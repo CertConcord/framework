@@ -110,8 +110,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 38799,
-      "sha256": "7fe683b372487e2b7f13f445bf0c6654ee507b96ad67ae53cdeaef9d373fc333"
+      "bytes": 40394,
+      "sha256": "826039ad0419b90ef377b871f91c60061ee72b89947a98d86b53e531874291fa"
     },
     {
       "path": "docs/apple-identity.md",
@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 296160,
-      "sha256": "1a93c641d98307082bde4b603e9a1b60c5d35c0283d1ce70b1e8985ff45094d6"
+      "bytes": 296298,
+      "sha256": "f8b362be86910827e997bfcf1c58f7adb78cc482b41dd6b1e3a344a821dec2d1"
     },
     {
       "path": "reference/README.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46594,
-      "sha256": "0263cedcff96f5835433b4914cdb8a829c0d7108a7625b98f199e54436d7a4a8"
+      "bytes": 46651,
+      "sha256": "fcfa8f10b0df941a917f1ab6bd953c83d394bedc846fffd9813a74dcebafa11b"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1045,8 +1045,8 @@
     },
     {
       "path": "reference/native/README.md",
-      "bytes": 9795,
-      "sha256": "c99718220616e286281ec8396454541485a5a3f2afa2e9dce6275af151a63fde"
+      "bytes": 10417,
+      "sha256": "b49693486d6cc3087e8b5b90ccc895242c6230515eb5f8784f73d29f90e6c807"
     },
     {
       "path": "reference/native/android/app/build.gradle.kts",
@@ -1092,6 +1092,11 @@
       "path": "reference/native/apple/main.swift",
       "bytes": 1510,
       "sha256": "c2b048e3bea05b690cd5aa32b11990d683ff406697e8040ce357eaa023197f07"
+    },
+    {
+      "path": "reference/native/pkcs11-capability-fixture.c",
+      "bytes": 4741,
+      "sha256": "51d24476cf734296bcec29a6dd022deead2b65615e102c0d2333ba4f9fbe0b13"
     },
     {
       "path": "reference/ocsp-null-status.test.mjs",
@@ -1379,9 +1384,14 @@
       "sha256": "cbf8c690d0c56f4379c7d5962f5989cc48618bafcda5fb406560935366b56468"
     },
     {
+      "path": "reference/pkcs11-capability.test.mjs",
+      "bytes": 3909,
+      "sha256": "6c3bb437de1676ea767aa68ed7ae0737eb94474ee6e03aaab1f22488d6388637"
+    },
+    {
       "path": "reference/pkcs11.mjs",
-      "bytes": 8731,
-      "sha256": "4479c689a59fe0451804bf001a9863d78e93ad01cd2a1f9c914dda18893c0298"
+      "bytes": 12602,
+      "sha256": "197faf1160a85a8466c269607028e0741c23e587a1353310f19876876f4b4735"
     },
     {
       "path": "reference/pki.mjs",
@@ -7412,6 +7422,11 @@
       "path": "reference/vectors/original-status-proof-mtc07-rar2/manifest.json",
       "bytes": 57635,
       "sha256": "b555ebedb7a783d31c08c7870059decf3e5dfec6d9fca23c5d336ac669450480"
+    },
+    {
+      "path": "reference/vectors/pkcs11-capability.json",
+      "bytes": 18430,
+      "sha256": "355444935c131b4395f803bbfff022e94350ff899317065caae549d3095b72b7"
     },
     {
       "path": "reference/vectors/preserved-certificate-status-rar2/README.md",
