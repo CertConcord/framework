@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 295233,
-      "sha256": "a15170e816a58aca51abfe6f9ae3611a634e8d9c6ee4459cf744472ba2281f5d"
+      "bytes": 295324,
+      "sha256": "ad42b391e2e1e46243a3ec6a7de3ffc468223f2d6c8af296b991a345a64dcc57"
     },
     {
       "path": "reference/README.md",
@@ -1462,6 +1462,11 @@
       "path": "reference/sd-jwt-type-claims.test.mjs",
       "bytes": 6138,
       "sha256": "45db1b54ce3b2ac1418b11eca0bf2a6f70a02bb4d71a6cabf67d43c4ba457406"
+    },
+    {
+      "path": "reference/sd-jwt-type-vectors.test.mjs",
+      "bytes": 2570,
+      "sha256": "56d144c684d29ffc3ad00c0e1e8fa90f0a003be3bda714df37616c5720ca3ac9"
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
@@ -12552,6 +12557,11 @@
       "path": "reference/vectors/retained-query-snapshot.json",
       "bytes": 96110,
       "sha256": "2b7526ef92d1d2a3ffc737a56c7fdd576cb082b22a47b2f70ba844b8c66f60cb"
+    },
+    {
+      "path": "reference/vectors/sd-jwt-type-claims.json",
+      "bytes": 41820,
+      "sha256": "90584a93cb612747e7ba524ec1a9043bd49f48e4369607e3cfb00d3c283b7b4d"
     },
     {
       "path": "reference/vectors/status-calendar.json",
