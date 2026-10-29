@@ -17,6 +17,7 @@ import {
 import { algID, OID, generalizedTime, signCMS, verifyCMS, attribute } from './pki.mjs';
 import { verifyExternalCMS } from './external-cms.mjs';
 import { readBody } from './transport.mjs';
+import { VerificationError } from './verification-result.mjs';
 const hashes = { [OID.sha256]: sha256, [OID.sha512]: sha512 };
 export function timestampRequest(
   imprint,
@@ -121,11 +122,15 @@ export function parseTSTInfo(raw) {
       `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${match[6]}${match[7] ?? ''}Z`,
     ) / 1000;
   requireThat(Number.isFinite(genTime), 'TST_TIME');
-  let nonce, accuracy;
+  let nonce, accuracy, tsaName;
   const optionalTags = new Set();
+  let previousOptional = -1;
   for (const n of a.slice(5)) {
     requireThat(!optionalTags.has(n.tag), 'TST_DUPLICATE_FIELD');
     optionalTags.add(n.tag);
+    const rank = [0x30, 0x01, 0x02, 0xa0, 0xa1].indexOf(n.tag);
+    requireThat(rank < 0 || rank > previousOptional, 'TST_FIELD_ORDER');
+    if (rank >= 0) previousOptional = rank;
     if (n.tag === 48) {
       accuracy = 0;
       let previous = -1;
@@ -145,8 +150,8 @@ export function parseTSTInfo(raw) {
       }
     } else if (n.tag === 2) nonce = intValue(n);
     else if (n.tag === 1) requireThat(equal(n.raw, Buffer.from('0101ff', 'hex')), 'TST_ORDERING');
-    else if (n.tag === 0xa0) {
-    } else throw Error('TST_UNSUPPORTED_EXTENSION');
+    else if (n.tag === 0xa0) tsaName = Buffer.from(n.raw);
+    else throw Error('TST_UNSUPPORTED_EXTENSION');
   }
   return {
     policy,
@@ -157,8 +162,68 @@ export function parseTSTInfo(raw) {
     accuracy,
     nonce,
     poeUpperBound: accuracy === undefined ? undefined : genTime + accuracy,
+    ...(tsaName ? { tsaName } : {}),
   };
 }
+function verifyTSAName(info, certificate) {
+  if (!info.tsaName) return;
+  const field = parseDER(info.tsaName);
+  requireThat(field.children?.length === 1, 'TSA_NAME_ENCODING');
+  const name = field.children[0];
+  requireThat(
+    [0xa0, 0x81, 0x82, 0xa3, 0xa4, 0xa5, 0x86, 0x87, 0x88].includes(name.tag),
+    'TSA_NAME_ENCODING',
+  );
+  if (name.tag !== 0xa4) throw new VerificationError('TSA_NAME_UNSUPPORTED', 'UNSUPPORTED', 'time');
+  const directoryName = (node) => {
+    requireThat(
+      node.children?.length === 1 &&
+        node.children[0].tag === 0x30 &&
+        node.children[0].children.length > 0,
+      'TSA_NAME_ENCODING',
+    );
+    const value = node.children[0];
+    for (const rdn of value.children) {
+      requireThat(rdn.tag === 0x31 && rdn.children.length > 0, 'TSA_NAME_ENCODING');
+      for (const attribute of rdn.children) {
+        requireThat(
+          attribute.tag === 0x30 &&
+            attribute.children.length === 2 &&
+            attribute.children[0].tag === 6,
+          'TSA_NAME_ENCODING',
+        );
+        oidText(attribute.children[0]);
+      }
+    }
+    return value.raw;
+  };
+  const expected = directoryName(name),
+    fields = parseDER(certificate).children[0].children,
+    offset = fields[0].tag === 0xa0 ? 1 : 0,
+    names = [fields[offset + 4].raw],
+    extensions = fields.find((node) => node.tag === 0xa3)?.children[0].children ?? [],
+    alternatives = extensions.filter((node) => oidText(node.children[0]) === '2.5.29.17');
+  requireThat(alternatives.length <= 1, 'TSA_CERTIFICATE_NAME_ENCODING');
+  if (alternatives.length) {
+    const encoded = alternatives[0].children.at(-1);
+    requireThat(encoded.tag === 4, 'TSA_CERTIFICATE_NAME_ENCODING');
+    const san = parseDER(encoded.value);
+    requireThat(san.tag === 0x30 && san.children.length > 0, 'TSA_CERTIFICATE_NAME_ENCODING');
+    for (const alternative of san.children) {
+      requireThat(
+        [0xa0, 0x81, 0x82, 0xa3, 0xa4, 0xa5, 0x86, 0x87, 0x88].includes(alternative.tag),
+        'TSA_CERTIFICATE_NAME_ENCODING',
+      );
+      if (alternative.tag === 0xa4) names.push(directoryName(alternative));
+    }
+  }
+  // This selected subset compares the original DER; it does not normalize DNs.
+  requireThat(
+    names.some((value) => equal(value, expected)),
+    'TSA_NAME_BINDING',
+  );
+}
+
 export function verifyTimestampToken(
   token,
   {
@@ -192,6 +257,7 @@ export function verifyTimestampToken(
       expectedContentType: OID.tstInfo,
     }),
     info = parseTSTInfo(initial.content);
+  verifyTSAName(info, initial.certificate);
   requireThat(
     info.hashOID === hashOID &&
       equal(info.imprint, imprint) &&
@@ -262,6 +328,7 @@ export function verifyExternalTimestampToken(
   const result = verifyExternalCMS(token, { certificate, expectedContentType: OID.tstInfo }),
     info = parseTSTInfo(result.content),
     cert = result.x509;
+  verifyTSAName(info, result.certificate);
   requireThat(
     info.hashOID === hashOID &&
       equal(info.imprint, imprint) &&
