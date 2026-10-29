@@ -156,7 +156,8 @@
         "revokedAt": 2556143970,
         "status": "REVOKED",
         "overall": "INVALID",
-        "reason": "OCSP_REVOKED"
+        "reason": "OCSP_REVOKED",
+        "revocationReason": 1
       }
     },
     {

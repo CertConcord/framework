@@ -1,0 +1,1536 @@
+{
+  "schemaVersion": 1,
+  "profile": "ocsp-revocation-contract",
+  "description": "Synthetic P-256 signed OCSP responses with fixed public keys and exact signed bytes. Full RevokedInfo syntax, optional reason metadata, temporary-hold freshness by knowledge time, unsupported removeFromCRL, and signature/nonce controls. Later GOOD is a separate response, not evidence of a historical release interval. Raw-key signature verification does not establish responder authorization, an issuer path, or archival admission.",
+  "cases": [
+    {
+      "id": "reason-0-current",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQAYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEA38XBLrnVCLQBTUXIXjknRr6T3roZFcmgVSwPVDSg7q0CIDBs2w3PGxRHikembB4Z7A+EB+zcQP8/HQ+u20XdPOBY",
+      "sha256": "28375761b6d363b60c1a0c50a5a60a4b1af373d7273fecc66019a5d1000a8b56",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBABgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQDfxcEuudUItAFNRcheOSdGvpPeuhkVyaBVLA9UNKDurQIgMGzbDc8bFEeKR6ZsHhnsD4QH7NxA/z8dD67bRd084Fg=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0100",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0100"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 0,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-0-before-effective",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQAYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEA38XBLrnVCLQBTUXIXjknRr6T3roZFcmgVSwPVDSg7q0CIDBs2w3PGxRHikembB4Z7A+EB+zcQP8/HQ+u20XdPOBY",
+      "sha256": "28375761b6d363b60c1a0c50a5a60a4b1af373d7273fecc66019a5d1000a8b56",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBABgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQDfxcEuudUItAFNRcheOSdGvpPeuhkVyaBVLA9UNKDurQIgMGzbDc8bFEeKR6ZsHhnsD4QH7NxA/z8dD67bRd084Fg=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0100",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0100"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 0,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "reason-1-current",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQEYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA4XSwsOPz/rYg1m4H0gnuVavweZjK1R3eAQy1pqljZf8CIQCz7JAhoum3VCVNUzpEGBNzohLbzTy+lJZgSMF3f62RQg==",
+      "sha256": "cede3112a72b680a87f2dcbd383944acdf324269f63c52551c2bb55ad44e44a9",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBARgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDhdLCw4/P+tiDWbgfSCe5Vq/B5mMrVHd4BDLWmqWNl/wIhALPskCGi6bdUJU1TOkQYE3OiEtvNPL6UlmBIwXd/rZFC",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0101",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0101"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 1,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-1-before-effective",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQEYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA4XSwsOPz/rYg1m4H0gnuVavweZjK1R3eAQy1pqljZf8CIQCz7JAhoum3VCVNUzpEGBNzohLbzTy+lJZgSMF3f62RQg==",
+      "sha256": "cede3112a72b680a87f2dcbd383944acdf324269f63c52551c2bb55ad44e44a9",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBARgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDhdLCw4/P+tiDWbgfSCe5Vq/B5mMrVHd4BDLWmqWNl/wIhALPskCGi6bdUJU1TOkQYE3OiEtvNPL6UlmBIwXd/rZFC",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0101",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0101"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 1,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "reason-2-current",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQIYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEA9qycdanT/iuZA80HsX6HRFzaQAaUx7UuPYeNBCpeEgECIDnZvMiLf0C1MAJcovnteMje7hs7DsSYBR3WMhBtGTx5",
+      "sha256": "355655e9e6ef62984f26e0c18ab4b3bb0529f66f1316cd0da03cbecf65c41583",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBAhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQD2rJx1qdP+K5kDzQexfodEXNpABpTHtS49h40EKl4SAQIgOdm8yIt/QLUwAlyi+e14yN7uGzsOxJgFHdYyEG0ZPHk=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0102",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0102"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 2,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-2-before-effective",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQIYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEA9qycdanT/iuZA80HsX6HRFzaQAaUx7UuPYeNBCpeEgECIDnZvMiLf0C1MAJcovnteMje7hs7DsSYBR3WMhBtGTx5",
+      "sha256": "355655e9e6ef62984f26e0c18ab4b3bb0529f66f1316cd0da03cbecf65c41583",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBAhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQD2rJx1qdP+K5kDzQexfodEXNpABpTHtS49h40EKl4SAQIgOdm8yIt/QLUwAlyi+e14yN7uGzsOxJgFHdYyEG0ZPHk=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0102",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0102"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 2,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "reason-3-current",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQMYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiBKXaPGBiwYlrWAQ5ArY8XbCbPZ34tN7ntQKifRpCwdhgIhAJ3iHamASQ80bFxhk9XfpBlTkKHQokEjoT8ygngpaOQm",
+      "sha256": "0472e75daf188d7cb09a7437824567c923484113f4231e8bfaa3b9f4cb3ac8b8",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBAxgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIEpdo8YGLBiWtYBDkCtjxdsJs9nfi03ue1AqJ9GkLB2GAiEAneIdqYBJDzRsXGGT1d+kGVOQodCiQSOhPzKCeClo5CY=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0103",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0103"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 3,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-3-before-effective",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQMYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiBKXaPGBiwYlrWAQ5ArY8XbCbPZ34tN7ntQKifRpCwdhgIhAJ3iHamASQ80bFxhk9XfpBlTkKHQokEjoT8ygngpaOQm",
+      "sha256": "0472e75daf188d7cb09a7437824567c923484113f4231e8bfaa3b9f4cb3ac8b8",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBAxgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIEpdo8YGLBiWtYBDkCtjxdsJs9nfi03ue1AqJ9GkLB2GAiEAneIdqYBJDzRsXGGT1d+kGVOQodCiQSOhPzKCeClo5CY=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0103",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0103"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 3,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "reason-4-current",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQQYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA82AW52d4RH8RhJOt/fb4A+3Wi2mxOPXBLHVJqwwIO1kCIQDtFxk3wYr9j8NT+4dNf+dynJ+aVDRyzg7W1s69brRhrw==",
+      "sha256": "bb5fd99895af2f865fd8f972f6776cc463d70ca1770933d576a658c4f09598c7",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBBgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDzYBbnZ3hEfxGEk6399vgD7daLabE49cEsdUmrDAg7WQIhAO0XGTfBiv2Pw1P7h01/53Kcn5pUNHLODtbWzr1utGGv",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0104",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0104"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 4,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-4-before-effective",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQQYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA82AW52d4RH8RhJOt/fb4A+3Wi2mxOPXBLHVJqwwIO1kCIQDtFxk3wYr9j8NT+4dNf+dynJ+aVDRyzg7W1s69brRhrw==",
+      "sha256": "bb5fd99895af2f865fd8f972f6776cc463d70ca1770933d576a658c4f09598c7",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBBgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDzYBbnZ3hEfxGEk6399vgD7daLabE49cEsdUmrDAg7WQIhAO0XGTfBiv2Pw1P7h01/53Kcn5pUNHLODtbWzr1utGGv",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0104",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0104"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 4,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "reason-5-current",
+      "raw": "MIIBbAoBAKCCAWUwggFhBgkrBgEFBQcwAQEEggFSMIIBTjCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQUYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNHADBEAiADTlPU9cr+Qj/IVJ1mnF0C5IPTt3LVc+sJf23XrLR84wIgWlnBMD5jtcfpyE8DBn7HfhKvYmvsJwr/kbCDnJ+ieNk=",
+      "sha256": "ddc828a95d8d9c2f58ea93e87556aea1e3083804395c1ec2f4deeb0293f4edca",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBRgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEQCIANOU9T1yv5CP8hUnWacXQLkg9O3ctVz6wl/bdestHzjAiBaWcEwPmO1x+nITwMGfsd+Eq9ia+wnCv+RsIOcn6J42Q==",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0105",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0105"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 5,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-5-before-effective",
+      "raw": "MIIBbAoBAKCCAWUwggFhBgkrBgEFBQcwAQEEggFSMIIBTjCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQUYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNHADBEAiADTlPU9cr+Qj/IVJ1mnF0C5IPTt3LVc+sJf23XrLR84wIgWlnBMD5jtcfpyE8DBn7HfhKvYmvsJwr/kbCDnJ+ieNk=",
+      "sha256": "ddc828a95d8d9c2f58ea93e87556aea1e3083804395c1ec2f4deeb0293f4edca",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBRgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEQCIANOU9T1yv5CP8hUnWacXQLkg9O3ctVz6wl/bdestHzjAiBaWcEwPmO1x+nITwMGfsd+Eq9ia+wnCv+RsIOcn6J42Q==",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0105",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0105"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 5,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "reason-6-current",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA6weuvFE2mxdT5kMvAPbm5tCdj88uNSu667uzkr0gKAECIQC1sAnxj4dhtFjZYgg/YFjk63KKwrVEUCN4Mb95ft+DiA==",
+      "sha256": "8467b8f669e65de8fd06c79fbca45c8bef527036474dd89f8a0cbca5d13d34bf",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDrB668UTabF1PmQy8A9ubm0J2Pzy41K7rru7OSvSAoAQIhALWwCfGPh2G0WNliCD9gWOTrcorCtURQI3gxv3l+34OI",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 6,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-6-before-effective",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA6weuvFE2mxdT5kMvAPbm5tCdj88uNSu667uzkr0gKAECIQC1sAnxj4dhtFjZYgg/YFjk63KKwrVEUCN4Mb95ft+DiA==",
+      "sha256": "8467b8f669e65de8fd06c79fbca45c8bef527036474dd89f8a0cbca5d13d34bf",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDrB668UTabF1PmQy8A9ubm0J2Pzy41K7rru7OSvSAoAQIhALWwCfGPh2G0WNliCD9gWOTrcorCtURQI3gxv3l+34OI",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 6,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "reason-8-current",
+      "raw": "MIIBbAoBAKCCAWUwggFhBgkrBgEFBQcwAQEEggFSMIIBTjCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQgYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNHADBEAiBPTf4JRuzgdE5t5+7FxGUKXa/rap0/wAwwaIG08secbQIgJt5o2O4ppf6w4fnuWC5hFydiuig3xjVEbcPpT9YwZAc=",
+      "sha256": "db960df225c2330159718e5990e43c04fc81a083c5e6cf49a047cfa9b0e056a0",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBCBgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEQCIE9N/glG7OB0Tm3n7sXEZQpdr+tqnT/ADDBogbTyx5xtAiAm3mjY7iml/rDh+e5YLmEXJ2K6KDfGNURtw+lP1jBkBw==",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0108",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0108"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 8,
+        "status": "UNSUPPORTED",
+        "overall": "UNSUPPORTED",
+        "reason": "OCSP_REVOCATION_REASON_UNSUPPORTED"
+      }
+    },
+    {
+      "id": "reason-8-before-effective",
+      "raw": "MIIBbAoBAKCCAWUwggFhBgkrBgEFBQcwAQEEggFSMIIBTjCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQgYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNHADBEAiBPTf4JRuzgdE5t5+7FxGUKXa/rap0/wAwwaIG08secbQIgJt5o2O4ppf6w4fnuWC5hFydiuig3xjVEbcPpT9YwZAc=",
+      "sha256": "db960df225c2330159718e5990e43c04fc81a083c5e6cf49a047cfa9b0e056a0",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBCBgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEQCIE9N/glG7OB0Tm3n7sXEZQpdr+tqnT/ADDBogbTyx5xtAiAm3mjY7iml/rDh+e5YLmEXJ2K6KDfGNURtw+lP1jBkBw==",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0108",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0108"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 8,
+        "status": "UNSUPPORTED",
+        "overall": "UNSUPPORTED",
+        "reason": "OCSP_REVOCATION_REASON_UNSUPPORTED"
+      }
+    },
+    {
+      "id": "reason-9-current",
+      "raw": "MIIBbAoBAKCCAWUwggFhBgkrBgEFBQcwAQEEggFSMIIBTjCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQkYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNHADBEAiAPBVaPw7j175YkP2+DCBc7xUJxsH+a28uaOqig3nc8IQIgY+vofdJ4hwTL7DCklfOSrXqbgsb3w8jyMxROqSRUSak=",
+      "sha256": "d816925275da6142cff5b87f1196d23650b8da059be7c3f923413a101cdecee7",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBCRgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEQCIA8FVo/DuPXvliQ/b4MIFzvFQnGwf5rby5o6qKDedzwhAiBj6+h90niHBMvsMKSV85KtepuCxvfDyPIzFE6pJFRJqQ==",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0109",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0109"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 9,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-9-before-effective",
+      "raw": "MIIBbAoBAKCCAWUwggFhBgkrBgEFBQcwAQEEggFSMIIBTjCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQkYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNHADBEAiAPBVaPw7j175YkP2+DCBc7xUJxsH+a28uaOqig3nc8IQIgY+vofdJ4hwTL7DCklfOSrXqbgsb3w8jyMxROqSRUSak=",
+      "sha256": "d816925275da6142cff5b87f1196d23650b8da059be7c3f923413a101cdecee7",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBCRgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEQCIA8FVo/DuPXvliQ/b4MIFzvFQnGwf5rby5o6qKDedzwhAiBj6+h90niHBMvsMKSV85KtepuCxvfDyPIzFE6pJFRJqQ==",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0109",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0109"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 9,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "reason-10-current",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQoYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEAkYZQ0tma9uyD3Vg/WXUvWum8Nzf9W14fLNBmxngfLaMCIBgd8YDsagtduh6rYCikFfSrjWAyS7JlKart5ibb0282",
+      "sha256": "818c260d1eb1eb832a9ebe9820e9e55180bf380d462519b74aaf697b92fb95a3",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBChgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQCRhlDS2Zr27IPdWD9ZdS9a6bw3N/1bXh8s0GbGeB8towIgGB3xgOxqC126HqtgKKQV9KuNYDJLsmUpqu3mJtvTbzY=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a010a",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a010a"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 10,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-10-before-effective",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQoYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEAkYZQ0tma9uyD3Vg/WXUvWum8Nzf9W14fLNBmxngfLaMCIBgd8YDsagtduh6rYCikFfSrjWAyS7JlKart5ibb0282",
+      "sha256": "818c260d1eb1eb832a9ebe9820e9e55180bf380d462519b74aaf697b92fb95a3",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBChgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQCRhlDS2Zr27IPdWD9ZdS9a6bw3N/1bXh8s0GbGeB8towIgGB3xgOxqC126HqtgKKQV9KuNYDJLsmUpqu3mJtvTbzY=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a010a",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a010a"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 10,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "hold-before-expiry",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA2WjJxhUaOmQN2/wqBv3anU88oULsnqxNNgWMUF0A0VYCIQCiu0YMjTYddIUMIA+iuMRW7s/IT8sEKrMGgbTc72AhMg==",
+      "sha256": "2b2dbd53e0f5d6b0f5647fa3fb8307b17d0ceb1125320f3f1e9495a7faddf815",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDZaMnGFRo6ZA3b/CoG/dqdTzyhQuyerE02BYxQXQDRVgIhAKK7RgyNNh10hQwgD6K4xFbuz8hPywQqswaBtNzvYCEy",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990699,
+        "knowledgeTime": 1769990699
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 6,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "hold-at-expiry",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA2WjJxhUaOmQN2/wqBv3anU88oULsnqxNNgWMUF0A0VYCIQCiu0YMjTYddIUMIA+iuMRW7s/IT8sEKrMGgbTc72AhMg==",
+      "sha256": "2b2dbd53e0f5d6b0f5647fa3fb8307b17d0ceb1125320f3f1e9495a7faddf815",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDZaMnGFRo6ZA3b/CoG/dqdTzyhQuyerE02BYxQXQDRVgIhAKK7RgyNNh10hQwgD6K4xFbuz8hPywQqswaBtNzvYCEy",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990700,
+        "knowledgeTime": 1769990700
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 6,
+        "status": "STALE",
+        "overall": "INDETERMINATE",
+        "reason": "OCSP_STALE"
+      }
+    },
+    {
+      "id": "hold-after-expiry",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA2WjJxhUaOmQN2/wqBv3anU88oULsnqxNNgWMUF0A0VYCIQCiu0YMjTYddIUMIA+iuMRW7s/IT8sEKrMGgbTc72AhMg==",
+      "sha256": "2b2dbd53e0f5d6b0f5647fa3fb8307b17d0ceb1125320f3f1e9495a7faddf815",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDZaMnGFRo6ZA3b/CoG/dqdTzyhQuyerE02BYxQXQDRVgIhAKK7RgyNNh10hQwgD6K4xFbuz8hPywQqswaBtNzvYCEy",
+      "signatureValid": true,
+      "query": {
+        "at": 1769991010,
+        "knowledgeTime": 1769991010
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 6,
+        "status": "STALE",
+        "overall": "INDETERMINATE",
+        "reason": "OCSP_STALE"
+      }
+    },
+    {
+      "id": "hold-historical-state-later-knowledge",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA2WjJxhUaOmQN2/wqBv3anU88oULsnqxNNgWMUF0A0VYCIQCiu0YMjTYddIUMIA+iuMRW7s/IT8sEKrMGgbTc72AhMg==",
+      "sha256": "2b2dbd53e0f5d6b0f5647fa3fb8307b17d0ceb1125320f3f1e9495a7faddf815",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDZaMnGFRo6ZA3b/CoG/dqdTzyhQuyerE02BYxQXQDRVgIhAKK7RgyNNh10hQwgD6K4xFbuz8hPywQqswaBtNzvYCEy",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769991010
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 6,
+        "status": "STALE",
+        "overall": "INDETERMINATE",
+        "reason": "OCSP_STALE"
+      }
+    },
+    {
+      "id": "hold-not-yet-known",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA2WjJxhUaOmQN2/wqBv3anU88oULsnqxNNgWMUF0A0VYCIQCiu0YMjTYddIUMIA+iuMRW7s/IT8sEKrMGgbTc72AhMg==",
+      "sha256": "2b2dbd53e0f5d6b0f5647fa3fb8307b17d0ceb1125320f3f1e9495a7faddf815",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDZaMnGFRo6ZA3b/CoG/dqdTzyhQuyerE02BYxQXQDRVgIhAKK7RgyNNh10hQwgD6K4xFbuz8hPywQqswaBtNzvYCEy",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990490,
+        "knowledgeTime": 1769990490
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 6,
+        "status": "UNKNOWN",
+        "overall": "INDETERMINATE",
+        "reason": "OCSP_NOT_YET_KNOWN"
+      }
+    },
+    {
+      "id": "permanent-after-expiry",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQEYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEAombWm7tcS61zuoaPs7fG4OcM6sN/Y9iJ/kE2ZnCpRkQCIQDdRh4ZnDwL5bAOVkoy5BySbmhGJE8kdPuylDY3QhQLCg==",
+      "sha256": "ce2670bb55ad7744d029d5d50f859a8d08e210a961db8772f918cc7e6a5ea587",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBARgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQCiZtabu1xLrXO6ho+zt8bg5wzqw39j2In+QTZmcKlGRAIhAN1GHhmcPAvlsA5WSjLkHJJuaEYkTyR0+7KUNjdCFAsK",
+      "signatureValid": true,
+      "query": {
+        "at": 1769991010,
+        "knowledgeTime": 1769991010
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0101",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0101"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "revocationReason": 1,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "later-good-current",
+      "raw": "MIIBVgoBAKCCAU8wggFLBgkrBgEFBQcwAQEEggE8MIIBODCB3qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDEwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvgAAYDzIwMjYwMjAyMDAxMDAwWqARGA8yMDI2MDIwMjAwMTUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA1jLsuo7ANh6V8z5iCpz7P0lMToE6OmreZqmFx7KvAWACIQC0GxD9weCAvkW+3VdTTfzhwHA03BOL8pw/ir/Tlq0dkg==",
+      "sha256": "d814fbdf87146deaab76e605cdae3a9422e1fa904f9fd66e8bcb4f510a14475a",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIHeohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMTAwMFowfjB8MFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+AABgPMjAyNjAyMDIwMDEwMDBaoBEYDzIwMjYwMjAyMDAxNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDWMuy6jsA2HpXzPmIKnPs/SUxOgTo6at5mqYXHsq8BYAIhALQbEP3B4IC+Rb7dV1NN/OHAcDTcE4vynD+Kv9OWrR2S",
+      "signatureValid": true,
+      "query": {
+        "at": 1769991010,
+        "knowledgeTime": 1769991010
+      },
+      "certStatus": {
+        "tag": 128,
+        "contentHex": "",
+        "fields": []
+      },
+      "expected": {
+        "thisUpdate": 1769991000,
+        "nextUpdate": 1769991300,
+        "producedAt": 1769991000,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "later-good-not-yet-known",
+      "raw": "MIIBVgoBAKCCAU8wggFLBgkrBgEFBQcwAQEEggE8MIIBODCB3qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDEwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvgAAYDzIwMjYwMjAyMDAxMDAwWqARGA8yMDI2MDIwMjAwMTUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA1jLsuo7ANh6V8z5iCpz7P0lMToE6OmreZqmFx7KvAWACIQC0GxD9weCAvkW+3VdTTfzhwHA03BOL8pw/ir/Tlq0dkg==",
+      "sha256": "d814fbdf87146deaab76e605cdae3a9422e1fa904f9fd66e8bcb4f510a14475a",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIHeohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMTAwMFowfjB8MFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+AABgPMjAyNjAyMDIwMDEwMDBaoBEYDzIwMjYwMjAyMDAxNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDWMuy6jsA2HpXzPmIKnPs/SUxOgTo6at5mqYXHsq8BYAIhALQbEP3B4IC+Rb7dV1NN/OHAcDTcE4vynD+Kv9OWrR2S",
+      "signatureValid": true,
+      "query": {
+        "at": 1769991010,
+        "knowledgeTime": 1769990999
+      },
+      "certStatus": {
+        "tag": 128,
+        "contentHex": "",
+        "fields": []
+      },
+      "expected": {
+        "thisUpdate": 1769991000,
+        "nextUpdate": 1769991300,
+        "producedAt": 1769991000,
+        "status": "UNKNOWN",
+        "overall": "INDETERMINATE",
+        "reason": "OCSP_NOT_YET_KNOWN"
+      }
+    },
+    {
+      "id": "later-good-expired",
+      "raw": "MIIBVgoBAKCCAU8wggFLBgkrBgEFBQcwAQEEggE8MIIBODCB3qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDEwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvgAAYDzIwMjYwMjAyMDAxMDAwWqARGA8yMDI2MDIwMjAwMTUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA1jLsuo7ANh6V8z5iCpz7P0lMToE6OmreZqmFx7KvAWACIQC0GxD9weCAvkW+3VdTTfzhwHA03BOL8pw/ir/Tlq0dkg==",
+      "sha256": "d814fbdf87146deaab76e605cdae3a9422e1fa904f9fd66e8bcb4f510a14475a",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIHeohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMTAwMFowfjB8MFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+AABgPMjAyNjAyMDIwMDEwMDBaoBEYDzIwMjYwMjAyMDAxNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDWMuy6jsA2HpXzPmIKnPs/SUxOgTo6at5mqYXHsq8BYAIhALQbEP3B4IC+Rb7dV1NN/OHAcDTcE4vynD+Kv9OWrR2S",
+      "signatureValid": true,
+      "query": {
+        "at": 1769991300,
+        "knowledgeTime": 1769991300
+      },
+      "certStatus": {
+        "tag": 128,
+        "contentHex": "",
+        "fields": []
+      },
+      "expected": {
+        "thisUpdate": 1769991000,
+        "nextUpdate": 1769991300,
+        "producedAt": 1769991000,
+        "status": "STALE",
+        "overall": "INDETERMINATE",
+        "reason": "OCSP_STALE"
+      }
+    },
+    {
+      "id": "reason-absent-current",
+      "raw": "MIIBaAoBAKCCAWEwggFdBgkrBgEFBQcwAQEEggFOMIIBSjCB8aIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGQMIGNMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hERgPMjAyNjAyMDIwMDAxMDBaGA8yMDI2MDIwMjAwMDIwMFqgERgPMjAyNjAyMDIwMDA1MDBaoTMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQwCgYIKoZIzj0EAwIDSAAwRQIga4e7PtcDOvcR5dEIBisKJE+mgkb4hOVv0MH7Yyd5gkwCIQDR5hCSE0ZBFK5yO4Zubs9K/gKYG9xoQm4R7YUQR1IdhA==",
+      "sha256": "c2380507e14d8bac94161366fdba7a074f2c2586a155396640f5b88d3f277b26",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIHxohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZAwgY0wVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6ERGA8yMDI2MDIwMjAwMDEwMFoYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhA==",
+      "signature": "MEUCIGuHuz7XAzr3EeXRCAYrCiRPpoJG+ITlb9DB+2MneYJMAiEA0eYQkhNGQRSucjuGbm7PSv4CmBvcaEJuEe2FEEdSHYQ=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990550,
+        "knowledgeTime": 1769990550
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305a",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-absent-stale",
+      "raw": "MIIBaAoBAKCCAWEwggFdBgkrBgEFBQcwAQEEggFOMIIBSjCB8aIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGQMIGNMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hERgPMjAyNjAyMDIwMDAxMDBaGA8yMDI2MDIwMjAwMDIwMFqgERgPMjAyNjAyMDIwMDA1MDBaoTMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQwCgYIKoZIzj0EAwIDSAAwRQIga4e7PtcDOvcR5dEIBisKJE+mgkb4hOVv0MH7Yyd5gkwCIQDR5hCSE0ZBFK5yO4Zubs9K/gKYG9xoQm4R7YUQR1IdhA==",
+      "sha256": "c2380507e14d8bac94161366fdba7a074f2c2586a155396640f5b88d3f277b26",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIHxohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZAwgY0wVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6ERGA8yMDI2MDIwMjAwMDEwMFoYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhA==",
+      "signature": "MEUCIGuHuz7XAzr3EeXRCAYrCiRPpoJG+ITlb9DB+2MneYJMAiEA0eYQkhNGQRSucjuGbm7PSv4CmBvcaEJuEe2FEEdSHYQ=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769991010,
+        "knowledgeTime": 1769991010
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305a",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          }
+        ]
+      },
+      "expected": {
+        "thisUpdate": 1769990520,
+        "nextUpdate": 1769990700,
+        "producedAt": 1769990520,
+        "revokedAt": 1769990460,
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED"
+      }
+    },
+    {
+      "id": "reason-integer",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMCAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA4vNt7P+5jXnT2WFaEVi/M/hdqW7U+HEh4XkiRj3xH3QCIQDekiOFCJM95fLIjdlac01amxIv6xVS16GWgpB2zcjYfQ==",
+      "sha256": "314e8b0966a547b22f1eb26a694638228538ed481dbc5f768623889d685ecd10",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwIBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDi823s/7mNedPZYVoRWL8z+F2pbtT4cSHheSJGPfEfdAIhAN6SI4UIkz3l8siN2VpzTVqbEi/rFVLXoZaCkHbNyNh9",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa003020106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "020106"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOCATION_REASON"
+      }
+    },
+    {
+      "id": "reason-empty",
+      "raw": "MIIBawoBAKCCAWQwggFgBgkrBgEFBQcwAQEEggFRMIIBTTCB9aIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGUMIGRMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFRgPMjAyNjAyMDIwMDAxMDBaoAIKABgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASEMAoGCCqGSM49BAMCA0cAMEQCIB0DeSCSc6vP9R7vo67gqNV9cz0mForxrxaDtWLIeqUmAiA5kmIwR4MMXxdVi/I36/CCafjSwVB6Q1fMZpWN4p03uA==",
+      "sha256": "a5f80074718795bb9f2c14cce753628ef9276d4844ca93a003ae6e0b4b4749b1",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH1ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZQwgZEwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EVGA8yMDI2MDIwMjAwMDEwMFqgAgoAGA8yMDI2MDIwMjAwMDIwMFqgERgPMjAyNjAyMDIwMDA1MDBaoTMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "signature": "MEQCIB0DeSCSc6vP9R7vo67gqNV9cz0mForxrxaDtWLIeqUmAiA5kmIwR4MMXxdVi/I36/CCafjSwVB6Q1fMZpWN4p03uA==",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0020a00",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a00"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOCATION_REASON"
+      }
+    },
+    {
+      "id": "reason-negative",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAf8YDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEA0I89EcCLOXg72Z8PEMhL6QRNeYkl76bvghKccmrneCECIDzWUoWZ8tRa2ogY1VJ3A+mOtFWnQtsPmu6XD1WIjYXH",
+      "sha256": "3710da2a12e150969f5810db6197b03d6e9c6c4737a424eb08cea2a224b1c74c",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoB/xgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQDQjz0RwIs5eDvZnw8QyEvpBE15iSXvpu+CEpxyaud4IQIgPNZShZny1FraiBjVUncD6Y60VadC2w+a7pcPVYiNhcc=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a01ff",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a01ff"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOCATION_REASON"
+      }
+    },
+    {
+      "id": "reason-reserved-seven",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQcYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA8g9SNCb7Y1To2yQyit0phBFQK+czfTT4PXOaTGbP85oCIQDeQWvJ33WARBqhxGvNLAVnWwqQf4V79EO5xGuFTXMqbQ==",
+      "sha256": "92d7c386bb5061cbb5e88b5c5118d4e7ee12356b9cbb425cb548a9aed6d17159",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBxgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDyD1I0JvtjVOjbJDKK3SmEEVAr5zN9NPg9c5pMZs/zmgIhAN5Ba8nfdYBEGqHEa80sBWdbCpB/hXv0Q7nEa4VNcypt",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0107",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0107"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOCATION_REASON"
+      }
+    },
+    {
+      "id": "reason-unknown-eleven",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQsYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiB3pXraBOHcHfnkoDcuBnV9kjtDMHY51tDZnCN4QE41WgIhAPd6frrLixI6i1vFOUV4t7eTSWfY8RKx/H78np7StD6I",
+      "sha256": "65c82ad343522f83d8e5f62d51d8fd8377d27c713751caa4f37de28adb3c6016",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBCxgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIHeletoE4dwd+eSgNy4GdX2SO0MwdjnW0NmcI3hATjVaAiEA93p+usuLEjqLW8U5RXi3t5NJZ9jxErH8fvyentK0Pog=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a010b",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a010b"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOCATION_REASON"
+      }
+    },
+    {
+      "id": "reason-nonminimal",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB96IWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGWMIGTMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFxgPMjAyNjAyMDIwMDAxMDBaoAQKAgAGGA8yMDI2MDIwMjAwMDIwMFqgERgPMjAyNjAyMDIwMDA1MDBaoTMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQwCgYIKoZIzj0EAwIDRwAwRAIgQ3UY/gi4+YdzQxn9NYrevD76h9/PF8UxsOq7m0WsRSsCIHMd/ePu7yP2R20eXxYElzQgra51qVs1tu4JTEd6hJl4",
+      "sha256": "3c5f66dc5a860bc31856d2de762be2f44209810d6005bf3f61a8e2430dc9b0d5",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH3ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZYwgZMwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EXGA8yMDI2MDIwMjAwMDEwMFqgBAoCAAYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhA==",
+      "signature": "MEQCIEN1GP4IuPmHc0MZ/TWK3rw++offzxfFMbDqu5tFrEUrAiBzHf3j7u8j9kdtHl8WBJc0IK2udalbNbbuCUxHeoSZeA==",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0040a020006",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a020006"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOCATION_REASON"
+      }
+    },
+    {
+      "id": "reason-multiple-values",
+      "raw": "MIIBcAoBAKCCAWkwggFlBgkrBgEFBQcwAQEEggFWMIIBUjCB+aIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGYMIGVMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hGRgPMjAyNjAyMDIwMDAxMDBaoAYKAQYKAQEYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEAjxsIECqhiQiJNmiv2ACUhJi+KFJkVelbJFc3wLmRhrUCIDxkjt1CfqNigzMU+8zwkvftX3brHXem9sXngbk5HKHF",
+      "sha256": "2db304170179f0ed10ccc5a3540f60e341c566d9c7575ac23e04f2198dc0015c",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH5ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZgwgZUwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EZGA8yMDI2MDIwMjAwMDEwMFqgBgoBBgoBARgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQCPGwgQKqGJCIk2aK/YAJSEmL4oUmRV6VskVzfAuZGGtQIgPGSO3UJ+o2KDMxT7zPCS9+1fdusdd6b2xeeBuTkcocU=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0060a01060a0101",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a01060a0101"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOCATION_REASON"
+      }
+    },
+    {
+      "id": "reason-wrong-wrapper",
+      "raw": "MIIBbQoBAKCCAWYwggFiBgkrBgEFBQcwAQEEggFTMIIBTzCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoQMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNIADBFAiEAgROadkgRwgcOPKstSiepuQeBrFd76hMnUcr9ZnZkNzICICLjiDlAt0tOkabSZ5adhVtb5mJtytUFCTZanSa64K4k",
+      "sha256": "ec4dbec30019d14a217e92437fc2f774085d97b867add179bd940528fe532d90",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqhAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEUCIQCBE5p2SBHCBw48qy1KJ6m5B4GsV3vqEydRyv1mdmQ3MgIgIuOIOUC3S06RptJnlp2FW1vmYm3K1QUJNlqdJrrgriQ=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa1030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 161,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOCATION_REASON"
+      }
+    },
+    {
+      "id": "reason-duplicate-wrapper",
+      "raw": "MIIBcwoBAKCCAWwwggFoBgkrBgEFBQcwAQEEggFZMIIBVTCB+6IWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGaMIGXMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hGxgPMjAyNjAyMDIwMDAxMDBaoAMKAQagAwoBARgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASEMAoGCCqGSM49BAMCA0kAMEYCIQDMmy9zlfiDEec5m6/FgUspb2ATTkHniMhP0ECpdR41BQIhANyEt/m5NpgDN4kmGrkoMt2yimp9ggU/tGv/fmFyHrAS",
+      "sha256": "6d0998897333fcb75887eb7dd4a50ac3deecf572fa0013dc7abbacccfb2cdecd",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH7ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZowgZcwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EbGA8yMDI2MDIwMjAwMDEwMFqgAwoBBqADCgEBGA8yMDI2MDIwMjAwMDIwMFqgERgPMjAyNjAyMDIwMDA1MDBaoTMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "signature": "MEYCIQDMmy9zlfiDEec5m6/FgUspb2ATTkHniMhP0ECpdR41BQIhANyEt/m5NpgDN4kmGrkoMt2yimp9ggU/tGv/fmFyHrAS",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106a0030a0101",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0101"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED_INFO"
+      }
+    },
+    {
+      "id": "revoked-extra-null",
+      "raw": "MIIBbwoBAKCCAWgwggFkBgkrBgEFBQcwAQEEggFVMIIBUTCB+KIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGXMIGUMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hGBgPMjAyNjAyMDIwMDAxMDBaoAMKAQYFABgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASEMAoGCCqGSM49BAMCA0gAMEUCIQDK2zP+0RKt89HJVHyP5UEflk+0KSpPdDmR3pthlmkSRgIgKGC0HE4j4z8HAmgEaZFz7raxUtyaKVazoOBAMgxPUYI=",
+      "sha256": "12dd22e752b5adfb9e696d89364fc0b54aee81fbdeec991e54cf4921ac84fc54",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH4ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZcwgZQwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EYGA8yMDI2MDIwMjAwMDEwMFqgAwoBBgUAGA8yMDI2MDIwMjAwMDIwMFqgERgPMjAyNjAyMDIwMDA1MDBaoTMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "signature": "MEUCIQDK2zP+0RKt89HJVHyP5UEflk+0KSpPdDmR3pthlmkSRgIgKGC0HE4j4z8HAmgEaZFz7raxUtyaKVazoOBAMgxPUYI=",
+      "signatureValid": true,
+      "query": {
+        "at": 1769990430,
+        "knowledgeTime": 1769990530
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a01060500",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          },
+          {
+            "tag": 5,
+            "contentHex": ""
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_REVOKED_INFO"
+      }
+    },
+    {
+      "id": "hold-invalid-signature",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA2WjJxhUaOmQN2/wqBv3anU88oULsnqxNNgWMUF0A0VYCIQCiu0YMjTYddIUMIA+iuMRW7s/IT8sEKrMGgbTc72AhMw==",
+      "sha256": "5b778477984a269fa47fe9177efd1a9d70d61bc87d1519b4a07408813e983565",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgJENIMm2zwmhlwzGDNunL4BBqG2xaC2djt0R9ZUzYBIQ=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDZaMnGFRo6ZA3b/CoG/dqdTzyhQuyerE02BYxQXQDRVgIhAKK7RgyNNh10hQwgD6K4xFbuz8hPywQqswaBtNzvYCEz",
+      "signatureValid": false,
+      "query": {
+        "at": 1769991010,
+        "knowledgeTime": 1769991010
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_SIGNATURE"
+      }
+    },
+    {
+      "id": "hold-wrong-nonce",
+      "raw": "MIIBbgoBAKCCAWcwggFjBgkrBgEFBQcwAQEEggFUMIIBUDCB9qIWBBTlJvk9I1yRTDU3O+hJV3gIWHwHPxgPMjAyNjAyMDIwMDAyMDBaMIGVMIGSMFQwCwYJYIZIAWUDBAIBBCBPXIWUZiQnS2Op/E2S/mxuP9sXjZTsMC7xx+q7SxEIHAQgQOuFpcEdpu8ist0GOphbgF4/5e3ps2NglcgRJ3DgajYCAS+hFhgPMjAyNjAyMDIwMDAxMDBaoAMKAQYYDzIwMjYwMjAyMDAwMjAwWqARGA8yMDI2MDIwMjAwMDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCAkQ0gybbPCaGXDMYM26cvgEGobbFoLZ2O3RH1lTNgEhDAKBggqhkjOPQQDAgNJADBGAiEA2WjJxhUaOmQN2/wqBv3anU88oULsnqxNNgWMUF0A0VYCIQCiu0YMjTYddIUMIA+iuMRW7s/IT8sEKrMGgbTc72AhMg==",
+      "sha256": "2b2dbd53e0f5d6b0f5647fa3fb8307b17d0ceb1125320f3f1e9495a7faddf815",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgT1yFlGYkJ0tjqfxNkv5sbj/bF42U7DAu8cfqu0sRCBwEIEDrhaXBHabvIrLdBjqYW4BeP+Xt6bNjYJXIESdw4Go2AgEvojMwMTAvBgkrBgEFBQcwAQIEIgQgNMwxnVE3pgX8gInzAap0Udskn8Yw2GC5WFsIa4vecuY=",
+      "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcpPMaRXdNArfbL+zIBil/FG0F7b96TBdFUd3E9+b76h11mcBmMeCTE0EXg7nrk58YofmKDEZ6ahknld+Mf1lwg==",
+      "tbs": "MIH2ohYEFOUm+T0jXJFMNTc76ElXeAhYfAc/GA8yMDI2MDIwMjAwMDIwMFowgZUwgZIwVDALBglghkgBZQMEAgEEIE9chZRmJCdLY6n8TZL+bG4/2xeNlOwwLvHH6rtLEQgcBCBA64WlwR2m7yKy3QY6mFuAXj/l7emzY2CVyBEncOBqNgIBL6EWGA8yMDI2MDIwMjAwMDEwMFqgAwoBBhgPMjAyNjAyMDIwMDAyMDBaoBEYDzIwMjYwMjAyMDAwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEICRDSDJts8JoZcMxgzbpy+AQahtsWgtnY7dEfWVM2ASE",
+      "signature": "MEYCIQDZaMnGFRo6ZA3b/CoG/dqdTzyhQuyerE02BYxQXQDRVgIhAKK7RgyNNh10hQwgD6K4xFbuz8hPywQqswaBtNzvYCEy",
+      "signatureValid": true,
+      "query": {
+        "at": 1769991010,
+        "knowledgeTime": 1769991010
+      },
+      "certStatus": {
+        "tag": 161,
+        "contentHex": "180f32303236303230323030303130305aa0030a0106",
+        "fields": [
+          {
+            "tag": 24,
+            "contentHex": "32303236303230323030303130305a"
+          },
+          {
+            "tag": 160,
+            "contentHex": "0a0106"
+          }
+        ]
+      },
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_NONCE"
+      }
+    }
+  ]
+}

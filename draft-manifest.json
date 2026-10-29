@@ -285,8 +285,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 296011,
-      "sha256": "4861975b37d126a2c45ab9b2495321517e19eeabcbfee735ee80246d3b75c91b"
+      "bytes": 296160,
+      "sha256": "1a93c641d98307082bde4b603e9a1b60c5d35c0283d1ce70b1e8985ff45094d6"
     },
     {
       "path": "reference/README.md",
@@ -570,8 +570,8 @@
     },
     {
       "path": "reference/crl-time-choice.test.mjs",
-      "bytes": 11637,
-      "sha256": "9f6f69f87287429dc105836e1b50fdfce13883b4df966deee7332694edb76d2e"
+      "bytes": 11664,
+      "sha256": "246dcf1ec2e8d0a49a69706851803d1fd06bcbe06d486ea86f97e5c134a28146"
     },
     {
       "path": "reference/csc.test.mjs",
@@ -1099,6 +1099,16 @@
       "sha256": "b32f09da0c0e318985bf38515f9ca56000a26310242fde18dbbc31ae761a7b88"
     },
     {
+      "path": "reference/ocsp-revocation-contract.test.mjs",
+      "bytes": 8217,
+      "sha256": "a1858f87153859a4eb5cd95111cc1400f375a1cb528f501c1fe8f40311a4a4b1"
+    },
+    {
+      "path": "reference/ocsp-revocation-replay.test.mjs",
+      "bytes": 1785,
+      "sha256": "9d2dc7c41ae62092d4cd4fd22b343587a5740e845d5f52af0aa07930dad8480d"
+    },
+    {
       "path": "reference/openid.mjs",
       "bytes": 47481,
       "sha256": "f9821ab7eae5eb94983ca9b32cd1fe9ed1dd2a9c2788c7224adbbb829b42e2ad"
@@ -1495,8 +1505,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 10789,
-      "sha256": "0fabdf49bf92f4e2891a0be451274c3e9ac56bcdb0d3140f5e32a5197c7bece5"
+      "bytes": 11836,
+      "sha256": "0c771e118ed39dfe87925be6db396aee8d7d7e6845be6fda2a45400a2220af95"
     },
     {
       "path": "reference/schemas.cddl",
@@ -2200,8 +2210,8 @@
     },
     {
       "path": "reference/vectors/crl-time-choice.json",
-      "bytes": 86543,
-      "sha256": "eea36b351ef17065d6c499d7f6156178cc96f79fab3197ba41dd7e05814e2c48"
+      "bytes": 86613,
+      "sha256": "91b66832232e1385f5a4c445ddb2a46e61329b4e2a5a9a80d9be1fafb1ba9314"
     },
     {
       "path": "reference/vectors/direct-authority-key-incidents.json",
@@ -4940,8 +4950,13 @@
     },
     {
       "path": "reference/vectors/ocsp-null-status.json",
-      "bytes": 14008,
-      "sha256": "cd24d10c4e87c85b61ae2fd81311dd84aa1effcd35c0e3ba24cd3b82535dbb6b"
+      "bytes": 14039,
+      "sha256": "ef6c2e864ad15f23f223d4dbdba5ffd9c22413179ceae33fdc73c1c5fbb9fb23"
+    },
+    {
+      "path": "reference/vectors/ocsp-revocation-contract.json",
+      "bytes": 93019,
+      "sha256": "0eb2248b9c7cab21afc9747337bc07112f55a60a9d575281c181aeb38fd25f13"
     },
     {
       "path": "reference/vectors/organization-history-rar2/README.md",
@@ -12635,8 +12650,8 @@
     },
     {
       "path": "reference/vectors/status-calendar.json",
-      "bytes": 49240,
-      "sha256": "f2178efdbeb36cea556b207c7e978c4c327e5d8fe42de42b8632da82efab6f86"
+      "bytes": 49310,
+      "sha256": "1a0a2e101bdfbb108a3f7bb42bc9319b72cdbb0a043c9f4d394fa3b72e62ae49"
     },
     {
       "path": "reference/vectors/xmlers-namespace/absolute-unused-prefix.xml",
@@ -12795,8 +12810,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 51748,
-      "sha256": "e7b99b2d0c3f4cad2bbe56867f3b2d131a734bb3f480509504afbf27c70e1677"
+      "bytes": 53640,
+      "sha256": "8e9aab380e5e1d2673edf414ee93d38210c112661cdc55cbf538243fe863de42"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",

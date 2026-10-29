@@ -734,7 +734,8 @@
             "producedAt": 2561241300,
             "revokedAt": 2561241599,
             "status": "GOOD",
-            "overall": "VALID"
+            "overall": "VALID",
+            "revocationReason": 1
           }
         },
         {
@@ -747,7 +748,8 @@
             "revokedAt": 2561241599,
             "status": "REVOKED",
             "overall": "INVALID",
-            "reason": "OCSP_REVOKED"
+            "reason": "OCSP_REVOKED",
+            "revocationReason": 1
           }
         }
       ]

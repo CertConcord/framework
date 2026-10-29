@@ -220,15 +220,21 @@ export function issueOCSP(
     status = record?.status ?? 'UNKNOWN';
   let value;
   if (status === 'GOOD') value = der(0x80, Buffer.alloc(0));
-  else if (status === 'REVOKED')
+  else if (status === 'REVOKED') {
+    const reason = record.reason ?? 0;
+    requireThat(
+      Number.isInteger(reason) && reason >= 0 && reason <= 10 && reason !== 7,
+      'OCSP_REVOCATION_REASON',
+    );
+    requireThat(reason !== 8, 'OCSP_REVOCATION_REASON_UNSUPPORTED');
     value = der(
       0xa1,
       Buffer.concat([
         generalizedTime(record.revokedAt),
-        der(0xa0, der(10, Buffer.from([record.reason ?? 0]))),
+        der(0xa0, der(10, Buffer.from([reason]))),
       ]),
     );
-  else value = der(0x82, Buffer.alloc(0));
+  } else value = der(0x82, Buffer.alloc(0));
   const rawKey = parseDER(spki(issuerPublicKey)).children[1].value.subarray(1),
     byKey = createHash('sha1').update(rawKey).digest();
   const tbs = seq(
@@ -243,6 +249,23 @@ export function issueOCSP(
 export function verifyOCSP(raw, options) {
   if (raw === undefined || raw === null) return statusResult('UNKNOWN', 'OCSP_MISSING');
   return evaluateStatusEvidence(() => inspectOCSP(raw, options), 'OCSP');
+}
+function parseOCSPRevokedInfo(node) {
+  requireThat([1, 2].includes(node.children.length), 'OCSP_REVOKED_INFO');
+  const revokedAt = parseTime(node.children[0]);
+  if (node.children.length === 1) return { revokedAt };
+  const wrapper = node.children[1];
+  requireThat(
+    wrapper.tag === 0xa0 && wrapper.children.length === 1,
+    'OCSP_REVOCATION_REASON',
+  );
+  const reason = wrapper.children[0];
+  requireThat(
+    reason.tag === 10 && reason.value.length === 1 &&
+      reason.value[0] <= 10 && reason.value[0] !== 7,
+    'OCSP_REVOCATION_REASON',
+  );
+  return { revokedAt, revocationReason: reason.value[0] };
 }
 function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime = at }) {
   const expected = parseOCSPRequest(request),
@@ -277,11 +300,17 @@ function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime 
   requireThat([0x80, 0x82, 0xa1].includes(s[1].tag), 'OCSP_CERT_STATUS');
   requireThat(s[1].tag === 0xa1 || s[1].value.length === 0, 'OCSP_CERT_STATUS');
   const thisUpdate = parseTime(s[2]), nextUpdate = parseTime(s[3].children[0]),
-    producedAt = parseTime(a[1]), revokedAt = s[1].tag === 0xa1 ? parseTime(s[1].children[0]) : undefined;
+    producedAt = parseTime(a[1]),
+    revocation = s[1].tag === 0xa1 ? parseOCSPRevokedInfo(s[1]) : {},
+    { revokedAt, revocationReason } = revocation;
   requireThat(nextUpdate > thisUpdate && producedAt >= thisUpdate, 'OCSP_INTERVAL');
+  const details = { thisUpdate, nextUpdate, producedAt, ...revocation };
   let status = s[1].tag === 0x80 ? 'GOOD' : s[1].tag === 0x82 ? 'UNKNOWN' : revokedAt <= at ? 'REVOKED' : 'GOOD';
   if (producedAt > knowledgeTime || thisUpdate > knowledgeTime) status = 'NOT_YET_KNOWN';
-  else if (status !== 'REVOKED' && nextUpdate <= knowledgeTime) status = 'STALE';
+  else if (revocationReason === 8)
+    return statusResult('UNSUPPORTED', 'OCSP_REVOCATION_REASON_UNSUPPORTED', details);
+  else if ((status !== 'REVOKED' || revocationReason === 6) && nextUpdate <= knowledgeTime)
+    status = 'STALE';
   return statusResult(status, status === 'GOOD' ? undefined : 'OCSP_' + status,
-    { thisUpdate, nextUpdate, producedAt, ...(revokedAt === undefined ? {} : { revokedAt }) });
+    details);
 }
