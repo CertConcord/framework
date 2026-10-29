@@ -259,6 +259,11 @@
       "sha256": "aa8122c4498ad1eae8cfcc977adffc1c8b9351d28a5f4e4df407a718f606fe4d"
     },
     {
+      "path": "docs/timestamp-names.md",
+      "bytes": 3175,
+      "sha256": "1fa65526af061e36a07574af8eede296402a8722479af0461ead9043a5a1614d"
+    },
+    {
       "path": "docs/upstream-baseline.md",
       "bytes": 39463,
       "sha256": "3ef23de98b532a32f5e6806b271760cd25bc8ecf127dfd92376b052f9bc86d57"
@@ -285,8 +290,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 296298,
-      "sha256": "f8b362be86910827e997bfcf1c58f7adb78cc482b41dd6b1e3a344a821dec2d1"
+      "bytes": 296463,
+      "sha256": "c8fd83e8d3422bf7feb10660dc1e9a8c20c3bd8f40b0dac181feac62fec01de3"
     },
     {
       "path": "reference/README.md",
@@ -1819,6 +1824,11 @@
       "sha256": "564c15b2e99c4e55dacdb5ad4e37f4bbcbd9a0a0ec4f9437ebc578f885c5cb54"
     },
     {
+      "path": "reference/timestamp-name.test.mjs",
+      "bytes": 5929,
+      "sha256": "b052f186b84248db2d3e2b38ab7e641b9661b9938cda30c57ecc91d6183b3919"
+    },
+    {
       "path": "reference/timestamp-protocol.mjs",
       "bytes": 13818,
       "sha256": "964b8f1f828bf763411c34e6fc73179f51e4068b3869e35d82fe2bb346ec6b70"
@@ -1860,8 +1870,8 @@
     },
     {
       "path": "reference/timestamp.mjs",
-      "bytes": 9296,
-      "sha256": "37110292938c084a2229c74966d20285724477eef6daedac4f6f931ac0a79fa8"
+      "bytes": 12044,
+      "sha256": "cec86b6eafe55d169496426388dfe41f3342d7290bb70483bb8c877c4c33564c"
     },
     {
       "path": "reference/tpm-simulator-check.mjs",
@@ -12669,6 +12679,11 @@
       "sha256": "1a0a2e101bdfbb108a3f7bb42bc9319b72cdbb0a043c9f4d394fa3b72e62ae49"
     },
     {
+      "path": "reference/vectors/timestamp-name-contract.json",
+      "bytes": 801550,
+      "sha256": "f5c2f61a5f1e5a8f5f524af4c318365d2f741a4e11a10062de829469944a78ab"
+    },
+    {
       "path": "reference/vectors/xmlers-namespace/absolute-unused-prefix.xml",
       "bytes": 12841,
       "sha256": "56787fbad8632ae7264437532a42e226baf5fc7fc83e81710b749190200c9937"
@@ -12815,8 +12830,8 @@
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
-      "bytes": 28880,
-      "sha256": "c38f353874dee141e26b4659ff296838100a4eb629886fc7fc1828a9978751e3"
+      "bytes": 29227,
+      "sha256": "871ec5428c1946b02d6822138ddf374643613a3b3188904a90ea9396ed0bd154"
     },
     {
       "path": "spec/bindings/DSCP-draft-03.md",
@@ -12855,8 +12870,8 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 51179,
-      "sha256": "886c2196ea8a87624c939e452d2204f74fcae52f2488f4d7e46086a2590e255d"
+      "bytes": 51879,
+      "sha256": "68a5c537a2d26ccecc3573d07ac352335d1cb3c497cfee7745013716121d31f2"
     },
     {
       "path": "spec/conformance.md",
@@ -13047,6 +13062,11 @@
       "path": "tools/create-mtc-version-vectors.mjs",
       "bytes": 9487,
       "sha256": "a8b83b4a48fc865442271521052b91b401b7b191c3a93d4eea4b0ae9552d5e6c"
+    },
+    {
+      "path": "tools/create-timestamp-name-vectors.mjs",
+      "bytes": 10279,
+      "sha256": "734b4a14a3cf80daf47ba1a9de66a8d129ee80dd9f1be2d776864e33e20d8797"
     },
     {
       "path": "tools/ers-bc186/ErsBc186Probe.java",

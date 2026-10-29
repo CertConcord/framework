@@ -503,6 +503,14 @@
         {
           "file": "reference/mdoc-certified-contract.test.mjs",
           "name": "DOCUMENT requires distinct authenticated CMS-byte and RA-body commitments"
+        },
+        {
+          "file": "reference/timestamp-name.test.mjs",
+          "name": "RFC3161 timestamp admission corpus binds exact signed bytes and independent certificate controls"
+        },
+        {
+          "file": "reference/timestamp-name.test.mjs",
+          "name": "RFC3161 timestamp admission ${profile} raw vector: ${row.id}"
         }
       ],
       "gap": "Ordinary WebAuthn completes selected CMS and mdoc document plans without raw-signing or execution proposals. Independent full-profile interoperability remains unrecorded."
@@ -887,6 +895,14 @@
         {
           "file": "reference/mdoc-certified-contract.test.mjs",
           "name": "signed native mdoc status references reject malformed contracts before authority resolution"
+        },
+        {
+          "file": "reference/timestamp-name.test.mjs",
+          "name": "RFC3161 timestamp admission corpus binds exact signed bytes and independent certificate controls"
+        },
+        {
+          "file": "reference/timestamp-name.test.mjs",
+          "name": "RFC3161 timestamp admission ${profile} raw vector: ${row.id}"
         }
       ],
       "gap": "Selected CMS/native mdoc offline preservation covers retained scoped authority/status history, root and custodian succession, atomic archive publication, renewal/reconciliation and separate historical/current results. Separate CAdES and PAdES adapters add bounded P-256/direct-root/full-CRL ATSv3 and PDF DSS/document-timestamp preservation respectively. The separate XMLERS lifetime API covers the selected canonical single-object encoding and per-token TSA rotation; retained-document composition remains DER ERS. JAdES augmentation, additional PKI and algorithm profiles, operational clock/custody/replication assurance, an independent complete implementation and external assessment remain open."
