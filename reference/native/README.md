@@ -90,7 +90,9 @@ The command requires swtpm and tpm2-tools. It creates a new isolated software TP
 
 ## PKCS #11
 
-pkcs11.mjs supports the declared PKCS #11 v3.2 EC/ML-DSA mechanisms. Configure the vendor library, slot, PIN provider and immutable key ID/SPKI. CKA_ALWAYS_AUTHENTICATE requires context-specific authentication. An unavailable algorithm produces a capability error.
+pkcs11.mjs checks the module version and advertised mechanisms before opening a session or logging in. EC retains explicit 2.40/3.0/3.1/3.2 compatibility; ML-DSA-65/87 requires 3.2 and the native mechanism. Signing and generation flags and key-size ranges are checked separately. Configure the vendor library, slot, PIN and immutable key ID/SPKI. CKA_ALWAYS_AUTHENTICATE requires context-specific authentication. Unsupported capabilities fail closed. See the [selected provider contract](../../docs/adapters.md#providers-and-document-containers), including the actual-version provider ID and initialization ownership rules.
+
+`node --test pkcs11-capability.test.mjs` compiles a synthetic shared library with the Linux C compiler and verifies fixed ABI call traces. It performs no token key generation or signing; those traces do not qualify a vendor module or establish hardware custody.
 
 ```sh
 PKCS11_LIBRARY=/usr/lib/softhsm/libsofthsm2.so node hardware-check.mjs

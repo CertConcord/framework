@@ -1,0 +1,912 @@
+{
+  "schema": "certconcord-pkcs11-capability-fixture-v1",
+  "purpose": "Synthetic native ABI admission traces; no token, key generation or signing qualification.",
+  "events": {
+    "1": "initialize",
+    "2": "info",
+    "3": "mechanisms",
+    "4": "mechanism-info",
+    "5": "open",
+    "6": "login",
+    "7": "close",
+    "8": "finalize",
+    "9": "find-init",
+    "10": "find",
+    "11": "find-final",
+    "12": "attribute",
+    "13": "sign-init",
+    "14": "sign",
+    "15": "generate",
+    "16": "logout"
+  },
+  "cases": [
+    {
+      "name": "ML-DSA-65 declared signing capability",
+      "mode": 0,
+      "algorithm": "ml-dsa-65",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "ML-DSA-87 declared signing capability",
+      "mode": 0,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "PKCS11 2.40 EC compatibility",
+      "mode": 6,
+      "algorithm": "ec",
+      "version": {
+        "major": 2,
+        "minor": 40
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "PKCS11 3.0 EC compatibility",
+      "mode": 23,
+      "algorithm": "ec",
+      "version": {
+        "major": 3,
+        "minor": 0
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "PKCS11 3.1 EC compatibility",
+      "mode": 24,
+      "algorithm": "ec",
+      "version": {
+        "major": 3,
+        "minor": 1
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "PKCS11 3.2 EC compatibility",
+      "mode": 0,
+      "algorithm": "ec",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Packed CK_INFO version prefix",
+      "mode": 39,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Already initialized module is not finalized",
+      "mode": 12,
+      "algorithm": "ec",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close"
+      ]
+    },
+    {
+      "name": "A pinned signer does not require key generation",
+      "mode": 33,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "ML-DSA-65 public-key byte range",
+      "mode": 20,
+      "algorithm": "ml-dsa-65",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "ML-DSA-87 public-key byte range",
+      "mode": 21,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "No pinned keys still requires version and mechanism list",
+      "mode": 0,
+      "algorithm": null,
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "2.40 cannot authorize ML-DSA",
+      "mode": 1,
+      "algorithm": "ml-dsa-87",
+      "error": "PKCS11_ALGORITHM_VERSION",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "3.1 mechanism advertisement cannot authorize ML-DSA",
+      "mode": 2,
+      "algorithm": "ml-dsa-87",
+      "error": "PKCS11_ALGORITHM_VERSION",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Missing ML-DSA signing mechanism",
+      "mode": 3,
+      "algorithm": "ml-dsa-87",
+      "error": "PKCS11_MECHANISM_MISSING",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Missing signing flag",
+      "mode": 4,
+      "algorithm": "ml-dsa-87",
+      "error": "PKCS11_MECHANISM_FLAGS",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "GetInfo failure before credentials",
+      "mode": 5,
+      "algorithm": "ec",
+      "error": "PKCS11_5",
+      "trace": [
+        "initialize",
+        "info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Unselected major version",
+      "mode": 8,
+      "algorithm": "ec",
+      "error": "PKCS11_VERSION",
+      "trace": [
+        "initialize",
+        "info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Excessive mechanism count",
+      "mode": 9,
+      "algorithm": "ec",
+      "error": "PKCS11_MECHANISM_COUNT",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "List growth reports buffer-too-small without retry",
+      "mode": 10,
+      "algorithm": "ec",
+      "error": "PKCS11_150",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Mechanism info failure before credentials",
+      "mode": 11,
+      "algorithm": "ml-dsa-65",
+      "error": "PKCS11_70",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Foreign initialization survives admission failure",
+      "mode": 12,
+      "algorithm": "ml-dsa-87",
+      "error": "PKCS11_MECHANISM_MISSING",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms"
+      ]
+    },
+    {
+      "name": "Login failure closes owned session and initialization",
+      "mode": 13,
+      "algorithm": "ec",
+      "error": "PKCS11_LOGIN",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Open failure finalizes owned initialization",
+      "mode": 14,
+      "algorithm": "ec",
+      "error": "PKCS11_5",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Duplicate mechanism identifiers",
+      "mode": 15,
+      "algorithm": "ec",
+      "error": "PKCS11_MECHANISM_DUPLICATE",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Empty mechanism list",
+      "mode": 16,
+      "algorithm": "ec",
+      "error": "PKCS11_MECHANISM_COUNT",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Returned count exceeds allocated capacity",
+      "mode": 17,
+      "algorithm": "ec",
+      "error": "PKCS11_MECHANISM_COUNT",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "EC mechanism range is in bits",
+      "mode": 18,
+      "algorithm": "ec",
+      "error": "PKCS11_MECHANISM_SIZE",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "ML-DSA minimum excludes selected key",
+      "mode": 19,
+      "algorithm": "ml-dsa-87",
+      "error": "PKCS11_MECHANISM_SIZE",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "ML-DSA-87 exceeds public-key byte maximum",
+      "mode": 20,
+      "algorithm": "ml-dsa-87",
+      "error": "PKCS11_MECHANISM_SIZE",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "ML-DSA-65 below public-key byte minimum",
+      "mode": 21,
+      "algorithm": "ml-dsa-65",
+      "error": "PKCS11_MECHANISM_SIZE",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Generation flag is not signing authority",
+      "mode": 22,
+      "algorithm": "ec",
+      "error": "PKCS11_MECHANISM_FLAGS",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Unselected future minor version",
+      "mode": 25,
+      "algorithm": "ec",
+      "error": "PKCS11_VERSION",
+      "trace": [
+        "initialize",
+        "info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Unselected legacy minor version",
+      "mode": 26,
+      "algorithm": "ec",
+      "error": "PKCS11_VERSION",
+      "trace": [
+        "initialize",
+        "info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Foreign initialization survives login failure",
+      "mode": 28,
+      "algorithm": "ec",
+      "error": "PKCS11_LOGIN",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close"
+      ]
+    },
+    {
+      "name": "Foreign initialization survives open failure",
+      "mode": 29,
+      "algorithm": "ec",
+      "error": "PKCS11_5",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open"
+      ]
+    },
+    {
+      "name": "Foreign initialization survives GetInfo failure",
+      "mode": 30,
+      "algorithm": "ec",
+      "error": "PKCS11_5",
+      "trace": [
+        "initialize",
+        "info"
+      ]
+    },
+    {
+      "name": "Failed initialization is not finalized",
+      "mode": 31,
+      "algorithm": "ec",
+      "error": "PKCS11_INITIALIZE",
+      "trace": [
+        "initialize"
+      ]
+    },
+    {
+      "name": "Mechanism list failure before credentials",
+      "mode": 32,
+      "algorithm": "ec",
+      "error": "PKCS11_5",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Zero key-size range grants no selected capability",
+      "mode": 38,
+      "algorithm": "ml-dsa-87",
+      "error": "PKCS11_MECHANISM_SIZE",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Unselected algorithm",
+      "mode": 0,
+      "algorithm": "ml-dsa-44",
+      "error": "PKCS11_ALGORITHM",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "EC generation reaches synthetic stop",
+      "mode": 6,
+      "algorithm": "ec",
+      "version": {
+        "major": 2,
+        "minor": 40
+      },
+      "operation": "generate",
+      "operationAlgorithm": "ec",
+      "operationError": "PKCS11_54",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "mechanism-info",
+        "mechanism-info",
+        "generate",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "ML-DSA generation reaches synthetic stop",
+      "mode": 0,
+      "algorithm": null,
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "operation": "generate",
+      "operationAlgorithm": "ml-dsa-87",
+      "operationError": "PKCS11_54",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "open",
+        "login",
+        "mechanism-info",
+        "mechanism-info",
+        "generate",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Legacy session rejects later ML-DSA generation",
+      "mode": 6,
+      "algorithm": "ec",
+      "version": {
+        "major": 2,
+        "minor": 40
+      },
+      "operation": "generate",
+      "operationAlgorithm": "ml-dsa-87",
+      "operationError": "PKCS11_ALGORITHM_VERSION",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Absent generation mechanism stops before key creation",
+      "mode": 33,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "operation": "generate",
+      "operationAlgorithm": "ml-dsa-87",
+      "operationError": "PKCS11_MECHANISM_MISSING",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "mechanism-info",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Generation requires CKF_GENERATE_KEY_PAIR",
+      "mode": 34,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "operation": "generate",
+      "operationAlgorithm": "ml-dsa-87",
+      "operationError": "PKCS11_MECHANISM_FLAGS",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "mechanism-info",
+        "mechanism-info",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Generation requires selected key-size range",
+      "mode": 35,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "operation": "generate",
+      "operationAlgorithm": "ml-dsa-87",
+      "operationError": "PKCS11_MECHANISM_SIZE",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "mechanism-info",
+        "mechanism-info",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Capabilities rechecks changed signing flags",
+      "mode": 0,
+      "algorithm": "ml-dsa-65",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "afterMode": 36,
+      "operation": "capabilities",
+      "operationError": "PKCS11_MECHANISM_FLAGS",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "mechanism-info",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Signing rechecks changed signing flags before key lookup",
+      "mode": 0,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "afterMode": 36,
+      "operation": "sign",
+      "operationError": "PKCS11_MECHANISM_FLAGS",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "mechanism-info",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Runtime mechanism errors stop before key lookup",
+      "mode": 0,
+      "algorithm": "ml-dsa-87",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "afterMode": 37,
+      "operation": "capabilities",
+      "operationError": "PKCS11_70",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "mechanism-info",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Admitted capabilities reach only synthetic key lookup",
+      "mode": 0,
+      "algorithm": "ml-dsa-65",
+      "version": {
+        "major": 3,
+        "minor": 2
+      },
+      "operation": "capabilities",
+      "operationError": "PKCS11_54",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "mechanism-info",
+        "open",
+        "login",
+        "mechanism-info",
+        "find-init",
+        "close",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Array algorithm ec is rejected before login",
+      "mode": 0,
+      "algorithm": [
+        "ec"
+      ],
+      "error": "PKCS11_ALGORITHM",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    },
+    {
+      "name": "Array algorithm ml-dsa-87 is rejected before login",
+      "mode": 0,
+      "algorithm": [
+        "ml-dsa-87"
+      ],
+      "error": "PKCS11_ALGORITHM",
+      "trace": [
+        "initialize",
+        "info",
+        "mechanisms",
+        "mechanisms",
+        "finalize"
+      ]
+    }
+  ]
+}
