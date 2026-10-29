@@ -19,7 +19,10 @@ import { parseTSTInfo } from './timestamp.mjs';
 // EN 319 122-1 V1.3.1, clauses 5.5.2 and 5.5.3. These are standard CMS
 // attributes; the original SignerInfo's six signed fields are never re-encoded.
 const SIGNING_TIME = '1.2.840.113549.1.9.5';
-const ALGORITHM_PROTECTION = '1.2.840.113549.1.9.52';
+const ALGORITHM_PROTECTION = '1.2.840.113549.1.9.16.2.52';
+// Preserve strict checks for the OID misprinted in RFC 6211. It remains a
+// distinct legacy attribute; signed bytes and attribute identities are unchanged.
+const LEGACY_ALGORITHM_PROTECTION = '1.2.840.113549.1.9.52';
 const MIME_TYPE = '0.4.0.1733.2.1';
 const ARCHIVE = '0.4.0.1733.2.4';
 const INDEX = '0.4.0.19122.1.5';
@@ -279,6 +282,7 @@ function parseCMS(raw, content, expectedType = OID.data, profile = 'CADES') {
       unsigned.includes(attr) &&
       [
         ALGORITHM_PROTECTION,
+        LEGACY_ALGORITHM_PROTECTION,
         MIME_TYPE,
         SIGNING_TIME,
         OID.ess,
@@ -387,20 +391,22 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
   failures.push(...parsed.unsupported);
   const hashOID = attempt(failures, () => hashAlgorithm(parsed.si[2]));
   const signatureOID = attempt(failures, () => algorithm(parsed.si[4]));
-  const algorithmProtection = one(parsed, ALGORITHM_PROTECTION);
-  if (algorithmProtection)
-    attempt(failures, () => {
-      const fields = algorithmProtection.children;
-      check(
-        algorithmProtection.tag === 0x30 && fields?.length === 2 && fields[1].tag === 0xa1,
-        'CADES_ALGORITHM_PROTECTION_ENCODING',
-      );
-      check(
-        algorithm(fields[0]) === hashOID && equal(der(0x30, fields[1].value), parsed.si[4].raw),
-        'CADES_ALGORITHM_PROTECTION_BINDING',
-      );
-      hashAlgorithm(fields[0]);
-    });
+  for (const id of [ALGORITHM_PROTECTION, LEGACY_ALGORITHM_PROTECTION]) {
+    const algorithmProtection = one(parsed, id);
+    if (algorithmProtection)
+      attempt(failures, () => {
+        const fields = algorithmProtection.children;
+        check(
+          algorithmProtection.tag === 0x30 && fields?.length === 2 && fields[1].tag === 0xa1,
+          'CADES_ALGORITHM_PROTECTION_ENCODING',
+        );
+        check(
+          algorithm(fields[0]) === hashOID && equal(der(0x30, fields[1].value), parsed.si[4].raw),
+          'CADES_ALGORITHM_PROTECTION_BINDING',
+        );
+        hashAlgorithm(fields[0]);
+      });
+  }
   const mediaType = one(parsed, MIME_TYPE);
   if (mediaType)
     attempt(failures, () => {
@@ -658,6 +664,7 @@ const PADES_OPTIONAL = new Set([
 const PADES_FORBIDDEN = new Set([
   SIGNING_TIME,
   ALGORITHM_PROTECTION,
+  LEGACY_ALGORITHM_PROTECTION,
   MIME_TYPE,
   ARCHIVE,
   INDEX,
