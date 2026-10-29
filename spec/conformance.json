@@ -685,6 +685,14 @@
         {
           "file": "reference/recovery-security.test.mjs",
           "name": "recovery rejects ML-KEM-512 before reserving a request or loading a root"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "recovery reconciles committed ml-kem-768 result after acknowledgement loss"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "recovery reconciles committed ml-kem-1024 result after acknowledgement loss"
         }
       ],
       "gap": "Certified recipient delivery and two-operator encryption-key recovery are exercised; external recovery services and hardware key import remain unassessed."
