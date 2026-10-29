@@ -114,6 +114,7 @@ function fixture(t, { durable = false, recipientAlgorithm = 'ml-kem-768' } = {})
     open,
     recover: (service) => service.recover(request, approvals, recipient.publicKey),
     journal: () => current,
+    journalPath: path,
     operationID: 'recovery:' + c.b64u(trustDomainID) + ':' + c.b64u(request.requestID),
     unpack: (raw) => {
       const result = c.decodeCBOR(raw);
@@ -333,6 +334,83 @@ test('recovery durable retry returns the saved ciphertext without loading the ro
     await pending.catch(() => {});
   }
 });
+
+for (const [recipientAlgorithm, name] of [
+  ['ml-kem-768', 'recovery reconciles committed ml-kem-768 result after acknowledgement loss'],
+  ['ml-kem-1024', 'recovery reconciles committed ml-kem-1024 result after acknowledgement loss'],
+])
+  test(name, async (t) => {
+    const f = fixture(t, { durable: true, recipientAlgorithm }),
+      acknowledgementLost = new Error('injected completion acknowledgement loss');
+    let rootLoads = 0,
+      completionCalls = 0,
+      loadedRoot,
+      committed;
+    let service = f.open(async () => {
+      rootLoads++;
+      loadedRoot = Buffer.from(f.root);
+      return loadedRoot;
+    });
+    const journal = f.journal(),
+      complete = journal.complete.bind(journal);
+    journal.complete = (id, result) => {
+      completionCalls++;
+      assert.equal(id, f.operationID);
+      complete(id, result);
+      committed = Buffer.from(result);
+      const observer = new Journal(f.journalPath);
+      try {
+        assert.deepEqual(observer.result(id), { status: 'COMPLETED', result: committed });
+      } finally {
+        observer.close();
+      }
+      throw acknowledgementLost;
+    };
+    await assert.rejects(f.recover(service), (error) => error === acknowledgementLost);
+    assert.equal(completionCalls, 1);
+    assert.equal(rootLoads, 1);
+    assert.deepEqual(loadedRoot, Buffer.alloc(32));
+    assert.deepEqual(journal.result(f.operationID), { status: 'COMPLETED', result: committed });
+
+    const denyReload = async () => {
+      rootLoads++;
+      assert.fail('A committed result with a lost acknowledgement must not load the root again');
+    };
+    service = f.open(denyReload);
+    assert.deepEqual(service.result(f.request.requestID), {
+      status: 'COMPLETED',
+      result: committed,
+    });
+    assert.deepEqual(await f.recover(service), committed);
+    const opened = f.unpack(committed),
+      raw = c.decodeCBOR(committed);
+    assert.deepEqual(opened.plaintext.root, f.root);
+    assert.deepEqual(opened.plaintext.requestHash, f.approvedHash);
+    assert.deepEqual(opened.receipt.requestHash, f.approvedHash);
+    assert.deepEqual(opened.plaintext.trustDomainID, f.trustDomainID);
+    assert.deepEqual(opened.receipt.trustDomainID, f.trustDomainID);
+    assert.deepEqual(opened.receipt.ciphertextHash, c.sha512(raw.encrypted));
+
+    const changed = { ...f.request, targetRootID: c.random() };
+    await assert.rejects(
+      service.recover(changed, approveRequest(f, changed), f.recipient.publicKey),
+      { code: 'IDEMPOTENCY_CONFLICT' },
+    );
+    assert.equal(service.result(c.random()), undefined);
+    service = f.open(denyReload, { trustDomainID: c.random() });
+    assert.equal(service.result(f.request.requestID), undefined);
+    await assert.rejects(f.recover(service), { code: 'RECOVERY_REQUEST' });
+
+    service = f.open(denyReload);
+    t.mock.method(Date, 'now', () => (f.request.expiresAt + 1) * 1000);
+    assert.deepEqual(service.result(f.request.requestID), {
+      status: 'COMPLETED',
+      result: committed,
+    });
+    await assert.rejects(f.recover(service), { code: 'RECOVERY_REQUEST' });
+    assert.equal(rootLoads, 1);
+    assert.equal(completionCalls, 1);
+  });
 
 test('recovery completion failure stays uncertain after restart and never reloads the root', async (t) => {
   const f = fixture(t, { durable: true });
