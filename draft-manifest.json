@@ -21,7 +21,7 @@
     {
       "path": ".github/workflows/codeql.yml",
       "bytes": 2194,
-      "sha256": "d05fa7ddf1f1e69fa64e08b607ad2e36a7212d986e7587a0b71a64227960100a"
+      "sha256": "561899f0353ba41ba423448eedf62cc5b22bdb391279743b46556417bd94ac3d"
     },
     {
       "path": ".github/workflows/contributions.yml",
@@ -275,8 +275,8 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 94048,
-      "sha256": "ea7f90d6e53a438a138e4524756b102dbc0221b1f94e54ce23eaf7e2a7397056"
+      "bytes": 94268,
+      "sha256": "078aed5cda32435a115e5dc16861c70948f390caf8b4dfcf3d7165213745d720"
     },
     {
       "path": "package.json",
@@ -306,7 +306,7 @@
     {
       "path": "reference/adapter-lock.json",
       "bytes": 46594,
-      "sha256": "9cd7dbc85936a83cb0dad8adcf7ecaadeeddf6fdfabf0b433fa034f9454c5b7f"
+      "sha256": "0263cedcff96f5835433b4914cdb8a829c0d7108a7625b98f199e54436d7a4a8"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1256,7 +1256,7 @@
     {
       "path": "reference/package.json",
       "bytes": 1488,
-      "sha256": "5c957aab74bbff7d5f6955ef3142c8b3f6908a77d1eba1c862990e9fd69adf5e"
+      "sha256": "5f9e1290b700dd03d98a88790b890242b636cbed2b31b78d3c303fae3597b16c"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
@@ -1685,13 +1685,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 43517,
-      "sha256": "30072afb2194a8c2ee4317d400532f0b88f4eaacbd103c1f3b5391e9a874a7b6"
+      "bytes": 43513,
+      "sha256": "10a656d02a46fafcfeec7ffd0430e5770f19281f3554e21286fa517e23f35b51"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 17051,
-      "sha256": "77498045ba5b9b2334efc6a3a67d9753e755115df28468428ef020b70af17701"
+      "sha256": "3403ed42248ad6b4d2a02d932e50a86664a786283631e716abdcc299bc63ac68"
     },
     {
       "path": "reference/state-security.test.mjs",
