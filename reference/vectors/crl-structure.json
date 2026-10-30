@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "scope": "Synthetic complete direct CRL outer-structure admission",
+  "at": 1793322000,
+  "serial": 2,
+  "algorithm": "ECDSA-SHA256",
+  "issuerName": {
+    "der": "MCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3Vlcg==",
+    "bytes": 43,
+    "sha256": "9e848b3346280450f75be3d1dc4946caf593301b7e9a7c50bde605e0ad44b47d"
+  },
+  "issuerSPKI": {
+    "der": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEzs1272Ux2vANpNKnV7RdzXZSY8fklmmKe5CamshVjEJiV8U5RAnL1dH4sK8fcMD9iHAR/EaBFNodZ+f+eBpaug==",
+    "bytes": 91,
+    "sha256": "de9f8cfb2bf0fd436e144b282bebda7e0d2d7d6dd9a0ae77db4374f03fb1d4bc"
+  },
+  "issuerCertificate": {
+    "der": "MIIBkzCCATigAwIBAgIBATAKBggqhkjOPQQDAjApMScwJQYDVQQDDB5TeW50aGV0aWMgQ1JMIHN0cnVjdHVyZSBpc3N1ZXIwHhcNMjYxMDI5MDEwMDAwWhcNMjYxMDMxMDEwMDAwWjApMScwJQYDVQQDDB5TeW50aGV0aWMgQ1JMIHN0cnVjdHVyZSBpc3N1ZXIwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATOzXbvZTHa8A2k0qdXtF3NdlJjx+SWaYp7kJqayFWMQmJXxTlECcvV0fiwrx9wwP2IcBH8RoEU2h1n5/54Glq6o1EwTzASBgNVHRMBAf8ECDAGAQH/AgEAMA4GA1UdDwEB/wQEAwIBBjApBgNVHQ4EIgQg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSQAwRgIhANuGheWLUBLI7CLTB0nIoZUgfGw9/nR6xO/n+vKo+PExAiEA5qQ0sz8q3kr30Qcu0qBrCkTlzcaNumnDUyvc4FUhpeA=",
+    "bytes": 407,
+    "sha256": "f72ea8fd2cf22913b50b7223b021d78edb29a13441b2b0f574d8316e86585109"
+  },
+  "certificate": {
+    "der": "MIIBrTCCAVSgAwIBAgIBAjAKBggqhkjOPQQDAjApMScwJQYDVQQDDB5TeW50aGV0aWMgQ1JMIHN0cnVjdHVyZSBpc3N1ZXIwHhcNMjYxMDI5MDEwMDAwWhcNMjYxMDMxMDEwMDAwWjAqMSgwJgYDVQQDDB9TeW50aGV0aWMgQ1JMIHN0cnVjdHVyZSBzdWJqZWN0MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3VtUcIjZLkzv0iir9ia/yyWJ8M/O6vlTocOMZgw7emmKIJn009Bb487ETcZfoPJwVN7MynccB8yE26FC265dMKNsMGowDAYDVR0TAQH/BAIwADAOBgNVHQ8BAf8EBAMCB4AwKQYDVR0OBCIEIJ6PDLfpYyL1srDW1qaAne0s23lTGdDV8o/hW+GmH9/yMB8GA1UdJQQYMBYGFGmCpJvN2MOzkr7Xq57btoL/pMomMAoGCCqGSM49BAMCA0cAMEQCIG9ebM5uWhrrTPf4eGQz8S4yN5sQ7Tx/vi34Z2foC49HAiAM8Oa5Gxeoer+7wPlxaxh6XTiIaLIVf7FExGRP2TAKOQ==",
+    "bytes": 433,
+    "sha256": "65591ead8c9daab300e326466384f5cbf70193796361b307ea5f28ae8c1ef180"
+  },
+  "rows": [
+    {
+      "id": "good",
+      "der": "MIHvMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAwWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSQAwRgIhALbeSc067wrBhnx7SsSS4p3TJczIvPpl0es9VBpfeJcaAiEAh3zfCsok1kwqqCVVg1/Hub7V/70cN8fohub2fGDsdwc=",
+      "bytes": 242,
+      "sha256": "161ce2e32b07c9edc5c84f6db4f00da7dfcc703091f06091d1c39192803e2c39",
+      "expected": {
+        "status": "GOOD",
+        "overall": "VALID"
+      },
+      "number": 7,
+      "payloadTLVCount": 3
+    },
+    {
+      "id": "revoked",
+      "der": "MIIBEjCBuQIBATAKBggqhkjOPQQDAjApMScwJQYDVQQDDB5TeW50aGV0aWMgQ1JMIHN0cnVjdHVyZSBpc3N1ZXIXDTI2MTAzMDAwNTkwMFoXDTI2MTAzMDAxMTAwMFowIjAgAgECFw0yNjEwMzAwMDU4MzBaMAwwCgYDVR0VBAMKAQGgOzA5MAoGA1UdFAQDAgEHMCsGA1UdIwQkMCKAIN6fjPsr8P1DbhRLKCvr2n4NLX1t2aCud9tDdPA/sdS8MAoGCCqGSM49BAMCA0gAMEUCIQCwGW0TDuFl7NDJdunwIcFbXgQcmVvpl8Lgr/DZ7zo80AIgOZLldx/Rha/HGKzWgDd+bpX8wJWNr8AZvyNlLz8NL7M=",
+      "bytes": 278,
+      "sha256": "182c0b62de59982a873a95fb564a2ef8ead827a625d037081da4a3408fd836ad",
+      "expected": {
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "CRL_REVOKED"
+      },
+      "number": 7,
+      "payloadTLVCount": 3
+    },
+    {
+      "id": "signed-same-number-fork",
+      "der": "MIHtMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1ODU5WhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDRwAwRAIgZM94D1kKi3QIO+Mz51JZefNAj9gq2UbMIL1iTmMSWksCICMDdAf3/ltWIFpIhA0QAhab7Z0pDIoqlLyyP3KxidiL",
+      "bytes": 240,
+      "sha256": "fac182c62f677c579687ce70b5a40de8c416f29f0c1d5ff9d4cc967135fd3d35",
+      "expected": {
+        "status": "GOOD",
+        "overall": "VALID"
+      },
+      "number": 7,
+      "payloadTLVCount": 3
+    },
+    {
+      "id": "next-number",
+      "der": "MIHuMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAxWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQgwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSAAwRQIgVyyLFHydts+XytaQ/BrDMpl82Lm/NIKR/YyA6BMk+/UCIQDjLgBdOoxL8+7aX4znR5hZk6wbbyrp3/OoLWXEWmAxGw==",
+      "bytes": 241,
+      "sha256": "1b8eb5e8242d5364625c199960b333e70e3e63199513f3defa417f21dc4b839a",
+      "expected": {
+        "status": "GOOD",
+        "overall": "VALID"
+      },
+      "number": 8,
+      "payloadTLVCount": 3
+    },
+    {
+      "id": "extra-null",
+      "der": "MIHxMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAwWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSQAwRgIhALbeSc067wrBhnx7SsSS4p3TJczIvPpl0es9VBpfeJcaAiEAh3zfCsok1kwqqCVVg1/Hub7V/70cN8fohub2fGDsdwcFAA==",
+      "bytes": 244,
+      "sha256": "a8b9ed884dd18577441b7bb1d36ccfcc0f09aaa2c349576608975365ce30f86e",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      },
+      "ancestor": "good",
+      "rootTag": 48,
+      "payloadTLVCount": 4,
+      "ancestorChildrenRetained": 3
+    },
+    {
+      "id": "extra-two",
+      "der": "MIH0MIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAwWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSQAwRgIhALbeSc067wrBhnx7SsSS4p3TJczIvPpl0es9VBpfeJcaAiEAh3zfCsok1kwqqCVVg1/Hub7V/70cN8fohub2fGDsdwcFAAIBAA==",
+      "bytes": 247,
+      "sha256": "c54ba9ea911f9008a09de36e97d5bf558d245c8efc97868f7c573a6b7b47ab02",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      },
+      "ancestor": "good",
+      "rootTag": 48,
+      "payloadTLVCount": 5,
+      "ancestorChildrenRetained": 3
+    },
+    {
+      "id": "context-root",
+      "der": "oIHvMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAwWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSQAwRgIhALbeSc067wrBhnx7SsSS4p3TJczIvPpl0es9VBpfeJcaAiEAh3zfCsok1kwqqCVVg1/Hub7V/70cN8fohub2fGDsdwc=",
+      "bytes": 242,
+      "sha256": "1ee1dcd6925d821a802704880da1a17a57c47178a42736eb351afa43bf36af4b",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      },
+      "ancestor": "good",
+      "rootTag": 160,
+      "payloadTLVCount": 3,
+      "ancestorChildrenRetained": 3
+    },
+    {
+      "id": "octet-root",
+      "der": "BIHvMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAwWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSQAwRgIhALbeSc067wrBhnx7SsSS4p3TJczIvPpl0es9VBpfeJcaAiEAh3zfCsok1kwqqCVVg1/Hub7V/70cN8fohub2fGDsdwc=",
+      "bytes": 242,
+      "sha256": "602fec748278b4c0f0695022a27ffb6457a77763a49aa415f51be1b18dd325c3",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      },
+      "ancestor": "good",
+      "rootTag": 4,
+      "payloadTLVCount": 3,
+      "ancestorChildrenRetained": 3
+    },
+    {
+      "id": "missing-signature",
+      "der": "MIGkMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAwWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwI=",
+      "bytes": 167,
+      "sha256": "8ea6b191e1d3ac183f6c5e295918b23ae692e3e9ab007fcd4fff606ec38000eb",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      },
+      "ancestor": "good",
+      "rootTag": 48,
+      "payloadTLVCount": 2,
+      "ancestorChildrenRetained": 2
+    },
+    {
+      "id": "only-tbs",
+      "der": "MIGYMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAwWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1Lw=",
+      "bytes": 155,
+      "sha256": "b0d82559725de595dd1a616624f4c8234c562377f99edb09b949c164df615973",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      },
+      "ancestor": "good",
+      "rootTag": 48,
+      "payloadTLVCount": 1,
+      "ancestorChildrenRetained": 1
+    },
+    {
+      "id": "empty-sequence",
+      "der": "MAA=",
+      "bytes": 2,
+      "sha256": "e4f60d0aa6d7f3d3b6a6494b1c861b99f649c6f9ec51abaf201b20f297327c95",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      },
+      "ancestor": "good",
+      "rootTag": 48,
+      "payloadTLVCount": 0,
+      "ancestorChildrenRetained": 0
+    },
+    {
+      "id": "extra-null-next-number",
+      "der": "MIHwMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAxWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQgwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSAAwRQIgVyyLFHydts+XytaQ/BrDMpl82Lm/NIKR/YyA6BMk+/UCIQDjLgBdOoxL8+7aX4znR5hZk6wbbyrp3/OoLWXEWmAxGwUA",
+      "bytes": 243,
+      "sha256": "b2203e7f9ae72e01940f251e42d8fc080634c5872002acba6b26a7bc6f904d31",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      },
+      "ancestor": "next-number",
+      "rootTag": 48,
+      "payloadTLVCount": 4,
+      "ancestorChildrenRetained": 3
+    },
+    {
+      "id": "signed-tbs-altered",
+      "der": "MIHvMIGVAgEBMAoGCCqGSM49BAMCMCkxJzAlBgNVBAMMHlN5bnRoZXRpYyBDUkwgc3RydWN0dXJlIGlzc3VlchcNMjYxMDMwMDA1OTAwWhcNMjYxMDMwMDExMDAwWqA7MDkwCgYDVR0UBAMCAQYwKwYDVR0jBCQwIoAg3p+M+yvw/UNuFEsoK+vafg0tfW3ZoK5320N08D+x1LwwCgYIKoZIzj0EAwIDSQAwRgIhALbeSc067wrBhnx7SsSS4p3TJczIvPpl0es9VBpfeJcaAiEAh3zfCsok1kwqqCVVg1/Hub7V/70cN8fohub2fGDsdwc=",
+      "bytes": 242,
+      "sha256": "b1befd72cbb54d3385a16e35fe3a12d6050d34b53efc86083216511710285519",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_SIGNATURE"
+      },
+      "ancestor": "good",
+      "changedTBSByte": 106,
+      "payloadTLVCount": 3
+    }
+  ]
+}

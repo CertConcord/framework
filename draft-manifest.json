@@ -159,6 +159,11 @@
       "sha256": "4dcbd0641f217624d2d12c2a8596ebdfa32edc2e4cdf9f673ed302f426cae0bb"
     },
     {
+      "path": "docs/crl-structure.md",
+      "bytes": 3267,
+      "sha256": "b70cf63937e1e7c11fd8fdbaf1d54867ca6121ca3bd8d308046bddc607f2d79d"
+    },
+    {
       "path": "docs/csc.md",
       "bytes": 4820,
       "sha256": "3ddea30077609fca16817fcd226d46aa1ed95a8fc9d1dffea4156f23cd5ab21d"
@@ -295,8 +300,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 296586,
-      "sha256": "3e5eb5905328aca2da4cb042e70995febe28a324454c48b77cf78b6489feb5f0"
+      "bytes": 296737,
+      "sha256": "05dba7855d022e9a0af9b1a070e065fd48ade6ad3882cbab4405664e538d1d68"
     },
     {
       "path": "reference/README.md",
@@ -577,6 +582,11 @@
       "path": "reference/crl-scope.test.mjs",
       "bytes": 2083,
       "sha256": "ca78a29eb0f2c4de24a0a9638471734ecf26db9146c960a46f05b745fcf005d8"
+    },
+    {
+      "path": "reference/crl-structure.test.mjs",
+      "bytes": 11143,
+      "sha256": "b1c7f956286415251730a5edd5e3cf0e30f3b894b67b9d67c55717e91221293d"
     },
     {
       "path": "reference/crl-time-choice-replay.test.mjs",
@@ -1530,8 +1540,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 11836,
-      "sha256": "0c771e118ed39dfe87925be6db396aee8d7d7e6845be6fda2a45400a2220af95"
+      "bytes": 11922,
+      "sha256": "4340a5384e071c9359fd2d44bf5e70e8dc2201c7656eeec2caef97c92db1a8b1"
     },
     {
       "path": "reference/schemas.cddl",
@@ -2242,6 +2252,11 @@
       "path": "reference/vectors/crl-scope.json",
       "bytes": 13543,
       "sha256": "cf710b9aef1a8fb5dc2528ebaeaff720892c27eb484c4bbd8aaf568cff4f119f"
+    },
+    {
+      "path": "reference/vectors/crl-structure.json",
+      "bytes": 10509,
+      "sha256": "4544ce2dce58e47dffb40c85d5770500f3ea94607f33449f54b0d1b55a5662e7"
     },
     {
       "path": "reference/vectors/crl-time-choice.json",
@@ -12855,8 +12870,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 54104,
-      "sha256": "4f534c5a36e701244ae3e9f6f53d71f298b08e93a7b7f5890c28e8396fc2617c"
+      "bytes": 54680,
+      "sha256": "4c0c0bd0948060d8ffa517c811cf52a59a161aafc85530a52830e94b74b8d2a4"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
@@ -13072,6 +13087,11 @@
       "path": "tools/check.mjs",
       "bytes": 7633,
       "sha256": "f667bc498d8e5c498d36e10c3acd3c8a921f108690c9d11487574fc677363978"
+    },
+    {
+      "path": "tools/create-crl-structure-vectors.mjs",
+      "bytes": 5965,
+      "sha256": "cb8cb8285784024124d6b042540495f9aa6e5160c641773b300fc6fd1d1f4618"
     },
     {
       "path": "tools/create-mtc-version-vectors.mjs",
