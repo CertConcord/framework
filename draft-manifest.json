@@ -109,6 +109,11 @@
       "sha256": "843ddfe95a097f63e8d7f56bd62999e2f0caf5da78eaef0d57869a55bab01ef5"
     },
     {
+      "path": "docs/acme-profiles.md",
+      "bytes": 3617,
+      "sha256": "b39cb47abedcafee7753caf17382de2f8edda82ca57bca04b1049a4290a17f75"
+    },
+    {
       "path": "docs/adapters.md",
       "bytes": 40504,
       "sha256": "e05bf3b7cb0477e01046777044cad398ef8a038f4d9e1105bfbf24fe608f41ff"
@@ -290,8 +295,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 296463,
-      "sha256": "c8fd83e8d3422bf7feb10660dc1e9a8c20c3bd8f40b0dac181feac62fec01de3"
+      "bytes": 296586,
+      "sha256": "3e5eb5905328aca2da4cb042e70995febe28a324454c48b77cf78b6489feb5f0"
     },
     {
       "path": "reference/README.md",
@@ -299,9 +304,14 @@
       "sha256": "b7027ed15c483f651c149c7ff81790f0f427728f1c042b547a90303a161aa741"
     },
     {
+      "path": "reference/acme-profile-metadata.test.mjs",
+      "bytes": 9516,
+      "sha256": "01df66bc7878c9cea9c16dd36f2e0f7adbe824eccd75ce25092739be6082c92c"
+    },
+    {
       "path": "reference/acme.mjs",
-      "bytes": 23367,
-      "sha256": "1cb85df0967b2fee4a9bdc0693a6b5e0e9a2bb147bd583d682b9d5d2e6f64aa9"
+      "bytes": 23847,
+      "sha256": "4ee5612d7f0a8da4aece53441dcfceca776f05670f6157a10fa588073c077c55"
     },
     {
       "path": "reference/acme.test.mjs",
@@ -1907,6 +1917,11 @@
       "path": "reference/vector-corpus.mjs",
       "bytes": 2914,
       "sha256": "b78041f2ee023d067c0f243d5b1dcb7e8c277b3ed04dab32d9c8f31f7ed5fab0"
+    },
+    {
+      "path": "reference/vectors/acme-profile-metadata.json",
+      "bytes": 11991,
+      "sha256": "6254f5eb0dd9cfc6c0677854ca664b2861db2f4bd4ff6b7217e7ffe151025382"
     },
     {
       "path": "reference/vectors/cades-hold-release.json",
@@ -12840,8 +12855,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 53640,
-      "sha256": "8e9aab380e5e1d2673edf414ee93d38210c112661cdc55cbf538243fe863de42"
+      "bytes": 54104,
+      "sha256": "4f534c5a36e701244ae3e9f6f53d71f298b08e93a7b7f5890c28e8396fc2617c"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",

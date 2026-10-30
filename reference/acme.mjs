@@ -112,7 +112,22 @@ export class ACMEClient {
     return r.json;
   }
   async newOrder({ identifiers, profile }) {
-    requireThat(profile === undefined || this.directory.profiles?.[profile], 'ACME_PROFILE');
+    const meta = this.directory.meta,
+      profiles = meta?.profiles;
+    requireThat(
+      profile === undefined ||
+        (typeof profile === 'string' &&
+          meta !== null &&
+          typeof meta === 'object' &&
+          !Array.isArray(meta) &&
+          profiles !== null &&
+          typeof profiles === 'object' &&
+          !Array.isArray(profiles) &&
+          Object.hasOwn(profiles, profile) &&
+          typeof profiles[profile] === 'string' &&
+          profiles[profile].length > 0),
+      'ACME_PROFILE',
+    );
     const r = await this.post(this.directory.newOrder, { identifiers, profile });
     return { ...r.json, url: r.headers.get('location') };
   }
@@ -237,8 +252,12 @@ export class ACMEService {
       newOrder: this.baseURL + '/new-order',
       revokeCert: this.baseURL + '/revoke-cert',
       keyChange: this.baseURL + '/key-change',
-      profiles: Object.fromEntries(this.profiles.map((p) => [p, this.baseURL + '/profiles/' + p])),
-      ...(this.termsOfService ? { meta: { termsOfService: this.termsOfService } } : {}),
+      meta: {
+        profiles: Object.fromEntries(
+          this.profiles.map((p) => [p, this.baseURL + '/profiles/' + p]),
+        ),
+        ...(this.termsOfService ? { termsOfService: this.termsOfService } : {}),
+      },
     };
   }
   nonce() {

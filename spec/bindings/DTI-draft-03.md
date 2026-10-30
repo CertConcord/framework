@@ -285,6 +285,8 @@ Root policies, authority appointments, transitions and incident statements have 
 
 Interfaces declare media types, authentication, authorization, size bounds, expiry, pagination, idempotency and errors. The enrollment adapters preserve CMP/ACME wire semantics while requiring the same RA approvals. DNS control in ACME is not natural-person identity or document signing authority. OpenID endpoints use DCP-draft-03; hardware and remote providers use ACB, regardless of API style.
 
+When ACME Profiles is selected, its Directory advertisement and explicit profile selection MUST use `meta.profiles` under the pinned profiles extension. The [selected metadata contract](../../docs/acme-profiles.md) defines exact advertised-name selection, coexistence with terms of service and rejection of the nonstandard top-level fallback. An omitted profile retains the authenticated service's configured default path and its existing RA and issuance checks.
+
 ## 45. Security zones
 
 The website, identity-evidence intake, RA decision service, online CA, activation service, signer, status service, mirrors and offline governance are separate authority zones. Network co-location does not collapse those roles. Secrets stay outside public repositories and logs. Public examples use synthetic keys and cannot be imported as production roots.
