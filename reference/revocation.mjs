@@ -131,8 +131,9 @@ function inspectCRL(
   raw,
   { issuer, publicKey, at = now(), knowledgeTime = at, serial, minNumber = 0n },
 ) {
-  const root = parseDER(raw),
-    [tbs, algorithm, signature] = root.children;
+  const root = parseDER(raw);
+  requireThat(root.tag === 0x30 && root.children?.length === 3, 'CRL_STRUCTURE');
+  const [tbs, algorithm, signature] = root.children;
   requireThat(
     equal(algorithm.raw, algID(publicKey.asymmetricKeyType)) &&
       signature.tag === 3 &&
