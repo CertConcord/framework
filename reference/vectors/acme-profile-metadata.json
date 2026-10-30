@@ -1,0 +1,323 @@
+{
+  "schemaVersion": 1,
+  "profile": "acme-directory-profile-metadata",
+  "source": "Synthetic, independently specified Directory metadata fragments; no private keys or production inputs.",
+  "specification": "draft-ietf-acme-profiles-02 sections 3 and 4",
+  "rows": [
+    {
+      "id": "standard",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "fa5716d17b03100ddec218bc949fef3a0e60b73a8b9ca5a5a8b6b36e2e720088"
+    },
+    {
+      "id": "with-terms",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"},\"termsOfService\":\"https://policy.example.test/terms\"}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "2d8d7904968e360cd70959c56d4dfd2a12d8f264ede9d23c59e2d0d794c03e23"
+    },
+    {
+      "id": "data-description",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"data:text/plain,Synthetic%20document%20profile\"}}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "7ffc2492333f0870dcb76c3b8ce5bb594284f6f8b5227cf5a89d1826db543fab"
+    },
+    {
+      "id": "own-constructor",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"constructor\":\"https://profiles.example.test/document\"}}}",
+      "profile": "constructor",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "26c20320dc7c9fad212f2afd278d2544d7b35bb7e488dbaf7fb23f81a48fcb2d"
+    },
+    {
+      "id": "own-prototype-name",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"__proto__\":\"https://profiles.example.test/document\"}}}",
+      "profile": "__proto__",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "a1a7eff184869e2a7c71de344b5aa5d7455eb07d3b44f3674c7e910c3b5ee389"
+    },
+    {
+      "id": "exact-case",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"Document\":\"https://profiles.example.test/document\"}}}",
+      "profile": "Document",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "a1eee56ce17bcdcce719a9d26a888c297c4f55cc7f612adf28e5f7ae14af72e5"
+    },
+    {
+      "id": "numeric-string-key",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"0\":\"https://profiles.example.test/document\"}}}",
+      "profile": "0",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "4ca6bbb96830c7a077b4a12800fce7cd1d3f50231b6c16d805c8f42ee89a0c53"
+    },
+    {
+      "id": "unselected-value",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\",\"other\":false},\"futureExtension\":{\"supported\":true}}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "0129ca7bb7fe552c70b73ac9c4382f407f12c4d9ae67c7b8a8730ffcc6bdf86a"
+    },
+    {
+      "id": "standard-over-legacy",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}},\"profiles\":{\"legacy\":\"https://profiles.example.test/document\"}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "accepted": true
+      },
+      "metadataSHA256": "c2ee7361ea14a7b70d044dfa9026e80d380efb12e6323a434efcf30ff1f4b17f"
+    },
+    {
+      "id": "omitted-without-metadata",
+      "metadataJSON": "{}",
+      "expected": {
+        "accepted": true
+      },
+      "omitProfile": true,
+      "metadataSHA256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "id": "omitted-with-malformed-map",
+      "metadataJSON": "{\"meta\":{\"profiles\":null}}",
+      "expected": {
+        "accepted": true
+      },
+      "omitProfile": true,
+      "metadataSHA256": "019bcc599785ae0d5ca8e9370f85aadc053de8a45e43ec0d539edd3ce043b369"
+    },
+    {
+      "id": "omitted-with-legacy",
+      "metadataJSON": "{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}}",
+      "expected": {
+        "accepted": true
+      },
+      "omitProfile": true,
+      "metadataSHA256": "cfa3e1470ff2f33862da7cf20b1a3a6109f50a40bda6ba2c30d90a16f5d7b86e"
+    },
+    {
+      "id": "legacy-only",
+      "metadataJSON": "{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "cfa3e1470ff2f33862da7cf20b1a3a6109f50a40bda6ba2c30d90a16f5d7b86e"
+    },
+    {
+      "id": "unknown-name",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}}}",
+      "profile": "absent",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "fa5716d17b03100ddec218bc949fef3a0e60b73a8b9ca5a5a8b6b36e2e720088"
+    },
+    {
+      "id": "missing-metadata",
+      "metadataJSON": "{}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "id": "null-metadata",
+      "metadataJSON": "{\"meta\":null}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "9a392cd489a25a5f231f93916f704f8de2026279c09b118d97a7fe0922b4bc7e"
+    },
+    {
+      "id": "array-metadata",
+      "metadataJSON": "{\"meta\":[]}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "74c326b89bfc96ee8c8bdc391d532340043809c74acf2859ae0fd3240d136214"
+    },
+    {
+      "id": "missing-profiles",
+      "metadataJSON": "{\"meta\":{\"termsOfService\":\"https://policy.example.test/terms\"}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "fa1bdbd48e6b5cbd8806d508e2ea5b030aedc35e8dc131fce85f3f20ff980ff4"
+    },
+    {
+      "id": "null-map",
+      "metadataJSON": "{\"meta\":{\"profiles\":null}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "019bcc599785ae0d5ca8e9370f85aadc053de8a45e43ec0d539edd3ce043b369"
+    },
+    {
+      "id": "array-map",
+      "metadataJSON": "{\"meta\":{\"profiles\":[\"https://profiles.example.test/document\"]}}",
+      "profile": "0",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "e79359a59210a3bebe0cdb798a830aa519968623e198b491c9b3aa4c5b8392ed"
+    },
+    {
+      "id": "string-map",
+      "metadataJSON": "{\"meta\":{\"profiles\":\"https://profiles.example.test/document\"}}",
+      "profile": "0",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "10ff975460e2bf992226014f241a0ce221dd6412cdf757c3ba22e08568e31a5c"
+    },
+    {
+      "id": "number-selection",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"0\":\"https://profiles.example.test/document\"}}}",
+      "profile": 0,
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "4ca6bbb96830c7a077b4a12800fce7cd1d3f50231b6c16d805c8f42ee89a0c53"
+    },
+    {
+      "id": "array-selection",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}}}",
+      "profile": ["synthetic-document"],
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "fa5716d17b03100ddec218bc949fef3a0e60b73a8b9ca5a5a8b6b36e2e720088"
+    },
+    {
+      "id": "object-selection",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"[object Object]\":\"https://profiles.example.test/document\"}}}",
+      "profile": {},
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "4c12df3cb4fd03226b04f114a2ebd43ca373ae0ae7b39dde02f7f46e89ba77ff"
+    },
+    {
+      "id": "null-selection",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"null\":\"https://profiles.example.test/document\"}}}",
+      "profile": null,
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "13844031d592bd3a4ef0684097ac455fd91edabb5cbbb4da4ffb48fa787b352e"
+    },
+    {
+      "id": "boolean-selection",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"false\":\"https://profiles.example.test/document\"}}}",
+      "profile": false,
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "e89d92ae2a4dda7301183584a85b20aad1909c34e9a293e9278e73e770e4323e"
+    },
+    {
+      "id": "empty-description",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"\"}}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "20094396eb90ccc07429e83f8aece68584004b878968e834f4f3e27b7e38bf72"
+    },
+    {
+      "id": "nonstring-description",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":{\"url\":\"https://profiles.example.test/document\"}}}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "ae1d14bf883016f36bcee056e2b385fb38ff7c2d3ae67c84530e65f5401afaf0"
+    },
+    {
+      "id": "unadvertised-constructor",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}}}",
+      "profile": "constructor",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "fa5716d17b03100ddec218bc949fef3a0e60b73a8b9ca5a5a8b6b36e2e720088"
+    },
+    {
+      "id": "case-mismatch",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"Document\":\"https://profiles.example.test/document\"}}}",
+      "profile": "document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "a1eee56ce17bcdcce719a9d26a888c297c4f55cc7f612adf28e5f7ae14af72e5"
+    },
+    {
+      "id": "malformed-meta-no-fallback",
+      "metadataJSON": "{\"meta\":{\"profiles\":null},\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "21f205f58bcac3b4d1a725c010592f4afb8e8a9e285b71e948e4e4fd85420a9b"
+    },
+    {
+      "id": "legacy-name-not-in-meta",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"other\":\"https://profiles.example.test/document\"}},\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "8b3f31f9778e469a4463753149f3986eeb5f07d7735ee28b4da85d0d8f0510f2"
+    },
+    {
+      "id": "duplicate-profile",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\",\"synthetic-document\":\"data:text/plain,other\"}}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "JSON_DUPLICATE"
+      },
+      "metadataSHA256": "bfc29829dbc6ce9a467e22c5745e748948f7cc485af4d32347cc20666679d863"
+    },
+    {
+      "id": "duplicate-metadata",
+      "metadataJSON": "{\"meta\":{\"profiles\":{\"synthetic-document\":\"https://profiles.example.test/document\"}},\"meta\":{}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "JSON_DUPLICATE"
+      },
+      "metadataSHA256": "f50c21c7dd04a6371fd2cde6773c661032cb2f43cad5ede92e6a9dc2c79e4a64"
+    },
+    {
+      "id": "empty-map",
+      "metadataJSON": "{\"meta\":{\"profiles\":{}}}",
+      "profile": "synthetic-document",
+      "expected": {
+        "error": "ACME_PROFILE"
+      },
+      "metadataSHA256": "cbc25567944daddb1eea6d67a3d34fee46786d20366002e5c14ebfcec4e2db88"
+    }
+  ]
+}
