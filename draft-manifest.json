@@ -180,8 +180,8 @@
     },
     {
       "path": "docs/draft-acceptance.md",
-      "bytes": 10156,
-      "sha256": "ea9cd959bf5d6ca774ed9dde388a456c77992b6ce21d6a542f4c4121e981cd42"
+      "bytes": 10306,
+      "sha256": "a012ce72902832cf92d15074965b40afa371e6e57302fd4880c77a537f1e0c82"
     },
     {
       "path": "docs/ecosystem-comparison.md",
@@ -1590,8 +1590,8 @@
     },
     {
       "path": "reference/sdk/consumer-test.mjs",
-      "bytes": 12316,
-      "sha256": "99de2b1b49fce928e72f638774f9a521b58bafb9e975bb1eef0430e36b67591a"
+      "bytes": 12361,
+      "sha256": "62d17c945c436362d4d9274e87d4a73750f97cf9adbd86b1d4e5076d75307a30"
     },
     {
       "path": "reference/sdk/index.d.ts",

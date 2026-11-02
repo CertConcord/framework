@@ -102,7 +102,7 @@ for (const [phase, database] of [
   assert.equal(observed.phase, phase);
   assert.deepEqual(observed.forbiddenCalls, []);
   assert.equal(observed.installedBundleSHA256, savedHistory.installedBundleSHA256);
-  assert.equal(observed.unchangedFiles, 201);
+  assert.equal(observed.unchangedFiles, 203); // 202 inventoried files plus manifest.json.
   durableReplay.push(observed);
 }
 assert.equal(new Set(durableReplay.map((row) => row.pid)).size, 4);
