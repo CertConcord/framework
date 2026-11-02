@@ -115,8 +115,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 40504,
-      "sha256": "e05bf3b7cb0477e01046777044cad398ef8a038f4d9e1105bfbf24fe608f41ff"
+      "bytes": 42530,
+      "sha256": "703c1d278afe951a768c3b5da28c2b3fa796f63db74e839edc55662547d7564f"
     },
     {
       "path": "docs/apple-identity.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 297404,
-      "sha256": "d81ffdf055feb2798e4b97bf0548f6f36951b8433adad85f39e7ac668be38120"
+      "bytes": 297537,
+      "sha256": "a004f27f9f601ebb089dd452003812d1dae4d081cd746b14f61aa7cde870a1da"
     },
     {
       "path": "reference/README.md",
@@ -710,8 +710,8 @@
     },
     {
       "path": "reference/enrollment.mjs",
-      "bytes": 13080,
-      "sha256": "3151a480069e09b48553988cb261e66a91d0ee8739cff5f7555c71aa60afecde"
+      "bytes": 13817,
+      "sha256": "662066b608f6fa3e36668f8e2818ab0f684b1eae3489484877521400805f15f1"
     },
     {
       "path": "reference/ers-bc186-vectors.test.mjs",
@@ -1417,6 +1417,11 @@
       "path": "reference/person-sign-profile.test.mjs",
       "bytes": 1288,
       "sha256": "cbf8c690d0c56f4379c7d5962f5989cc48618bafcda5fb406560935366b56468"
+    },
+    {
+      "path": "reference/pkcs10-structure.test.mjs",
+      "bytes": 5539,
+      "sha256": "f4e19a91bedb140782b30ba70be593f440034db569191d92a2a0e7b2578f2415"
     },
     {
       "path": "reference/pkcs11-capability.test.mjs",
@@ -7504,6 +7509,11 @@
       "sha256": "b555ebedb7a783d31c08c7870059decf3e5dfec6d9fca23c5d336ac669450480"
     },
     {
+      "path": "reference/vectors/pkcs10-structure.json",
+      "bytes": 475176,
+      "sha256": "189a57b78df0f031eec40b4455e7de6c965f82f443b6722fcca213300dc91d68"
+    },
+    {
       "path": "reference/vectors/pkcs11-capability.json",
       "bytes": 19034,
       "sha256": "c5e585f4f0fa889a3d3dec1fab3de21655bd41a6a4a5b2213480f6d4bde49cf9"
@@ -13147,6 +13157,11 @@
       "path": "tools/create-mtc-version-vectors.mjs",
       "bytes": 9487,
       "sha256": "a8b83b4a48fc865442271521052b91b401b7b191c3a93d4eea4b0ae9552d5e6c"
+    },
+    {
+      "path": "tools/create-pkcs10-structure-vectors.mjs",
+      "bytes": 8741,
+      "sha256": "03cd4578e5b65a15e52959f742ac358d7fd79a136c839e34719a953359f58511"
     },
     {
       "path": "tools/create-timestamp-name-vectors.mjs",

@@ -139,18 +139,41 @@ export function verifyCSR(
   raw,
   { validatePossessionCertificate, expectedSubject, expectedSPKI } = {},
 ) {
-  const r = parseDER(raw),
-    [info, algorithm, signature] = r.children;
+  const r = parseDER(raw);
+  requireThat(r.tag === 0x30 && r.children.length === 3, 'CSR_STRUCTURE');
+  const [info, algorithm, signature] = r.children;
   requireThat(
-    r.children.length === 3 && info.children.length === 4 && intValue(info.children[0]) === 0n,
+    info.tag === 0x30 &&
+      info.children.length === 4 &&
+      intValue(info.children[0]) === 0n &&
+      algorithm.tag === 0x30 &&
+      signature.tag === 3,
     'CSR_STRUCTURE',
   );
   const [_, subject, pub, attributes] = info.children,
     publicKey = publicFromDER(pub.raw),
     attrs = new Map();
+  requireThat(subject.tag === 0x30, 'CSR_SUBJECT_STRUCTURE');
+  for (const rdn of subject.children) {
+    requireThat(rdn.tag === 0x31 && rdn.children.length > 0, 'CSR_SUBJECT_STRUCTURE');
+    for (const a of rdn.children) {
+      requireThat(
+        a.tag === 0x30 && a.children.length === 2 && a.children[0].tag === 6,
+        'CSR_SUBJECT_STRUCTURE',
+      );
+      oidText(a.children[0]);
+    }
+  }
   requireThat(attributes.tag === 0xa0, 'CSR_ATTRIBUTES');
   parseDER(der(0x31, attributes.value));
   for (const a of attributes.children) {
+    requireThat(
+      a.tag === 0x30 &&
+        a.children.length === 2 &&
+        a.children[0].tag === 6 &&
+        a.children[1].tag === 0x31,
+      'CSR_ATTRIBUTE_STRUCTURE',
+    );
     const id = oidText(a.children[0]);
     requireThat(!attrs.has(id) && a.children[1].children.length === 1, 'CSR_DUPLICATE_ATTRIBUTE');
     attrs.set(id, a.children[1].children[0]);
