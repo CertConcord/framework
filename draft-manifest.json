@@ -115,8 +115,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 44572,
-      "sha256": "a86775c1e58f76eab221171eff044d66b4394a32156564b780a958417e3e34bb"
+      "bytes": 47032,
+      "sha256": "114399c8c79dbbb5aaba4a991f1fe362e5c2165afe65fa9311e5ebd15e0e31df"
     },
     {
       "path": "docs/apple-identity.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 297679,
-      "sha256": "2409ad121775f52883f00791748e0da8b11706a507fd2a953d0b52896a50ce44"
+      "bytes": 297857,
+      "sha256": "c24c04d7487584293d2294888428c6ee26a514ce9881a280ef7897eaf3e281a5"
     },
     {
       "path": "reference/README.md",
@@ -382,6 +382,11 @@
       "path": "reference/arkg.mjs",
       "bytes": 3770,
       "sha256": "b10ad6410f81ecf2abc16470c5c392109f57440112d58480b97d78ad74cbc315"
+    },
+    {
+      "path": "reference/attestation-extension-admission.test.mjs",
+      "bytes": 11381,
+      "sha256": "3ec27de77b341aaaa58ab80bd2d6d17c4aa50da3e78528651e8ad44b0cf03fe2"
     },
     {
       "path": "reference/attestation-fixtures.mjs",
@@ -980,8 +985,8 @@
     },
     {
       "path": "reference/key-attestation.mjs",
-      "bytes": 21094,
-      "sha256": "5ea47d77e0e5962f300de9ef1cd96a2f27faff04ab7836e652dd5cea7e8f7cac"
+      "bytes": 21432,
+      "sha256": "7103d31b279a00764c67783d98b02496ac0d3883ff140abb7da3c52f90c61f5e"
     },
     {
       "path": "reference/key-attestation.test.mjs",
@@ -1967,6 +1972,11 @@
       "path": "reference/vectors/acme-profile-metadata.json",
       "bytes": 11991,
       "sha256": "6254f5eb0dd9cfc6c0677854ca664b2861db2f4bd4ff6b7217e7ffe151025382"
+    },
+    {
+      "path": "reference/vectors/attestation-extension-admission.json",
+      "bytes": 148897,
+      "sha256": "03f24bff4babaf5f5dd24f96a79ab273aac05b33fe6de47655c4bc568e06a3e2"
     },
     {
       "path": "reference/vectors/attestation-pathlen.json",
@@ -13152,6 +13162,11 @@
       "path": "tools/check.mjs",
       "bytes": 7633,
       "sha256": "f667bc498d8e5c498d36e10c3acd3c8a921f108690c9d11487574fc677363978"
+    },
+    {
+      "path": "tools/create-attestation-extension-admission-vectors.mjs",
+      "bytes": 15897,
+      "sha256": "bd7852267e9ebf6ef612a379a0ba5857d1ec27bb88821c23adad5d90231c4d07"
     },
     {
       "path": "tools/create-attestation-pathlen-vectors.mjs",
