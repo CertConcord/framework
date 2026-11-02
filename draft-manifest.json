@@ -115,8 +115,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 42530,
-      "sha256": "703c1d278afe951a768c3b5da28c2b3fa796f63db74e839edc55662547d7564f"
+      "bytes": 44572,
+      "sha256": "a86775c1e58f76eab221171eff044d66b4394a32156564b780a958417e3e34bb"
     },
     {
       "path": "docs/apple-identity.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 297537,
-      "sha256": "a004f27f9f601ebb089dd452003812d1dae4d081cd746b14f61aa7cde870a1da"
+      "bytes": 297679,
+      "sha256": "2409ad121775f52883f00791748e0da8b11706a507fd2a953d0b52896a50ce44"
     },
     {
       "path": "reference/README.md",
@@ -387,6 +387,11 @@
       "path": "reference/attestation-fixtures.mjs",
       "bytes": 6494,
       "sha256": "ec94b7f427bbe52d650852ad39213cb0f753bb5bd08613cb23354628bd1433c1"
+    },
+    {
+      "path": "reference/attestation-pathlen.test.mjs",
+      "bytes": 12433,
+      "sha256": "81fe26cac599c45e08765df91100c261b2e92f401c39fb4bb92ff2eb64149f32"
     },
     {
       "path": "reference/audit-regressions.test.mjs",
@@ -975,8 +980,8 @@
     },
     {
       "path": "reference/key-attestation.mjs",
-      "bytes": 20964,
-      "sha256": "912232a0618a917b84ccaee393b7f5796d64fcbab4ece9abafe48d6e28dbf09f"
+      "bytes": 21094,
+      "sha256": "5ea47d77e0e5962f300de9ef1cd96a2f27faff04ab7836e652dd5cea7e8f7cac"
     },
     {
       "path": "reference/key-attestation.test.mjs",
@@ -1962,6 +1967,11 @@
       "path": "reference/vectors/acme-profile-metadata.json",
       "bytes": 11991,
       "sha256": "6254f5eb0dd9cfc6c0677854ca664b2861db2f4bd4ff6b7217e7ffe151025382"
+    },
+    {
+      "path": "reference/vectors/attestation-pathlen.json",
+      "bytes": 83935,
+      "sha256": "1222b052bd3ebcec35ad9d7d51c75f280beaa493a97fdf3972a266bc88c11df1"
     },
     {
       "path": "reference/vectors/authority-rsa-equivalence.json",
@@ -13142,6 +13152,11 @@
       "path": "tools/check.mjs",
       "bytes": 7633,
       "sha256": "f667bc498d8e5c498d36e10c3acd3c8a921f108690c9d11487574fc677363978"
+    },
+    {
+      "path": "tools/create-attestation-pathlen-vectors.mjs",
+      "bytes": 15821,
+      "sha256": "50472a97292895c870745f13c296a784de16eddb3eb26d7ecc551f3fbe807326"
     },
     {
       "path": "tools/create-authority-rsa-equivalence-vectors.mjs",
