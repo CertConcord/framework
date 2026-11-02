@@ -14,7 +14,7 @@ The code-signing `SigningReceipt` proves certificate inclusion in a batch. CertC
 
 ## Evidence and reference implementation
 
-The [preservation contract](document-preservation.md) maps the independent requirements to the existing CMS evidence package and RFC 4998 adapter. Its lifetime checker is imported from the pinned independent component; TSA verification and historical status resolution remain framework adapter responsibilities.
+The [preservation contract](document-preservation.md) maps the independent requirements to the existing CMS evidence package and RFC 4998 adapter. Framework adapts the pinned component's lifetime rules to authenticated outward timestamp bounds in its [local lifetime adapter](../reference/preservation-lifetimes.mjs); the component snapshot remains unchanged. TSA verification and historical status resolution remain framework adapter responsibilities.
 
 The offline SDK requires caller-provisioned trust and complete original evidence. Missing dependencies or stale required status cannot yield VALID. Historical replay and current admissibility retain distinct state and knowledge times. Archived evidence does not lower live trust watermarks.
 

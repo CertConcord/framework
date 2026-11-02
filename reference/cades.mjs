@@ -263,7 +263,7 @@ function timestamp(parsed, value, failures, policy, times, archive) {
         'CADES_TIMESTAMP_ACCURACY_MISSING',
         'INDETERMINATE',
       );
-      check(info.genTime - info.accuracy >= 0, 'CADES_TIMESTAMP_TIME');
+      check(info.poeLowerBound >= 0, 'CADES_TIMESTAMP_TIME');
       check(
         info.poeUpperBound <= times.knowledgeTime &&
           (archive || info.poeUpperBound <= times.validationTime),
@@ -480,16 +480,13 @@ export function verifyCAdES(
       const coverage = coveredBy(item, next);
       if (next && item.info && next.info)
         attempt(local, () =>
-          check(
-            item.info.poeUpperBound <= next.info.genTime - next.info.accuracy,
-            'CADES_ARCHIVE_TIME_ORDER',
-          ),
+          check(item.info.poeUpperBound <= next.info.poeLowerBound, 'CADES_ARCHIVE_TIME_ORDER'),
         );
       if (item.info && item.signature.certificate) {
         const low = materialFor(
           item.signature,
           'TSA',
-          item.info.genTime - item.info.accuracy,
+          item.info.poeLowerBound,
           currentParsed,
           policy,
           times,
@@ -545,7 +542,7 @@ export function verifyCAdES(
         const low = materialFor(
           item.signature,
           'TSA',
-          item.info.genTime - item.info.accuracy,
+          item.info.poeLowerBound,
           currentParsed,
           policy,
           times,
@@ -570,7 +567,7 @@ export function verifyCAdES(
       if (nextArchive?.info && item.info)
         attempt(local, () =>
           check(
-            item.info.poeUpperBound <= nextArchive.info.genTime - nextArchive.info.accuracy,
+            item.info.poeUpperBound <= nextArchive.info.poeLowerBound,
             'CADES_TIMESTAMP_TIME_ORDER',
           ),
         );

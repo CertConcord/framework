@@ -303,12 +303,15 @@ for (const [delay, expected] of [[29, 'VALID'], [30, 'INVALID'], [31, 'INVALID']
     assert.equal(result.proofOfExistenceUpperBound, f.P);
   }, { proofDelay: delay }));
 
-for (const [delay, milliseconds, expected] of [[29, 999, 'VALID'], [30, 1, 'INVALID']])
-  test(`fractional proof at ${delay} seconds plus ${milliseconds} milliseconds retains the exact exclusive bound`, async () => usingFixture((f, create) => {
+// Explicit outward binary64 bounds for the independently specified decimal endpoints.
+for (const [delay, milliseconds, expected, upper] of [
+  [29, 999, 'VALID', 1800000029.999], [30, 1, 'INVALID', 1800000030.0010002],
+])
+  test(`fractional proof at ${delay} seconds plus ${milliseconds} milliseconds retains the conservative exclusive bound`, async () => usingFixture((f, create) => {
     const result = verdict(create(f.options).verify(f.input), expected);
-    assert.equal(result.proofOfExistenceUpperBound, f.P);
-    assert.notEqual(f.P, Math.floor(f.P));
-    assert.equal(result.historicalAuthorization.stateTime, f.P);
+    assert.equal(result.proofOfExistenceUpperBound, upper);
+    assert.notEqual(upper, Math.floor(upper));
+    assert.equal(result.historicalAuthorization.stateTime, upper);
   }, { proofDelay: delay, firstAccuracyMillis: milliseconds }));
 
 test('a loose caller data deadline cannot override the earliest raw approver key cutoff', async () => usingFixture((f, create) => {
