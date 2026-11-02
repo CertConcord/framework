@@ -160,7 +160,7 @@ test('ERS preservation uses whole accuracy intervals and the timestamp hash when
         ...f.preservation,
         resolveTimestamp: () => ({ ...f.trust, revokedAt: f.start + 101 }),
       }),
-    /ERS_TIMESTAMP_LIFETIME/,
+    /TSA_TIME_OR_REVOCATION/,
   );
   f.clock(f.start);
   first = await a.createERS(data, { tsa: f.tsa, hashOID: p.OID.sha256 });

@@ -276,7 +276,7 @@ function publicationProof(proof, imprint, at, knowledgeTime, selected) {
     'ORG_HISTORY_PUBLICATION_ACCURACY',
     'INDETERMINATE',
   );
-  const first = info.genTime - info.accuracy,
+  const first = info.poeLowerBound,
     last = info.poeUpperBound;
   need(
     first >= Math.max(pin.parsed.notBefore, pin.validFrom) &&

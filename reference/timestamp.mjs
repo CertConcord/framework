@@ -101,6 +101,28 @@ export function tokenFromResponse(response) {
   requireThat(a?.length === 2 && [0n, 1n].includes(intValue(a[0].children[0])), 'TSA_REJECTED');
   return a[1].raw;
 }
+// Project integer microseconds outward to binary64 seconds. Comparing the exact
+// binary value avoids moving already-exact endpoints or rounding an interval inward.
+function intervalBound(microseconds, direction) {
+  const value = Number(microseconds + 'e-6'),
+    view = new DataView(new ArrayBuffer(8));
+  view.setFloat64(0, value);
+  const bits = view.getBigUint64(0),
+    exponent = Number((bits >> 52n) & 2047n),
+    mantissa = (bits & ((1n << 52n) - 1n)) + (exponent === 0 ? 0n : 1n << 52n),
+    shift = exponent === 0 ? -1074 : exponent - 1075;
+  let binary = (bits >> 63n ? -mantissa : mantissa) * 1000000n,
+    exact = microseconds;
+  if (shift < 0) exact <<= BigInt(-shift);
+  else binary <<= BigInt(shift);
+  if ((direction > 0 && binary < exact) || (direction < 0 && binary > exact)) {
+    if (value === 0) return direction * Number.MIN_VALUE;
+    view.setBigUint64(0, bits + BigInt(value > 0 ? direction : -direction));
+    return view.getFloat64(0);
+  }
+  return value;
+}
+
 export function parseTSTInfo(raw) {
   const a = parseDER(raw).children;
   requireThat(a?.length >= 5 && intValue(a[0]) === 1n, 'TST_VERSION');
@@ -114,15 +136,24 @@ export function parseTSTInfo(raw) {
       imprint.length === hashes[hashOID](Buffer.alloc(0)).length,
     'TST_HASH',
   );
-  const time = a[4].value.toString('ascii'),
+  const time = a[4].value.toString('latin1'),
     match = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\.\d+)?Z$/.exec(time);
   requireThat(a[4].tag === 24 && match, 'TST_TIME');
-  const genTime =
-    Date.parse(
-      `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${match[6]}${match[7] ?? ''}Z`,
-    ) / 1000;
-  requireThat(Number.isFinite(genTime), 'TST_TIME');
-  let nonce, accuracy, tsaName;
+  const whole = `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${match[6]}`,
+    milliseconds = Date.parse(`${whole}.000Z`),
+    fraction = match[7]?.slice(1) ?? '';
+  requireThat(
+    Number.isFinite(milliseconds) &&
+      new Date(milliseconds).toISOString() === `${whole}.000Z` &&
+      !fraction.endsWith('0'),
+    'TST_TIME',
+  );
+  if (fraction.length > 3)
+    throw new VerificationError('TST_TIME_PRECISION_UNSUPPORTED', 'UNSUPPORTED', 'time');
+  const timeMillis = milliseconds + Number(fraction.padEnd(3, '0')),
+    genTime = timeMillis / 1000,
+    timeMicros = BigInt(timeMillis) * 1000n;
+  let nonce, accuracyMicros, tsaName;
   const optionalTags = new Set();
   let previousOptional = -1;
   for (const n of a.slice(5)) {
@@ -132,7 +163,7 @@ export function parseTSTInfo(raw) {
     requireThat(rank < 0 || rank > previousOptional, 'TST_FIELD_ORDER');
     if (rank >= 0) previousOptional = rank;
     if (n.tag === 48) {
-      accuracy = 0;
+      accuracyMicros = 0n;
       let previous = -1;
       for (const t of n.children) {
         const rank = [2, 0x80, 0x81].indexOf(t.tag);
@@ -141,11 +172,11 @@ export function parseTSTInfo(raw) {
         if (t.tag === 2) {
           const seconds = Number(intValue(t));
           requireThat(Number.isSafeInteger(seconds) && seconds >= 0, 'TST_ACCURACY');
-          accuracy += seconds;
+          accuracyMicros += BigInt(seconds) * 1000000n;
         } else if ([0x80, 0x81].includes(t.tag)) {
           const v = intValue({ tag: 2, value: t.value });
           requireThat(v >= 1n && v <= 999n, 'TST_ACCURACY');
-          accuracy += Number(v) / (t.tag === 0x80 ? 1000 : 1000000);
+          accuracyMicros += v * (t.tag === 0x80 ? 1000n : 1n);
         } else throw Error('TST_ACCURACY');
       }
     } else if (n.tag === 2) nonce = intValue(n);
@@ -159,9 +190,12 @@ export function parseTSTInfo(raw) {
     imprint,
     serial: intValue(a[3]),
     genTime,
-    accuracy,
+    accuracy: accuracyMicros === undefined ? undefined : Number(accuracyMicros + 'e-6'),
     nonce,
-    poeUpperBound: accuracy === undefined ? undefined : genTime + accuracy,
+    poeLowerBound:
+      accuracyMicros === undefined ? undefined : intervalBound(timeMicros - accuracyMicros, -1),
+    poeUpperBound:
+      accuracyMicros === undefined ? undefined : intervalBound(timeMicros + accuracyMicros, 1),
     ...(tsaName ? { tsaName } : {}),
   };
 }
@@ -224,6 +258,13 @@ function verifyTSAName(info, certificate) {
   );
 }
 
+function verifyRevocationInterval(info, revokedAt) {
+  if (revokedAt === Infinity) return;
+  if (info.accuracy === undefined)
+    throw new VerificationError('TSA_ACCURACY_REQUIRED', 'INDETERMINATE', 'time');
+  requireThat(info.poeUpperBound < revokedAt, 'TSA_TIME_OR_REVOCATION');
+}
+
 export function verifyTimestampToken(
   token,
   {
@@ -266,7 +307,9 @@ export function verifyTimestampToken(
     'TSA_REQUEST_BINDING',
   );
   requireThat(
-    info.genTime <= at + maxFutureSkew && info.genTime < revokedAt,
+    (revokedAt === Infinity || Number.isFinite(revokedAt)) &&
+      info.genTime <= at + maxFutureSkew &&
+      info.genTime < revokedAt,
     'TSA_TIME_OR_REVOCATION',
   );
   requireThat(certificate && issuerKey, 'TSA_TRUST_REQUIRED');
@@ -277,6 +320,7 @@ export function verifyTimestampToken(
     at: info.genTime,
     profileID: 'CERTCONCORD-TSA-v1',
   });
+  verifyRevocationInterval(info, revokedAt);
   return info;
 }
 export async function requestTimestamp(
@@ -337,7 +381,8 @@ export function verifyExternalTimestampToken(
     'TSA_REQUEST_BINDING',
   );
   requireThat(
-    info.genTime <= at + maxFutureSkew &&
+    (revokedAt === Infinity || Number.isFinite(revokedAt)) &&
+      info.genTime <= at + maxFutureSkew &&
       info.genTime < revokedAt &&
       info.genTime * 1000 >= Date.parse(cert.validFrom) &&
       info.genTime * 1000 < Date.parse(cert.validTo),
@@ -357,5 +402,6 @@ export function verifyExternalTimestampToken(
     eku?.children.length === 3 && equal(eku.children[1].raw, Buffer.from('0101ff', 'hex')),
     'TSA_EKU_NOT_CRITICAL',
   );
+  verifyRevocationInterval(info, revokedAt);
   return info;
 }

@@ -151,12 +151,47 @@ test('saved organization corpus retains exact public original bytes and declared
     assert(!stored.toString().includes('PRIVATE KEY'));
   }
   const provenance = JSON.parse(corpus.read(corpus.manifest.provenance));
+  const { expectationRevision: revision, ...construction } = provenance;
+  assert.deepEqual(construction, JSON.parse(corpus.read(revision.originalProvenance)));
+  assert.equal(construction.semanticSHA256, '9ea41d36329a068f509352bd60458aee078f1ab1a0daac10e2de6ed12dcc3eac');
   assert.equal(
-    provenance.semanticSHA256,
+    revision.semanticSHA256,
     vectorHash(
       fs.readFileSync(new URL('./organization-history-vector-semantics.mjs', import.meta.url)),
     ),
   );
+  assert.equal(revision.case, 'proof-30-1');
+  assert.equal(revision.exactUpperMicroseconds, '1800000030001000');
+  const entry = corpus.manifest.cases.find(row => row.id === revision.case);
+  assert.equal(revision.evidenceRecord, entry.evidenceRecord);
+  assert.equal(revision.expected, entry.expected);
+  const paths = [
+    '/proofOfExistenceUpperBound', '/historicalAuthorization/stateTime',
+    '/historicalAuthorization/knowledgeTime', '/currentAdmissibility/stateTime',
+    '/preservation/proofOfExistenceUpperBound',
+  ];
+  assert.deepEqual(revision.changes, paths.map(path => ({
+    path, previous: 1800000030.001, current: 1800000030.0010002,
+  })));
+  const restored = corpus.expected(entry);
+  for (const change of revision.changes) {
+    const keys = change.path.slice(1).split('/'), key = keys.pop();
+    const parent = keys.reduce((value, name) => value[name], restored);
+    assert.equal(parent[key], change.current);
+    parent[key] = change.previous;
+  }
+  // This exact comparison also preserves every verdict, reason and other field.
+  assert.deepEqual(restored, JSON.parse(corpus.read(revision.previousExpected)));
+  const scaledBinary64 = value => {
+    const bytes = Buffer.alloc(8); bytes.writeDoubleBE(value);
+    const bits = bytes.readBigUInt64BE(), exponent = Number((bits >> 52n) & 2047n) - 1023 - 52;
+    assert(exponent < 0 && value > 0);
+    return { numerator: ((bits & ((1n << 52n) - 1n)) | (1n << 52n)) * 1000000n, denominator: 1n << BigInt(-exponent) };
+  };
+  const oldBound = scaledBinary64(1800000030.001), bound = scaledBinary64(1800000030.0010002);
+  const exact = BigInt(revision.exactUpperMicroseconds);
+  assert(oldBound.numerator < exact * oldBound.denominator);
+  assert(bound.numerator >= exact * bound.denominator);
   assert.equal(provenance.baselineCommit, 'ac43db6dfd52acbac57a091cb2c9b5cc71e06244');
   assert(
     provenance.sources.some(

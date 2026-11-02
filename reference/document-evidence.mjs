@@ -353,7 +353,7 @@ export function verifyDocumentEvidence(
     requireThat(
       Number.isFinite(timeResult.poeUpperBound) &&
         timeResult.poeUpperBound <= knowledgeTime &&
-        tsa.notBefore <= timeResult.genTime - timeResult.accuracy &&
+        tsa.notBefore <= timeResult.poeLowerBound &&
         tsa.notAfter > timeResult.poeUpperBound,
       'DOCUMENT_TIMESTAMP_INTERVAL',
     );
@@ -373,7 +373,7 @@ export function verifyDocumentEvidence(
       authorityFailures.push(error);
     }
     stateTime = timeResult.poeUpperBound;
-    for (const time of [timeResult.genTime - timeResult.accuracy, stateTime])
+    for (const time of [timeResult.poeLowerBound, stateTime])
       authorityQueries.push({
         certificate: trust.timestamp.certificate,
         role: 'TIMESTAMP_AUTHORITY',

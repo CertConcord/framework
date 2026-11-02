@@ -1,4 +1,4 @@
-import { assertPreservationLifetimes } from './vendor/mtc-document-validation/lifetimes.mjs';
+import { assertPreservationLifetimes } from './preservation-lifetimes.mjs';
 import { DOMParser } from '@xmldom/xmldom';
 import { C14nCanonicalization } from 'xml-crypto';
 import {
@@ -234,7 +234,7 @@ export function verifyERSOriginalProof(
       requireThat(
         info.poeUpperBound === P &&
           info.accuracy >= 0 &&
-          info.genTime - info.accuracy >= cert.notBefore &&
+          info.poeLowerBound >= cert.notBefore &&
           P < cert.notAfter,
         'ERS_TIMESTAMP_INTERVAL',
       );
@@ -320,7 +320,7 @@ function verifyPreservation(
         'ERS_ACCURACY_REQUIRED',
       );
       requireThat(
-        info.genTime - info.accuracy >= cert.notBefore &&
+        info.poeLowerBound >= cert.notBefore &&
           info.poeUpperBound < cert.notAfter &&
           info.poeUpperBound <= at,
         'ERS_TIMESTAMP_INTERVAL',

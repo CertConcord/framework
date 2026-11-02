@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "profile": "certconcord-organization-history-vectors-draft-03-rar2",
   "description": "Frozen synthetic original organization evidence with external public trust and explicit knowledge snapshots.",
-  "provenance": "files/91362e040e9630782e233550dae5a342abb5d66f8e54fc7aa811b8883a1a0e91.json",
+  "provenance": "files/b3c489c5faef91a1d92b4c4fcfa433065c3ee22f34370c9089598f614135dd1e.json",
   "files": [
     {
       "path": "files/004c0534a939c77223399c8ee42206fd17e342e88ca206dbbcfdf0583c537008.bin.b64",
@@ -588,6 +588,15 @@
       "encoding": "base64",
       "decodedBytes": 270849,
       "decodedSHA256": "4efa61f17d88142d44a1191623d559faeb4e7b695630f2383d1419625331f330"
+    },
+    {
+      "path": "files/4f274090355de774a644c1d21541ba501867ceafbb2e1010a0ed05c708094ea7.json",
+      "bytes": 23806,
+      "sha256": "4f274090355de774a644c1d21541ba501867ceafbb2e1010a0ed05c708094ea7",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 23806,
+      "decodedSHA256": "4f274090355de774a644c1d21541ba501867ceafbb2e1010a0ed05c708094ea7"
     },
     {
       "path": "files/509013a3d836227ad3eefd3872c227c657a384f0dbfc8e0d74a218a9f893fbd7.spki.b64",
@@ -1283,6 +1292,15 @@
       "decodedSHA256": "b36974f469bbaad278d60d6419c1f8e12e20bcdd2243b37a6fb9777b85702dbe"
     },
     {
+      "path": "files/b3c489c5faef91a1d92b4c4fcfa433065c3ee22f34370c9089598f614135dd1e.json",
+      "bytes": 5502,
+      "sha256": "b3c489c5faef91a1d92b4c4fcfa433065c3ee22f34370c9089598f614135dd1e",
+      "mediaType": "application/json",
+      "encoding": "utf8",
+      "decodedBytes": 5502,
+      "decodedSHA256": "b3c489c5faef91a1d92b4c4fcfa433065c3ee22f34370c9089598f614135dd1e"
+    },
+    {
       "path": "files/b43b3072b4f07b46545a0ea126cc555ec3fcec57b028a2db835ebb37755fc905.json",
       "bytes": 12578,
       "sha256": "b43b3072b4f07b46545a0ea126cc555ec3fcec57b028a2db835ebb37755fc905",
@@ -1867,7 +1885,7 @@
       "evidenceRecord": "files/52a9c3d6c7f991eec6c715dbb929b26ed0cb3f34a8fa7733b5c84d9b9f8a0a7c.ers.b64",
       "policy": "files/cc5a855fc6710fcf84c89fdf9233af6a4907e8be57bee40465a4714e92a4824a.json",
       "knowledge": "files/26e378957f1f6119ac42266497b122f59d8ad6fa72eae0abc3e551d6d441a0b1.json",
-      "expected": "files/f26ae9b4929c9453c3c7452196bb89336778ef5fbaf380a8d90076e6252fbe84.json"
+      "expected": "files/4f274090355de774a644c1d21541ba501867ceafbb2e1010a0ed05c708094ea7.json"
     },
     {
       "id": "missing-original-document",

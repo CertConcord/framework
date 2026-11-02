@@ -942,7 +942,7 @@ export function inspectRFC3161Token(token, { request, externalCertificates = [] 
         'CADES_TIMESTAMP_ACCURACY_MISSING',
         'INDETERMINATE',
       );
-      check(info.genTime - info.accuracy >= 0, 'CADES_TIMESTAMP_TIME');
+      check(info.poeLowerBound >= 0, 'CADES_TIMESTAMP_TIME');
     });
     if (request)
       attempt(failures, () =>

@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/components.md",
-      "bytes": 5283,
-      "sha256": "23d8ce3cc9dc81484df9b0b96569eb79d8ef04f49ccec763f4abeb1098a47869"
+      "bytes": 5451,
+      "sha256": "d534b275e34c024dc7034cfdf749b480dd82042e3ab331c38617f88d0a8c5969"
     },
     {
       "path": "docs/composition-review.md",
@@ -175,8 +175,8 @@
     },
     {
       "path": "docs/document-preservation.md",
-      "bytes": 18590,
-      "sha256": "588e23b7e68437f3f4f583d8be479d689525c677945f0f8b231057819281d1b0"
+      "bytes": 18893,
+      "sha256": "581130baefec3d87f8e981d2bee44fdf55c77b957e570aaba092f66b78bb1771"
     },
     {
       "path": "docs/draft-acceptance.md",
@@ -215,8 +215,8 @@
     },
     {
       "path": "docs/mtc-document-validation.md",
-      "bytes": 3868,
-      "sha256": "5831073303810b0a127e055ca34b101dc76bfadbc8a20d4155498a970b993527"
+      "bytes": 4009,
+      "sha256": "e624106f880f2f1fcf89ef654fcdec8e7563a6ba4758c24293247f49eea12ec3"
     },
     {
       "path": "docs/organization-delegation.md",
@@ -274,6 +274,11 @@
       "sha256": "1fa65526af061e36a07574af8eede296402a8722479af0461ead9043a5a1614d"
     },
     {
+      "path": "docs/timestamp-time.md",
+      "bytes": 3947,
+      "sha256": "e5f1b81c32fb00404a9d87b3f9539ce7e948f2633e129ecec51cbf26cc62ac6f"
+    },
+    {
       "path": "docs/upstream-baseline.md",
       "bytes": 39463,
       "sha256": "3ef23de98b532a32f5e6806b271760cd25bc8ecf127dfd92376b052f9bc86d57"
@@ -300,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 296737,
-      "sha256": "05dba7855d022e9a0af9b1a070e065fd48ade6ad3882cbab4405664e538d1d68"
+      "bytes": 297244,
+      "sha256": "7c4f8179dd6a6c94bb0580f095bb55e4a5a162f7f4b1bd9793df9863935282c7"
     },
     {
       "path": "reference/README.md",
@@ -335,8 +340,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 35735,
-      "sha256": "c5f44b783c9b28b10ab454417da49eeaec4484cd037428b3de838878f27d2f64"
+      "bytes": 35725,
+      "sha256": "7931320ec1e2bdd2ebc807a27f66f215e61f96c694266c5971cba532c879eec9"
     },
     {
       "path": "reference/annex-verifier.mjs",
@@ -366,12 +371,12 @@
     {
       "path": "reference/archive-security.test.mjs",
       "bytes": 11640,
-      "sha256": "a5e88c8249fd0768bdf030bb31703209b218668eea93ab5738514da5c4a6756e"
+      "sha256": "a13643905348603ab940082b382506afadedcd0aa9cf0ccc03d823743d6b374e"
     },
     {
       "path": "reference/archive.mjs",
-      "bytes": 21702,
-      "sha256": "331577a3b25a6d2e847ea9a87dd5c2fe949b810967fc3c4226ded2263220efd3"
+      "bytes": 21664,
+      "sha256": "6a737a8f709007c7480ca6fecd74cfde5963c811dd569564193963c59223b61e"
     },
     {
       "path": "reference/arkg.mjs",
@@ -470,8 +475,8 @@
     },
     {
       "path": "reference/cades.mjs",
-      "bytes": 30054,
-      "sha256": "cd49aca0b03fcce5fe62728dd3d912ca9e2262a72ebe09f1c2a7d697216d4d83"
+      "bytes": 29940,
+      "sha256": "87f872222f1f83413c78b26e675704cd7b1b48b1d62c2fb600dc218bcaa193e0"
     },
     {
       "path": "reference/cades.test.mjs",
@@ -660,8 +665,8 @@
     },
     {
       "path": "reference/document-evidence.mjs",
-      "bytes": 17123,
-      "sha256": "3a33520222bd9afd25caf4c2fec0f47ddd5b527d5f72a73b6a90a69b4b1432a2"
+      "bytes": 17091,
+      "sha256": "a002efb13c211ff6efbc3fa0c285b8630d6ec2759d0edc1fdb57beffe877c21a"
     },
     {
       "path": "reference/document-evidence.test.mjs",
@@ -1225,8 +1230,8 @@
     },
     {
       "path": "reference/organization-history-independent.test.mjs",
-      "bytes": 22050,
-      "sha256": "2822fc518e6031413fcd61c4c7cfd3c2390a95f053476a9ca9b3be55f9993d09"
+      "bytes": 22200,
+      "sha256": "e3237958e4edd719b08c7fbb2c61f1ae7e813be8683fe0befe19f807675aebb0"
     },
     {
       "path": "reference/organization-history-knowledge-child.mjs",
@@ -1245,8 +1250,8 @@
     },
     {
       "path": "reference/organization-history-source.mjs",
-      "bytes": 27369,
-      "sha256": "4e5f92044c5c9877f57c775e9ba50de0e333da02e2f104c8f26ba68256ce7504"
+      "bytes": 27359,
+      "sha256": "77f7e8019fde0e445b1dec0a2e4ba39120090be2076e85ff28a21784a607a782"
     },
     {
       "path": "reference/organization-history-source.test.mjs",
@@ -1255,13 +1260,13 @@
     },
     {
       "path": "reference/organization-history-vector-semantics.mjs",
-      "bytes": 22615,
-      "sha256": "9ea41d36329a068f509352bd60458aee078f1ab1a0daac10e2de6ed12dcc3eac"
+      "bytes": 22864,
+      "sha256": "a8e73ed141793657111e30e5047f20cf2869018013eba2d105c8bb19fde68292"
     },
     {
       "path": "reference/organization-history-vectors.test.mjs",
-      "bytes": 12607,
-      "sha256": "16497a33fcffb9d085d6ca6196d960b4b8592cbea0c038b8c7f823e211e03a66"
+      "bytes": 14643,
+      "sha256": "b93c1708b242b61cb7a3aec10b36957a0ca130c7a3011a530578e2553f474b0e"
     },
     {
       "path": "reference/organization-history.mjs",
@@ -1355,8 +1360,8 @@
     },
     {
       "path": "reference/pades.mjs",
-      "bytes": 26531,
-      "sha256": "bf340cd17558c1f5a227c8d9b3f4c6fcab8b1186e3458b2f075c5873456449fb"
+      "bytes": 26501,
+      "sha256": "99cb57aab445a1816f41e5d62bff21f1124b6c304741434a28a82064a3236e4b"
     },
     {
       "path": "reference/pades.test.mjs",
@@ -1427,6 +1432,11 @@
       "path": "reference/postgres-rpc.test.mjs",
       "bytes": 3856,
       "sha256": "12277e342ba166fefcc3a265af8a0568c9cf760c65224b893d371263456c8d53"
+    },
+    {
+      "path": "reference/preservation-lifetimes.mjs",
+      "bytes": 2088,
+      "sha256": "8ee199b5ccf2c6b1d89442ea9a7d1deb6ce7701ef9cd4b16fa61d6a815889b2b"
     },
     {
       "path": "reference/preserved-certificate-status-semantics.mjs",
@@ -1884,14 +1894,24 @@
       "sha256": "e466a719300aeb54cf4ae55b3670e0fd88adfce4956f7b92e97fd64a980e75e4"
     },
     {
+      "path": "reference/timestamp-time-integration.test.mjs",
+      "bytes": 11743,
+      "sha256": "87532662c972f91c4564b204ca6dc76ababc48cd0f01bf2b41734680b9a75540"
+    },
+    {
+      "path": "reference/timestamp-time.test.mjs",
+      "bytes": 6691,
+      "sha256": "81bf977c347fee35c05ac828e2b61ad98c5c5653e85ccdcd49d11a43952fa7ce"
+    },
+    {
       "path": "reference/timestamp-verifier.test.mjs",
       "bytes": 16311,
       "sha256": "3d93b65cf1886efa10a54eed1417d2165ebacd6b782804661dd6bac6ec8c5aea"
     },
     {
       "path": "reference/timestamp.mjs",
-      "bytes": 12044,
-      "sha256": "cec86b6eafe55d169496426388dfe41f3342d7290bb70483bb8c877c4c33564c"
+      "bytes": 14219,
+      "sha256": "ffae321403dfdb0061bdb4270e779957d35bad6fd1fe8117a37976343f73a875"
     },
     {
       "path": "reference/tpm-simulator-check.mjs",
@@ -5010,8 +5030,8 @@
     },
     {
       "path": "reference/vectors/organization-history-rar2/README.md",
-      "bytes": 6480,
-      "sha256": "e9fbf114600fa822452a5792609f55276b497991232028e0b8754d73d8e4b395"
+      "bytes": 7307,
+      "sha256": "d2e6e4d3dfd18a0fbbe7fcf37205d58a4f2acc5aed85e20093aaf79b4b6d935d"
     },
     {
       "path": "reference/vectors/organization-history-rar2/files/004c0534a939c77223399c8ee42206fd17e342e88ca206dbbcfdf0583c537008.bin.b64",
@@ -5337,6 +5357,11 @@
       "path": "reference/vectors/organization-history-rar2/files/4efa61f17d88142d44a1191623d559faeb4e7b695630f2383d1419625331f330.cbor.b64",
       "bytes": 361133,
       "sha256": "059b75f46bfa6d3d2e8999426cc9b7bf251dc94360e696302ab2c6dc61348ce1"
+    },
+    {
+      "path": "reference/vectors/organization-history-rar2/files/4f274090355de774a644c1d21541ba501867ceafbb2e1010a0ed05c708094ea7.json",
+      "bytes": 23806,
+      "sha256": "4f274090355de774a644c1d21541ba501867ceafbb2e1010a0ed05c708094ea7"
     },
     {
       "path": "reference/vectors/organization-history-rar2/files/509013a3d836227ad3eefd3872c227c657a384f0dbfc8e0d74a218a9f893fbd7.spki.b64",
@@ -5724,6 +5749,11 @@
       "sha256": "b36974f469bbaad278d60d6419c1f8e12e20bcdd2243b37a6fb9777b85702dbe"
     },
     {
+      "path": "reference/vectors/organization-history-rar2/files/b3c489c5faef91a1d92b4c4fcfa433065c3ee22f34370c9089598f614135dd1e.json",
+      "bytes": 5502,
+      "sha256": "b3c489c5faef91a1d92b4c4fcfa433065c3ee22f34370c9089598f614135dd1e"
+    },
+    {
       "path": "reference/vectors/organization-history-rar2/files/b43b3072b4f07b46545a0ea126cc555ec3fcec57b028a2db835ebb37755fc905.json",
       "bytes": 12578,
       "sha256": "b43b3072b4f07b46545a0ea126cc555ec3fcec57b028a2db835ebb37755fc905"
@@ -6015,8 +6045,8 @@
     },
     {
       "path": "reference/vectors/organization-history-rar2/manifest.json",
-      "bytes": 115536,
-      "sha256": "4af9c2a52161197b2dda2788f3f3fd62e195afa41b83ada0d3512a77376327d0"
+      "bytes": 116326,
+      "sha256": "11f67b0428465b5a44dd4a084d269b0104e7442381b134da7b4d73c4f30a1a16"
     },
     {
       "path": "reference/vectors/organization-history/README.md",
@@ -12714,6 +12744,11 @@
       "sha256": "f5c2f61a5f1e5a8f5f524af4c318365d2f741a4e11a10062de829469944a78ab"
     },
     {
+      "path": "reference/vectors/timestamp-time-contract.json",
+      "bytes": 521907,
+      "sha256": "a8e39a5b350462367e3916aa99b634d26ba589b47be33d2162c18603c109ac12"
+    },
+    {
       "path": "reference/vectors/xmlers-namespace/absolute-unused-prefix.xml",
       "bytes": 12841,
       "sha256": "56787fbad8632ae7264437532a42e226baf5fc7fc83e81710b749190200c9937"
@@ -12831,7 +12866,7 @@
     {
       "path": "reference/xmlers-contract.test.mjs",
       "bytes": 25380,
-      "sha256": "0546aee83cd1e2535867937c3ca36929084be858360e32994715aa9446f6e03a"
+      "sha256": "eb388ca1fc7d7d27f958d6252d71ce17c8776a072e30c53469e2986392e90ff8"
     },
     {
       "path": "spec/applications.md",
@@ -12860,8 +12895,8 @@
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
-      "bytes": 29227,
-      "sha256": "871ec5428c1946b02d6822138ddf374643613a3b3188904a90ea9396ed0bd154"
+      "bytes": 29421,
+      "sha256": "14b2bdfac4668ac79db27ce64fe2de07c75d720d2ffec959d949786bd42370e3"
     },
     {
       "path": "spec/bindings/DSCP-draft-03.md",
@@ -13102,6 +13137,11 @@
       "path": "tools/create-timestamp-name-vectors.mjs",
       "bytes": 10279,
       "sha256": "734b4a14a3cf80daf47ba1a9de66a8d129ee80dd9f1be2d776864e33e20d8797"
+    },
+    {
+      "path": "tools/create-timestamp-time-vectors.mjs",
+      "bytes": 7998,
+      "sha256": "21d4bc86b1b78f0fa9c4a54a92ad3129f41e6192fe353fdf68d8b49e0b123a97"
     },
     {
       "path": "tools/ers-bc186/ErsBc186Probe.java",

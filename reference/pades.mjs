@@ -452,7 +452,7 @@ export async function verifyPAdES(
       if (previous?.info && item.info)
         attempt(failures, () =>
           check(
-            previous.info.poeUpperBound <= item.info.genTime - item.info.accuracy,
+            previous.info.poeUpperBound <= item.info.poeLowerBound,
             'PADES_TIMESTAMP_TIME_ORDER',
           ),
         );
@@ -472,7 +472,7 @@ export async function verifyPAdES(
         const low = materialFor(
           item.signature,
           'TSA',
-          item.info.genTime - item.info.accuracy,
+          item.info.poeLowerBound,
           current,
           policy,
           times,

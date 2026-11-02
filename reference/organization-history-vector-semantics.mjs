@@ -61,19 +61,20 @@ export const organizationHistorySemantics = Object.freeze([
     'Expired original issuer and retired original roles retain valid historical evidence under scoped succession.',
   ),
   ...[
-    [1, 500, V],
-    [29, 0, V],
-    [30, 0, I],
-    [31, 0, I],
-    [29, 999, V],
-    [30, 1, I],
-  ].map(([seconds, millis, overall]) =>
+    // Fixed conservative binary64 upper bounds, independent of verifier output.
+    [1, 500, V, 1800000001.5],
+    [29, 0, V, 1800000029],
+    [30, 0, I, 1800000030],
+    [31, 0, I, 1800000031],
+    [29, 999, V, 1800000029.999],
+    [30, 1, I, 1800000030.0010002],
+  ].map(([seconds, millis, overall, proofUpperBound]) =>
     definition(
       `proof-${seconds}-${millis}`,
       'proof-boundary',
       `The exact first proof at A + ${seconds} seconds + ${millis} milliseconds respects exclusive authorization expiry.`,
       [overall, overall, overall, V],
-      { proofOffset: seconds + millis / 1000, seconds, millis },
+      { proofOffset: seconds + millis / 1000, proofUpperBound, seconds, millis },
     ),
   ),
   ...requiredOriginals.map((missing) =>
@@ -283,7 +284,7 @@ function facts(entry) {
     return manifest;
   });
   const timestamps = timestampFacts(entry.evidenceRecord);
-  return { spec, leaves, statuses, certificates, history, timestamps, P: A + spec.proofOffset };
+  return { spec, leaves, statuses, certificates, history, timestamps, P: spec.proofUpperBound ?? A + spec.proofOffset };
 }
 
 /** Check public construction facts without asking a historical verifier for a verdict. */
@@ -550,7 +551,7 @@ export function assertOrganizationHistoryOutcome(entry, actual) {
   assert.equal(actual.coreRevision, 'draft-03');
   assert.equal(actual.purpose, 'RETAINED_EVIDENCE_VERIFICATION');
   assert.equal(actual.knowledgeTime, spec.knowledgeTime);
-  const P = spec.proofUnavailable ? null : A + spec.proofOffset;
+  const P = spec.proofUnavailable ? null : spec.proofUpperBound ?? A + spec.proofOffset;
   assert.equal(actual.proofOfExistenceUpperBound, P);
   assert.equal(actual.historicalAuthorization.scope, 'AS_KNOWN_AT_PROOF_TIME');
   assert.equal(actual.currentAdmissibility.scope, 'HISTORICAL_EVIDENCE_UNDER_CURRENT_KNOWLEDGE');

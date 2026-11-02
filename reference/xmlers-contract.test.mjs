@@ -342,7 +342,7 @@ test('XMLERS preservation evaluates the entire signed accuracy interval', async 
         resolveTimestamp: () => ({ ...f.trust, revokedAt: start + 2 }),
       }),
     'INVALID',
-    'ERS_TIMESTAMP_LIFETIME',
+    'TSA_TIME_OR_REVOCATION',
   );
   f.clock(start + 3);
   const overlapping = await a.renewXMLERS(first, data, { tsa: f.tsa });

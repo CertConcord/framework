@@ -35,6 +35,8 @@ Native Promise results remain invalid even if attaching a rejection observer thr
 
 Every deadline is explicit and finite; missing assessments fail closed. The fixtures' lifetimes are artificial values, not forecasts for SHA-256, SHA-512 or ML-DSA. The reference does not calculate cryptanalytic lifetimes or fetch revocation, governance or incident histories automatically. The [retained-history resolver](historical-validation.md) authenticates supplied history under externally selected roots, publication proofs and deadlines.
 
+The [selected helper time contract](timestamp-time.md) supplies conservative lower and upper bounds without reconstructing them through floating-point addition or subtraction. Framework applies its lifetime adapter to these authenticated bounds while retaining the pinned component snapshot unchanged.
+
 Each timestamp requires a stated accuracy interval contained within the TSA certificate validity and ending no later than `at`. Adjacent intervals must not overlap except at their common boundary. This conservative subset does not use optional TSA ordering assertions to admit overlapping intervals.
 
 The initial proof must precede `dataValidUntil`. Every successor proof must precede the preceding timestamp's protection deadline. A chain's data hash must remain acceptable until the first proof of the next hash-renewal chain, or until `at` for the final chain. The final timestamp must still provide protection at `at`. Equality with a deadline fails. A newly signed token cannot repair a lost protection interval.
