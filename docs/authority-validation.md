@@ -37,6 +37,21 @@ The [fixed generic-policy vectors](../reference/vectors/direct-authority-key-inc
 use explicit synthetic P-256 selections; they do not change the governed
 pure ML-DSA-87 profile or authorize an alternative encoding by themselves.
 
+For explicitly selected RSA identities, this negative comparison also recognizes
+the same positive modulus and public exponent in `rsaEncryption` and
+`id-RSASSA-PSS` SubjectPublicKeyInfo encodings. These encodings carry the same
+`RSAPublicKey` structure ([RFC 4055, Section 1.2](https://www.rfc-editor.org/rfc/rfc4055#section-1.2)).
+PSS hash, mask-generation and salt restrictions remain attached to the original
+key object; equivalence never replaces that key for signature verification.
+The additional RSA-family fallback treats native-imported nonpositive modulus
+or exponent values as non-equivalent. Existing same-type native key equality,
+key-import policy, and governed signing profiles are unchanged.
+The [synthetic RSA/PSS vectors](../reference/vectors/authority-rsa-equivalence.json)
+cover both propagation directions, original status bindings, time and appointment
+limits, unrelated material and retained native PSS signature restrictions. Their
+policy and status inputs assume prior caller authentication; they are not a
+signed governance directory or an operational RSA authority profile.
+
 Online issuance and execution and offline CMS/mdoc verification use the same
 resolver contract. Registration decisions are evaluated when issued, issuer roles
 when the credential is issued, status roles when status is published, and permit
