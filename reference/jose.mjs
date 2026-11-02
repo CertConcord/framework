@@ -224,6 +224,13 @@ export function verifyJAdES(
   return r;
 }
 
+function validateSDJWTHashClaims(value, topLevel = false) {
+  if (value === null || typeof value !== 'object') return;
+  if (Object.hasOwn(value, '_sd_alg'))
+    requireThat(topLevel && value._sd_alg === 'sha-256', 'SD_FORMAT');
+  for (const child of Object.values(value)) validateSDJWTHashClaims(child);
+}
+
 function validateSDJWTTypes(claims) {
   requireThat(typeof claims.vct === 'string' && claims.vct.length > 0, 'SD_FORMAT');
   if (Object.hasOwn(claims, 'aka_vcts'))
@@ -279,9 +286,13 @@ export function issueSDJWT(
     };
   validateSDJWTTypes(payload);
   if (status) payload.status = status;
+  const payloadBytes = Buffer.from(JSON.stringify(payload));
+  validateSDJWTHashClaims(parseJSON(payloadBytes.toString('utf8')), true);
+  for (const d of disclosures)
+    validateSDJWTHashClaims(parseJSON(unb64u(d).toString('utf8'))[2]);
   return {
     credential: [
-      signJWS(payload, key, { typ: 'dc+sd-jwt', ...(x5c ? { x5c } : {}) }),
+      signJWS(payloadBytes, key, { typ: 'dc+sd-jwt', ...(x5c ? { x5c } : {}) }),
       ...disclosures,
       '',
     ].join('~'),
@@ -310,7 +321,9 @@ export function verifySDJWT(
   const r = verifyJWT(issuerJWT, issuerKey, { typ: 'dc+sd-jwt', issuer, at });
   validateSDJWTTypes(r.claims);
   requireThat(
-    r.claims._sd_alg === 'sha-256' && r.claims.cnf?.jwk && (!vct || r.claims.vct === vct),
+    (!Object.hasOwn(r.claims, '_sd_alg') || r.claims._sd_alg === 'sha-256') &&
+      r.claims.cnf?.jwk &&
+      (!vct || r.claims.vct === vct),
     'SD_FORMAT',
   );
   importPublicJWK(r.claims.cnf.jwk);
@@ -329,6 +342,7 @@ export function verifySDJWT(
   function resolve(value, depth = 0) {
     requireThat(depth < 32, 'SD_DEPTH');
     if (value === null || typeof value !== 'object') return value;
+    requireThat(depth === 0 || !Object.hasOwn(value, '_sd_alg'), 'SD_FORMAT');
     if (Array.isArray(value)) {
       const a = [];
       for (const item of value) {
