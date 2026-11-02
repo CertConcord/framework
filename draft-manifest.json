@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 297828,
-      "sha256": "74096e1a7a7ac8fd4918d7638556ece233755603480a3fb0f6e9dec53281225b"
+      "bytes": 297969,
+      "sha256": "41011be08174a0b6a3eab21911ec43e96bb92660ba71f12b85d117f1e68e2840"
     },
     {
       "path": "reference/README.md",
@@ -965,8 +965,8 @@
     },
     {
       "path": "reference/issuance.mjs",
-      "bytes": 7115,
-      "sha256": "3322b1218ede0223ddf894d4a5a5e8067f8f4517f8d3cf2b799d1488f697989f"
+      "bytes": 7323,
+      "sha256": "ec7951eea9b7e9b604c117351ed8f089ee82cff045bb98281b5bc36609b26f71"
     },
     {
       "path": "reference/jose.mjs",
@@ -1054,6 +1054,11 @@
       "sha256": "a3010b8180f83f1595f150e4575a0e4cd96c806830234a586bcd0430f0260b6b"
     },
     {
+      "path": "reference/mtc-identity-boundary.test.mjs",
+      "bytes": 17572,
+      "sha256": "aadb11ceabe9ca4f0e3edd84a79d4289d063e7f0d836197cb758f756e5e1c75a"
+    },
+    {
       "path": "reference/mtc-person-sign-profile.test.mjs",
       "bytes": 2468,
       "sha256": "6a9a73f77db3fab1fe964eccd42e8f50b39e4600c6b8652fa6570953ddfa1804"
@@ -1075,8 +1080,8 @@
     },
     {
       "path": "reference/mtc.mjs",
-      "bytes": 16787,
-      "sha256": "0f18e849b7a1b6376af6449a9ea5a69c8af6a840c62560cacdbd7b5fd11640b8"
+      "bytes": 17554,
+      "sha256": "adbc00181841ed491187dd8d67d7e47f31751a6d0a8902f73c33f1824479edcb"
     },
     {
       "path": "reference/native-driver.mjs",
@@ -1440,8 +1445,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 20231,
-      "sha256": "bb7c1e6625259896439f40389604d4c5b0b37914cd4edcd01e3afeca3eaa1195"
+      "bytes": 20657,
+      "sha256": "68212ce8ea37555438fb8bfdc4aa9ee899b3b97564163c208d6264bc4dc32b5f"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -5037,6 +5042,11 @@
       "path": "reference/vectors/document-acceptance/manifest.json",
       "bytes": 66603,
       "sha256": "870963954ff118c054ec6524a5fb86ee24204b7e581ad1bc708ca13d38b7440c"
+    },
+    {
+      "path": "reference/vectors/mtc-identity-boundaries.json",
+      "bytes": 58252,
+      "sha256": "21b20243156c5c3018a9318338be67777d3ee944e17d6f212bc8d2e0a0591160"
     },
     {
       "path": "reference/vectors/mtc-versions.json",
@@ -12945,8 +12955,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 54680,
-      "sha256": "4c0c0bd0948060d8ffa517c811cf52a59a161aafc85530a52830e94b74b8d2a4"
+      "bytes": 55942,
+      "sha256": "9748ef0f80948ebd3513f9ace3e5b622ecba20e737a903c1890636930f547fe2"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
@@ -13177,6 +13187,11 @@
       "path": "tools/create-crl-structure-vectors.mjs",
       "bytes": 5965,
       "sha256": "cb8cb8285784024124d6b042540495f9aa6e5160c641773b300fc6fd1d1f4618"
+    },
+    {
+      "path": "tools/create-mtc-identity-vectors.mjs",
+      "bytes": 6839,
+      "sha256": "84071c56849e80eaf3101c50af46f81707fd0548578b743c7ea2da3cadadd1b8"
     },
     {
       "path": "tools/create-mtc-version-vectors.mjs",

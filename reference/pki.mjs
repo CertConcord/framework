@@ -43,7 +43,18 @@ export const OID = {
 export const RRA = Object.fromEntries(registry.entries.map((e) => [e.name, e.oid]));
 export const algID = (name) => seq(oid(ALG[name]?.oid ?? name));
 export const name = (cn) => seq(set(seq(oid('2.5.4.3'), der(12, Buffer.from(cn)))));
-export const anchorName = (caID) => seq(set(seq(oid(OID.trustAnchorID), oid(caID, true))));
+// TrustAnchorID limits apply to RELATIVE-OID content, excluding tag and length.
+export function trustAnchorID(id) {
+  requireThat(typeof id === 'string' && /^[0-9]+(?:\.[0-9]+)*$/.test(id), 'TRUST_ANCHOR_ID');
+  const encoded = parseDER(oid(id, true));
+  requireThat(
+    encoded.value.length >= 1 && encoded.value.length <= 32 && oidText(encoded) === id,
+    'TRUST_ANCHOR_ID',
+  );
+  return encoded.value;
+}
+export const anchorName = (caID) =>
+  seq(set(seq(oid(OID.trustAnchorID), der(13, trustAnchorID(caID)))));
 export const generalizedTime = (seconds) =>
   der(
     24,

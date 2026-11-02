@@ -22,6 +22,7 @@ import {
   profiles,
   algID,
   anchorName,
+  trustAnchorID,
   tbsCertificate,
   certificateFromTBS,
   parseCertificate,
@@ -190,14 +191,25 @@ export function coverInterval(start, end) {
     [mid, end],
   ];
 }
+// The proof wire codec also handles unknown identities; configured identities
+// and real signers use the narrower TrustAnchorID contract.
 export const anchorBytes = (id) => parseDER(oid(id, true)).value;
+export function mtcLogID(caID, logNumber) {
+  trustAnchorID(caID);
+  requireThat(Number.isInteger(logNumber) && logNumber >= 1 && logNumber <= 65535, 'MTC_SERIAL');
+  const id = caID + '.0.' + logNumber;
+  trustAnchorID(id);
+  return id;
+}
 export function cosignedMessage({ cosignerID, caID, logNumber, start, end, root, timestamp = 0 }) {
+  trustAnchorID(cosignerID);
+  const logID = mtcLogID(caID, logNumber);
   requireThat(
     validSubtree(start, end) && root.length === 32 && (!timestamp || BigInt(start) === 0n),
     'COSIGNATURE_RANGE',
   );
   const cn = Buffer.from(`oid/1.3.6.1.4.1.${cosignerID}`),
-    ln = Buffer.from(`oid/1.3.6.1.4.1.${caID}.0.${logNumber}`);
+    ln = Buffer.from(`oid/1.3.6.1.4.1.${logID}`);
   requireThat(cn.length > 0 && ln.length > 0, 'COSIGNATURE_NAME');
   return Buffer.concat([
     Buffer.from('subtree/v1\n\0'),
@@ -316,6 +328,7 @@ export function createMTCTBS(options, { caID, logNumber, index }) {
       BigInt(index) < 1n << 48n,
     'MTC_SERIAL',
   );
+  mtcLogID(caID, logNumber);
   return tbsCertificate({
     ...options,
     issuer: anchorName(caID),
@@ -327,6 +340,8 @@ export function issueMTC(
   tbs,
   { entries, index, caID, logNumber, cosigners, start = 0, end = entries.length },
 ) {
+  mtcLogID(caID, logNumber);
+  for (const cosigner of cosigners) trustAnchorID(cosigner.id);
   requireThat(equal(logEntryFromTBS(tbs), entries[index]), 'MTC_ENTRY_BINDING');
   const root = treeHash(entries.slice(start, end)),
     inclusion = inclusionProof(entries, index, start, end);
@@ -364,6 +379,8 @@ export function verifyMTC(
       Number.isSafeInteger(membershipEpoch),
     'MTC_POLICY',
   );
+  trustAnchorID(caID);
+  for (const member of members) trustAnchorID(member.id);
   const c = parseCertificate(raw);
   requireThat(
     equal(c.issuer, anchorName(caID)) &&
@@ -417,6 +434,7 @@ export function verifyMTC(
       ),
     'MTC_REVOKED',
   );
+  mtcLogID(caID, logNumber);
   const proof = decodeProof(c.signature),
     entry = logEntryFromTBS(c.tbs, proof.extensions),
     root = evaluateInclusion(leafHash(entry), index, proof.start, proof.end, proof.inclusion);
@@ -492,14 +510,17 @@ export function verifyMTC(
 }
 export class Mirror {
   constructor({ journal, id, privateKey }) {
+    trustAnchorID(id);
     Object.assign(this, { journal, id, privateKey });
   }
   store(origin) {
+    trustAnchorID(this.id);
+    trustAnchorID(origin);
     requireThat(!this.journal.get('mirror', origin)?.value.entries, 'LOG_MIGRATION_REQUIRED');
     return new IndexedMerkleLog(this.journal, 'mtc-mirror:' + origin);
   }
   cosignSubtree({ caID, logNumber, start, end }) {
-    const store = this.store(`${caID}.0.${logNumber}`);
+    const store = this.store(mtcLogID(caID, logNumber));
     requireThat(
       validSubtree(start, end) && start >= 0 && end <= store.head().size,
       'MIRROR_SUBTREE_UNAVAILABLE',
@@ -514,7 +535,7 @@ export class Mirror {
     };
   }
   cosign({ caID, logNumber, entries, source, size = entries?.length }) {
-    const origin = `${caID}.0.${logNumber}`,
+    const origin = mtcLogID(caID, logNumber),
       store = this.store(origin);
     const root = this.journal.transaction(() => {
       const old = store.head().size;
