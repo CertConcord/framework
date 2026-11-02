@@ -1500,8 +1500,8 @@
     },
     {
       "path": "reference/recovery-security.test.mjs",
-      "bytes": 20612,
-      "sha256": "81790b66f40726a10fce93158d61b44b98215fa9d1547d7fa16c8646a9f87596"
+      "bytes": 24766,
+      "sha256": "a91989b54b4100c8485f3ee5053018c815b1ccadf802951d481ad6ea5198ca57"
     },
     {
       "path": "reference/registration-authorization.test.mjs",
@@ -12925,8 +12925,8 @@
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
-      "bytes": 29421,
-      "sha256": "14b2bdfac4668ac79db27ce64fe2de07c75d720d2ffec959d949786bd42370e3"
+      "bytes": 30099,
+      "sha256": "62da434044b8023a3b925e1c435c33398d769848fff7843c75045fcbb5eaa6d2"
     },
     {
       "path": "spec/bindings/DSCP-draft-03.md",
@@ -12965,8 +12965,8 @@
     },
     {
       "path": "spec/conformance.json",
-      "bytes": 51879,
-      "sha256": "68a5c537a2d26ccecc3573d07ac352335d1cb3c497cfee7745013716121d31f2"
+      "bytes": 52069,
+      "sha256": "895c475c80da198cdebe30032f1c241e964b94a5f62b3a282eda30b8cc4e142d"
     },
     {
       "path": "spec/conformance.md",

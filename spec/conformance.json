@@ -701,6 +701,10 @@
         {
           "file": "reference/recovery-security.test.mjs",
           "name": "recovery reconciles committed ml-kem-1024 result after acknowledgement loss"
+        },
+        {
+          "file": "reference/recovery-security.test.mjs",
+          "name": "live completed recovery rechecks authority before replay and preserves read-only retrieval"
         }
       ],
       "gap": "Certified recipient delivery and two-operator encryption-key recovery are exercised; external recovery services and hardware key import remain unassessed."
