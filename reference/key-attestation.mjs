@@ -130,6 +130,7 @@ export function verifiedChain(x5c, { roots, status }, at) {
   }
   fail(chain.length >= 2, 'SELF_ATTESTED');
   let expiry = Infinity;
+  let nonSelfIssuedCAsBelow = 0;
   const evidence = [];
   for (let i = 0; i < chain.length; i++) {
     const cert = chain[i],
@@ -149,7 +150,7 @@ export function verifiedChain(x5c, { roots, status }, at) {
       fail(bc?.critical, 'CA_CONSTRAINTS');
       const constraint = parseDER(bc.value),
         path = constraint.children?.find((n) => n.tag === 2);
-      if (path) fail(intValue(path) >= BigInt(i - 1), 'PATH_LENGTH');
+      if (path) fail(intValue(path) >= BigInt(nonSelfIssuedCAsBelow), 'PATH_LENGTH');
     }
     if (i + 1 < chain.length)
       fail(
@@ -170,6 +171,7 @@ export function verifiedChain(x5c, { roots, status }, at) {
       );
       evidence.push(s.evidenceHash);
     }
+    if (i > 0 && !equal(parsed.issuer, parsed.subject)) nonSelfIssuedCAsBelow++;
   }
   return {
     chain,
