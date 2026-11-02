@@ -65,16 +65,27 @@ export class OpenIDWallet {
   async discover() {
     const u = new URL(this.issuer),
       url = u.origin + '/.well-known/openid-credential-issuer' + u.pathname.replace(/\/$/, '');
-    const r = await requestBytes(url, { allowLoopback: this.allowLoopback });
+    const r = await requestBytes(url, {
+      headers: { accept: 'application/jwt, application/json;q=0.5' },
+      allowLoopback: this.allowLoopback,
+    });
     requireThat(r.status === 200, 'ISSUER_DISCOVERY');
-    const metadata = parseJSON(r.body.toString('utf8'));
-    requireThat(typeof metadata.signed_metadata === 'string', 'SIGNED_METADATA_REQUIRED');
+    const contentType = r.headers.get('content-type') ?? '',
+      mediaType = contentType.split(';', 1)[0].trim().toLowerCase();
+    requireThat(
+      !contentType.includes(',') &&
+        (mediaType === 'application/jwt' || mediaType === 'application/json'),
+      'ISSUER_METADATA_MEDIA_TYPE',
+    );
+    const body = r.body.toString('utf8'),
+      signedMetadata = mediaType === 'application/jwt' ? body : parseJSON(body)?.signed_metadata;
+    requireThat(typeof signedMetadata === 'string', 'SIGNED_METADATA_REQUIRED');
     const leaf = verifyX5C(
-        (await import('./jose.mjs')).decodeJWS(metadata.signed_metadata).header,
+        (await import('./jose.mjs')).decodeJWS(signedMetadata).header,
         this.issuerRoots,
         { expectedLeaf: this.issuerCertificate },
       ),
-      signed = verifyJWT(metadata.signed_metadata, leaf.publicKey, {
+      signed = verifyJWT(signedMetadata, leaf.publicKey, {
         typ: 'openidvci-issuer-metadata+jwt',
         issuer: this.issuer,
         maxAge: 300,

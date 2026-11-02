@@ -176,7 +176,9 @@ Credential requests prove possession with the configured proof type and issuer a
 
 Wallet attestation uses authenticated issuer-specific evidence and a fresh attestation PoP. Its subject identifies the wallet implementation as required by HAIP, not a globally unique wallet instance. Key-attestation validation checks the nonce, exact holder keys, attestation issuer trust, validity and required device properties. Hardware attestations may be transformed into the OpenID format only by an explicitly authorized service with retained source evidence and privacy controls.
 
-Signed metadata has typ `openidvci-issuer-metadata+jwt`, sub matching credential_issuer, iat, a bounded exp and all metadata at top level. The wallet verifies the signer before using endpoint data. Endpoint origin and redirect policies MUST prevent untrusted metadata from becoming an arbitrary-fetch facility.
+The selected wallet accepts the compact `application/jwt` response defined by OpenID4VCI Final 1.0 sections 12.2.2 and 12.2.3. Its `Accept` header also permits the legacy `application/json` object containing `signed_metadata`; this JSON envelope is profile-specific. Other media types and unsigned JSON MUST NOT satisfy this wallet's signed-metadata policy. Neither envelope supplies new trust anchors: configured issuer roots and, when supplied, the expected leaf are used before endpoint data is accepted.
+
+The reference issuer emits signed metadata with typ `openidvci-issuer-metadata+jwt`, issuer and subject matching credential_issuer, iat, a bounded exp and all metadata at top level. The selected wallet verifies the signature and those issuer/subject bindings, limits iat age to 300 seconds with 30 seconds of future-clock tolerance, and checks exp and nbf when present. Final 1.0 makes iss and exp optional in the general signed-metadata format. This wallet requires iss to match the configured credential issuer; its selected issuer and freshness rules do not claim every Final metadata trust mechanism. Endpoint origin and redirect policies MUST prevent untrusted metadata from becoming an arbitrary-fetch facility.
 
 ## 6. OpenID4VP presentation
 

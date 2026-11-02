@@ -115,8 +115,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 44572,
-      "sha256": "a86775c1e58f76eab221171eff044d66b4394a32156564b780a958417e3e34bb"
+      "bytes": 45579,
+      "sha256": "f765ed2acca8760ed0cb7f14734fee286acddb5e1b57cb5a5f88f35052ba3397"
     },
     {
       "path": "docs/apple-identity.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 297679,
-      "sha256": "2409ad121775f52883f00791748e0da8b11706a507fd2a953d0b52896a50ce44"
+      "bytes": 297828,
+      "sha256": "74096e1a7a7ac8fd4918d7638556ece233755603480a3fb0f6e9dec53281225b"
     },
     {
       "path": "reference/README.md",
@@ -12779,6 +12779,11 @@
       "sha256": "a8e39a5b350462367e3916aa99b634d26ba589b47be33d2162c18603c109ac12"
     },
     {
+      "path": "reference/vectors/wallet-metadata-envelopes.json",
+      "bytes": 126367,
+      "sha256": "bcaed3253638ac271096952871318617604128a60f72b99f005bb0c254344010"
+    },
+    {
       "path": "reference/vectors/xmlers-namespace/absolute-unused-prefix.xml",
       "bytes": 12841,
       "sha256": "56787fbad8632ae7264437532a42e226baf5fc7fc83e81710b749190200c9937"
@@ -12864,9 +12869,14 @@
       "sha256": "f560f1028189c85bab5052bfa02557ab772780ef446f49549d9e4994bb8162ad"
     },
     {
+      "path": "reference/wallet-metadata-envelope.test.mjs",
+      "bytes": 4353,
+      "sha256": "0a0504bacc667f773664e2d39668fe09893ae5216ed83b78472be946a56d8e93"
+    },
+    {
       "path": "reference/wallet.mjs",
-      "bytes": 12460,
-      "sha256": "4fd9927887ea1111cddb990b67f11c5e1f85649ef6a1f60d4a79fd70f7481618"
+      "bytes": 12899,
+      "sha256": "8aa11c18b3614e03beffeca52c9a5f434f9d5bf326dd8f8fe223f648206a082c"
     },
     {
       "path": "reference/webauthn.mjs",
@@ -12920,8 +12930,8 @@
     },
     {
       "path": "spec/bindings/DCP-draft-03.md",
-      "bytes": 57670,
-      "sha256": "631c663994cf47f0e87b4c53653f648906228fb5bbd10ccda76efecb02ce204e"
+      "bytes": 58586,
+      "sha256": "171e949c37b6d8c1a3253206e25a3f25aef45a50c08c6eef9d53d53fba38a519"
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
@@ -13187,6 +13197,11 @@
       "path": "tools/create-timestamp-time-vectors.mjs",
       "bytes": 7998,
       "sha256": "21d4bc86b1b78f0fa9c4a54a92ad3129f41e6192fe353fdf68d8b49e0b123a97"
+    },
+    {
+      "path": "tools/create-wallet-metadata-vectors.mjs",
+      "bytes": 8929,
+      "sha256": "f7cea8e3649583ea30a772e4e0048d0b99113915df9c9c349b3ab9b672767af2"
     },
     {
       "path": "tools/ers-bc186/ErsBc186Probe.java",
