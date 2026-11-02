@@ -1,5 +1,5 @@
 import {
-  ProtocolError, requireThat, fields, dcbor, decodeCBOR, equal, keyID, publicFromDER,
+  ProtocolError, requireThat, fields, dcbor, decodeCBOR, equal, keyID, publicFromDER, parseDER, intValue,
 } from './core.mjs';
 import { parseCertificate } from './pki.mjs';
 import { isPromise, isProxy } from 'node:util/types';
@@ -22,6 +22,26 @@ function validScope(scope) {
     Buffer.isBuffer(scope.trustDomainID) && scope.trustDomainID.length === 32 &&
     Object.entries(scope).every(([key, value]) => scopeKeys.has(key) &&
       (key === 'trustDomainID' || (typeof value === 'string' && value.length > 0)));
+}
+
+function rsaPublicMaterial(key) {
+  const spki = parseDER(key.export({ type: 'spki', format: 'der' }));
+  if (spki.tag !== 0x30 || spki.children.length !== 2 || spki.children[0].tag !== 0x30 ||
+      spki.children[1].tag !== 3 || spki.children[1].value[0] !== 0) return null;
+  const material = parseDER(spki.children[1].value.subarray(1));
+  if (material.tag !== 0x30 || material.children.length !== 2 || !material.children.every(value =>
+    value.tag === 2 && !(value.value[0] & 128) && intValue(value) > 0n)) return null;
+  return material.raw;
+}
+
+// Only key-wide negative evidence uses mathematical equivalence. Keep the
+// original SPKI, KeyID and algorithm restrictions for every positive decision.
+function equivalentPublicKey(left, right) {
+  if (left.asymmetricKeyType === right.asymmetricKeyType && left.equals(right)) return true;
+  const isRSA = key => key.asymmetricKeyType === 'rsa' || key.asymmetricKeyType === 'rsa-pss';
+  if (!isRSA(left) || !isRSA(right)) return false;
+  const a = rsaPublicMaterial(left), b = rsaPublicMaterial(right);
+  return a !== null && b !== null && equal(a, b);
 }
 
 /** Evaluate an already authenticated status statement; this function does not authenticate it. */
@@ -136,8 +156,7 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
     // Key-wide negative evidence does not admit an unselected encoding or certificate.
     const equivalentRevoked = records.find((record) => record.knownAt <= knowledgeTime &&
       !equal(record.keyID, requestedKeyID) &&
-      record.publicKey.asymmetricKeyType === requestedKey.asymmetricKeyType &&
-      record.publicKey.equals(requestedKey) &&
+      equivalentPublicKey(record.publicKey, requestedKey) &&
       statusFor(record).overall === 'INVALID' && statusFor(record).reason === 'AUTHORITY_REVOKED');
     if (equivalentRevoked) return statusFor(equivalentRevoked);
     const roles = known.filter((r) => r.roles.includes(role));

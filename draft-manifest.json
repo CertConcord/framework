@@ -130,8 +130,8 @@
     },
     {
       "path": "docs/authority-validation.md",
-      "bytes": 4331,
-      "sha256": "71c830bfaaac2ee82bcc9656d1d8b56b49e386c666b2a951332303ec579064e2"
+      "bytes": 5434,
+      "sha256": "1d0250c027905b689d04c32fd60598a45be07178bfb5a022ec70c8fd09f4f318"
     },
     {
       "path": "docs/benchmarks.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 297244,
-      "sha256": "7c4f8179dd6a6c94bb0580f095bb55e4a5a162f7f4b1bd9793df9863935282c7"
+      "bytes": 297404,
+      "sha256": "d81ffdf055feb2798e4b97bf0548f6f36951b8433adad85f39e7ac668be38120"
     },
     {
       "path": "reference/README.md",
@@ -395,13 +395,18 @@
     },
     {
       "path": "reference/authority-history.mjs",
-      "bytes": 11628,
-      "sha256": "ab0e4fee1f9c5e6c7aa948ab22406e4b9dc2e6a8d08417c984ef2b1b1d29f781"
+      "bytes": 12693,
+      "sha256": "08e406d1aba6675b440c8fcce4bb419bd5e1b5cf6fb0acf14e8d53f8d84c2462"
     },
     {
       "path": "reference/authority-history.test.mjs",
       "bytes": 11886,
       "sha256": "4a0e53aa7331f1713f0613244d49cbe5fabcfacc35899754ff14bc092134896d"
+    },
+    {
+      "path": "reference/authority-rsa-equivalence.test.mjs",
+      "bytes": 8659,
+      "sha256": "e9813eeb8019c0d7e2b32cfa171f72528bf265b55f474d8f55d2864cac2cebea"
     },
     {
       "path": "reference/authority.test.mjs",
@@ -1952,6 +1957,11 @@
       "path": "reference/vectors/acme-profile-metadata.json",
       "bytes": 11991,
       "sha256": "6254f5eb0dd9cfc6c0677854ca664b2861db2f4bd4ff6b7217e7ffe151025382"
+    },
+    {
+      "path": "reference/vectors/authority-rsa-equivalence.json",
+      "bytes": 318720,
+      "sha256": "0429adc19325c99825e073dd810285e25125db1e1030e4a75370864d83a35295"
     },
     {
       "path": "reference/vectors/cades-hold-release.json",
@@ -13122,6 +13132,11 @@
       "path": "tools/check.mjs",
       "bytes": 7633,
       "sha256": "f667bc498d8e5c498d36e10c3acd3c8a921f108690c9d11487574fc677363978"
+    },
+    {
+      "path": "tools/create-authority-rsa-equivalence-vectors.mjs",
+      "bytes": 10140,
+      "sha256": "642125e56be7c9166fa16c8769322a18f4502e6b58e51d3cc44fac391b1ac0bf"
     },
     {
       "path": "tools/create-crl-structure-vectors.mjs",
