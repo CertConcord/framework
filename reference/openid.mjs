@@ -764,15 +764,29 @@ export class CredentialIssuer {
   }
 }
 
+const STATIC_WALLET_AUDIENCE = 'https://self-issued.me/v2';
+function requireVPRequestAudience(request) {
+  const audience = request.aud;
+  requireThat(
+    audience === STATIC_WALLET_AUDIENCE ||
+      (Array.isArray(audience) &&
+        audience.every((value) => typeof value === 'string') &&
+        audience.some((value) => value === STATIC_WALLET_AUDIENCE)),
+    'VP_REQUEST_AUDIENCE',
+  );
+}
+
 export class PresentationVerifier {
   constructor({ baseURL, journal, privateKey, certificate, issuerRegistry, trustRoots }) {
     Object.assign(this, { baseURL, journal, privateKey, certificate, issuerRegistry, trustRoots });
     this.clientID = 'x509_hash:' + b64u(sha256(certificate));
   }
   signedRequest(id) {
-    const r = this.journal.get('vp', id);
-    requireThat(r?.value.status === 'REQUESTED' && r.value.request.exp > now(), 'VP_STATE');
-    return signJWS(r.value.request, this.privateKey, {
+    const r = this.journal.get('vp', id),
+      request = r?.value.request;
+    requireThat(r?.value.status === 'REQUESTED' && request?.exp > now(), 'VP_STATE');
+    requireVPRequestAudience(request);
+    return signJWS(request, this.privateKey, {
       typ: 'oauth-authz-req+jwt',
       x5c: [this.certificate.toString('base64')],
     });
@@ -816,6 +830,7 @@ export class PresentationVerifier {
       kid = b64u(random(16));
     const request = {
       client_id: this.clientID,
+      aud: STATIC_WALLET_AUDIENCE,
       response_type: 'vp_token',
       response_mode: mode,
       nonce,
@@ -1270,9 +1285,10 @@ export function parseVPRequest(input, { verifierRoots, expectedResponseOrigin, o
     const leaf = verifyX5C(decodeJWS(input).header, verifierRoots);
     r = verifyJWT(input, leaf.publicKey, { typ: 'oauth-authz-req+jwt', maxAge: 120 }).claims;
     requireThat(r.client_id === 'x509_hash:' + b64u(sha256(leaf.raw)), 'VP_CLIENT_ID');
-  } else if (input?.protocol === 'openid4vp-v1-signed')
+  } else if (input?.protocol === 'openid4vp-v1-signed') {
+    requireThat(typeof input.data?.request === 'string', 'VP_REQUEST_PROTOCOL');
     return parseVPRequest(input.data.request, { verifierRoots, expectedResponseOrigin, origin });
-  else if (input?.protocol === 'openid4vp-v1-unsigned') {
+  } else if (input?.protocol === 'openid4vp-v1-unsigned') {
     signed = false;
     requireThat(
       origin && new URL(origin).origin === origin && origin.startsWith('https://'),
@@ -1320,6 +1336,7 @@ export function parseVPRequest(input, { verifierRoots, expectedResponseOrigin, o
     }
     requireThat(r, 'VP_NO_TRUSTED_SIGNATURE');
   } else throw Error('VP_REQUEST_PROTOCOL');
+  if (signed) requireVPRequestAudience(r);
   requireThat(
     r.exp > now() &&
       r.response_type === 'vp_token' &&
