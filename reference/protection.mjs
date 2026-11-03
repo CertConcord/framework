@@ -134,6 +134,14 @@ export function wrapRoot(prf, root, header) {
     k.fill(0);
   }
 }
+function admittedRoot(root) {
+  if (root.length !== 32) {
+    root.fill(0);
+    requireThat(false, 'ROOT_LENGTH');
+  }
+  return root;
+}
+
 export function unwrapRoot(prf, wrapper) {
   fields(wrapper, ['schemaVersion', 'header', 'ciphertext', 'tag'], ['nonce']);
   requireThat(prf.length === 32 && wrapper.schemaVersion === 1, 'WRAPPER_VERSION');
@@ -142,7 +150,7 @@ export function unwrapRoot(prf, wrapper) {
   try {
     if (h.aead === 'AES-256-GCM') {
       requireThat(Buffer.isBuffer(wrapper.nonce), 'WRAPPER_NONCE');
-      return open(k, wrapper, D('WrapperAAD', h));
+      return admittedRoot(open(k, wrapper, D('WrapperAAD', h)));
     }
     requireThat(!wrapper.nonce, 'KW_UNEXPECTED_NONCE');
     const m = hkdf(prf, h.kdfSalt, D('WrapperMACKey', h));
@@ -151,7 +159,7 @@ export function unwrapRoot(prf, wrapper) {
         equal(mac(m, D('WrapperMAC', { header: h, ciphertext: wrapper.ciphertext })), wrapper.tag),
         'WRAPPER_MAC',
       );
-      return unwrapAES(k, wrapper.ciphertext, h.aead === 'AES-256-KWP');
+      return admittedRoot(unwrapAES(k, wrapper.ciphertext, h.aead === 'AES-256-KWP'));
     } finally {
       m.fill(0);
     }

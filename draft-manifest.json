@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 298123,
-      "sha256": "9e6975644be0a3adfee45fc203311133e47723ed7e038c71cefa51abbbad251d"
+      "bytes": 298274,
+      "sha256": "2051788a2d0d3883500f0669fd13312df30e84caee6a38e9e5e74e403458f11f"
     },
     {
       "path": "reference/README.md",
@@ -1484,9 +1484,14 @@
       "sha256": "a71215500c0a3d25e671e57a74fa9da6dd32bfafe34fa6f42f15e72ec87f87a2"
     },
     {
+      "path": "reference/prf-kpp-root-admission.test.mjs",
+      "bytes": 9954,
+      "sha256": "c2e7e99ee03316f736dd73671d5d2a76d871fcd100baff73e3fb1d7c1e311c7f"
+    },
+    {
       "path": "reference/protection.mjs",
-      "bytes": 14040,
-      "sha256": "f00a4d63f9603dc82a5f27486b986ff315c02a8206b9573a08422d2adbfa3108"
+      "bytes": 14205,
+      "sha256": "689aa5d15c4d4245d39c9ccd00faa0766c94246b8b270f64258e2ff711904ca8"
     },
     {
       "path": "reference/protocols.test.mjs",
@@ -12759,6 +12764,11 @@
       "sha256": "8cba69093b87599913328cadba68df6c6f948b63f5623ad0e5b88cfb0ffa766e"
     },
     {
+      "path": "reference/vectors/prf-kpp-root-admission.json",
+      "bytes": 22567,
+      "sha256": "43ef2af7f208eb262c7fef2ae4760eb1867971e8d5789b23778d86d3f68aa86f"
+    },
+    {
       "path": "reference/vectors/registration-authorization/README.md",
       "bytes": 1036,
       "sha256": "d8a09fe7e07a37c34da9f8b5a82bab4966530210ca411c2d5bfd5735ac2a37b4"
@@ -12980,8 +12990,8 @@
     },
     {
       "path": "spec/bindings/PRF-KPP-draft-03.md",
-      "bytes": 22093,
-      "sha256": "73fd81009d722f6d3f1b89285fc52825009d937cd7bc3914dbb055dbd60c892c"
+      "bytes": 22655,
+      "sha256": "325f73ba391951c69caefdbb79b1550e47601cf77dba18f25286b062b59860ca"
     },
     {
       "path": "spec/bindings/PSCP-draft-03.md",
@@ -13217,6 +13227,11 @@
       "path": "tools/create-pkcs10-structure-vectors.mjs",
       "bytes": 8741,
       "sha256": "03cd4578e5b65a15e52959f742ac358d7fd79a136c839e34719a953359f58511"
+    },
+    {
+      "path": "tools/create-prf-kpp-root-admission-vectors.mjs",
+      "bytes": 3430,
+      "sha256": "cc23f3ca91afac9fb58dbb560752248d53f5ef83d90e9979fb0303bf1becd162"
     },
     {
       "path": "tools/create-timestamp-name-vectors.mjs",

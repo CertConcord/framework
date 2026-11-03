@@ -80,6 +80,8 @@ tag = HMAC-SHA-256(MK, D("WrapperMAC", {header, ciphertext}))
 
 The MAC is verified before unwrap. Bare KW integrity is not sufficient to authenticate the RRA header. Algorithms cannot be changed in place without a new wrapper and verified transition.
 
+For every wrapper algorithm, an authenticated plaintext MUST be exactly 32 bytes before it is returned or used as an AMK. A valid authentication tag or key-wrap integrity check does not establish this root contract. An invalid-length plaintext MUST be rejected and its returned buffer overwritten on a best-effort basis; this does not guarantee erasure of engine-internal copies. Epoch verification MUST apply the same check to both roots before comparing them or committing state. The variable-length input domains of the generic AES primitives are unchanged.
+
 ## 14. Multiple credentials
 
 Each credential has a separate wrapper for the same authorized root, its own PRF namespace and its own lifecycle. Multiple wrappers constitute an OR recovery path. Policy and RCG evaluation MUST account for every wrapper, including old devices, synced copies and recovery credentials. Removing a wrapper from a database does not erase a previously copied ciphertext or compromised root.
