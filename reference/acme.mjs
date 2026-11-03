@@ -568,19 +568,19 @@ export class ACMEService {
             deviceProofs.every((a) => equal(a.attestedSPKI, parsed.spki)),
           'urn:ietf:params:acme:error:badCSR',
         );
-      else
+      else {
         requireThat(
-          names.every((n) => n.tag === 0x82) &&
-            names
-              .map((n) => n.value.toString('ascii'))
-              .sort()
-              .join(',') ===
-              order.identifiers
-                .map((i) => i.value)
-                .sort()
-                .join(','),
+          names.every((n) => n.tag === 0x82 && n.value.every((octet) => octet < 0x80)),
           'ACME_CSR_IDENTIFIERS',
         );
+        const requested = names.map((n) => n.value.toString('ascii')).sort(),
+          expected = order.identifiers.map((i) => i.value).sort();
+        requireThat(
+          requested.length === expected.length &&
+            requested.every((value, index) => value === expected[index]),
+          'ACME_CSR_IDENTIFIERS',
+        );
+      }
       this.journal.put(
         'acme-order',
         id,
