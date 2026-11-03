@@ -109,6 +109,11 @@
       "sha256": "843ddfe95a097f63e8d7f56bd62999e2f0caf5da78eaef0d57869a55bab01ef5"
     },
     {
+      "path": "docs/acme-csr-identifiers.md",
+      "bytes": 2591,
+      "sha256": "77f62ae52dd746a38a8062939a9723ebea449374098ad43c9e9ac68d391f3288"
+    },
+    {
       "path": "docs/acme-profiles.md",
       "bytes": 3617,
       "sha256": "b39cb47abedcafee7753caf17382de2f8edda82ca57bca04b1049a4290a17f75"
@@ -305,13 +310,18 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 298437,
-      "sha256": "4002e143d1448e1a18ab7cb4b9d15c45f4b246ad527d1ca5c0feb1d34d32646c"
+      "bytes": 298592,
+      "sha256": "4a45cda504e60fbb521da144ac1d8f559da05ff8fbf8448ac01280566a62edb5"
     },
     {
       "path": "reference/README.md",
       "bytes": 6064,
       "sha256": "b7027ed15c483f651c149c7ff81790f0f427728f1c042b547a90303a161aa741"
+    },
+    {
+      "path": "reference/acme-dns-ia5.test.mjs",
+      "bytes": 15518,
+      "sha256": "d1559d219eac8dd2c9a6eb7ab00dc45d82bf0998634719257617eb4bd62eb9ea"
     },
     {
       "path": "reference/acme-profile-metadata.test.mjs",
@@ -320,8 +330,8 @@
     },
     {
       "path": "reference/acme.mjs",
-      "bytes": 23847,
-      "sha256": "4ee5612d7f0a8da4aece53441dcfceca776f05670f6157a10fa588073c077c55"
+      "bytes": 23989,
+      "sha256": "c75aaba1bbb416367ff78ce775ccef793d9c427498950fd58d8066f7f73fad21"
     },
     {
       "path": "reference/acme.test.mjs",
@@ -1982,6 +1992,11 @@
       "path": "reference/vector-corpus.mjs",
       "bytes": 2914,
       "sha256": "b78041f2ee023d067c0f243d5b1dcb7e8c277b3ed04dab32d9c8f31f7ed5fab0"
+    },
+    {
+      "path": "reference/vectors/acme-dns-ia5.json",
+      "bytes": 28445,
+      "sha256": "2d8f8fc4ee2fab067728b140674b8395f8c6d7bf7319de71d06cc2f72d6d6a6b"
     },
     {
       "path": "reference/vectors/acme-profile-metadata.json",
@@ -13202,6 +13217,11 @@
       "path": "tools/check.mjs",
       "bytes": 7633,
       "sha256": "f667bc498d8e5c498d36e10c3acd3c8a921f108690c9d11487574fc677363978"
+    },
+    {
+      "path": "tools/create-acme-dns-ia5-vectors.mjs",
+      "bytes": 6028,
+      "sha256": "bf59fae1fbf04f5064a343acf2c973b7914b65ea758110db2f5cf68fcceba71d"
     },
     {
       "path": "tools/create-attestation-pathlen-vectors.mjs",
