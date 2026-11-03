@@ -110,7 +110,11 @@ A reader preserves the signed TBSCertificate and accepts both Time alternatives.
 
 ## 8. CA and log identifiers
 
-The CAID is a valid Trust Anchor ID within a legitimately controlled namespace. Draft-06 log, landmark and landmark-group names use `{caID 0 N}`, `{caID 1 N L}` and `{caID 2 N L}`. Display strings are not substitutes for the prescribed RELATIVE-OID bytes. Log numbers range from 1 through 65535 and are not reused under the same CA identity.
+The CAID is a valid Trust Anchor ID within a legitimately controlled namespace. The selected MTC draft defines log, landmark and landmark-group names as `{caID 0 N}`, `{caID 1 N L}` and `{caID 2 N L}`. Display strings are not substitutes for the prescribed RELATIVE-OID bytes. Log numbers range from 1 through 65535 and are not reused under the same CA identity.
+
+The selected [Trust Anchor IDs draft-06, section 4](https://www.ietf.org/archive/id/draft-ietf-tls-trust-anchor-ids-06.html#section-4) bounds the binary identity to 1 through 32 DER RELATIVE-OID content octets, excluding the tag and length. The reference admits canonical dotted-decimal configuration for the CA, every configured cosigner, and the actual derived log ID before standalone or trusted-subtree acceptance. A 32-octet CA ID can therefore still be unsuitable for a log when appending `0.N` exceeds the identity limit. Namespace control remains a separate provisioning requirement.
+
+Real signers and stateful MTC issuer/mirror operations validate these identities before signing or journal access, at each operation entry, including configuration changes made before the call. The general OID codec and the selected MTC draft-07 proof wire capacity are unchanged: unknown proof identities remain noncounting entries and cannot supply the required CA signature or cosigner quorum. Such opaque entries are not assertions that an overlong identity is a conforming allocated trust anchor. Existing exact signed bytes, retained log entries, signature/key separation, revocation and cache scope/freshness/root checks remain applicable.
 
 ## 9. Certificate serial number
 

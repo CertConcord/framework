@@ -21,9 +21,23 @@ import {
 import { requireAuthorityQuorum } from './control-authority.mjs';
 import { verifyCSR } from './enrollment.mjs';
 import { readControl } from './state.mjs';
-import { RRA, OID, extension, certificateFromTBS, parseCertificate } from './pki.mjs';
+import {
+  RRA,
+  OID,
+  extension,
+  certificateFromTBS,
+  parseCertificate,
+  trustAnchorID,
+} from './pki.mjs';
 import { IndexedMerkleLog } from './storage/merkle.mjs';
-import { createMTCTBS, logEntryFromTBS, cosignedMessage, encodeProof, verifyMTC } from './mtc.mjs';
+import {
+  createMTCTBS,
+  logEntryFromTBS,
+  cosignedMessage,
+  encodeProof,
+  verifyMTC,
+  mtcLogID,
+} from './mtc.mjs';
 
 export class MTCIssuer {
   constructor({
@@ -47,6 +61,8 @@ export class MTCIssuer {
     authorityResolver,
     issuerCertificate,
   }) {
+    const origin = mtcLogID(caID, logNumber);
+    for (const member of members) trustAnchorID(member.id);
     requireThat(mirrors.length >= threshold, 'MTC_MIRRORS');
     Object.assign(this, {
       journal,
@@ -73,7 +89,6 @@ export class MTCIssuer {
       this.issuanceScope.representation === 'MTC' && this.issuanceScope.issuerID === caID,
       'ISSUANCE_SCOPE',
     );
-    const origin = this.caID + '.0.' + this.logNumber;
     requireThat(
       !journal.get('mtc-log', origin) || journal.get('log-migration', 'mtc:' + origin),
       'LOG_MIGRATION_REQUIRED',
@@ -84,6 +99,8 @@ export class MTCIssuer {
     });
   }
   async issue({ csr, rar }) {
+    mtcLogID(this.caID, this.logNumber);
+    for (const member of this.members) trustAnchorID(member.id);
     ({ csr, rar } = decodeCBOR(dcbor({ csr, rar })));
     const a = readControl(rar, 'RegistrationAuthorization', this.raCertificate),
       q = verifyCSR(csr, { validatePossessionCertificate: this.validatePossessionCertificate }),
