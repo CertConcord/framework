@@ -246,6 +246,44 @@ export function parseCertificate(raw) {
     );
     extensions.set(id, { critical, value: e.children.at(-1).value });
   }
+  // Keep extension error precedence when optional fields or SPKI are also invalid.
+  let previousOptionalTag = 0;
+  for (const field of t.slice(7)) {
+    requireThat(
+      [0x81, 0x82, 0xa3].includes(field.tag) && field.tag > previousOptionalTag,
+      'CERTIFICATE_OPTIONAL_FIELDS',
+    );
+    previousOptionalTag = field.tag;
+    if (field.tag !== 0xa3) {
+      // UniqueIdentifier is an ordinary implicit BIT STRING, not a named bit list.
+      const unused = field.value[0];
+      requireThat(
+        field.value.length > 0 &&
+          unused <= 7 &&
+          (field.value.length > 1 || unused === 0) &&
+          (field.value.at(-1) & ((1 << unused) - 1)) === 0,
+        'CERTIFICATE_OPTIONAL_FIELDS',
+      );
+    }
+  }
+  const keyFields = t[6].children;
+  requireThat(
+    t[6].tag === 0x30 &&
+      keyFields?.length === 2 &&
+      keyFields[0].tag === 0x30 &&
+      [1, 2].includes(keyFields[0].children?.length) &&
+      keyFields[0].children[0].tag === 6 &&
+      keyFields[1].tag === 3,
+    'CERTIFICATE_SPKI',
+  );
+  if (oidText(keyFields[0].children[0]) === ALG.ed25519.oid)
+    // Check the signed encoding before native import can normalize its bits.
+    requireThat(
+      keyFields[0].children.length === 1 &&
+        keyFields[1].value.length === 33 &&
+        keyFields[1].value[0] === 0,
+      'CERTIFICATE_SPKI',
+    );
   const time = (n) => {
     let s = n.value.toString('ascii');
     if (n.tag === 23) {
