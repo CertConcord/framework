@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 298274,
-      "sha256": "2051788a2d0d3883500f0669fd13312df30e84caee6a38e9e5e74e403458f11f"
+      "bytes": 298437,
+      "sha256": "4002e143d1448e1a18ab7cb4b9d15c45f4b246ad527d1ca5c0feb1d34d32646c"
     },
     {
       "path": "reference/README.md",
@@ -497,6 +497,11 @@
       "path": "reference/cbor-text-identity.test.mjs",
       "bytes": 6587,
       "sha256": "7d67c48dea55aeea1b8de6081b4b522027daa0d093d8d5539054faf77b9c5595"
+    },
+    {
+      "path": "reference/certificate-asn1-admission.test.mjs",
+      "bytes": 12280,
+      "sha256": "a2cba9edfd8343fde0fcaa4db978b46aa7df40f7d11d6bab85f29f9178ab17c6"
     },
     {
       "path": "reference/certificate-key-usage.test.mjs",
@@ -1450,8 +1455,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 20657,
-      "sha256": "68212ce8ea37555438fb8bfdc4aa9ee899b3b97564163c208d6264bc4dc32b5f"
+      "bytes": 22004,
+      "sha256": "cc9ba608dbc6e82fb6ed67d5590aae7def8bef6dc9abbba6f612e43ee820f3fb"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -1997,6 +2002,11 @@
       "path": "reference/vectors/cades-hold-release.json",
       "bytes": 25763,
       "sha256": "4ddb578c800acd3249ebaef81525bd1440da34283065f450cac9616cb6be4d9b"
+    },
+    {
+      "path": "reference/vectors/certificate-asn1-admission.json",
+      "bytes": 133060,
+      "sha256": "a966b36710e4cc4470cfb2b795e1765377b34abe73034e6f8ba6018cfc737b6e"
     },
     {
       "path": "reference/vectors/certificate-validity-endpoints.README.md",
@@ -12975,8 +12985,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 55942,
-      "sha256": "9748ef0f80948ebd3513f9ace3e5b622ecba20e737a903c1890636930f547fe2"
+      "bytes": 57615,
+      "sha256": "efaa7cfd8642d57f5c4542b7e41ab141697c85e240212789ca8ac3471796ac1a"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
@@ -13202,6 +13212,11 @@
       "path": "tools/create-authority-rsa-equivalence-vectors.mjs",
       "bytes": 10140,
       "sha256": "642125e56be7c9166fa16c8769322a18f4502e6b58e51d3cc44fac391b1ac0bf"
+    },
+    {
+      "path": "tools/create-certificate-asn1-admission-vectors.mjs",
+      "bytes": 10105,
+      "sha256": "73116fe8553f74f187e79370826c8c2abfb33973e6c9eba4cc2db215ee80fdc3"
     },
     {
       "path": "tools/create-crl-structure-vectors.mjs",
