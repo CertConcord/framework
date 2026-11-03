@@ -305,8 +305,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 297969,
-      "sha256": "41011be08174a0b6a3eab21911ec43e96bb92660ba71f12b85d117f1e68e2840"
+      "bytes": 298123,
+      "sha256": "9e6975644be0a3adfee45fc203311133e47723ed7e038c71cefa51abbbad251d"
     },
     {
       "path": "reference/README.md",
@@ -1159,9 +1159,14 @@
       "sha256": "9d2dc7c41ae62092d4cd4fd22b343587a5740e845d5f52af0aa07930dad8480d"
     },
     {
+      "path": "reference/oid4vp-request-audience.test.mjs",
+      "bytes": 20390,
+      "sha256": "d401fe01d8b01f31d193fe376e8b54825161e5c7b45bd5f232fa0e9e9c4fef23"
+    },
+    {
       "path": "reference/openid.mjs",
-      "bytes": 47481,
-      "sha256": "f9821ab7eae5eb94983ca9b32cd1fe9ed1dd2a9c2788c7224adbbb829b42e2ad"
+      "bytes": 48099,
+      "sha256": "a0161c86dfc7a32b8109036a120590d27f175fa7f5e486ca65ae1e1b2faf3c49"
     },
     {
       "path": "reference/openssl.test.mjs",
@@ -5062,6 +5067,11 @@
       "path": "reference/vectors/ocsp-revocation-contract.json",
       "bytes": 93019,
       "sha256": "0eb2248b9c7cab21afc9747337bc07112f55a60a9d575281c181aeb38fd25f13"
+    },
+    {
+      "path": "reference/vectors/oid4vp-request-audience.json",
+      "bytes": 289783,
+      "sha256": "a3822f42772d63720b207a532dc7c1c644d6d858ebf87d84d1804bf6389f581a"
     },
     {
       "path": "reference/vectors/organization-history-rar2/README.md",
@@ -12940,8 +12950,8 @@
     },
     {
       "path": "spec/bindings/DCP-draft-03.md",
-      "bytes": 58586,
-      "sha256": "171e949c37b6d8c1a3253206e25a3f25aef45a50c08c6eef9d53d53fba38a519"
+      "bytes": 59848,
+      "sha256": "f551fafbe090c85740c734ee0c4ec2b04a2552fb101e4612eb3ffa7a30be3022"
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
@@ -13197,6 +13207,11 @@
       "path": "tools/create-mtc-version-vectors.mjs",
       "bytes": 9487,
       "sha256": "a8b83b4a48fc865442271521052b91b401b7b191c3a93d4eea4b0ae9552d5e6c"
+    },
+    {
+      "path": "tools/create-oid4vp-request-audience-vectors.mjs",
+      "bytes": 9442,
+      "sha256": "f015bf3443ee9fc535890c05a0f3c6d1403d30563398c684bec5314be4ef2f53"
     },
     {
       "path": "tools/create-pkcs10-structure-vectors.mjs",
