@@ -1,0 +1,206 @@
+{
+  "schema": "certconcord-prf-kpp-root-admission-v1",
+  "description": "Synthetic authenticated root boundaries and separated authentication failures. Native crypto producer; shared D/CBOR framing.",
+  "cases": [
+    {
+      "id": "AES-256-GCM-0-authenticated",
+      "algorithm": "AES-256-GCM",
+      "kind": "authenticated",
+      "syntheticPRF": "475f2f50bc1eacf7bad19b093076d29c8dd25192cf8b706972785589d50f2f79",
+      "syntheticRoot": "",
+      "wire": "pWN0YWdQoLZhTdZKlTXVgOHwPcGWSWVub25jZUwStHSFO4pOgLwXDQdmaGVhZGVyrmNrZGZsSEtERi1TSEEtMjU2ZGFlYWRrQUVTLTI1Ni1HQ01kcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIBX2CESv1Mc5iTHItLSBbJBN9MXK/8ZoZAczXiyQSjMPZ3ByZlNhbHRYIEjWsC0MAxaEW663g/dIcUhzXU4pm1UEeyib35zkFCR3Z3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggCY12cZaIK7Nl0yq1EfEanJRMGgjfwmrxHn3EUYkTKplpc3ViamVjdElEWCCv4yUNQGmdoVPgcYp6rIzpQpaMs6tc62noDX/p6Aohu2l3cmFwcGVySURYII7tgRWmZQ9aY4pguQYApM30QEybtyKb9Mz+IXur3GDJamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIEn3A76BY/S35SFnvTDWvCR8zuylE6zMumCnabUQJ9AncGNyZWRlbnRpYWxJREhhc2hYIDa+ULw0JymCHAtxUFT0ol7Y1C+EOPZe6szB4T/z+jVYamNpcGhlcnRleHRAbXNjaGVtYVZlcnNpb24B",
+      "bytes": 513,
+      "sha256": "ac6bedec1147ca541d7013edc69e93ba5dbe224c034e844bcfd3b18c01c44704"
+    },
+    {
+      "id": "AES-256-GCM-1-authenticated",
+      "algorithm": "AES-256-GCM",
+      "kind": "authenticated",
+      "syntheticPRF": "8e5a03ee9ece14a2f2ab4200b157b1f423901eb342ab3e6b3f7f233240f23e0e",
+      "syntheticRoot": "be",
+      "wire": "pWN0YWdQjnRCHSPhNMqhc+qBb2rSjmVub25jZUw0mKo2nmbV7jQKbKZmaGVhZGVyrmNrZGZsSEtERi1TSEEtMjU2ZGFlYWRrQUVTLTI1Ni1HQ01kcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIDXQXs6OQQub90I/qRc2VL+nQCYEjkBIMNBS7y4p+tlvZ3ByZlNhbHRYIMdHwsbvUnX9499SxQ/X8VhcKm75HmHMxmMMEjm0y7ahZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggSHAW6UjGboeZ8X8L0uVPq/G/YEyRk3Ixd9eSBMDI1YBpc3ViamVjdElEWCDFwhXsXbzbTFQIoDq2hP9EYhwAHaHwZ4+i0nt3UsqiCWl3cmFwcGVySURYIO4Fq4rdVxcIQ93y0uBJVurU/np4l2Ur9JFzlFRCa/E6amFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIBBkekngWAY0ZxI/vIpVBLlViLNz7tzpWdoIFME+SATYcGNyZWRlbnRpYWxJREhhc2hYIGpsqXkQpIKIp6kB7dcS4W4SOvuYyZupc8vrH45Fn4PWamNpcGhlcnRleHRBKW1zY2hlbWFWZXJzaW9uAQ==",
+      "bytes": 514,
+      "sha256": "8f780eb54b70a9527ede65abfdf7b9b1ec411111ceaee16398e8ee605d95f57b"
+    },
+    {
+      "id": "AES-256-GCM-31-authenticated",
+      "algorithm": "AES-256-GCM",
+      "kind": "authenticated",
+      "syntheticPRF": "64f51fb65b531b3b8fcf2a9029afbe12ebed8c4cd9ba260ac441eb6c0ac144c0",
+      "syntheticRoot": "164b67f638c6166c34695d3e6fad1e6a61c16374ba48eca5a7b8e73f4798a6",
+      "wire": "pWN0YWdQCdd2PIKSNzXt2N5ybLl3j2Vub25jZUwf+8PyTRmwIXAJjmlmaGVhZGVyrmNrZGZsSEtERi1TSEEtMjU2ZGFlYWRrQUVTLTI1Ni1HQ01kcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIAU96t2WJXJTR7PBSDi63ckJYFzfoZI4KwadhvnsIKufZ3ByZlNhbHRYIKc6qjF1IUGusJEWTz30ABI3Kd1DrVPSuNmFL0CK12B/Z3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggRJo0lau4X0Zb0dWzhQZiML3zuzI++4IKZiKVYpQbmHhpc3ViamVjdElEWCAnZShM8SxMeGq0Fg5HtlIq/rjxO6PlLRlNf0WkfjsEwml3cmFwcGVySURYIFT9tDoOy2z8AWx00UYMa6zD8AWWeknN23IzTxqYnioYamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIKZKW9r41Gj8Bg1wiirF7ZDQYeVLGgBqzG7aXuuwdNXJcGNyZWRlbnRpYWxJREhhc2hYIPnq+onxWy+1jHzqO6ipbnkpgb/kL3PVnd7vWCeRdXsIamNpcGhlcnRleHRYH4FJZzJB/XsR+D9AwXMPFJ4MUx7JE+Eh/vfMjiaJikRtc2NoZW1hVmVyc2lvbgE=",
+      "bytes": 545,
+      "sha256": "92df95aebcda8e4af62dd61e70173cac7881de82b071720f70c75487fbd8d491"
+    },
+    {
+      "id": "AES-256-GCM-32-authenticated",
+      "algorithm": "AES-256-GCM",
+      "kind": "authenticated",
+      "syntheticPRF": "c2ea149e50db189c32dd84496e788774ee0675897a5555ee2ea2fe3ffa23337e",
+      "syntheticRoot": "e92e29b95a655ee2ae9aa7047d468351bb3794ff4b260f5709577c3c43a5d4e2",
+      "wire": "pWN0YWdQOS2ar/tpiSl+DtUiXYR+I2Vub25jZUxmBPjF6ToU55srg9tmaGVhZGVyrmNrZGZsSEtERi1TSEEtMjU2ZGFlYWRrQUVTLTI1Ni1HQ01kcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIGhbtFYVUYHbws+qyqQfB7t6YN6+cTNewrEBpl5kgOALZ3ByZlNhbHRYINTl4YhxEwUIaao+6tRHSdYPRgVkIDet49bnBdCQEHUdZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFgghE9Y9fQbKEk1oKLBPEugG8yZewkiwFgF3g+ptDt4P5Bpc3ViamVjdElEWCCu8M2axFIAAh3UlgfJ4SvGWCxbrZQ9IR9vooGkhT+0UWl3cmFwcGVySURYIKHziue9XzCSmRYdsFEdiGzJyucs7ltN5c7ya6iSY9wBamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIIlxipRbmG+A6EcUVBLpysiAYtWp6w49nzoX0dAx08dpcGNyZWRlbnRpYWxJREhhc2hYIO9Tpfinxm1106OxdgzmVntxdkclQpeCSUn24cO5cQStamNpcGhlcnRleHRYIBzulKkbfz9SMnM+8BV6S0wJGN/G6PKSzM6iUd104W3pbXNjaGVtYVZlcnNpb24B",
+      "bytes": 546,
+      "sha256": "4448ad2610220bc7d049b206774c88e61e9c1c1f27e27dc65dd3353f2ed5b1ad"
+    },
+    {
+      "id": "AES-256-GCM-33-authenticated",
+      "algorithm": "AES-256-GCM",
+      "kind": "authenticated",
+      "syntheticPRF": "1ac571a62fe7ff5cc680a448e764b9062af0867a0904497ab733ed13869d6579",
+      "syntheticRoot": "c79767b9a6e1c297e5af534e2ef738418a07b14bdd0f6a96f1fc1a769205fa81ff",
+      "wire": "pWN0YWdQq9gkwt4iatiN9OLRJNb9HmVub25jZUzBKnxciROAO1J/ZdVmaGVhZGVyrmNrZGZsSEtERi1TSEEtMjU2ZGFlYWRrQUVTLTI1Ni1HQ01kcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIKTwGqh/kludkH/V0H7U3oVhKzb8Dw2kfqA0C6X/R1TYZ3ByZlNhbHRYICrM92b29b1nkx8azv23haZ6QB2kKiMqNvyntnRysJSwZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggcd0x7Dy4xf6noyHUAym5qaFyLxxQa0glK/wBu10NCzdpc3ViamVjdElEWCA0YH+i9yjkh9w0Cj6Iw8hyas8jEi0nQhVZomChP0jyP2l3cmFwcGVySURYIL6EvgwhUodnMNxj6gX+Ol6UXFpGrbulT0DZ5u4sq9VZamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIP2QA7fMNapp4ODa5YnP00obEKZIQOr3qczhQrDhGWZfcGNyZWRlbnRpYWxJREhhc2hYIPUcZsKc1A1JV0gJDQD8+TLEDfffb75MY+MIMWIkOZlzamNpcGhlcnRleHRYId9l40BXjDpg4zqSs3K3ZT8yb8B77QkY0EaSErF2vBPwxW1zY2hlbWFWZXJzaW9uAQ==",
+      "bytes": 547,
+      "sha256": "1801155c75461aa7a8bd5ed2cbc77b1e2d038ab7c1cc0e0a42bcf23fa94f26dc"
+    },
+    {
+      "id": "AES-256-KW-16-authenticated",
+      "algorithm": "AES-256-KW",
+      "kind": "authenticated",
+      "syntheticPRF": "9f332bc5682e7b55674cd202b7acbff13df3afd5979f9f484c0ade1efb84e405",
+      "syntheticRoot": "1eed45ca3eb21ff9a9955d6157f9e5b1",
+      "wire": "pGN0YWdYIIOHW8i/MN5rpQibnSQxdp7YWBeKgLP/WYMrZxoTePA9ZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFkakFFUy0yNTYtS1dkcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIKYx/mFpQglextn20uKTvm4WIxslT8RJn6dZ0T+1u9g1Z3ByZlNhbHRYIEIeinsVlBIJIhzsJd9LdAEM/iCSDCCnXqIU31fm6XwcZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggkYhMh9F1nSzL7hqD47JDSHTC3YFoQvb5OWKraJZz3Phpc3ViamVjdElEWCDQhjGodJfAd3n2C7CIegV/qkdmSIBMdfGue26OMa3/HGl3cmFwcGVySURYIB1w7HT6ayUrb8JB/lEkGwr8+dABacokt/sI8S7l1ElGamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIL7ScB3rkvf16PpohbVGve39+tkrgOufju+AhLXUk8+/cGNyZWRlbnRpYWxJREhhc2hYIHY8BSlqKohP1Hn0iGqhN3EVr0GtMjNJtyCZE8ckIROAamNpcGhlcnRleHRYGFrHrDhboS/L4ivN0q7InWpuOuMyOizKYm1zY2hlbWFWZXJzaW9uAQ==",
+      "bytes": 535,
+      "sha256": "ed53cb1bad16d26cc3668eec4851a926b2d5f3b82d356248dec9b60a1b3ee327"
+    },
+    {
+      "id": "AES-256-KW-24-authenticated",
+      "algorithm": "AES-256-KW",
+      "kind": "authenticated",
+      "syntheticPRF": "8599aa43ddca144c914d63580e4946ed61497f62b5d0bac4ba9bf85c7a69b5fa",
+      "syntheticRoot": "7271823a03b6fbbc620eee7f9f79b47da83ecedf1a03dcc5",
+      "wire": "pGN0YWdYIFMHfGamRTkgCaXZxoozvEjUHzrVb39yiTrZ5+gZq97xZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFkakFFUy0yNTYtS1dkcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIGK8f92p0e662lTjDgtF6pt/VXLR21rPCPPYyuxj49m2Z3ByZlNhbHRYIGdJA8vxbUeugPRH5XoSeOmm4DeL1swH1peEj/mLBAaHZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggmvY5Qm34WKHsO8qVy5ub3lptz9unkZShExhjOfY1otFpc3ViamVjdElEWCC2PU6Skk8hyFJaxZDdAPPVIf1NwaLskvkjuICtWxi5rWl3cmFwcGVySURYIM0rkakN9rfdScuUq46VEYzkfpuewnZdeePWY51H7jFFamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIPcM9b2osvHy4+nRCOyi0c9yELeEg8RHT4kbJZmAvWVWcGNyZWRlbnRpYWxJREhhc2hYIDpayN9zQ8Yf5w+UMGsR22c88l6ZZuoWsbaeE7djK/MtamNpcGhlcnRleHRYIM7LM24tVsC2wzblosejvFg5oU8J0vGb/dN1SCqeD0jibXNjaGVtYVZlcnNpb24B",
+      "bytes": 543,
+      "sha256": "ce9d9e4e0d4b6b78872147786ff8d88a9636d2907a707c3725f4808bc52f742b"
+    },
+    {
+      "id": "AES-256-KW-32-authenticated",
+      "algorithm": "AES-256-KW",
+      "kind": "authenticated",
+      "syntheticPRF": "f9fc88503935dceaf98ad66799c2f84087b3d3d3a214dcc8965a24ba49fa1015",
+      "syntheticRoot": "9b38a0a9c9dd0038d400114110f145a8cfc0d435f07c16f42f37f33545d19cb9",
+      "wire": "pGN0YWdYIGVE6+8X+JWKsN1DtKPmyWeaImfjj78edVFL0F4/nAwtZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFkakFFUy0yNTYtS1dkcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIKmDydl25Y7mBAlUUM1HjpXERrc3Gj2MhKs5bgQLUdqeZ3ByZlNhbHRYINB9CsTNu65PnmfLWcnEP5f06lTFRpPEN1td0tlA4eBmZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFgg72wOMIDawjmvWT4oxM+u8Q54FwYI9tk+kq2szV+7re1pc3ViamVjdElEWCAEf6Xjjk/lWsMPPWfShPAeMmwTj1LUK/YOkNkv81MUv2l3cmFwcGVySURYIFo9s/yToG8BVXDsT9JYKahG/hxy04wrnhP1Vj5vmOusamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIC6f6QFlhNVw3ngM4Ya6sqpeBpFwyVOPZbbqBwdjoOhUcGNyZWRlbnRpYWxJREhhc2hYIBp/aCmsvoP9bRmFYXZtjxwheINqpnpO8poOcp+PxbsQamNpcGhlcnRleHRYKA2hq9uFHz0jbfomipUrfK6hFYloSIZ2xF3k1cehj5vE0jISJllLL7Vtc2NoZW1hVmVyc2lvbgE=",
+      "bytes": 551,
+      "sha256": "ec9952a0d36187ca9fdf4321631070c1609eb6cbaaf3e18ee9ef3d9c5b2b49a1"
+    },
+    {
+      "id": "AES-256-KW-40-authenticated",
+      "algorithm": "AES-256-KW",
+      "kind": "authenticated",
+      "syntheticPRF": "94646529fa66835f3af8ea17eba8fa2fe264172f93004ab207af3591ce8b9f17",
+      "syntheticRoot": "883a12208cb18f1885e30eb7402d5a2e9161681f147f3e93b50218290a1a1515d58aec28d2876b17",
+      "wire": "pGN0YWdYIHHpUZYyf9tjYs5nxEHsxPS8B+HtOi/C0bVvvWZf+Gt+ZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFkakFFUy0yNTYtS1dkcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIPr2t4BgL2yXLz8PDpiMEoRcrIJlWAzlFqTDC89I6Vk5Z3ByZlNhbHRYIINKjR6geY/SAeSMjayEj9+CkipgtovvrP8pWqs0rrtmZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFgg1CD2H4JYQbE5NYb8+PCwzJwv1Ogqal1f6+uI1FByYR1pc3ViamVjdElEWCCec37HCfWhKqJOzO4UrjJayUz3gZXMOv2bhTp4fzKKmGl3cmFwcGVySURYIIoaTYkXU0lhiO4Q752iLSeyBpMY0/VqNrm1rs6wzTesamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYINUYFo0Kh//aZpGVEouLcnMSPotcYXGG7ruT9fUensMPcGNyZWRlbnRpYWxJREhhc2hYIKd3eiUx3Wm0QGrVg/91GIh9bEjyvVRzcNlmb34FalKwamNpcGhlcnRleHRYMIP90c7/fmoERrYUU7hdl+GXSnK+iT5Rp7AiPuUtdgetMlSuA2eBxA5bqt7gYBdE5m1zY2hlbWFWZXJzaW9uAQ==",
+      "bytes": 559,
+      "sha256": "6165080e785862342f63e5ae045be1c80dce536571cfc4e6883e7cdf52800b7b"
+    },
+    {
+      "id": "AES-256-KWP-1-authenticated",
+      "algorithm": "AES-256-KWP",
+      "kind": "authenticated",
+      "syntheticPRF": "b27d59aadb8b8752b96d7ae7d00fa8e436f78436d3d641b673f3205772ebd09c",
+      "syntheticRoot": "3c",
+      "wire": "pGN0YWdYIBvrYjogNo+nTrQZvHp0wL3HRzETqAQfjPio4XvavQSwZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFka0FFUy0yNTYtS1dQZHJwSUR4GnByZi1yb290LWFkbWlzc2lvbi5leGFtcGxlZWVwb2NoAGdrZGZTYWx0WCA5IelSZXQJHwdrKLLm2jKLLKL1zZRkqGnE6RDvDksTpmdwcmZTYWx0WCB8VISiojzy9tHmWrMB9yyDeXvzFG/DjmQ3IQZz0HEsCGdwdXJwb3NlbEFDQ09VTlRfV1JBUGljb250ZXh0SURYIGjGU0t6kYeNagS542TeAvuELSv9znCFuiT0GGKU5VUDaXN1YmplY3RJRFggnhVgq4x/J0nAMo6lKPjymVvk09+/YA6cm5Lyzzi5261pd3JhcHBlcklEWCDNbF3xKh979m4rje4pzTnsgi9omOD7/UdSU0MG27/VlWphbWtWZXJzaW9uAW1zY2hlbWFWZXJzaW9uAW10cnVzdERvbWFpbklEWCBcYYZZ7RmICSDkhxxv95S3YejU5OLKd296hPEwQGTZUnBjcmVkZW50aWFsSURIYXNoWCD1t+it2OA1kGgSUyuodjZj4liXxuUDab/RCJ3P4SmpJGpjaXBoZXJ0ZXh0UGtwJvhYExB88XTI9o6wdLVtc2NoZW1hVmVyc2lvbgE=",
+      "bytes": 527,
+      "sha256": "13b2ef0d4bd41c686450c88de3a2d748cf041d3e98cae00fb49d6c7316f04369"
+    },
+    {
+      "id": "AES-256-KWP-31-authenticated",
+      "algorithm": "AES-256-KWP",
+      "kind": "authenticated",
+      "syntheticPRF": "1ac2f687ca087b9bb8b7a0555bfabfbd3318f437c1a1b80ad0a07ecfc430bb50",
+      "syntheticRoot": "f3d44efc07bbc62c41c61919eab302a42868d457e0ba1d92c119e70afb5d5b",
+      "wire": "pGN0YWdYIPPScI3Bhc9nijfXgxdx7q9Gl0NZHIEHe/KplRXUna9JZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFka0FFUy0yNTYtS1dQZHJwSUR4GnByZi1yb290LWFkbWlzc2lvbi5leGFtcGxlZWVwb2NoAGdrZGZTYWx0WCBLbitrZxexW5jvZhedY4lbM3gMTkar8qL+PvQDFdmX32dwcmZTYWx0WCBGFnyo2QLSf/V9PUD9NWQbyivVbpGr62o1fq0W2iOtaWdwdXJwb3NlbEFDQ09VTlRfV1JBUGljb250ZXh0SURYIAGJa7GVWvKoVbx9VCaVFBrRZj9dTO6ey4UMRGtjeU3RaXN1YmplY3RJRFggSkj5EFYymsrcpAYWTKJA4704N36Os0YUpTVQMYZ3F9Zpd3JhcHBlcklEWCAwfUdbsyQV2ONf80IHLJVTn6bP2ZBmPzmS1CjrsiOPOmphbWtWZXJzaW9uAW1zY2hlbWFWZXJzaW9uAW10cnVzdERvbWFpbklEWCAfqWLxrJZcMZGJ7tQPfTD1PqS/XC8gi5a2R/xXqcnMnHBjcmVkZW50aWFsSURIYXNoWCB12h4gZGsiEZGzii++LKOnWAZ6h33RxWEw0t0cBhdBjmpjaXBoZXJ0ZXh0WCiTxbXt8m794VHxEr1v37K9I1CsjcV0LGxradn19lUCcuU7vGzIV+RkbXNjaGVtYVZlcnNpb24B",
+      "bytes": 552,
+      "sha256": "106eaa024d3dbd84b9fff17b490b20cefca03fee306f98487b6352070e1f9b1d"
+    },
+    {
+      "id": "AES-256-KWP-32-authenticated",
+      "algorithm": "AES-256-KWP",
+      "kind": "authenticated",
+      "syntheticPRF": "c1703302b82854b947377bb37156fb3869fa35d358707a82d9f30dc10de10e4a",
+      "syntheticRoot": "71be31c3b5331b761a8bf8a563a0536c56ceb3c951e93023b86afc00b6cf3c4d",
+      "wire": "pGN0YWdYIPSQEPEbViNYpYHEx9ZyzVs0Q4seXk/qBBAxgO8gVa04ZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFka0FFUy0yNTYtS1dQZHJwSUR4GnByZi1yb290LWFkbWlzc2lvbi5leGFtcGxlZWVwb2NoAGdrZGZTYWx0WCBTp2NYswEjWZF6GRLBckpxfBNFWeiO/JRlV1lPaRdWsGdwcmZTYWx0WCB9G3o/V2eHhEtXzy7dhOX6UHITSe1vJSJdU7sIG+/nvWdwdXJwb3NlbEFDQ09VTlRfV1JBUGljb250ZXh0SURYIHLefNHFB58+RUDwjjXbhef7Jemojv6+oo+11U3mBuOUaXN1YmplY3RJRFggK0jtWT8CjkA6tlCthcV08IMv43jKk1HJNRYTi4B0SPRpd3JhcHBlcklEWCDNmOcnQfHuKOaJzJjidAvsC24Cpy0IWf+TsA2ZSsxzIWphbWtWZXJzaW9uAW1zY2hlbWFWZXJzaW9uAW10cnVzdERvbWFpbklEWCCqQGWQ9J5bnjjoWIJwtPQPlY2VN2Ym8A6tSBgCY252XnBjcmVkZW50aWFsSURIYXNoWCC5fiBmMD2VrA3HTkKapEHRGJ+BWtogqXdfP1q99Z9/JmpjaXBoZXJ0ZXh0WCgmNhHeN3JyL/og5AgUoGnURsDvDknlueqdqn63gmGamSLmos51cqEXbXNjaGVtYVZlcnNpb24B",
+      "bytes": 552,
+      "sha256": "3c8637122cb6d089ac996ca0c190b3daa52368dc97187bd3c73bb9595819a832"
+    },
+    {
+      "id": "AES-256-KWP-33-authenticated",
+      "algorithm": "AES-256-KWP",
+      "kind": "authenticated",
+      "syntheticPRF": "28531be4e16ec7a1f618c25e78fb8cced72f68fa18c30d2bed0a49d1ec263294",
+      "syntheticRoot": "e8587366e7e85578cc1b00322ea36a01120f559e7756921305e975d8de8cee1fc0",
+      "wire": "pGN0YWdYIMzZbQfKjS59VPNcl1W/b/MV6WhBR1nSF0aw9KeZrgK1ZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFka0FFUy0yNTYtS1dQZHJwSUR4GnByZi1yb290LWFkbWlzc2lvbi5leGFtcGxlZWVwb2NoAGdrZGZTYWx0WCA5TmgwaJ4FUfRW69BrYyhSGdg84mO2gTQTrSjdfI0rQmdwcmZTYWx0WCC5c3Enab7sALUuhU/kCNegHd25jTXJ444iV4KpSFYIFmdwdXJwb3NlbEFDQ09VTlRfV1JBUGljb250ZXh0SURYII85gfnzKGF4rEt61VyUnB4sTuwp0JPC1gW3ajzbmBVgaXN1YmplY3RJRFggaInGRvQLV8tH3B1zV1X76mjpCf7FcIrsY4wT1iWOvDFpd3JhcHBlcklEWCBEuJqiVD8rwR5DgQpDu8ZeMRTyjzrEHQT8FpZPim60EmphbWtWZXJzaW9uAW1zY2hlbWFWZXJzaW9uAW10cnVzdERvbWFpbklEWCDIWtJvkGA+A0fcE6SKNLgK+W8LC9sK2yVmDf32mDZMg3BjcmVkZW50aWFsSURIYXNoWCDsIu4L0X25BtPuWwU2d09d0G/wYdwAUT4okIxAVGZ+ImpjaXBoZXJ0ZXh0WDDz7d5bp/A0AEUCWr3fY/MnFkNx9ZIB/KcxSbhqzeTta/UM1COHti+eT8UOGmRkqp5tc2NoZW1hVmVyc2lvbgE=",
+      "bytes": 560,
+      "sha256": "394e48115af80d7e113c8e415c5ec6357531eb874f71729adff14df2cbc47714"
+    },
+    {
+      "id": "AES-256-GCM-31-bad-tag",
+      "algorithm": "AES-256-GCM",
+      "kind": "bad-tag",
+      "syntheticPRF": "a2fd5a44d0a35052df4a91a40b88dec1da31e0b0e0554ea0ff2bd1267de938b6",
+      "syntheticRoot": "0d30352f63555d09307ef6c939b026b669f7b9598c89bab013a514223e8673",
+      "wire": "pWN0YWdQ4QoAsMjEIPtg6Kq10YU/L2Vub25jZUwddy3J1S+1TNJ+sSFmaGVhZGVyrmNrZGZsSEtERi1TSEEtMjU2ZGFlYWRrQUVTLTI1Ni1HQ01kcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIM05lsEFj8jsXLMxr0GylCoXU70s3cLQu83m0fyzsWlVZ3ByZlNhbHRYIF6aEix46WF48G0jMonW7pqX23IzUZYXwQDdtc3vdSY7Z3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggAih9ivM8hgpi/VHomIYxacrVgNraWevJnNh3tf4nXCZpc3ViamVjdElEWCDTc0zuithXOUPEmlOuxoF7e/T3wotukAhJl1eMemmLpGl3cmFwcGVySURYIC5nc/JmEw5wpExtgElIO4GfUDxMxLWgIEli7VElgVNWamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIE7CRhOj4sj5fKMCGbGhuKaX7n8G5HG/P/ZwHEnc/KFycGNyZWRlbnRpYWxJREhhc2hYIBy4BdW0fXgckctl708siGFxchtAZNClNOPKhAkzJfHCamNpcGhlcnRleHRYH0c5m9pxbAg3S4yA2xl+GFLBPFuaxY0t7qI98aad+Qxtc2NoZW1hVmVyc2lvbgE=",
+      "bytes": 545,
+      "sha256": "7c6e4e024d07357513d0562806773be12485fd85c0e8177a9aefc54bfba59f83"
+    },
+    {
+      "id": "AES-256-KW-16-bad-tag",
+      "algorithm": "AES-256-KW",
+      "kind": "bad-tag",
+      "syntheticPRF": "4564808e99aa989d52e8e560020d4f8c5658b31e0eafd1886c15e27dd277f1b9",
+      "syntheticRoot": "e04009ec40d08ebcdfba62bd73ccb28d",
+      "wire": "pGN0YWdYILiOgkz1nbJHENP4OfGlWEx1Klem2GTjO0f8GHJuhFutZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFkakFFUy0yNTYtS1dkcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIKF2N8iDt4T3aPAGZmL7sIsFTw5Ywf8z/PMaMxaf9oEhZ3ByZlNhbHRYIFO8iyyFDqYyDFJpW8Y4s+fN+8904+cCTk4UgzYuRhGqZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggvyMTvDLK/j7jiaPh2UPD9ilTcS/WdAOidCSBTS1STA1pc3ViamVjdElEWCAlrG2eorZKj+UMqnbjxm6QjeIkE5CaPacoaiknnvKoJGl3cmFwcGVySURYIC3ZD3nOHO4didGgzPggS9WOOoiOeIgfkXbIjLa3xew6amFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIJb3gqOoz41KdJGYwL8HKMPnyu/Ivv2JTzfbRjve1GE4cGNyZWRlbnRpYWxJREhhc2hYIEyQY0/VVMYIzecLMUAdPybcSxkSSBZsjdV9/DQSDVqpamNpcGhlcnRleHRYGPu0GLG0SrBK9ykxb7L0gORId0eTLEgyGW1zY2hlbWFWZXJzaW9uAQ==",
+      "bytes": 535,
+      "sha256": "cef4155be03c39aeaf2f83dc52ddf462e4ff09387e075b4cf5a93f234c13ca29"
+    },
+    {
+      "id": "AES-256-KW-16-bad-integrity",
+      "algorithm": "AES-256-KW",
+      "kind": "bad-integrity",
+      "syntheticPRF": "583027f95ddd26fc5790877a70eea1b6898026305a7ed9e0aa5d38418d11eafe",
+      "syntheticRoot": "64ec7d71ba7dba5f0f3ba3bf6694f535",
+      "wire": "pGN0YWdYIE7k5TpiDoIWrPtV4wD4gBMhGybgKgGrlH8rprl/Y+szZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFkakFFUy0yNTYtS1dkcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIDsBJYDu8nYSQXW2NBLN82XeC/NNUWF4kqQLWpZBpmE8Z3ByZlNhbHRYILBvI3cOI/rqfutjsIwbJ8FHOrpjvcAHWzUk0s6ynVIaZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFgg1mx0AxHo3xBNUIqivCvY5vqwTwzXcD9/qMAHruU1Xh1pc3ViamVjdElEWCAeK9UloNE/9O+TyfR/0qh3sz3PqdaQmITagva/mL/YOWl3cmFwcGVySURYIMO/MG5+v6tTmcRY45CDA6cHKPstDPt4wd52sTpV9cwLamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIIgszaZQ6plaQV8PDgPUagdxx1oxgjsenkOTBtBSQ4zucGNyZWRlbnRpYWxJREhhc2hYICC+Rdleuhevly7uH73pOWy0JLmVONxEgRXvpdcuNHRwamNpcGhlcnRleHRYGAJoQmImr/uNtpcdaQ6H0TI35VY/i8wtgm1zY2hlbWFWZXJzaW9uAQ==",
+      "bytes": 535,
+      "sha256": "b80ad19399e8490cf9afeec7e43c13f5e166d777eccc86831d6e412ab91b1bcd"
+    },
+    {
+      "id": "AES-256-KW-16-bad-tag-and-integrity",
+      "algorithm": "AES-256-KW",
+      "kind": "bad-tag-and-integrity",
+      "syntheticPRF": "40e5b3582eeafd045f3efdf7646fb68950b3dede7f10377bdd9933ea98a0c604",
+      "syntheticRoot": "e2fc23bb92ae9723dafd53ecc4e8e318",
+      "wire": "pGN0YWdYIN+ur8WS9dufp6UIcw7+tQCGd5Q3a+n+PRciUiZ/ZpHsZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFkakFFUy0yNTYtS1dkcnBJRHgacHJmLXJvb3QtYWRtaXNzaW9uLmV4YW1wbGVlZXBvY2gAZ2tkZlNhbHRYIMfsyU+FQlAZJFgszzbuEhoMSWsBQXXwW9gQZI0SZDi9Z3ByZlNhbHRYIDbFP32ijAAVGCqAHhcrRuxN7Ahi6uB5zBVFM/qE8BegZ3B1cnBvc2VsQUNDT1VOVF9XUkFQaWNvbnRleHRJRFggW07fsid6cmZZGeB0+eIVxNI2XJuAukKbgFEON6w7Pt5pc3ViamVjdElEWCCl/NxTzHG2fyOvOzf87nuA8uLBs1aBP/flwAnEJwOmaGl3cmFwcGVySURYICp1EF/Qm4tIddvHHEYOcdREjyjugeriHSE41bbtIsehamFta1ZlcnNpb24BbXNjaGVtYVZlcnNpb24BbXRydXN0RG9tYWluSURYIL58/SepX6KL6NrZRu7s42AMkLJjacUqHneYrbsxjW2PcGNyZWRlbnRpYWxJREhhc2hYIN5pIzSglUoJVfCHw4a5nKwHnVsHJxtXls96zXlLUCIUamNpcGhlcnRleHRYGFPO63mN2v6f7QK7C8w31JwUBpWLFscgSW1zY2hlbWFWZXJzaW9uAQ==",
+      "bytes": 535,
+      "sha256": "dd2e215014d1c93b9683ca23bad144f897e6a77b1ad86d5c31708880ade10ef8"
+    },
+    {
+      "id": "AES-256-KWP-1-bad-tag",
+      "algorithm": "AES-256-KWP",
+      "kind": "bad-tag",
+      "syntheticPRF": "f0b82c782c0643bdc59db7882c11d23079ec333475c3bc7c21ca137b5f162bed",
+      "syntheticRoot": "58",
+      "wire": "pGN0YWdYIIZBCVBUrVZ2IY6WLqikUdAwqojMSmhU8RTAZh8FI9cjZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFka0FFUy0yNTYtS1dQZHJwSUR4GnByZi1yb290LWFkbWlzc2lvbi5leGFtcGxlZWVwb2NoAGdrZGZTYWx0WCCjK1AMzgr95GRPtAQWYj5Rh1bXErFL8ZCTlyMDp57RpGdwcmZTYWx0WCA34nAZHuHQW1l5RofLd89EUDJhfmLQpFvCyPt+fCITlmdwdXJwb3NlbEFDQ09VTlRfV1JBUGljb250ZXh0SURYIFHNxQktTbKBtsY18FfyMUtznSggd+TrDgqPGAhSxCOCaXN1YmplY3RJRFggSEZ+6F8vnq8vaClxAsAq75Q4kIoVwYvHDTfHnE80Jh5pd3JhcHBlcklEWCC5ccXlyucRIpA/eFHkVXfz9yJGYZIGVFhbXMYbX4vH3mphbWtWZXJzaW9uAW1zY2hlbWFWZXJzaW9uAW10cnVzdERvbWFpbklEWCD+WUiHtAsaMSbI/m1c2RHxKAhbFkL3qcymxiBTN0SEl3BjcmVkZW50aWFsSURIYXNoWCC66YkCNrxgnHWUK0paiEHNbREINLoaqnUVILwk8FDVdWpjaXBoZXJ0ZXh0ULK0pfv9N2tk1hL2+F2CP/9tc2NoZW1hVmVyc2lvbgE=",
+      "bytes": 527,
+      "sha256": "7813f24147b2492dd5e59248ad5bc812f5f5ada5882ea2213cb1f8f20257b179"
+    },
+    {
+      "id": "AES-256-KWP-1-bad-integrity",
+      "algorithm": "AES-256-KWP",
+      "kind": "bad-integrity",
+      "syntheticPRF": "623c70d981f75a2c512445fce57ddc362cf5b2e9589208c9c021016ccc2cf6fe",
+      "syntheticRoot": "77",
+      "wire": "pGN0YWdYIIQynzC1LiHhGu7n6/CfEjkAl75QHBYjEMhJ0ImFot2jZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFka0FFUy0yNTYtS1dQZHJwSUR4GnByZi1yb290LWFkbWlzc2lvbi5leGFtcGxlZWVwb2NoAGdrZGZTYWx0WCDyTqWOQlMj7mLu1+Z/jmLtlT86NWLLnh3kEsht6algC2dwcmZTYWx0WCAHZ1OkApii+9ZvYWOpdVJo6MHyqIgzS033pXfoORL+WGdwdXJwb3NlbEFDQ09VTlRfV1JBUGljb250ZXh0SURYIDj/s9q+YpYaJwwecAX7Qh+onc9sNty6YYwC4kQQpz3haXN1YmplY3RJRFggf+L4Y5BWAGbAJlWc86sOV5XozyzM/ALasK94F1+dfVtpd3JhcHBlcklEWCBEqns6i+7fRXw7Q7grvOiXM5GHCspf9hOPTwWh1WuxVGphbWtWZXJzaW9uAW1zY2hlbWFWZXJzaW9uAW10cnVzdERvbWFpbklEWCCMo1ggQYSQ6HpvcGHZNPlrEsaebEmMSEzG5ITcqR9Lv3BjcmVkZW50aWFsSURIYXNoWCAkF1YbVHqijZG72UGM6vK4/JX8NEn2AEMZpbWxq/mqOWpjaXBoZXJ0ZXh0UL+bznw8sFPw7ZdDOYlo23xtc2NoZW1hVmVyc2lvbgE=",
+      "bytes": 527,
+      "sha256": "67c2b0386eab17df4d4268e666ca02195b5461b5f214630cd4637739dee01e86"
+    },
+    {
+      "id": "AES-256-KWP-1-bad-tag-and-integrity",
+      "algorithm": "AES-256-KWP",
+      "kind": "bad-tag-and-integrity",
+      "syntheticPRF": "7ca03cabf3db8bdd73e227cce09ddbf905676c428a2143b754bc2e14b48d4054",
+      "syntheticRoot": "17",
+      "wire": "pGN0YWdYIIvgcs9tBpE71n5RlqfOlwAjHLb2RAio6fr55FIPuM9EZmhlYWRlcq5ja2RmbEhLREYtU0hBLTI1NmRhZWFka0FFUy0yNTYtS1dQZHJwSUR4GnByZi1yb290LWFkbWlzc2lvbi5leGFtcGxlZWVwb2NoAGdrZGZTYWx0WCDRALzcrI6CovTHcdFjEJRC/i8CagJ3fiF13vzK/nmUAWdwcmZTYWx0WCCzNexWQcZSN4QWoduHjOpysLuh0JMx3NvRTY0J3LyrwWdwdXJwb3NlbEFDQ09VTlRfV1JBUGljb250ZXh0SURYIEmyNBwkz3SRdMmxkyYsB2dgsf+OOZlLpHZsFC6wBGBNaXN1YmplY3RJRFggaO0Jv+VAioAFyKjCvVLiylwtayytjgyIu7fEayM0ixtpd3JhcHBlcklEWCA8HlpbxnHRnT+43xNc0UJ4HKVyQa5HzPimyZ8DTYVNP2phbWtWZXJzaW9uAW1zY2hlbWFWZXJzaW9uAW10cnVzdERvbWFpbklEWCAIS5LuiHN3/OvuS9uIcg8Cip5KBeVnqOrCRVmkw8st1XBjcmVkZW50aWFsSURIYXNoWCCCFw7N/PwxEzyXnPDS9kv0/ME95vYsCEd9g6fSH7oxiWpjaXBoZXJ0ZXh0UKzbGRAJOK9MM76KXa3KSy1tc2NoZW1hVmVyc2lvbgE=",
+      "bytes": 527,
+      "sha256": "c61cac42cb95d6d3fde3cc6683e6d23de8d6ab159a11ed7b7a2d12b8fa5fc6d4"
+    }
+  ]
+}
