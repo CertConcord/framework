@@ -219,6 +219,11 @@
       "sha256": "341028f766df9f2eb5506e554170d613579c1a2cdaa19a450ed40bdf30b002a6"
     },
     {
+      "path": "docs/jose-p256-admission.md",
+      "bytes": 2532,
+      "sha256": "9a9a27c97f23aa212c0af656b91e61372003a594ea42c4908d1d9ead74ee6fc2"
+    },
+    {
       "path": "docs/mtc-document-validation.md",
       "bytes": 4009,
       "sha256": "e624106f880f2f1fcf89ef654fcdec8e7563a6ba4758c24293247f49eea12ec3"
@@ -315,8 +320,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 298794,
-      "sha256": "9fef900806b8d295a36e3466d232108afd3715889de15045bcaf22cb53df53ba"
+      "bytes": 298969,
+      "sha256": "b6b56f6395a2855b93c28c8986c8d48c595dd5f302abdbf3687f38db253ad084"
     },
     {
       "path": "reference/README.md",
@@ -989,9 +994,14 @@
       "sha256": "ec7951eea9b7e9b604c117351ed8f089ee82cff045bb98281b5bc36609b26f71"
     },
     {
+      "path": "reference/jose-p256-admission.test.mjs",
+      "bytes": 11893,
+      "sha256": "6d67946fe630273515e7d141bb19c688d19227b27057bcc664a131a2a9de34c6"
+    },
+    {
       "path": "reference/jose.mjs",
-      "bytes": 17052,
-      "sha256": "cb5b9a5ad0c6ca2e9f05960b4add08ba78957d638d2eeb3e6eef6c9007c82de8"
+      "bytes": 17397,
+      "sha256": "4b639686588799cd04af91ac97daa37b863d5085faf5e6f54a4136a456f987e7"
     },
     {
       "path": "reference/json.mjs",
@@ -5082,6 +5092,11 @@
       "path": "reference/vectors/document-acceptance/manifest.json",
       "bytes": 66603,
       "sha256": "870963954ff118c054ec6524a5fb86ee24204b7e581ad1bc708ca13d38b7440c"
+    },
+    {
+      "path": "reference/vectors/jose-p256-admission.json",
+      "bytes": 123428,
+      "sha256": "8620dbb9b6429b4703be885fcad12e3948d7340bf034462f4a9011818e682f15"
     },
     {
       "path": "reference/vectors/mtc-identity-boundaries.json",
@@ -13257,6 +13272,11 @@
       "path": "tools/create-crl-structure-vectors.mjs",
       "bytes": 5965,
       "sha256": "cb8cb8285784024124d6b042540495f9aa6e5160c641773b300fc6fd1d1f4618"
+    },
+    {
+      "path": "tools/create-jose-p256-admission-vectors.mjs",
+      "bytes": 9682,
+      "sha256": "7be31aa91b47f4831ccd754fe49665b89cc208b01e5bf940a6001e2fca00f5ae"
     },
     {
       "path": "tools/create-mtc-identity-vectors.mjs",
