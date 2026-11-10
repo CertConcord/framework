@@ -10,6 +10,7 @@ import {
   validateIdentityClaims,
 } from './identity-profiles.mjs';
 import {
+  ProtocolError,
   requireThat,
   random,
   b64u,
@@ -393,11 +394,18 @@ export class CredentialIssuer {
         params.client_assertion_type === 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
         'invalid_client',
       );
-      const a = verifyJWT(params.client_assertion, client.publicKey, {
-        typ: 'JWT',
-        audience: this.issuer,
-        maxAge: 60,
-      }).claims;
+      let a;
+      try {
+        a = verifyJWT(params.client_assertion, client.publicKey, {
+          typ: 'JWT',
+          audience: this.issuer,
+          maxAge: 60,
+        }).claims;
+      } catch (cause) {
+        const error = new ProtocolError('invalid_client');
+        error.cause = cause;
+        throw error;
+      }
       requireThat(
         a.iss === params.client_id &&
           a.sub === params.client_id &&
