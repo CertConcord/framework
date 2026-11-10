@@ -109,6 +109,7 @@
   "reference/certificate-validity-endpoint.test.mjs",
   "reference/certificate-validity-time.test.mjs",
   "reference/certificate-validity-vectors.test.mjs",
+  "reference/client-auth-error.test.mjs",
   "reference/cmp.mjs",
   "reference/cms-algorithm-protection-replay.test.mjs",
   "reference/cms-algorithm-protection.test.mjs",
