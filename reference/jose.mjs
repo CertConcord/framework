@@ -21,10 +21,13 @@ import {
   D,
 } from './core.mjs';
 import { uint, vector } from './mtc.mjs';
-export const joseAlgorithm = (key) =>
-  ({ ec: 'ES256', ed25519: 'Ed25519', 'ml-dsa-65': 'ML-DSA-65', 'ml-dsa-87': 'ML-DSA-87' })[
+export function joseAlgorithm(key) {
+  if (key.asymmetricKeyType === 'ec')
+    return key.asymmetricKeyDetails?.namedCurve === 'prime256v1' ? 'ES256' : undefined;
+  return { ed25519: 'Ed25519', 'ml-dsa-65': 'ML-DSA-65', 'ml-dsa-87': 'ML-DSA-87' }[
     key.asymmetricKeyType
   ];
+}
 export function publicJWK(key) {
   if (key.asymmetricKeyType.startsWith('ml-dsa-'))
     return {
@@ -55,6 +58,8 @@ export function importPublicJWK(jwk) {
     (jwk.kty === 'EC' && jwk.crv === 'P-256') || (jwk.kty === 'OKP' && jwk.crv === 'Ed25519'),
     'JWK_ALGORITHM',
   );
+  if (jwk.kty === 'EC')
+    requireThat(unb64u(jwk.x).length === 32 && unb64u(jwk.y).length === 32, 'JWK_COORDINATES');
   return crypto.createPublicKey({ key: jwk, format: 'jwk' });
 }
 export function thumbprint(jwk) {
@@ -80,11 +85,14 @@ function signBytes(data, key) {
 }
 function verifyBytes(data, sig, key) {
   const alg = joseAlgorithm(key);
-  return crypto.verify(
-    alg === 'ES256' ? 'sha256' : null,
-    data,
-    alg === 'ES256' ? { key, dsaEncoding: 'ieee-p1363' } : key,
-    sig,
+  return (
+    (alg !== 'ES256' || sig.length === 64) &&
+    crypto.verify(
+      alg === 'ES256' ? 'sha256' : null,
+      data,
+      alg === 'ES256' ? { key, dsaEncoding: 'ieee-p1363' } : key,
+      sig,
+    )
   );
 }
 export function signJWS(payload, key, header = {}, { detached = false, unencoded = false } = {}) {
@@ -121,9 +129,10 @@ export function verifyJWS(
   key,
   { typ, detached, critical = [], allowedAlgorithms = [joseAlgorithm(key)] } = {},
 ) {
-  const { parts, header, payload } = decodeJWS(token);
+  const { parts, header, payload } = decodeJWS(token),
+    algorithm = joseAlgorithm(key);
   requireThat(
-    allowedAlgorithms.includes(header.alg) && header.alg === joseAlgorithm(key),
+    algorithm && allowedAlgorithms.includes(header.alg) && header.alg === algorithm,
     'JWS_ALGORITHM',
   );
   if (typ) requireThat(header.typ === typ, 'JWS_TYPE');
