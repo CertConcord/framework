@@ -320,8 +320,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 299281,
-      "sha256": "e0467993a7399d688e9f581d0e1984a0d0f0766d42155809ab518cc7d730fb9c"
+      "bytes": 299323,
+      "sha256": "fd9bffed55c7cbff957ae49484fccfd069dfa9f194f14917ad11f7027bf0b8fa"
     },
     {
       "path": "reference/README.md",
@@ -552,6 +552,11 @@
       "path": "reference/certificate-validity-vectors.test.mjs",
       "bytes": 8402,
       "sha256": "85f3ced7cad3714dc012356c3887914df8b031883201994c39c20fe5ac2a6c54"
+    },
+    {
+      "path": "reference/client-auth-error.test.mjs",
+      "bytes": 3150,
+      "sha256": "6b580e2d6d31db92c9c930c8abf81f710aa905f17268f60183300656ae374da8"
     },
     {
       "path": "reference/cmp.mjs",
@@ -1200,8 +1205,8 @@
     },
     {
       "path": "reference/openid.mjs",
-      "bytes": 48099,
-      "sha256": "a0161c86dfc7a32b8109036a120590d27f175fa7f5e486ca65ae1e1b2faf3c49"
+      "bytes": 48286,
+      "sha256": "a63adfcc8f0d4a237650d7dff51307d68b0d4c599befcd293bfe8d4dcd771f50"
     },
     {
       "path": "reference/openssl.test.mjs",
