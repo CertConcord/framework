@@ -555,6 +555,120 @@ test('completed recovery result queries remain available after authority withdra
   assert.deepEqual(f.unpack(completed).receipt.trustDomainID, f.trustDomainID);
 });
 
+test('live completed recovery rechecks authority before replay and preserves read-only retrieval', async (t) => {
+  const f = fixture(t, { durable: true }),
+    liveTime = f.request.issuedAt + 30;
+  assert(f.request.issuedAt < liveTime && liveTime < f.request.expiresAt);
+  t.mock.method(Date, 'now', () => liveTime * 1000);
+  let loads = 0;
+  let service = f.open(async () => {
+    loads++;
+    return Buffer.from(f.root);
+  });
+  const initialComplete = t.mock.method(f.journal(), 'complete'),
+    completed = await f.recover(service),
+    decoded = f.unpack(completed);
+  assert(
+    c.equal(decoded.plaintext.root, f.root),
+    'The completed result must contain the selected root',
+  );
+  assert.deepEqual(decoded.plaintext.trustDomainID, f.trustDomainID);
+  assert.deepEqual(decoded.receipt.requestHash, f.approvedHash);
+  assert.equal(loads, 1);
+  assert.equal(initialComplete.mock.callCount(), 1);
+  const row = () => {
+    const value = f.journal().db.prepare('SELECT * FROM operations WHERE id=?').get(f.operationID);
+    return {
+      ...value,
+      digest: Buffer.from(value.digest),
+      result: Buffer.from(value.result),
+    };
+  };
+  const saved = row();
+  assert.equal(saved.status, 'COMPLETED');
+  assert.deepEqual(saved.digest, f.approvedHash);
+  assert.deepEqual(saved.result, completed);
+
+  const reopen = (resolve) => {
+    const queries = [];
+    service = f.open(
+      async () => {
+        loads++;
+        assert.fail('A completed operation must never load the root again');
+      },
+      {
+        authorityResolver: (query) => {
+          queries.push(query);
+          return resolve(query);
+        },
+      },
+    );
+    const journalCalls = Object.fromEntries(
+      ['reserve', 'complete', 'uncertain'].map((name) => [name, t.mock.method(f.journal(), name)]),
+    );
+    assert.deepEqual(row(), saved);
+    return { queries, journalCalls };
+  };
+  const assertCurrentQueries = (queries) => {
+    assert.deepEqual(
+      queries,
+      [...f.authorities, f.receipt].map((authority) => ({
+        certificate: authority.certificate,
+        role: 'RECOVERY_AUTHORITY',
+        scope: { trustDomainID: f.trustDomainID, purpose: f.request.purpose },
+        stateTime: liveTime,
+        knowledgeTime: liveTime,
+      })),
+    );
+  };
+  const baseline = reopen(resolverFor(f));
+  assert.deepEqual(await f.recover(service), completed);
+  assertCurrentQueries(baseline.queries);
+  assert.equal(baseline.journalCalls.reserve.mock.callCount(), 1);
+  assert.equal(baseline.journalCalls.complete.mock.callCount(), 0);
+  assert.equal(baseline.journalCalls.uncertain.mock.callCount(), 0);
+  assert.deepEqual(row(), saved);
+  assert.equal(loads, 1);
+
+  for (const [index, role] of [
+    [0, 'approver'],
+    [2, 'result signer'],
+  ]) {
+    await t.test(
+      `live completed replay rejects a withdrawn ${role} while lookup preserves the saved result`,
+      async () => {
+        const { queries, journalCalls } = reopen(
+          resolverFor(f, (record, authority, selected) =>
+            selected !== index
+              ? record
+              : {
+                  ...record,
+                  status: {
+                    ...revokedStatus(f, authority),
+                    publishedAt: liveTime - 1,
+                    effectiveTime: liveTime - 1,
+                    compromiseStart: liveTime - 1,
+                  },
+                },
+          ),
+        );
+        await assert.rejects(f.recover(service), { code: 'AUTHORITY_REVOKED' });
+        assertCurrentQueries(queries);
+        assert.deepEqual(row(), saved);
+        for (const calls of Object.values(journalCalls)) assert.equal(calls.mock.callCount(), 0);
+        assert.equal(loads, 1);
+
+        const lookup = service.result(f.request.requestID);
+        assert.deepEqual(lookup, { status: 'COMPLETED', result: completed });
+        assert.equal(queries.length, 3, 'Result lookup must not query authority admission');
+        assert.deepEqual(row(), saved);
+        for (const calls of Object.values(journalCalls)) assert.equal(calls.mock.callCount(), 0);
+        assert.equal(loads, 1, 'Result lookup must not load a root');
+      },
+    );
+  }
+});
+
 test('recovery requests and saved results stay isolated across trust domains sharing a journal', async (t) => {
   const f = fixture(t),
     otherDomain = c.random();
