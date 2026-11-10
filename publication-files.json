@@ -104,6 +104,7 @@
   "reference/cades.test.mjs",
   "reference/cbor-text-identity.test.mjs",
   "reference/certificate-asn1-admission.test.mjs",
+  "reference/certificate-issuer-name-admission.test.mjs",
   "reference/certificate-key-usage.test.mjs",
   "reference/certificate-validity-endpoint-vectors.test.mjs",
   "reference/certificate-validity-endpoint.test.mjs",
