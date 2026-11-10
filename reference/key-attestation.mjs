@@ -12,7 +12,7 @@ import {
   spki,
   b64u,
 } from './core.mjs';
-import { parseCertificate } from './pki.mjs';
+import { parseCertificate, validateKeyUsage } from './pki.mjs';
 import { p1363ToDER } from './ecdsa.mjs';
 import { parseJSON } from './json.mjs';
 
@@ -139,18 +139,31 @@ export function verifiedChain(x5c, { roots, status }, at) {
     expiry = Math.min(expiry, parsed.notAfter);
     for (const [id, ext] of parsed.extensions)
       fail(!ext.critical || criticalOIDs.has(id), 'CRITICAL_EXTENSION');
-    const ku = parsed.extensions.get('2.5.29.15');
-    fail(ku, 'KEY_USAGE');
-    const bits = parseDER(ku.value);
-    fail(bits.tag === 3 && bits.value.length >= 2, 'KEY_USAGE');
-    if (i === 0) fail(!cert.ca && bits.value[1] & 128, 'LEAF_USAGE');
-    else {
-      fail(cert.ca && bits.value[1] & 4, 'CA_USAGE');
-      const bc = parsed.extensions.get('2.5.29.19');
-      fail(bc?.critical, 'CA_CONSTRAINTS');
+    const bits = validateKeyUsage(
+      parsed.extensions.get('2.5.29.15'),
+      undefined,
+      'KEY_ATTESTATION_KEY_USAGE',
+    );
+    const bc = parsed.extensions.get('2.5.29.19');
+    let pathLength;
+    if (bc) {
       const constraint = parseDER(bc.value),
-        path = constraint.children?.find((n) => n.tag === 2);
-      if (path) fail(intValue(path) >= BigInt(nonSelfIssuedCAsBelow), 'PATH_LENGTH');
+        fields = constraint.children;
+      fail(
+        constraint.tag === 0x30 &&
+          [0, 1, 2].includes(fields?.length) &&
+          (fields.length === 0 || equal(fields[0].raw, Buffer.from('0101ff', 'hex'))) &&
+          (fields.length < 2 || fields[1].tag === 2),
+        'CA_CONSTRAINTS',
+      );
+      if (fields.length === 2) pathLength = intValue(fields[1]);
+    }
+    if (i === 0) fail(!cert.ca && bits[0] & 128, 'LEAF_USAGE');
+    else {
+      fail(cert.ca && bits[0] & 4, 'CA_USAGE');
+      fail(bc?.critical, 'CA_CONSTRAINTS');
+      if (pathLength !== undefined)
+        fail(pathLength >= BigInt(nonSelfIssuedCAsBelow), 'PATH_LENGTH');
     }
     if (i + 1 < chain.length)
       fail(
