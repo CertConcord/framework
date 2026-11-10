@@ -1126,7 +1126,7 @@
     {
       "path": "reference/native/README.md",
       "bytes": 10417,
-      "sha256": "b49693486d6cc3087e8b5b90ccc895242c6230515eb5f8784f73d29f90e6c807"
+      "sha256": "541aefc44fb2b4b8bad43a458c9378de433666597ee58c5b61499f6d5b459944"
     },
     {
       "path": "reference/native/android/app/build.gradle.kts",
@@ -1146,7 +1146,7 @@
     {
       "path": "reference/native/android/build.gradle.kts",
       "bytes": 70,
-      "sha256": "1702d38c33dd90c19d72a939717f8d9cc5ddd92203426e6d0e64606ef5db3f83"
+      "sha256": "f59ca7e3550320f64457d3d1e16168cd2bdb69eb4bf9b731ee11861979379f44"
     },
     {
       "path": "reference/native/android/settings.gradle.kts",
