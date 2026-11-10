@@ -311,7 +311,7 @@
     {
       "path": "package-lock.json",
       "bytes": 94268,
-      "sha256": "078aed5cda32435a115e5dc16861c70948f390caf8b4dfcf3d7165213745d720"
+      "sha256": "50a1b77a0b924e40a0720a49e84d83096ea81b362ce3ef634cb48eb6b07ec622"
     },
     {
       "path": "package.json",
@@ -351,7 +351,7 @@
     {
       "path": "reference/adapter-lock.json",
       "bytes": 46651,
-      "sha256": "fcfa8f10b0df941a917f1ab6bd953c83d394bedc846fffd9813a74dcebafa11b"
+      "sha256": "385aaab7797b197dc9fa19c8bfcc9e8e05245f109c5d3f06a583a91aa5cac2b6"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1356,7 +1356,7 @@
     {
       "path": "reference/package.json",
       "bytes": 1488,
-      "sha256": "5f9e1290b700dd03d98a88790b890242b636cbed2b31b78d3c303fae3597b16c"
+      "sha256": "639242c0a389ee6c7832af6746fb2525df08fac4863acdd5aa8f50149624ce87"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
@@ -1811,12 +1811,12 @@
     {
       "path": "reference/source-lock.json",
       "bytes": 43513,
-      "sha256": "10a656d02a46fafcfeec7ffd0430e5770f19281f3554e21286fa517e23f35b51"
+      "sha256": "30cfcdd8b4bddaac1a196e8dc59ed198be27a78ac107be6fc672dbc87f20bbb1"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 17051,
-      "sha256": "3403ed42248ad6b4d2a02d932e50a86664a786283631e716abdcc299bc63ac68"
+      "sha256": "82cb014644631829bd0b4cfcb13960f11e6df793a8f36c9edd9fddbf8c2488d9"
     },
     {
       "path": "reference/state-security.test.mjs",
