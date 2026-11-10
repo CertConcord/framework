@@ -289,6 +289,11 @@
       "sha256": "3ef23de98b532a32f5e6806b271760cd25bc8ecf127dfd92376b052f9bc86d57"
     },
     {
+      "path": "docs/webauthn-authenticator-extensions.md",
+      "bytes": 2553,
+      "sha256": "e3a9e4f89f625f738cfb8584dd435fde697ec339863a87f6b3041b9f5941c334"
+    },
+    {
       "path": "docs/webauthn-evolution.md",
       "bytes": 10842,
       "sha256": "f5d6151931bf35b6308de41843954b933a18e559ff89b92bad2e439e17300a10"
@@ -310,8 +315,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 298592,
-      "sha256": "4a45cda504e60fbb521da144ac1d8f559da05ff8fbf8448ac01280566a62edb5"
+      "bytes": 298794,
+      "sha256": "9fef900806b8d295a36e3466d232108afd3715889de15045bcaf22cb53df53ba"
     },
     {
       "path": "reference/README.md",
@@ -12839,6 +12844,11 @@
       "sha256": "bcaed3253638ac271096952871318617604128a60f72b99f005bb0c254344010"
     },
     {
+      "path": "reference/vectors/webauthn-authenticator-extensions.json",
+      "bytes": 66449,
+      "sha256": "0ad6227b98579c7c8bc3c380b313907b0b1d608761f0010deafd4a2dd84a28a1"
+    },
+    {
       "path": "reference/vectors/xmlers-namespace/absolute-unused-prefix.xml",
       "bytes": 12841,
       "sha256": "56787fbad8632ae7264437532a42e226baf5fc7fc83e81710b749190200c9937"
@@ -12934,9 +12944,14 @@
       "sha256": "8aa11c18b3614e03beffeca52c9a5f434f9d5bf326dd8f8fe223f648206a082c"
     },
     {
+      "path": "reference/webauthn-extensions.test.mjs",
+      "bytes": 7865,
+      "sha256": "ab2115e42e18d1c0b4970da233a01b1f8fe3ba2ff8f68109ac21ddae035e0e25"
+    },
+    {
       "path": "reference/webauthn.mjs",
-      "bytes": 9957,
-      "sha256": "fd6b31a491c07b183153c58be053943bd0f008f9a7aa4811f978c9fc31482bcd"
+      "bytes": 10170,
+      "sha256": "f38a98cca80241d82083be9408df05d11d454df616c7e3c22cb9fbf290bcc807"
     },
     {
       "path": "reference/windows-tpm.mjs",
@@ -13282,6 +13297,11 @@
       "path": "tools/create-wallet-metadata-vectors.mjs",
       "bytes": 8929,
       "sha256": "f7cea8e3649583ea30a772e4e0048d0b99113915df9c9c349b3ab9b672767af2"
+    },
+    {
+      "path": "tools/create-webauthn-extension-vectors.mjs",
+      "bytes": 7889,
+      "sha256": "dc8f6584d995d7e66716af4f2f4080539490e90ca3d5c8cf035aa05bff451739"
     },
     {
       "path": "tools/ers-bc186/ErsBc186Probe.java",

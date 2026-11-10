@@ -75,6 +75,12 @@ export function authenticatorData(raw, { rpID, uv = true }) {
     backedUp: !!(flags & 16),
   };
 }
+function authenticatorExtensions(value) {
+  requireThat(
+    value instanceof Map && [...value.keys()].every((key) => typeof key === 'string'),
+    'AUTHENTICATOR_EXTENSIONS',
+  );
+}
 export function verifyRegistration(
   response,
   { challenge, origin, rpID, uv = true, attestationRoots = [] },
@@ -99,6 +105,7 @@ export function verifyRegistration(
   const publicKey = cosePublicKey(encodedKeys[0]),
     fmt = attestation.get('fmt'),
     statement = attestation.get('attStmt');
+  if (data.flags & 128) authenticatorExtensions(encodedKeys[1]);
   let attestationVerified = false;
   if (fmt === 'none')
     requireThat(statement instanceof Map && statement.size === 0, 'NONE_ATTESTATION');
@@ -161,8 +168,7 @@ export function verifyAssertion(
     !(data.flags & 64) && (data.flags & 128 || auth.length === 37),
     'ASSERTION_AUTH_DATA',
   );
-  if (data.flags & 128)
-    requireThat(decoder.decode(auth.subarray(37)) instanceof Map, 'AUTHENTICATOR_EXTENSIONS');
+  if (data.flags & 128) authenticatorExtensions(decoder.decode(auth.subarray(37)));
   requireThat(
     verify(
       Buffer.concat([auth, sha256(client)]),
