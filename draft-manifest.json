@@ -16,12 +16,12 @@
     {
       "path": ".github/workflows/ci.yml",
       "bytes": 4170,
-      "sha256": "bc8cebce4b687c8327fe4bf99a0e057306eadbb91c8c590da2842dd3ea67b0b1"
+      "sha256": "07a8e2cdfc8ce2379dee475d5d919b98ee3f7406ab99a773b8362c87e91d9a4d"
     },
     {
       "path": ".github/workflows/codeql.yml",
       "bytes": 2194,
-      "sha256": "561899f0353ba41ba423448eedf62cc5b22bdb391279743b46556417bd94ac3d"
+      "sha256": "d802ce82b18b9153d13baf40694a308e6c7b36aa35f763c61a72e31057ff803f"
     },
     {
       "path": ".github/workflows/contributions.yml",
