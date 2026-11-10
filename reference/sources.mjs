@@ -10,7 +10,7 @@ export const sources = {
   libbase64141: 'https://registry.npmjs.org/libbase64/-/libbase64-1.4.1.tgz',
   libmime563: 'https://registry.npmjs.org/libmime/-/libmime-5.6.3.tgz',
   libqp301: 'https://registry.npmjs.org/libqp/-/libqp-3.0.1.tgz',
-  nodemailer1021: 'https://registry.npmjs.org/nodemailer/-/nodemailer-10.2.1.tgz',
+  nodemailer1031: 'https://registry.npmjs.org/nodemailer/-/nodemailer-10.3.1.tgz',
   saferBuffer212: 'https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz',
   rfc8551: 'https://www.rfc-editor.org/rfc/rfc8551.txt',
   rfc8550: 'https://www.rfc-editor.org/rfc/rfc8550.txt',
