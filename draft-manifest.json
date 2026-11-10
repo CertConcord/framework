@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 48039,
-      "sha256": "fced3bef6a9ba2ca067c225fbc352787f20e7ed54ba1695c16d8c2ffc42eedd0"
+      "bytes": 48072,
+      "sha256": "70129736ee16d07df347c0bebc6ddc1c2a509be36251a9510fcd501f30878499"
     },
     {
       "path": "docs/apple-identity.md",
@@ -320,8 +320,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 299147,
-      "sha256": "36bb95c03657d574c7dce624250b294f2c9901c87c182e456f76a8c2b16bbcbe"
+      "bytes": 299281,
+      "sha256": "e0467993a7399d688e9f581d0e1984a0d0f0766d42155809ab518cc7d730fb9c"
     },
     {
       "path": "reference/README.md",
@@ -1005,8 +1005,8 @@
     },
     {
       "path": "reference/jose.mjs",
-      "bytes": 17397,
-      "sha256": "4b639686588799cd04af91ac97daa37b863d5085faf5e6f54a4136a456f987e7"
+      "bytes": 18275,
+      "sha256": "e2c94f6287236d3fe147cc9680ba910ef62e99bb2a38d8a5a087b6e1841b4af8"
     },
     {
       "path": "reference/json.mjs",
@@ -1622,6 +1622,11 @@
       "path": "reference/schemas.cddl",
       "bytes": 20072,
       "sha256": "03aa86f7fd73132a2171e11399d30404bfcd78c43d0cfe4a30fbed60e900650f"
+    },
+    {
+      "path": "reference/sd-jwt-hash-contract.test.mjs",
+      "bytes": 9201,
+      "sha256": "0a3c0a6499a3b5f3fd7bf851d78a85328d9c213cf8511a10f0b809cd133ec299"
     },
     {
       "path": "reference/sd-jwt-type-claims.test.mjs",
@@ -12844,6 +12849,11 @@
       "sha256": "2b7526ef92d1d2a3ffc737a56c7fdd576cb082b22a47b2f70ba844b8c66f60cb"
     },
     {
+      "path": "reference/vectors/sd-jwt-hash-claims.json",
+      "bytes": 97925,
+      "sha256": "ef4fe1bc53745cc26f08cdfa8c9798b543b247ced82d67307d819b790e85e570"
+    },
+    {
       "path": "reference/vectors/sd-jwt-type-claims.json",
       "bytes": 41820,
       "sha256": "90584a93cb612747e7ba524ec1a9043bd49f48e4369607e3cfb00d3c283b7b4d"
@@ -13025,8 +13035,8 @@
     },
     {
       "path": "spec/bindings/DCP-draft-03.md",
-      "bytes": 59848,
-      "sha256": "f551fafbe090c85740c734ee0c4ec2b04a2552fb101e4612eb3ffa7a30be3022"
+      "bytes": 60854,
+      "sha256": "8174a65990bc72164f2df766710c295cb900a424a0a8f5679b8263da9086a289"
     },
     {
       "path": "spec/bindings/DOCUMENT-draft-03.md",
@@ -13317,6 +13327,11 @@
       "path": "tools/create-prf-kpp-root-admission-vectors.mjs",
       "bytes": 3430,
       "sha256": "cc23f3ca91afac9fb58dbb560752248d53f5ef83d90e9979fb0303bf1becd162"
+    },
+    {
+      "path": "tools/create-sd-jwt-hash-vectors.mjs",
+      "bytes": 7708,
+      "sha256": "de3d3f70256ea785fc07a7e3d5f90db4662115bb19791e051c271de5c2cae0db"
     },
     {
       "path": "tools/create-timestamp-name-vectors.mjs",
