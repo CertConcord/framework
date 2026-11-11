@@ -141,6 +141,36 @@ test('MTC identity: generic relative OID retains a thirty-three-byte value', () 
   assert.throws(() => p.trustAnchorID(overlong), error);
   assert.throws(() => p.anchorName(overlong), error);
 });
+test('MTC identity: fixed 32/33-octet proof wire keeps unknown IDs outside trust', () => {
+  const vectors = [
+    {
+      size: 32,
+      hex: '000000000000000000000000000100000000242081fd5901010101010101010101010101010101010101010101010101010101010001aa',
+      sha256: 'f38a02c682a37f7a391826f3b366b8534836dcf347457a3bb23a1f771b94c9b5',
+    },
+    {
+      size: 33,
+      hex: '000000000000000000000000000100000000252181fd590101010101010101010101010101010101010101010101010101010101010001aa',
+      sha256: 'e4c2f668afc7c5958a49984d3215df98e26e5e7976522383c18a012f07702865',
+    },
+  ];
+  for (const { size, hex, sha256 } of vectors) {
+    const wire = b(hex),
+      decoded = m.decodeProof(wire),
+      id = decoded.signatures[0].cosignerID;
+    assert.equal(c.sha256(wire).toString('hex'), sha256);
+    assert.equal(m.anchorBytes(id).length, size);
+    assert.deepEqual(m.encodeProof(decoded), wire);
+    if (size === 32) assert.deepEqual(p.trustAnchorID(id), m.anchorBytes(id));
+    else assert.throws(() => p.trustAnchorID(id), error);
+  }
+  const withKnown = corpus.fixtures.find((f) => f.id === 'unknown33-known'),
+    withoutKnown = corpus.fixtures.find((f) => f.id === 'unknown33-only');
+  assert.equal(m.verifyMTC(b(withKnown.certificateHex), options(withKnown)).mode, 'STANDALONE');
+  assert.throws(() => m.verifyMTC(b(withoutKnown.certificateHex), options(withoutKnown)), {
+    code: 'MTC_QUORUM',
+  });
+});
 for (const [name, id] of [
   ['empty', ''],
   ['empty-component', '1..2'],

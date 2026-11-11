@@ -1100,8 +1100,8 @@
     },
     {
       "path": "reference/mtc-identity-boundary.test.mjs",
-      "bytes": 17572,
-      "sha256": "aadb11ceabe9ca4f0e3edd84a79d4289d063e7f0d836197cb758f756e5e1c75a"
+      "bytes": 18994,
+      "sha256": "fb1ef68a62cee2ae97e29063679cd0f93095d8b496da77591b3092ed7675fdd4"
     },
     {
       "path": "reference/mtc-person-sign-profile.test.mjs",
@@ -13035,8 +13035,8 @@
     },
     {
       "path": "spec/bindings/COMMON-draft-03.md",
-      "bytes": 31113,
-      "sha256": "5489d7f146ad79f39fddbb220a133586a2685cb819f0a376b1ec27e01edad867"
+      "bytes": 31906,
+      "sha256": "d7cf07442ed05defa19e2f9618af8d2619b3894b8987d16ac7662fbe98bfd17d"
     },
     {
       "path": "spec/bindings/CONFORMANCE-draft-03.md",
