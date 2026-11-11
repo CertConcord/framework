@@ -1156,7 +1156,7 @@
     {
       "path": "reference/native/android/build.gradle.kts",
       "bytes": 70,
-      "sha256": "f59ca7e3550320f64457d3d1e16168cd2bdb69eb4bf9b731ee11861979379f44"
+      "sha256": "fee04f42234f4725ea2fe99e1983402b0756b4b3f43ee804cada0e0b7679d2ec"
     },
     {
       "path": "reference/native/android/settings.gradle.kts",
