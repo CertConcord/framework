@@ -16,12 +16,12 @@
     {
       "path": ".github/workflows/ci.yml",
       "bytes": 4170,
-      "sha256": "07a8e2cdfc8ce2379dee475d5d919b98ee3f7406ab99a773b8362c87e91d9a4d"
+      "sha256": "8fca11dbf362de3445906f2bae5cd2c61f81d2d6b89dd7b94a4ce1b47a30fb8f"
     },
     {
       "path": ".github/workflows/codeql.yml",
       "bytes": 2194,
-      "sha256": "d802ce82b18b9153d13baf40694a308e6c7b36aa35f763c61a72e31057ff803f"
+      "sha256": "7715c9b7a20f7c804532b7eec15beb224d1a1961926f63cea65d493289b87e14"
     },
     {
       "path": ".github/workflows/contributions.yml",
@@ -310,8 +310,8 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 94268,
-      "sha256": "50a1b77a0b924e40a0720a49e84d83096ea81b362ce3ef634cb48eb6b07ec622"
+      "bytes": 94485,
+      "sha256": "d7e0378e849fe477dee960f7e47ae56b09b64ed8d4339b67e79522f3f928fc7f"
     },
     {
       "path": "package.json",
@@ -351,7 +351,7 @@
     {
       "path": "reference/adapter-lock.json",
       "bytes": 46651,
-      "sha256": "385aaab7797b197dc9fa19c8bfcc9e8e05245f109c5d3f06a583a91aa5cac2b6"
+      "sha256": "b42ceb801286610cbf121a391048cec66dd6a6d65d9883e2f7195a4ff757b3c3"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1156,7 +1156,7 @@
     {
       "path": "reference/native/android/build.gradle.kts",
       "bytes": 70,
-      "sha256": "f59ca7e3550320f64457d3d1e16168cd2bdb69eb4bf9b731ee11861979379f44"
+      "sha256": "fee04f42234f4725ea2fe99e1983402b0756b4b3f43ee804cada0e0b7679d2ec"
     },
     {
       "path": "reference/native/android/settings.gradle.kts",
@@ -1365,8 +1365,8 @@
     },
     {
       "path": "reference/package.json",
-      "bytes": 1488,
-      "sha256": "639242c0a389ee6c7832af6746fb2525df08fac4863acdd5aa8f50149624ce87"
+      "bytes": 1489,
+      "sha256": "e1123925522a404e9bb256c554bb6ef1667017b58927a3d4bd11aec53c22352b"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
@@ -1821,12 +1821,12 @@
     {
       "path": "reference/source-lock.json",
       "bytes": 43513,
-      "sha256": "30cfcdd8b4bddaac1a196e8dc59ed198be27a78ac107be6fc672dbc87f20bbb1"
+      "sha256": "42d1dc4079a1ca842b89007a5ee61813ba387e99c3ecda286d10de78cc37a137"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 17051,
-      "sha256": "82cb014644631829bd0b4cfcb13960f11e6df793a8f36c9edd9fddbf8c2488d9"
+      "sha256": "1158aae5631224a84fa82952b9082f2c2a84ed049eb8899bf89f055324012502"
     },
     {
       "path": "reference/state-security.test.mjs",
