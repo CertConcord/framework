@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 48072,
-      "sha256": "70129736ee16d07df347c0bebc6ddc1c2a509be36251a9510fcd501f30878499"
+      "bytes": 49488,
+      "sha256": "dd7b6d768a55d5c0f7446caf803f47b2dccb1f8059544665a8c1a51c97f31bc2"
     },
     {
       "path": "docs/apple-identity.md",
@@ -1110,8 +1110,8 @@
     },
     {
       "path": "reference/mtc-range-contract.test.mjs",
-      "bytes": 6417,
-      "sha256": "526969fa246a031f378a85f0a9b28605cc5909b56e48b24d5bba378c16c1e408"
+      "bytes": 8071,
+      "sha256": "1e89d8fecdcee2a8d6c5ccc850cbf2345e093d150f75964dc0d04cdbb3955e24"
     },
     {
       "path": "reference/mtc-validity-replay.test.mjs",
