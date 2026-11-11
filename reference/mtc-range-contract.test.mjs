@@ -1,12 +1,56 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { generateKeyPairSync } from 'node:crypto';
+import { createHash, generateKeyPairSync } from 'node:crypto';
 import * as c from './core.mjs';
 import * as p from './pki.mjs';
 import * as m from './mtc.mjs';
 import * as tlog from './transparency.mjs';
 import { Journal } from './state.mjs';
 import { verifyCredentialLog } from './credential-log.mjs';
+
+test('MTC proof parser enforces the reference 2 MiB resource bound', () => {
+  const vector = (value, width) => {
+      const length = Buffer.alloc(width);
+      length.writeUIntBE(value.length, 0, width);
+      return Buffer.concat([length, value]);
+    },
+    proof = (lastLength) => {
+      const entries = Array.from({ length: 32 }, (_, index) =>
+        Buffer.concat([
+          vector(Buffer.from([0x81, 0xfd, 0x59, index + 1]), 1),
+          vector(Buffer.alloc(index < 31 ? 65535 : lastLength, 0xaa), 2),
+        ]),
+      );
+      return Buffer.concat([
+        Buffer.alloc(2),
+        Buffer.alloc(6),
+        Buffer.from([0, 0, 0, 0, 0, 1]),
+        Buffer.alloc(2),
+        vector(Buffer.concat(entries), 3),
+      ]);
+    },
+    digest = (bytes) => createHash('sha256').update(bytes).digest('hex'),
+    atCap = proof(65324),
+    aboveCap = proof(65325),
+    duplicate = Buffer.from(
+      '000000000000000000000000000100000000100481fd59010001aa0481fd59010001bb',
+      'hex',
+    );
+  assert.equal(atCap.length, 2 * 1024 * 1024);
+  assert.equal(digest(atCap), '6f125b87a7547b8d81206028d636a3f8842f5d81935fb124c3a90d2b8b805a04');
+  assert.equal(aboveCap.length, atCap.length + 1);
+  assert.equal(
+    digest(aboveCap),
+    'bc4a4ea40582ada9b5ca1e50d194fda769e6357af9507f047e1477400b8a12c6',
+  );
+  assert.equal(
+    digest(duplicate),
+    '95416f63bbe5498aec4b587b4203dfa86db71516ab05d6a714bfdc792c4488a1',
+  );
+  assert.equal(m.decodeProof(atCap).signatures.length, 32);
+  assert.throws(() => m.decodeProof(aboveCap), { code: 'MTC_SIZE' });
+  assert.throws(() => m.decodeProof(duplicate), { code: 'MTC_COSIGNER_ORDER' });
+});
 
 test('fixed three-leaf consistency bytes do not authenticate an absolute tree size', () => {
   const entries = ['61', '62', '63'].map((hex) => Buffer.from(hex, 'hex')),
@@ -156,4 +200,67 @@ test('a signed four-entry claim over three leaves cannot complete mirror custody
   } finally {
     journal.close();
   }
+});
+
+test('MTC proof and log-entry encoders refuse unordered or duplicate extension types', () => {
+  const vectors = [
+      {
+        id: 'ascending',
+        hex: '00090002000000050001ff0000000000000000000000010000000000',
+        sha256: 'cc801a409e77178fb331be89c183d28fd90cfa110c6b98e54393ef7c235957c6',
+        expected: 'accepted',
+      },
+      {
+        id: 'descending',
+        hex: '000900050001ff000200000000000000000000000000010000000000',
+        sha256: 'd7748f429d77232e3cf4bfe9bf3a971803baa7c83b38182538808d899c125439',
+        expected: 'MTC_EXTENSION_ORDER',
+      },
+      {
+        id: 'duplicate',
+        hex: '000800020000000200000000000000000000000000010000000000',
+        sha256: 'b9dd6c09c78ba9370b67129b9340b8dc997ac11a9e5e79034a9a5957884825ce',
+        expected: 'MTC_EXTENSION_ORDER',
+      },
+    ],
+    key = c.generate('ml-dsa-65'),
+    tbs = m.createMTCTBS(
+      { publicKey: key.publicKey, subject: p.name('Extension order') },
+      { caID: '32473.1', logNumber: 1, index: 0 },
+    );
+  for (const { id, hex, sha256, expected } of vectors) {
+    const wire = Buffer.from(hex, 'hex'),
+      extensions = wire.subarray(2, 2 + wire.readUInt16BE(0));
+    assert.equal(createHash('sha256').update(wire).digest('hex'), sha256, id);
+    if (expected === 'accepted') {
+      const decoded = m.decodeProof(wire);
+      assert.deepEqual(
+        m.encodeProof({
+          extensions: decoded.extensions,
+          start: decoded.start,
+          end: decoded.end,
+          inclusion: decoded.inclusion,
+          signatures: decoded.signatures,
+        }),
+        wire,
+      );
+      const entry = m.logEntryFromTBS(tbs, extensions);
+      assert.equal(entry.readUInt16BE(0), extensions.length);
+      assert.deepEqual(entry.subarray(2, 2 + extensions.length), extensions);
+    } else {
+      assert.throws(() => m.decodeProof(wire), { code: expected }, id);
+      assert.throws(
+        () => m.encodeProof({ extensions, start: 0, end: 1, inclusion: [] }),
+        {
+          code: expected,
+        },
+        id,
+      );
+      assert.throws(() => m.logEntryFromTBS(tbs, extensions), { code: expected }, id);
+    }
+  }
+  assert.throws(
+    () => m.encodeProof({ extensions: Buffer.from([0, 2]), start: 0, end: 1, inclusion: [] }),
+    { code: 'MTC_EXTENSION' },
+  );
 });

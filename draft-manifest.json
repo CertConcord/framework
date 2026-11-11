@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 48072,
-      "sha256": "70129736ee16d07df347c0bebc6ddc1c2a509be36251a9510fcd501f30878499"
+      "bytes": 49834,
+      "sha256": "0a36377efa3458519475800a35567628f132fe6bef30e29ad7e11d2d90415bc0"
     },
     {
       "path": "docs/apple-identity.md",
@@ -1100,8 +1100,8 @@
     },
     {
       "path": "reference/mtc-identity-boundary.test.mjs",
-      "bytes": 17572,
-      "sha256": "aadb11ceabe9ca4f0e3edd84a79d4289d063e7f0d836197cb758f756e5e1c75a"
+      "bytes": 18994,
+      "sha256": "fb1ef68a62cee2ae97e29063679cd0f93095d8b496da77591b3092ed7675fdd4"
     },
     {
       "path": "reference/mtc-person-sign-profile.test.mjs",
@@ -1110,8 +1110,8 @@
     },
     {
       "path": "reference/mtc-range-contract.test.mjs",
-      "bytes": 6417,
-      "sha256": "526969fa246a031f378a85f0a9b28605cc5909b56e48b24d5bba378c16c1e408"
+      "bytes": 10376,
+      "sha256": "6f65ffeefa9a9a7d9a0b19e3f76c178611f9861f547bab4a1be7d14f92baabac"
     },
     {
       "path": "reference/mtc-validity-replay.test.mjs",
@@ -1125,8 +1125,8 @@
     },
     {
       "path": "reference/mtc.mjs",
-      "bytes": 17554,
-      "sha256": "adbc00181841ed491187dd8d67d7e47f31751a6d0a8902f73c33f1824479edcb"
+      "bytes": 17774,
+      "sha256": "e4d6c29677367a82339bc10291a96e445a38a77e0bf3b14bbb6d8dbb59eab305"
     },
     {
       "path": "reference/native-driver.mjs",
@@ -13035,8 +13035,8 @@
     },
     {
       "path": "spec/bindings/COMMON-draft-03.md",
-      "bytes": 31113,
-      "sha256": "5489d7f146ad79f39fddbb220a133586a2685cb819f0a376b1ec27e01edad867"
+      "bytes": 31906,
+      "sha256": "d7cf07442ed05defa19e2f9618af8d2619b3894b8987d16ac7662fbe98bfd17d"
     },
     {
       "path": "spec/bindings/CONFORMANCE-draft-03.md",

@@ -221,6 +221,20 @@ export function cosignedMessage({ cosignerID, caID, logNumber, start, end, root,
     root,
   ]);
 }
+function validatedExtensions(value) {
+  const extensions = bytes(value);
+  let e = 0,
+    last = -1;
+  while (e < extensions.length) {
+    requireThat(e + 4 <= extensions.length, 'MTC_EXTENSION');
+    const t = extensions.readUInt16BE(e),
+      n = extensions.readUInt16BE(e + 2);
+    requireThat(t > last && e + 4 + n <= extensions.length, 'MTC_EXTENSION_ORDER');
+    last = t;
+    e += 4 + n;
+  }
+  return extensions;
+}
 export function encodeProof({
   extensions = Buffer.alloc(0),
   start,
@@ -232,13 +246,14 @@ export function encodeProof({
     validSubtree(start, end) && inclusion.every((h) => h.length === 32),
     'MTC_PROOF_RANGE',
   );
-  const ss = signatures
-    .map((s) => ({ id: anchorBytes(s.cosignerID), signature: s.signature }))
-    .sort((a, b) => a.id.length - b.id.length || Buffer.compare(a.id, b.id));
+  const encodedExtensions = validatedExtensions(extensions),
+    ss = signatures
+      .map((s) => ({ id: anchorBytes(s.cosignerID), signature: s.signature }))
+      .sort((a, b) => a.id.length - b.id.length || Buffer.compare(a.id, b.id));
   for (let i = 1; i < ss.length; i++)
     requireThat(!equal(ss[i - 1].id, ss[i].id), 'DUPLICATE_COSIGNER');
   return Buffer.concat([
-    vector(extensions, 2),
+    vector(encodedExtensions, 2),
     uint(start, 6),
     uint(end, 6),
     vector(Buffer.concat(inclusion), 2),
@@ -289,16 +304,7 @@ export function decodeProof(input) {
     previous = id;
   }
   requireThat(validSubtree(start, end) && p === stop, 'MTC_PROOF_RANGE');
-  let e = 0,
-    last = -1;
-  while (e < extensions.length) {
-    requireThat(e + 4 <= extensions.length, 'MTC_EXTENSION');
-    const t = extensions.readUInt16BE(e),
-      n = extensions.readUInt16BE(e + 2);
-    requireThat(t > last && e + 4 + n <= extensions.length, 'MTC_EXTENSION_ORDER');
-    last = t;
-    e += 4 + n;
-  }
+  validatedExtensions(extensions);
   return { extensions, start, end, inclusion, signatures };
 }
 export function logEntryFromTBS(tbs, extensions = Buffer.alloc(0)) {
@@ -306,7 +312,7 @@ export function logEntryFromTBS(tbs, extensions = Buffer.alloc(0)) {
   requireThat(equal(t[2].raw, algID(OID.mtc)), 'MTC_ALGORITHM');
   const pk = t[6];
   const entry = Buffer.concat([
-    vector(extensions, 2),
+    vector(validatedExtensions(extensions), 2),
     uint(1, 2),
     t[0].raw,
     t[3].raw,
