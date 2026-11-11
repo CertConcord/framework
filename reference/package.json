@@ -26,7 +26,7 @@
     "demo:archive": "node archive-demo.mjs"
   },
   "dependencies": {
-    "@hpke/core": "1.10.0",
+    "@hpke/core": "1.10.1",
     "@noble/curves": "2.4.0",
     "@noble/hashes": "2.4.0",
     "@xmldom/xmldom": "0.9.12",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@jazzer.js/core": "4.0.0",
     "esbuild": "0.28.2",
-    "jose": "6.2.15",
+    "jose": "6.2.16",
     "prettier": "3.9.10"
   },
   "license": "Apache-2.0"
