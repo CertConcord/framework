@@ -4,13 +4,13 @@ import { sha256 } from './core.mjs';
 const arf3 =
   'https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/c64f2cbb19aee37c571c58af66d359c4d5be29c8/docs/';
 export const sources = {
-  mailsplit5429: 'https://registry.npmjs.org/@zone-eu/mailsplit/-/mailsplit-5.4.29.tgz',
-  encodingJapanese240: 'https://registry.npmjs.org/encoding-japanese/-/encoding-japanese-2.4.0.tgz',
+  mailsplit5430: 'https://registry.npmjs.org/@zone-eu/mailsplit/-/mailsplit-5.4.30.tgz',
+  encodingJapanese250: 'https://registry.npmjs.org/encoding-japanese/-/encoding-japanese-2.5.0.tgz',
   iconvLite073: 'https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.3.tgz',
   libbase64141: 'https://registry.npmjs.org/libbase64/-/libbase64-1.4.1.tgz',
-  libmime563: 'https://registry.npmjs.org/libmime/-/libmime-5.6.3.tgz',
+  libmime564: 'https://registry.npmjs.org/libmime/-/libmime-5.6.4.tgz',
   libqp301: 'https://registry.npmjs.org/libqp/-/libqp-3.0.1.tgz',
-  nodemailer1031: 'https://registry.npmjs.org/nodemailer/-/nodemailer-10.3.1.tgz',
+  nodemailer1040: 'https://registry.npmjs.org/nodemailer/-/nodemailer-10.4.0.tgz',
   saferBuffer212: 'https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz',
   rfc8551: 'https://www.rfc-editor.org/rfc/rfc8551.txt',
   rfc8550: 'https://www.rfc-editor.org/rfc/rfc8550.txt',
