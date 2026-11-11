@@ -42,6 +42,7 @@ export const pem = (label, bytes) =>
     .toString('base64')
     .match(/.{1,64}/g)
     .join('\n')}\n-----END ${label}-----\n`;
+const opensslConfigPath = (path) => path.replaceAll(sep, '/');
 const stamp = (at) =>
   new Date(at * 1000).toISOString().replace(/[-:]/g, '').replace('.000', '').replace('T', '');
 const utc = (at) => c.der(23, Buffer.from(stamp(at).slice(2)));
@@ -311,7 +312,7 @@ export function fixture({ signerNotAfter = epoch + 120, tsaNotAfter = epoch + 10
     writeFileSync(file('ca-number'), '01\n');
     writeFileSync(
       file('ca.cnf'),
-      `[ca]\ndefault_ca=local\n[local]\ndatabase=${file('ca-index')}\nserial=${file('ca-serial')}\ncrlnumber=${file('ca-number')}\nprivate_key=${root.keyFile}\ncertificate=${root.pemFile}\ndefault_md=sha256\ndefault_crl_days=1\ncrl_extensions=crl_ext\n[crl_ext]\nauthorityKeyIdentifier=keyid:always\n`,
+      `[ca]\ndefault_ca=local\n[local]\ndatabase=${opensslConfigPath(file('ca-index'))}\nserial=${opensslConfigPath(file('ca-serial'))}\ncrlnumber=${opensslConfigPath(file('ca-number'))}\nprivate_key=${opensslConfigPath(root.keyFile)}\ncertificate=${opensslConfigPath(root.pemFile)}\ndefault_md=sha256\ndefault_crl_days=1\ncrl_extensions=crl_ext\n[crl_ext]\nauthorityKeyIdentifier=keyid:always\n`,
     );
     run(
       'ca',
