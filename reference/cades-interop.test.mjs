@@ -61,6 +61,7 @@ test(
     const token = f.token(request, { genTime: epoch + 20 });
     writeFileSync(f.file('timestamp.der'), token);
     writeFileSync(f.file('timestamp.tsq'), request.der);
+    assert.match(f.file('timestamp.der'), /certconcord-cades- space-/);
     f.run(
       'ts',
       '-verify',
@@ -71,10 +72,34 @@ test(
       f.file('timestamp.tsq'),
       '-CAfile',
       f.root.pemFile,
-      '-untrusted',
-      f.tsa.pemFile,
       '-attime',
       String(epoch + 30),
+    );
+    const unrelatedRoot = f.certificate('CAdES Unrelated Root');
+    const unrelated = new X509Certificate(unrelatedRoot.der);
+    assert.equal(unrelated.ca, true);
+    assert(unrelated.verify(unrelated.publicKey));
+    assert.notDeepEqual(unrelatedRoot.der, f.root.der);
+    assert.throws(
+      () =>
+        f.run(
+          'ts',
+          '-verify',
+          '-token_in',
+          '-in',
+          f.file('timestamp.der'),
+          '-queryfile',
+          f.file('timestamp.tsq'),
+          '-CAfile',
+          unrelatedRoot.pemFile,
+          '-attime',
+          String(epoch + 30),
+        ),
+      (error) => {
+        assert.equal(error.status, 1);
+        assert.match(String(error.stderr), /certificate verify error/);
+        return true;
+      },
     );
     const info = parseTSTInfo(cmsView(token).embeddedContent);
     assert.equal(info.genTime, epoch + 20);
@@ -196,8 +221,6 @@ test(
           info.imprint.toString('hex'),
           '-CAfile',
           f.root.pemFile,
-          '-untrusted',
-          f.tsa.pemFile,
           '-attime',
           String(epoch + 40),
         );
