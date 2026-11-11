@@ -201,3 +201,66 @@ test('a signed four-entry claim over three leaves cannot complete mirror custody
     journal.close();
   }
 });
+
+test('MTC proof and log-entry encoders refuse unordered or duplicate extension types', () => {
+  const vectors = [
+      {
+        id: 'ascending',
+        hex: '00090002000000050001ff0000000000000000000000010000000000',
+        sha256: 'cc801a409e77178fb331be89c183d28fd90cfa110c6b98e54393ef7c235957c6',
+        expected: 'accepted',
+      },
+      {
+        id: 'descending',
+        hex: '000900050001ff000200000000000000000000000000010000000000',
+        sha256: 'd7748f429d77232e3cf4bfe9bf3a971803baa7c83b38182538808d899c125439',
+        expected: 'MTC_EXTENSION_ORDER',
+      },
+      {
+        id: 'duplicate',
+        hex: '000800020000000200000000000000000000000000010000000000',
+        sha256: 'b9dd6c09c78ba9370b67129b9340b8dc997ac11a9e5e79034a9a5957884825ce',
+        expected: 'MTC_EXTENSION_ORDER',
+      },
+    ],
+    key = c.generate('ml-dsa-65'),
+    tbs = m.createMTCTBS(
+      { publicKey: key.publicKey, subject: p.name('Extension order') },
+      { caID: '32473.1', logNumber: 1, index: 0 },
+    );
+  for (const { id, hex, sha256, expected } of vectors) {
+    const wire = Buffer.from(hex, 'hex'),
+      extensions = wire.subarray(2, 2 + wire.readUInt16BE(0));
+    assert.equal(createHash('sha256').update(wire).digest('hex'), sha256, id);
+    if (expected === 'accepted') {
+      const decoded = m.decodeProof(wire);
+      assert.deepEqual(
+        m.encodeProof({
+          extensions: decoded.extensions,
+          start: decoded.start,
+          end: decoded.end,
+          inclusion: decoded.inclusion,
+          signatures: decoded.signatures,
+        }),
+        wire,
+      );
+      const entry = m.logEntryFromTBS(tbs, extensions);
+      assert.equal(entry.readUInt16BE(0), extensions.length);
+      assert.deepEqual(entry.subarray(2, 2 + extensions.length), extensions);
+    } else {
+      assert.throws(() => m.decodeProof(wire), { code: expected }, id);
+      assert.throws(
+        () => m.encodeProof({ extensions, start: 0, end: 1, inclusion: [] }),
+        {
+          code: expected,
+        },
+        id,
+      );
+      assert.throws(() => m.logEntryFromTBS(tbs, extensions), { code: expected }, id);
+    }
+  }
+  assert.throws(
+    () => m.encodeProof({ extensions: Buffer.from([0, 2]), start: 0, end: 1, inclusion: [] }),
+    { code: 'MTC_EXTENSION' },
+  );
+});

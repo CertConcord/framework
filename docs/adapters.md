@@ -60,6 +60,8 @@ The MTC cryptographic certificate profile selects published draft-07, including 
 
 The reference `decodeProof` parser caps the complete proof at 2 MiB as a local resource policy. Draft-07 permits larger syntactically valid signature vectors, so this cap limits interoperability with unusually large proofs; it is not a draft-07 wire limit. A fixed boundary test accepts 2 MiB, rejects 2 MiB plus one byte with `MTC_SIZE`, and separately checks duplicate cosigner IDs. These synthetic proofs establish parser behavior only, not valid cosigner signatures or end-to-end certificate verification.
 
+The reference proof and log-entry encoders require ascending, unique extension types in nonempty extension vectors, as draft-07 section 5.2.1 requires for log entries. The proof decoder and both encoders reject malformed order without assigning trust semantics to unknown extension types. Normal issuance currently uses empty extension vectors.
+
 The [upstream baseline](upstream-baseline.md) identifies the reviewed publication and editor revisions. C2SP cosignatures retain the selected editor snapshot. Comparison with the subsequent v1.1.0 release found versioned reference-link changes only; the signature inputs and wire bytes are unchanged. The pinned snapshot and the published release remain separately identified.
 
 MTC plus C2SP mirror/witness protocols plus RRA governance is CertConcord's composition. The upstream formats, selected operator/quorum policy and CertConcord document requirements have separate provenance and assurance claims. A witness's consistency statement does not acquire a mirror's durable-entry-possession meaning from the transport used to carry it.
