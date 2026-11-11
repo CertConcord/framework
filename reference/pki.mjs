@@ -284,6 +284,10 @@ export function parseCertificate(raw) {
         keyFields[1].value[0] === 0,
       'CERTIFICATE_SPKI',
     );
+  requireThat(
+    t[3].tag === 0x30 && t[3].children?.length > 0,
+    'CERTIFICATE_ISSUER_NAME',
+  );
   const time = (n) => {
     let s = n.value.toString('ascii');
     if (n.tag === 23) {

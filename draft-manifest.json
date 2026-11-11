@@ -320,8 +320,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 299323,
-      "sha256": "fd9bffed55c7cbff957ae49484fccfd069dfa9f194f14917ad11f7027bf0b8fa"
+      "bytes": 299381,
+      "sha256": "04486f9eb183b99e9cffa3e4dd5ed7c03b013203b7df7982c7d193a210c54329"
     },
     {
       "path": "reference/README.md",
@@ -527,6 +527,11 @@
       "path": "reference/certificate-asn1-admission.test.mjs",
       "bytes": 12280,
       "sha256": "a2cba9edfd8343fde0fcaa4db978b46aa7df40f7d11d6bab85f29f9178ab17c6"
+    },
+    {
+      "path": "reference/certificate-issuer-name-admission.test.mjs",
+      "bytes": 2999,
+      "sha256": "7ff956cc230f3ec3cf50333a07d67c73e5ad294149f96d1eed1c4085d9298335"
     },
     {
       "path": "reference/certificate-key-usage.test.mjs",
@@ -1490,8 +1495,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 22004,
-      "sha256": "cc9ba608dbc6e82fb6ed67d5590aae7def8bef6dc9abbba6f612e43ee820f3fb"
+      "bytes": 22107,
+      "sha256": "bbb771ba4ac101fcf11d985a28191cb832dba81c0caaa65a4407e76fb7933eaf"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
