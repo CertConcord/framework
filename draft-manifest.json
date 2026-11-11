@@ -470,8 +470,8 @@
     },
     {
       "path": "reference/cades-fixtures.mjs",
-      "bytes": 17297,
-      "sha256": "9ccbac75963be0e369a1787b169b51557796adee9f07aa230edd0a890ef2bcca"
+      "bytes": 17304,
+      "sha256": "c5498f76a39219a7817e6a1c10306971bffd30ade96100f64c19c5fbe277f276"
     },
     {
       "path": "reference/cades-format.test.mjs",
@@ -490,8 +490,8 @@
     },
     {
       "path": "reference/cades-interop.test.mjs",
-      "bytes": 6038,
-      "sha256": "545a890655abeb8833672aa9885ba4de2ef3ff80eced88410d96319175df6e3e"
+      "bytes": 6792,
+      "sha256": "5e3cb39bc1fd773940a9af024ac8925988ca0b44debde53d6ed36e7a4bca483b"
     },
     {
       "path": "reference/cades-material.test.mjs",

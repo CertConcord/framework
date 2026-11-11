@@ -152,7 +152,7 @@ export function requestFields(request) {
 export function fixture({ signerNotAfter = epoch + 120, tsaNotAfter = epoch + 100 } = {}) {
   assert(opensslAvailable, 'OpenSSL is required to generate standard synthetic CAdES fixtures');
   const base = resolve(tmpdir()),
-    dir = mkdtempSync(join(base, 'certconcord-cades-'));
+    dir = mkdtempSync(join(base, 'certconcord-cades- space-'));
   const file = (name) => join(dir, name),
     commands = [];
   const run = (...args) => {
