@@ -284,10 +284,7 @@ export function parseCertificate(raw) {
         keyFields[1].value[0] === 0,
       'CERTIFICATE_SPKI',
     );
-  requireThat(
-    t[3].tag === 0x30 && t[3].children?.length > 0,
-    'CERTIFICATE_ISSUER_NAME',
-  );
+  requireThat(t[3].tag === 0x30 && t[3].children?.length > 0, 'CERTIFICATE_ISSUER_NAME');
   const time = (n) => {
     let s = n.value.toString('ascii');
     if (n.tag === 23) {
@@ -445,11 +442,13 @@ export function prepareCMS({
   certificate,
   contentType = OID.data,
   detached = false,
+  includeCertificate = true,
   context,
   simHash,
   policyHash,
   additionalAttributes = [],
 }) {
+  requireThat(typeof includeCertificate === 'boolean', 'CMS_CERTIFICATE_SELECTION');
   const cert = parseCertificate(certificate);
   const { digestOID, digest } = cmsSuite(cert);
   const attrs = [
@@ -491,7 +490,7 @@ export function prepareCMS({
             integer(contentType === OID.data ? 1 : 3),
             set(algID(digestOID)),
             seq(oid(contentType), ...(detached ? [] : [der(0xa0, octet(content))])),
-            der(0xa0, certificate),
+            ...(includeCertificate ? [der(0xa0, certificate)] : []),
             set(si),
           ),
         ),
@@ -508,6 +507,7 @@ export function verifyCMS(
   {
     content: detachedContent,
     expectedCertificate,
+    allowExternalCertificate = false,
     expectedContentType = OID.data,
     context,
     simHash,
@@ -530,7 +530,7 @@ export function verifyCMS(
   );
   const sd = root.children[1].children[0].children;
   requireThat(
-    sd?.length === 5 &&
+    [4, 5].includes(sd?.length) &&
       sd[1].tag === 0x31 &&
       sd[1].children?.length === 1 &&
       sd[1].children[0].tag === 0x30,
@@ -551,23 +551,30 @@ export function verifyCMS(
   if (embedded !== undefined && detachedContent !== undefined)
     requireThat(equal(embedded, detachedContent), 'CONTENT_CONFLICT');
   const content = embedded ?? detachedContent;
+  const certificateField = sd[3]?.tag === 0xa0 ? sd[3] : undefined;
+  const signerField = sd[certificateField ? 4 : 3];
   requireThat(
-    sd[3].tag === 0xa0 &&
-      sd[3].children?.length === 1 &&
-      sd[3].children[0].tag === 0x30 &&
-      sd[4].tag === 0x31 &&
-      sd[4].children?.length === 1 &&
-      sd[4].children[0].tag === 0x30,
+    ((certificateField &&
+      sd.length === 5 &&
+      certificateField.children?.length === 1 &&
+      certificateField.children[0].tag === 0x30) ||
+      (!certificateField &&
+        sd.length === 4 &&
+        allowExternalCertificate === true &&
+        expectedCertificate)) &&
+      signerField?.tag === 0x31 &&
+      signerField.children?.length === 1 &&
+      signerField.children[0].tag === 0x30,
     'CMS_SIGNERS',
   );
-  const certificate = sd[3].children[0].raw;
-  if (expectedCertificate)
+  const certificate = certificateField?.children[0].raw ?? expectedCertificate;
+  if (certificateField && expectedCertificate)
     requireThat(equal(certificate, expectedCertificate), 'CERTIFICATE_REPRESENTATION');
   const cert = issuerKey
     ? validateCertificate(certificate, issuerKey, { at, profileID })
     : parseCertificate(certificate);
   const { digestOID, digest } = cmsSuite(cert);
-  const si = sd[4].children[0].children;
+  const si = signerField.children[0].children;
   requireThat(
     si && [6, 7].includes(si.length) && intValue(si[0]) === 1n && (!si[6] || si[6].tag === 0xa1),
     'CMS_SIGNER_STRUCTURE',
@@ -656,6 +663,7 @@ export function verifyCMS(
   return {
     content,
     certificate,
+    certificateEmbedded: Boolean(certificateField),
     cert,
     tbs,
     signature: si[5].value,

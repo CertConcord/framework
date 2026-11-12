@@ -320,8 +320,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 299381,
-      "sha256": "04486f9eb183b99e9cffa3e4dd5ed7c03b013203b7df7982c7d193a210c54329"
+      "bytes": 302220,
+      "sha256": "17dc0a917b8d0b731882091ed85d0cf5cd0a0cb71066844853b3d26b0996046a"
     },
     {
       "path": "reference/README.md",
@@ -1495,8 +1495,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 22107,
-      "sha256": "bbb771ba4ac101fcf11d985a28191cb832dba81c0caaa65a4407e76fb7933eaf"
+      "bytes": 22723,
+      "sha256": "48013323f35cd9065da800b3eb372619e3fe5b7e6faa33e79afaf093f37f46e2"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -1919,6 +1919,11 @@
       "sha256": "ff2f8d248cb87f50d993d5d450d1ef5d0e20ed0e4d12441bdd93c286848cfe3b"
     },
     {
+      "path": "reference/timestamp-certreq-vectors.test.mjs",
+      "bytes": 3011,
+      "sha256": "55295e2dbb93b8ba257a04b2a7d60e746afee972f957630ceea7e7643918f4c9"
+    },
+    {
       "path": "reference/timestamp-client.test.mjs",
       "bytes": 15712,
       "sha256": "d67c6fda50bcb30ae9c4564d720846468401b58da54d9cce5912ccaa3ec6ce73"
@@ -1990,8 +1995,8 @@
     },
     {
       "path": "reference/timestamp.mjs",
-      "bytes": 14219,
-      "sha256": "ffae321403dfdb0061bdb4270e779957d35bad6fd1fe8117a37976343f73a875"
+      "bytes": 15179,
+      "sha256": "969bb2c217181b394d65e28b588255627f50a3768a2d8b9a305b33771321f818"
     },
     {
       "path": "reference/tpm-simulator-check.mjs",
@@ -12874,6 +12879,11 @@
       "sha256": "1a0a2e101bdfbb108a3f7bb42bc9319b72cdbb0a043c9f4d394fa3b72e62ae49"
     },
     {
+      "path": "reference/vectors/timestamp-certreq-contract.json",
+      "bytes": 58595,
+      "sha256": "23c6d1da6c523f62c9b4d255a5be9c9608e262966c3b76b6fadb011f79654d74"
+    },
+    {
       "path": "reference/vectors/timestamp-name-contract.json",
       "bytes": 801550,
       "sha256": "f5c2f61a5f1e5a8f5f524af4c318365d2f741a4e11a10062de829469944a78ab"
@@ -13342,6 +13352,11 @@
       "path": "tools/create-sd-jwt-hash-vectors.mjs",
       "bytes": 7708,
       "sha256": "de3d3f70256ea785fc07a7e3d5f90db4662115bb19791e051c271de5c2cae0db"
+    },
+    {
+      "path": "tools/create-timestamp-certreq-vectors.mjs",
+      "bytes": 2309,
+      "sha256": "f019986f4f235f092be69c8a2e33ecb7b4886620abc0cde5122516935cd8a25a"
     },
     {
       "path": "tools/create-timestamp-name-vectors.mjs",

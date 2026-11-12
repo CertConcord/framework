@@ -21,24 +21,31 @@ import { VerificationError } from './verification-result.mjs';
 const hashes = { [OID.sha256]: sha256, [OID.sha512]: sha512 };
 export function timestampRequest(
   imprint,
-  { hashOID = OID.sha512, policy, nonce = BigInt('0x' + random(16).toString('hex')) } = {},
+  {
+    hashOID = OID.sha512,
+    policy,
+    nonce = BigInt('0x' + random(16).toString('hex')),
+    certReq = true,
+  } = {},
 ) {
   requireThat(
     hashes[hashOID] && imprint.length === hashes[hashOID](Buffer.alloc(0)).length,
     'TSA_IMPRINT',
   );
+  requireThat(typeof certReq === 'boolean', 'TSA_CERT_REQ');
   return {
     der: seq(
       integer(1),
       seq(algID(hashOID), octet(imprint)),
       ...(policy ? [oid(policy)] : []),
       integer(nonce),
-      der(1, Buffer.from([255])),
+      ...(certReq ? [der(1, Buffer.from([255]))] : []),
     ),
     imprint,
     hashOID,
     policy,
     nonce,
+    certReq,
   };
 }
 export function parseTimestampRequest(raw) {
@@ -90,7 +97,12 @@ export class TimestampAuthority {
       ...(r.nonce !== undefined ? [integer(r.nonce)] : []),
     );
     const token = signCMS(
-      { content: info, contentType: OID.tstInfo, certificate: this.certificate },
+      {
+        content: info,
+        contentType: OID.tstInfo,
+        certificate: this.certificate,
+        includeCertificate: r.certReq,
+      },
       this.privateKey,
     );
     return seq(seq(integer(0)), token);
@@ -271,6 +283,7 @@ export function verifyTimestampToken(
     imprint,
     hashOID = OID.sha512,
     nonce,
+    certReq,
     policy,
     certificate,
     issuerKey,
@@ -295,9 +308,15 @@ export function verifyTimestampToken(
   requireThat(signatureProfile === 'CERTCONCORD-PQ', 'TSA_SIGNATURE_PROFILE');
   const initial = verifyCMS(token, {
       expectedCertificate: certificate,
+      allowExternalCertificate: true,
       expectedContentType: OID.tstInfo,
     }),
     info = parseTSTInfo(initial.content);
+  if (certReq !== undefined)
+    requireThat(
+      typeof certReq === 'boolean' && initial.certificateEmbedded === certReq,
+      'TSA_CERT_REQ_RESPONSE',
+    );
   verifyTSAName(info, initial.certificate);
   requireThat(
     info.hashOID === hashOID &&
@@ -315,6 +334,7 @@ export function verifyTimestampToken(
   requireThat(certificate && issuerKey, 'TSA_TRUST_REQUIRED');
   verifyCMS(token, {
     expectedCertificate: certificate,
+    allowExternalCertificate: true,
     expectedContentType: OID.tstInfo,
     issuerKey,
     at: info.genTime,
@@ -325,9 +345,18 @@ export function verifyTimestampToken(
 }
 export async function requestTimestamp(
   imprint,
-  { endpoint, hashOID = OID.sha512, policy, fetchImpl = fetch, authorization, ...trust },
+  {
+    endpoint,
+    hashOID = OID.sha512,
+    policy,
+    nonce,
+    certReq = true,
+    fetchImpl = fetch,
+    authorization,
+    ...trust
+  },
 ) {
-  const request = timestampRequest(imprint, { hashOID, policy });
+  const request = timestampRequest(imprint, { hashOID, policy, nonce, certReq });
   requireThat(new URL(endpoint).protocol === 'https:', 'TSA_HTTPS_REQUIRED');
   const response = await fetchImpl(endpoint, {
     method: 'POST',
