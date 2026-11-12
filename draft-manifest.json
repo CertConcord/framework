@@ -320,8 +320,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 299381,
-      "sha256": "04486f9eb183b99e9cffa3e4dd5ed7c03b013203b7df7982c7d193a210c54329"
+      "bytes": 299485,
+      "sha256": "69adfda308d8ae60ac89be3a63a85ee9249f9ddc5f509c3e31e954b28526ccd7"
     },
     {
       "path": "reference/README.md",
@@ -1204,6 +1204,11 @@
       "sha256": "9d2dc7c41ae62092d4cd4fd22b343587a5740e845d5f52af0aa07930dad8480d"
     },
     {
+      "path": "reference/ocsp-structural-admission.test.mjs",
+      "bytes": 3462,
+      "sha256": "456b8f36885240eb8b36c4f9b658258587d780674b36042ad23d25e76983133e"
+    },
+    {
       "path": "reference/oid4vp-request-audience.test.mjs",
       "bytes": 20390,
       "sha256": "d401fe01d8b01f31d193fe376e8b54825161e5c7b45bd5f232fa0e9e9c4fef23"
@@ -1625,8 +1630,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 11922,
-      "sha256": "4340a5384e071c9359fd2d44bf5e70e8dc2201c7656eeec2caef97c92db1a8b1"
+      "bytes": 11991,
+      "sha256": "c2771f95def58f6c14ad8c078ba35ce80a949f1d07e8f205bd629f9109d36a1e"
     },
     {
       "path": "reference/schemas.cddl",
@@ -5142,6 +5147,11 @@
       "path": "reference/vectors/ocsp-revocation-contract.json",
       "bytes": 93019,
       "sha256": "0eb2248b9c7cab21afc9747337bc07112f55a60a9d575281c181aeb38fd25f13"
+    },
+    {
+      "path": "reference/vectors/ocsp-structural-admission.json",
+      "bytes": 4222,
+      "sha256": "2a15187b2c69e87568a628744fcff7959207f1f3349f1095b91a02347afe3aa0"
     },
     {
       "path": "reference/vectors/oid4vp-request-audience.json",
