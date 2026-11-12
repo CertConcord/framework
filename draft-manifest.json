@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 49834,
-      "sha256": "0a36377efa3458519475800a35567628f132fe6bef30e29ad7e11d2d90415bc0"
+      "bytes": 49881,
+      "sha256": "e21810c715b84bb0944b6d075561b3c846cc188fc353bdf4e52a947fd3872586"
     },
     {
       "path": "docs/apple-identity.md",
@@ -284,6 +284,11 @@
       "sha256": "1fa65526af061e36a07574af8eede296402a8722479af0461ead9043a5a1614d"
     },
     {
+      "path": "docs/timestamp-rfc3161-compat.md",
+      "bytes": 2835,
+      "sha256": "54ba51822611c695659fec1de56a9e0f1a4094790e301d4e5927d6cf1dbf2619"
+    },
+    {
       "path": "docs/timestamp-time.md",
       "bytes": 3947,
       "sha256": "e5f1b81c32fb00404a9d87b3f9539ce7e948f2633e129ecec51cbf26cc62ac6f"
@@ -320,8 +325,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 302220,
-      "sha256": "17dc0a917b8d0b731882091ed85d0cf5cd0a0cb71066844853b3d26b0996046a"
+      "bytes": 302301,
+      "sha256": "edccad4c7e76e8559b6ab362abef1b1cc99d34e8b98561816d5687eb6a462a62"
     },
     {
       "path": "reference/README.md",
@@ -1929,6 +1934,11 @@
       "sha256": "d67c6fda50bcb30ae9c4564d720846468401b58da54d9cce5912ccaa3ec6ce73"
     },
     {
+      "path": "reference/timestamp-compat.test.mjs",
+      "bytes": 6247,
+      "sha256": "695af840b2e609481c4c5040aab4137c473caae9b8887a726d94cfc63cfaad37"
+    },
+    {
       "path": "reference/timestamp-crash-fixture.mjs",
       "bytes": 2138,
       "sha256": "6f33ae4b3aaac9a7a6a09a3c27df54c7e4531fe97c2cdc4b402de4b081660c90"
@@ -1995,8 +2005,8 @@
     },
     {
       "path": "reference/timestamp.mjs",
-      "bytes": 15179,
-      "sha256": "969bb2c217181b394d65e28b588255627f50a3768a2d8b9a305b33771321f818"
+      "bytes": 14772,
+      "sha256": "ab31b5851859b214afa971345dd6f89d913321e1b4fddb65a5b952bb4681a227"
     },
     {
       "path": "reference/tpm-simulator-check.mjs",

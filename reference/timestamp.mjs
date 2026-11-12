@@ -371,7 +371,8 @@ export async function requestTimestamp(
   });
   requireThat(
     response.ok &&
-      response.headers.get('content-type')?.split(';')[0] === 'application/timestamp-reply',
+      response.headers.get('content-type')?.split(';')[0].trim().toLowerCase() ===
+        'application/timestamp-reply',
     'TSA_HTTP',
   );
   const raw = await readBody(response.body, { maxBytes: 1048576 });
