@@ -121,6 +121,40 @@ function recipientKey(cert) {
   );
 }
 
+function certificateExtensionProfile(id, value) {
+  if (id === '2.5.29.31') {
+    const points = parseDER(value);
+    requireThat(
+      points.tag === 0x30 && points.children?.length > 0 &&
+        points.children.every((point) => point.tag === 0x30 &&
+          point.children?.some((part) => [0xa0, 0xa2].includes(part.tag))),
+      'CADES_CERTIFICATE_CRLDP',
+    );
+  } else if (id === '1.3.6.1.5.5.7.1.1') {
+    const descriptions = parseDER(value);
+    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0,
+      'CADES_CERTIFICATE_AIA');
+  } else if (id === '1.3.6.1.5.5.7.1.11') {
+    const descriptions = parseDER(value);
+    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0,
+      'CADES_CERTIFICATE_SIA');
+  } else if (id === '2.5.29.18') {
+    const names = parseDER(value);
+    requireThat(names.tag === 0x30 && names.children?.length > 0,
+      'CADES_CERTIFICATE_IAN');
+  } else if (id === '2.5.29.17') {
+    const names = parseDER(value);
+    requireThat(
+      names.tag === 0x30 && names.children?.length > 0 &&
+        names.children.every((name) => name.value.length > 0 &&
+          (name.tag !== 0xa4 ||
+            (name.children?.length === 1 && name.children[0].tag === 0x30 &&
+              name.children[0].children?.length > 0))),
+      'CADES_CERTIFICATE_SAN',
+    );
+  }
+}
+
 function certificateProfile(cert, purpose) {
   const permitted = new Set(['2.5.29.19', '2.5.29.15', '2.5.29.14', '2.5.29.35', '2.5.29.37']);
   if (mailPurpose(purpose)) permitted.add('2.5.29.17');
@@ -133,6 +167,7 @@ function certificateProfile(cert, purpose) {
       !['2.5.29.30', '2.5.29.36', '2.5.29.54'].includes(id),
       'CADES_CERTIFICATE_CONSTRAINTS_UNSUPPORTED',
     );
+    if (purpose === 'SIGNER') certificateExtensionProfile(id, extension.value);
   }
   if (purpose === 'SMIME_RECIPIENT_ENCRYPTION') recipientKey(cert);
   else p256(cert.publicKey);
