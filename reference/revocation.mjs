@@ -59,9 +59,10 @@ function parseCRLReason(raw) {
   return reason.value[0];
 }
 function extMap(node) {
+  requireThat(node.tag === 0x30, 'STATUS_EXTENSION');
   const out = new Map();
   for (const e of node.children) {
-    requireThat([2, 3].includes(e.children.length), 'STATUS_EXTENSION');
+    requireThat(e.tag === 0x30 && [2, 3].includes(e.children.length), 'STATUS_EXTENSION');
     const id = oidText(e.children[0]);
     requireThat(!out.has(id), 'STATUS_DUPLICATE_EXTENSION');
     const critical = e.children.length === 3;
@@ -195,8 +196,14 @@ export function ocspRequest(options, { nonce = random() } = {}) {
   };
 }
 export function parseOCSPRequest(raw) {
-  const t = parseDER(raw).children[0].children;
-  requireThat(t.length === 2 && t[0].children.length === 1 && t[1].tag === 0xa2, 'OCSP_REQUEST');
+  const envelope = parseDER(raw);
+  requireThat(envelope.tag === 0x30 && envelope.children[0]?.tag === 0x30, 'OCSP_REQUEST');
+  const t = envelope.children[0].children;
+  requireThat(
+    t.length === 2 && t[0].tag === 0x30 && t[0].children.length === 1 &&
+      t[0].children[0].tag === 0x30 && t[1].tag === 0xa2,
+    'OCSP_REQUEST',
+  );
   const certID = t[0].children[0].children[0],
     extensions = extMap(t[1].children[0]),
     nonceNode = parseDER(extensions.get(nonceOID));
@@ -281,7 +288,9 @@ function isCertificateEnvelope(cert) {
 }
 function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime = at }) {
   const expected = parseOCSPRequest(request),
-    r = parseDER(raw).children;
+    envelope = parseDER(raw);
+  requireThat(envelope.tag === 0x30, 'OCSP_TYPE');
+  const r = envelope.children;
   requireThat(
     r.length === 2 && r[0].tag === 10 && r[0].value.length === 1 && r[0].value[0] === 0,
     'OCSP_STATUS',

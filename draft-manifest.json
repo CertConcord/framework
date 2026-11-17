@@ -1225,8 +1225,8 @@
     },
     {
       "path": "reference/ocsp-der-boundaries.test.mjs",
-      "bytes": 5535,
-      "sha256": "5e56ceee54493f521bb00911c2eee890334f485ef859cdab3d7ffe7f58d82fe4"
+      "bytes": 12567,
+      "sha256": "21e5ba303c81c72a70bf0c1a2baad56b06c02673cb862d902d60e6a9c0d76b26"
     },
     {
       "path": "reference/ocsp-null-status.test.mjs",
@@ -1670,8 +1670,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 13524,
-      "sha256": "deb65aa9c2baf91a59a4ffdee8d7b3b4e370e9017c45ce63f854a750e7113d1c"
+      "bytes": 13870,
+      "sha256": "10936ea793e4ffc6fa07f974ceabf64311dbfbecaad8a8aa1534d6d589b9c4d2"
     },
     {
       "path": "reference/rfc3454-tables.mjs",
@@ -5220,8 +5220,8 @@
     },
     {
       "path": "reference/vectors/ocsp-der-boundaries.json",
-      "bytes": 9111,
-      "sha256": "390fbd6c052a7b711a65abb21375622eab3263e436eaa838711d997848a2e0d9"
+      "bytes": 14245,
+      "sha256": "357028dbe5167540ddd9168aee0f3c54928563ddfccdc72e09b1fc25b9c0f984"
     },
     {
       "path": "reference/vectors/ocsp-null-status.json",
