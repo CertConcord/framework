@@ -15,6 +15,7 @@ import {
 } from './core.mjs';
 import { OID, algID, attribute } from './pki.mjs';
 import { parseTSTInfo } from './timestamp.mjs';
+import { sameDistinguishedName } from './x509-name.mjs';
 
 // EN 319 122-1 V1.3.1, clauses 5.5.2 and 5.5.3. These are standard CMS
 // attributes; the original SignerInfo's six signed fields are never re-encoded.
@@ -131,6 +132,7 @@ function hashAlgorithm(node) {
 function attributes(node, signed) {
   if (!node) return [];
   canonicalImplicit(node, signed ? 0xa0 : 0xa1, 'CADES_ATTRIBUTES_ENCODING');
+  check(node.children.length > 0, 'CADES_ATTRIBUTES_ENCODING');
   check(node.children.length <= 256, 'CADES_ATTRIBUTE_LIMIT');
   const seen = new Set();
   return node.children.map((entry) => {
@@ -208,6 +210,10 @@ function parseCMS(raw, content, expectedType = OID.data, profile = 'CADES') {
   const sd = signedData.children,
     version = intValue(sd[0]);
   check(sd[1].tag === 0x31 && sd[1].children.length > 0, 'CADES_DIGEST_ALGORITHMS');
+  sd[1].children.forEach((entry) => {
+    const id = algorithm(entry);
+    if (HASHES[id]) hashAlgorithm(entry);
+  });
   check(
     sd[2].tag === 0x30 && sd[2].children.length >= 1 && sd[2].children.length <= 2,
     'CADES_CONTENT_ENCODING',
@@ -321,6 +327,18 @@ function certificateIdentity(raw) {
   const offset = tbs[0].tag === 0xa0 ? 1 : 0;
   return { x509, sid: seq(tbs[offset + 2].raw, tbs[offset].raw) };
 }
+function sameIssuerAndSerial(left, right) {
+  try {
+    const a = parseDER(left), b = parseDER(right);
+    return a.tag === 0x30 && b.tag === 0x30 &&
+      a.children.length === 2 && b.children.length === 2 &&
+      a.children[1].tag === 2 && b.children[1].tag === 2 &&
+      equal(a.children[1].raw, b.children[1].raw) &&
+      sameDistinguishedName(a.children[0].raw, b.children[0].raw);
+  } catch {
+    return false;
+  }
+}
 function essBinding(parsed) {
   const value = one(parsed, OID.ess);
   check(value, 'CADES_SIGNING_CERTIFICATE_MISSING', 'INDETERMINATE');
@@ -344,7 +362,11 @@ function essBinding(parsed) {
   );
   let at = 0,
     hashOID = OID.sha256;
-  if (id.children[0].tag === 0x30) hashOID = hashAlgorithm(id.children[at++]);
+  if (id.children[0].tag === 0x30) {
+    hashOID = hashAlgorithm(id.children[at++]);
+    // DER omits a SEQUENCE component equal to its DEFAULT value.
+    check(hashOID !== OID.sha256, 'CADES_SIGNING_CERTIFICATE_ENCODING');
+  }
   const hash = id.children[at++];
   check(
     hash?.tag === 4 && hash.value.length === digest(hashOID, Buffer.alloc(0)).length,
@@ -466,7 +488,7 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
       identity &&
       (unselectedIdentifier
         ? ess && equal(digest(ess.hashOID, cert), ess.hash)
-        : equal(identity.sid, parsed.si[1].raw))
+        : sameIssuerAndSerial(identity.sid, parsed.si[1].raw))
     )
       candidates.push({ cert, ...identity });
   }
@@ -507,9 +529,10 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
         ess.issuerSerial.tag === 0x30 &&
           binding?.length === 2 &&
           binding[0].tag === 0x30 &&
+          binding[0].children.length === 1 &&
           binding[0].children.some(
             (n) =>
-              n.tag === 0xa4 && n.children.length === 1 && equal(n.children[0].raw, sid[0].raw),
+              n.tag === 0xa4 && n.children.length === 1 && sameDistinguishedName(n.children[0].raw, sid[0].raw),
           ) &&
           equal(binding[1].raw, sid[1].raw),
         'CADES_ESS_ISSUER_SERIAL',
