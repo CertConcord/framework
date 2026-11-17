@@ -165,8 +165,8 @@
     },
     {
       "path": "docs/crl-structure.md",
-      "bytes": 3267,
-      "sha256": "b70cf63937e1e7c11fd8fdbaf1d54867ca6121ca3bd8d308046bddc607f2d79d"
+      "bytes": 5338,
+      "sha256": "59b01f8c1ca8c65fb841f4be0574c723e0f154ae535971461e8bde295453a969"
     },
     {
       "path": "docs/csc.md",
@@ -330,8 +330,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 300454,
-      "sha256": "d09a87108332bccc1dfad068983f67997d9eaab2abda33261b92ce8ff254e75c"
+      "bytes": 300542,
+      "sha256": "1abb3e7de6dfaf74cb8fa205b86b0029bcda7fda328554cfd4e2334ee2ab2a2a"
     },
     {
       "path": "reference/README.md",
@@ -662,6 +662,11 @@
       "path": "reference/crl-authority-key-identifier.test.mjs",
       "bytes": 4012,
       "sha256": "f6bbc3808fde8183462065287a1d64f2ab0b96862d166816cbc4f8b129788171"
+    },
+    {
+      "path": "reference/crl-der-structure.test.mjs",
+      "bytes": 5227,
+      "sha256": "cdb65d82bf6ba38ccde2ecbcb8cce2db8e8129719651ddb20730cbe99756fec2"
     },
     {
       "path": "reference/crl-reason-codes.test.mjs",
@@ -1670,8 +1675,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 13870,
-      "sha256": "10936ea793e4ffc6fa07f974ceabf64311dbfbecaad8a8aa1534d6d589b9c4d2"
+      "bytes": 14509,
+      "sha256": "44005f97ad84a5109d517587710eb9da7a6753dd5777a1147f3b5196bd252373"
     },
     {
       "path": "reference/rfc3454-tables.mjs",
@@ -2452,6 +2457,11 @@
       "path": "reference/vectors/crl-authority-key-identifier.json",
       "bytes": 6397,
       "sha256": "7622964bd460dee7212554d71e52451d2e5fd3ce725933b0f4fefafed6940283"
+    },
+    {
+      "path": "reference/vectors/crl-der-structure.json",
+      "bytes": 7987,
+      "sha256": "5e69df32de47e8c3197f82e08ba8927231f468817c4eb0c9954ff1e3de0be3e6"
     },
     {
       "path": "reference/vectors/crl-reason-codes.json",
