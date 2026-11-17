@@ -365,8 +365,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 35762,
-      "sha256": "c120432405e341f7743570307c4b5ade1b0517eb09971968228494d58dc95dc2"
+      "bytes": 35808,
+      "sha256": "2ab50599b408ac8b25a5329d64f3648c1117e90ee79018e2d20928c37407503d"
     },
     {
       "path": "reference/annex-verifier.mjs",

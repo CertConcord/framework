@@ -508,6 +508,7 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
         ess.issuerSerial.tag === 0x30 &&
           binding?.length === 2 &&
           binding[0].tag === 0x30 &&
+          binding[0].children.length === 1 &&
           binding[0].children.some(
             (n) =>
               n.tag === 0xa4 && n.children.length === 1 && equal(n.children[0].raw, sid[0].raw),
