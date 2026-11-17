@@ -59,13 +59,18 @@ function parseCRLReason(raw) {
   return reason.value[0];
 }
 function extMap(node) {
-  requireThat(node.tag === 0x30, 'STATUS_EXTENSION');
+  requireThat(node.tag === 0x30 && node.children.length > 0, 'STATUS_EXTENSION');
   const out = new Map();
   for (const e of node.children) {
     requireThat(e.tag === 0x30 && [2, 3].includes(e.children.length), 'STATUS_EXTENSION');
     const id = oidText(e.children[0]);
     requireThat(!out.has(id), 'STATUS_DUPLICATE_EXTENSION');
     const critical = e.children.length === 3;
+    requireThat(
+      !critical || (e.children[1].tag === 1 && e.children[1].value.length === 1 &&
+        e.children[1].value[0] === 0xff),
+      'STATUS_EXTENSION',
+    );
     requireThat(
       !critical || ['2.5.29.20', '2.5.29.21', '2.5.29.24', nonceOID].includes(id),
       'STATUS_CRITICAL_EXTENSION',
@@ -136,6 +141,7 @@ function inspectCRL(
   const root = parseDER(raw);
   requireThat(root.tag === 0x30 && root.children?.length === 3, 'CRL_STRUCTURE');
   const [tbs, algorithm, signature] = root.children;
+  requireThat(tbs.tag === 0x30, 'CRL_STRUCTURE');
   requireThat(
     equal(algorithm.raw, algID(publicKey.asymmetricKeyType)) &&
       signature.tag === 3 &&
@@ -144,6 +150,7 @@ function inspectCRL(
     'CRL_SIGNATURE',
   );
   const a = tbs.children;
+  requireThat([6, 7].includes(a.length), 'CRL_STRUCTURE');
   requireThat(
     intValue(a[0]) === 1n && equal(a[1].raw, algorithm.raw) && equal(a[2].raw, issuer),
     'CRL_SCOPE',
@@ -151,20 +158,27 @@ function inspectCRL(
   const thisUpdate = parseCRLTime(a[3]),
     nextUpdate = parseCRLTime(a[4]);
   requireThat(nextUpdate > thisUpdate, 'CRL_INTERVAL');
+  requireThat(
+    a.at(-1).tag === 0xa0 && a.at(-1).children.length === 1,
+    'CRL_STRUCTURE',
+  );
   const extensions = extMap(a.at(-1).children[0]);
   requireThat(!extensions.has('2.5.29.27'), 'DELTA_CRL_UNSUPPORTED');
   requireThat(!extensions.has('2.5.29.28'), 'SCOPED_CRL_UNSUPPORTED');
   const number = intValue(parseDER(extensions.get('2.5.29.20')));
   requireThat(number >= BigInt(minNumber), 'CRL_ROLLBACK');
+  requireThat(a.length !== 7 || a[5].tag === 0x30, 'CRL_STRUCTURE');
   const records = a.length === 7 ? a[5].children : [];
   let result = 'GOOD';
   const seen = new Set();
   for (const record of records) {
+    requireThat(record.tag === 0x30 && [2, 3].includes(record.children.length), 'CRL_STRUCTURE');
     const [sn, when, ex] = record.children,
       s = intValue(sn),
       id = s.toString();
     requireThat(!seen.has(id), 'CRL_DUPLICATE_SERIAL');
     seen.add(id);
+    requireThat(!ex || ex.tag === 0x30, 'CRL_STRUCTURE');
     const ext = ex ? extMap(ex) : new Map(),
       revokedAt = parseCRLTime(when),
       invalidityDate = ext.has('2.5.29.24') ? parseTime(parseDER(ext.get('2.5.29.24'))) : revokedAt,
