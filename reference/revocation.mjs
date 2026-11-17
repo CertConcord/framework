@@ -271,12 +271,16 @@ function parseOCSPRevokedInfo(node) {
 function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime = at }) {
   const expected = parseOCSPRequest(request),
     r = parseDER(raw).children;
-  requireThat(r.length === 2 && r[0].tag === 10 && r[0].value[0] === 0, 'OCSP_STATUS');
+  requireThat(
+    r.length === 2 && r[0].tag === 10 && r[0].value.length === 1 && r[0].value[0] === 0,
+    'OCSP_STATUS',
+  );
   const responseBytes = r[1].children[0].children;
   requireThat(oidText(responseBytes[0]) === basicOID, 'OCSP_TYPE');
   const [tbs, algorithm, signature] = parseDER(responseBytes[1].value).children;
   requireThat(
-    equal(algorithm.raw, algID(issuerPublicKey.asymmetricKeyType)) &&
+    signature.tag === 3 &&
+      equal(algorithm.raw, algID(issuerPublicKey.asymmetricKeyType)) &&
       signature.value[0] === 0 &&
       verify(tbs.raw, signature.value.subarray(1), issuerPublicKey),
     'OCSP_SIGNATURE',
