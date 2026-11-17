@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 49881,
-      "sha256": "e21810c715b84bb0944b6d075561b3c846cc188fc353bdf4e52a947fd3872586"
+      "bytes": 50096,
+      "sha256": "eee2d0aac210b6b40f0375762d2eac8c73ae7ae322c10c336c047b70f0efe7f4"
     },
     {
       "path": "docs/apple-identity.md",
@@ -229,6 +229,11 @@
       "sha256": "e624106f880f2f1fcf89ef654fcdec8e7563a6ba4758c24293247f49eea12ec3"
     },
     {
+      "path": "docs/ocsp-structure.md",
+      "bytes": 2470,
+      "sha256": "84fb6f362ef218e4c5d0b42e7cc3606fdad0dff6ac68c654f4d6526a7edbf4c2"
+    },
+    {
       "path": "docs/organization-delegation.md",
       "bytes": 26980,
       "sha256": "ad0ae5580a5c9a97d1be8f633bdd43bc9a601ade2cc084f912bb9cbec80d8d3e"
@@ -325,8 +330,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 300334,
-      "sha256": "d7ebadff8b119a9161af739a990cca2eaf74d4b5cfc21936f52adfa810f1a4fe"
+      "bytes": 300454,
+      "sha256": "d09a87108332bccc1dfad068983f67997d9eaab2abda33261b92ce8ff254e75c"
     },
     {
       "path": "reference/README.md",
@@ -1219,6 +1224,11 @@
       "sha256": "51d24476cf734296bcec29a6dd022deead2b65615e102c0d2333ba4f9fbe0b13"
     },
     {
+      "path": "reference/ocsp-der-boundaries.test.mjs",
+      "bytes": 5535,
+      "sha256": "5e56ceee54493f521bb00911c2eee890334f485ef859cdab3d7ffe7f58d82fe4"
+    },
+    {
       "path": "reference/ocsp-null-status.test.mjs",
       "bytes": 1519,
       "sha256": "b32f09da0c0e318985bf38515f9ca56000a26310242fde18dbbc31ae761a7b88"
@@ -1660,8 +1670,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 11991,
-      "sha256": "c2771f95def58f6c14ad8c078ba35ce80a949f1d07e8f205bd629f9109d36a1e"
+      "bytes": 13524,
+      "sha256": "deb65aa9c2baf91a59a4ffdee8d7b3b4e370e9017c45ce63f854a750e7113d1c"
     },
     {
       "path": "reference/rfc3454-tables.mjs",
@@ -5207,6 +5217,11 @@
       "path": "reference/vectors/mtc-versions.json",
       "bytes": 403760,
       "sha256": "e01ddb9bee1587daa297ce34fdb1947efe48d125fdef60e0c5d6abd00e9ce939"
+    },
+    {
+      "path": "reference/vectors/ocsp-der-boundaries.json",
+      "bytes": 9111,
+      "sha256": "390fbd6c052a7b711a65abb21375622eab3263e436eaa838711d997848a2e0d9"
     },
     {
       "path": "reference/vectors/ocsp-null-status.json",

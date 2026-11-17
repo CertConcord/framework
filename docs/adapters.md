@@ -54,6 +54,8 @@ This catalog supplies concrete bindings for the `certconcord-governed-draft-03` 
 
 ## Boundaries and compatibility rules
 
+The optional direct OCSP adapter's [structure admission contract](ocsp-structure.md) checks successful status, response and signature containers, and nonce inner types before interpreting the signed status result.
+
 ### MTC and transparency
 
 The MTC cryptographic certificate profile selects published draft-07, including its Appendix C tree vectors and assigned PKIX OIDs. `mtc-version.test.mjs` consumes fixed original certificates assembled separately from the runtime encoder. Its positive and negative cases cover standalone and historical landmark verification, GREASE, quorum, malformed proofs, unknown extensions and explicit rejection of draft-06 identifiers. The selected C2SP transport revision is independently locked. The assigned `id-pe-mtcCA` OID is recorded, but this adapter takes an externally admitted CA public key; MTC CA certificate-extension admission is not implemented by that key-based verifier.

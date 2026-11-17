@@ -69,6 +69,7 @@ function extMap(node) {
       !critical || ['2.5.29.20', '2.5.29.21', '2.5.29.24', nonceOID].includes(id),
       'STATUS_CRITICAL_EXTENSION',
     );
+    requireThat(e.children.at(-1).tag === 4, 'STATUS_EXTENSION');
     out.set(id, e.children.at(-1).value);
   }
   return out;
@@ -198,7 +199,9 @@ export function parseOCSPRequest(raw) {
   requireThat(t.length === 2 && t[0].children.length === 1 && t[1].tag === 0xa2, 'OCSP_REQUEST');
   const certID = t[0].children[0].children[0],
     extensions = extMap(t[1].children[0]),
-    nonce = parseDER(extensions.get(nonceOID)).value;
+    nonceNode = parseDER(extensions.get(nonceOID));
+  requireThat(nonceNode.tag === 4, 'OCSP_NONCE');
+  const nonce = nonceNode.value;
   requireThat(nonce.length >= 16 && nonce.length <= 32, 'OCSP_NONCE');
   return { certID: certID.raw, nonce };
 }
@@ -268,6 +271,14 @@ function parseOCSPRevokedInfo(node) {
   );
   return { revokedAt, revocationReason: reason.value[0] };
 }
+function isCertificateEnvelope(cert) {
+  const fields = cert.children;
+  return cert.tag === 0x30 && fields.length === 3 &&
+    fields[0].tag === 0x30 && fields[0].children.length >= 6 &&
+    fields[1].tag === 0x30 && fields[1].children.length >= 1 &&
+    fields[1].children[0].tag === 6 &&
+    fields[2].tag === 3 && fields[2].value.length > 1 && fields[2].value[0] === 0;
+}
 function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime = at }) {
   const expected = parseOCSPRequest(request),
     r = parseDER(raw).children;
@@ -275,9 +286,27 @@ function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime 
     r.length === 2 && r[0].tag === 10 && r[0].value.length === 1 && r[0].value[0] === 0,
     'OCSP_STATUS',
   );
+  requireThat(
+    r[1].tag === 0xa0 && r[1].children.length === 1 &&
+      r[1].children[0].tag === 0x30,
+    'OCSP_TYPE',
+  );
   const responseBytes = r[1].children[0].children;
-  requireThat(oidText(responseBytes[0]) === basicOID, 'OCSP_TYPE');
-  const [tbs, algorithm, signature] = parseDER(responseBytes[1].value).children;
+  requireThat(
+    responseBytes.length === 2 && responseBytes[0].tag === 6 &&
+      responseBytes[1].tag === 4 && oidText(responseBytes[0]) === basicOID,
+    'OCSP_TYPE',
+  );
+  const basic = parseDER(responseBytes[1].value);
+  requireThat(basic.tag === 0x30 && [3, 4].includes(basic.children.length), 'OCSP_SIGNATURE');
+  const [tbs, algorithm, signature, certs] = basic.children;
+  requireThat(
+    tbs.tag === 0x30 && algorithm.tag === 0x30 &&
+      (!certs || (certs.tag === 0xa0 && certs.children.length === 1 &&
+        certs.children[0].tag === 0x30 &&
+        certs.children[0].children.every(isCertificateEnvelope))),
+    'OCSP_SIGNATURE',
+  );
   requireThat(
     signature.tag === 3 &&
       equal(algorithm.raw, algID(issuerPublicKey.asymmetricKeyType)) &&
@@ -289,9 +318,11 @@ function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime 
     rawKey = parseDER(spki(issuerPublicKey)).children[1].value.subarray(1);
   requireThat(
     a.length === 4 &&
-      a[0].tag === 0xa2 &&
+      a[0].tag === 0xa2 && a[0].children.length === 1 &&
+      a[0].children[0].tag === 4 &&
       equal(a[0].children[0].value, createHash('sha1').update(rawKey).digest()) &&
-      a[2].children.length === 1,
+      a[2].tag === 0x30 && a[2].children.length === 1 &&
+      a[2].children[0].tag === 0x30,
     'OCSP_RESPONDER',
   );
   const s = a[2].children[0].children;
@@ -300,10 +331,18 @@ function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime 
       equal(s[0].raw, expected.certID),
     'OCSP_CONTEXT',
   );
-  const nonce = parseDER(extMap(a[3].children[0]).get(nonceOID)).value;
-  requireThat(equal(nonce, expected.nonce), 'OCSP_NONCE');
+  requireThat(
+    a[3].tag === 0xa1 && a[3].children.length === 1 && a[3].children[0].tag === 0x30,
+    'OCSP_NONCE',
+  );
+  const nonceNode = parseDER(extMap(a[3].children[0]).get(nonceOID));
+  requireThat(nonceNode.tag === 4 && equal(nonceNode.value, expected.nonce), 'OCSP_NONCE');
   requireThat([0x80, 0x82, 0xa1].includes(s[1].tag), 'OCSP_CERT_STATUS');
   requireThat(s[1].tag === 0xa1 || s[1].value.length === 0, 'OCSP_CERT_STATUS');
+  requireThat(
+    s[3].tag === 0xa0 && s[3].children.length === 1,
+    'OCSP_INTERVAL',
+  );
   const thisUpdate = parseTime(s[2]), nextUpdate = parseTime(s[3].children[0]),
     producedAt = parseTime(a[1]),
     revocation = s[1].tag === 0xa1 ? parseOCSPRevokedInfo(s[1]) : {},
