@@ -515,8 +515,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 30828,
-      "sha256": "1785314dc9a63243c45083b2d37e8f3bee4c13b060b8524d472d99d0d4887529"
+      "bytes": 30935,
+      "sha256": "3696a449485666f5fdbe879943b5f50cf252c9d617dbb8d791d36ed48280addb"
     },
     {
       "path": "reference/cades.mjs",
