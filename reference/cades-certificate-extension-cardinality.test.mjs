@@ -8,7 +8,7 @@ import { verifyCAdES } from './cades.mjs';
 
 const rawVectors = readFileSync(new URL('./vectors/cades-certificate-extension-cardinality.json', import.meta.url));
 assert.equal(createHash('sha256').update(rawVectors).digest('hex'),
-  '4c9107c65e690a8c4269f302c6d569920ed390842243197c1c5e643b694b09e2');
+  'ab3c3669761e939a879876f00e3abb84b460a9fe92ac5205ae91689c5ae8ad6d');
 const vectors = JSON.parse(rawVectors);
 assert.equal(vectors.schema, 'certconcord.cades-certificate-extension-cardinality.v1');
 const decode = (entry) => {
@@ -57,6 +57,8 @@ test('frozen extension bytes distinguish absent, empty, and nonempty forms', () 
     ['aiaEmpty', '1.3.6.1.5.5.7.1.1', '3000'],
     ['sanEmptyDNS', '2.5.29.17', '30028200'],
     ['sanEmptyDirectoryName', '2.5.29.17', '3004a4023000'],
+    ['siaEmpty', '1.3.6.1.5.5.7.1.11', '3000'],
+    ['ianEmpty', '2.5.29.18', '3000'],
   ];
   for (const [name, expectedOID, expectedHex] of cases) {
     const extension = extensions(variants[name].certificate).at(-1).children;
@@ -65,7 +67,7 @@ test('frozen extension bytes distinguish absent, empty, and nonempty forms', () 
     assert.equal(extension[1].value.toString('hex'), expectedHex);
   }
   for (const name of ['crldpNonempty', 'aiaNonempty', 'sanNonemptyDNS',
-    'sanNonemptyDirectoryName'])
+    'sanNonemptyDirectoryName', 'siaNonempty', 'ianNonempty'])
     assert.ok(parseDER(extensions(variants[name].certificate).at(-1).children.at(-1).value)
       .children.length > 0, name);
   const directory = (name) => parseDER(extensions(variants[name].certificate)
@@ -104,6 +106,10 @@ for (const [name, overall, reason] of [
   ['sanNonemptyDNS', 'VALID', 'CADES_VALID'],
   ['sanEmptyDirectoryName', 'INVALID', 'CADES_CERTIFICATE_SAN'],
   ['sanNonemptyDirectoryName', 'VALID', 'CADES_VALID'],
+  ['siaEmpty', 'INVALID', 'CADES_CERTIFICATE_SIA'],
+  ['siaNonempty', 'VALID', 'CADES_VALID'],
+  ['ianEmpty', 'INVALID', 'CADES_CERTIFICATE_IAN'],
+  ['ianNonempty', 'VALID', 'CADES_VALID'],
 ]) test(`full CAdES certificate extension admission: ${name}`, () => {
   const { certificate, cms } = variants[name];
   const result = verifyCAdES(cms, { content: fixture.document,

@@ -134,6 +134,14 @@ function certificateExtensionProfile(id, value) {
     const descriptions = parseDER(value);
     requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0,
       'CADES_CERTIFICATE_AIA');
+  } else if (id === '1.3.6.1.5.5.7.1.11') {
+    const descriptions = parseDER(value);
+    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0,
+      'CADES_CERTIFICATE_SIA');
+  } else if (id === '2.5.29.18') {
+    const names = parseDER(value);
+    requireThat(names.tag === 0x30 && names.children?.length > 0,
+      'CADES_CERTIFICATE_IAN');
   } else if (id === '2.5.29.17') {
     const names = parseDER(value);
     requireThat(
