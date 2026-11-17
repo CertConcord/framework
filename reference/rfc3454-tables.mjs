@@ -1,6 +1,22 @@
 // RFC 3454 Tables B.2, A.1 and C.8 (Unicode 3.2); generated from
 // https://www.rfc-editor.org/rfc/rfc3454.txt
 // Source SHA-256 eb722fa698fb7e8823b835d9fd263e4cdb8f1c7b0d234edf7f0e3bd2ccbb2c79.
+// Copyright (C) The Internet Society (2002). All Rights Reserved.
+// This document and translations of it may be copied and furnished to
+// others, and derivative works that comment on or otherwise explain it
+// or assist in its implementation may be prepared, copied, published
+// and distributed, in whole or in part, without restriction of any
+// kind, provided that the above copyright notice and this paragraph are
+// included on all such copies and derivative works. However, this
+// document itself may not be modified in any way, such as by removing
+// the copyright notice or references to the Internet Society or other
+// Internet organizations, except as needed for the purpose of
+// developing Internet standards in which case the procedures for
+// copyrights defined in the Internet Standards process must be
+// followed, or as required to translate it into languages other than
+// English.
+// Source rights restriction: the original RFC itself may not be modified
+// except under the stated standards-process or translation conditions.
 // Use only with the RFC 4518 LDAP StringPrep profile.
 export const caseFoldB2 = new Map([
   [0x41, 'a'],

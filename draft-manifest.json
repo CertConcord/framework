@@ -1640,8 +1640,8 @@
     },
     {
       "path": "reference/rfc3454-tables.mjs",
-      "bytes": 40064,
-      "sha256": "ba504ce7014c541e0b6ca6f2d4004b0ce4c2b1aa8ea54662dee29bb6fd645761"
+      "bytes": 41131,
+      "sha256": "faa4ab85de2d75ed30c6641417fbddd4f5e0218f1314199073858dba813b107d"
     },
     {
       "path": "reference/schemas.cddl",
