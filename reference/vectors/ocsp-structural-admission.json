@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "profile": "ocsp-structural-admission",
+  "source": "Fresh synthetic P-256 OCSP response; no private key or third-party bytes are included.",
+  "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEPAIzYnHVF7fbGOt96BqhSAF8hDHztWw0onqxSKDd8TMJ5/WHVh0KSYX/KDk5Ulh7L9+Pl4+CH65y1H91vn7CQg==",
+  "request": "MIGBMH8wWDBWMFQwCwYJYIZIAWUDBAIBBCBtFFS1laj5HSoTdX+myEfZck+V/lqwE1dhzAK/iqG31gQgRzhmqXquB5vaq4dkLK65YwyUuw63XpI5kDBbIaE0c3QCASmiIzAhMB8GCSsGAQUFBzABAgQSBBBBQUFBQUFBQUFBQUFBQUFB",
+  "query": {
+    "at": 1800000000,
+    "knowledgeTime": 1800000000
+  },
+  "cases": [
+    {
+      "id": "valid-successful",
+      "raw": "MIIBRgoBAKCCAT8wggE7BgkrBgEFBQcwAQEEggEsMIIBKDCBzqIWBBQwRGajnai6AZMyPr1naNnhbz3w3xgPMjAyNzAxMTUwNzU5MzBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgbRRUtZWo+R0qE3V/pshH2XJPlf5asBNXYcwCv4qht9YEIEc4Zql6rgeb2quHZCyuuWMMlLsOt16SOZAwWyGhNHN0AgEpgAAYDzIwMjcwMTE1MDc1OTMwWqARGA8yMDI3MDExNTA4MDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBBBQUFBQUFBQUFBQUFBQUFBMAoGCCqGSM49BAMCA0kAMEYCIQDJRqBkni+iim3Pfna/yUlyV2KsEZtHMbghIlo/F/4zkgIhANDUUvLz15FZlLRnfaBG/FTfTDL6m7zk7eUnOWhauvgR",
+      "sha256": "5f5057f4a55da56425116867974cae799bff6ba849d3446a5c436ab44c02503c",
+      "expected": {
+        "thisUpdate": 1799999970,
+        "nextUpdate": 1800000300,
+        "producedAt": 1799999970,
+        "status": "GOOD",
+        "overall": "VALID"
+      }
+    },
+    {
+      "id": "redundant-zero-status",
+      "raw": "MIIBRwoCAACgggE/MIIBOwYJKwYBBQUHMAEBBIIBLDCCASgwgc6iFgQUMERmo52ougGTMj69Z2jZ4W898N8YDzIwMjcwMTE1MDc1OTMwWjB+MHwwVDALBglghkgBZQMEAgEEIG0UVLWVqPkdKhN1f6bIR9lyT5X+WrATV2HMAr+KobfWBCBHOGapeq4Hm9qrh2QsrrljDJS7DrdekjmQMFshoTRzdAIBKYAAGA8yMDI3MDExNTA3NTkzMFqgERgPMjAyNzAxMTUwODA1MDBaoSMwITAfBgkrBgEFBQcwAQIEEgQQQUFBQUFBQUFBQUFBQUFBQTAKBggqhkjOPQQDAgNJADBGAiEAyUagZJ4vooptz352v8lJcldirBGbRzG4ISJaPxf+M5ICIQDQ1FLy89eRWZS0Z32gRvxU30wy+pu85O3lJzloWrr4EQ==",
+      "sha256": "7e0d450e6fc81c4911ffa5ee7a538c152f9cfc64c220be20be8c6f866f9b6b39",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_STATUS"
+      }
+    },
+    {
+      "id": "leading-zero-nonzero-status",
+      "raw": "MIIBRwoCAAGgggE/MIIBOwYJKwYBBQUHMAEBBIIBLDCCASgwgc6iFgQUMERmo52ougGTMj69Z2jZ4W898N8YDzIwMjcwMTE1MDc1OTMwWjB+MHwwVDALBglghkgBZQMEAgEEIG0UVLWVqPkdKhN1f6bIR9lyT5X+WrATV2HMAr+KobfWBCBHOGapeq4Hm9qrh2QsrrljDJS7DrdekjmQMFshoTRzdAIBKYAAGA8yMDI3MDExNTA3NTkzMFqgERgPMjAyNzAxMTUwODA1MDBaoSMwITAfBgkrBgEFBQcwAQIEEgQQQUFBQUFBQUFBQUFBQUFBQTAKBggqhkjOPQQDAgNJADBGAiEAyUagZJ4vooptz352v8lJcldirBGbRzG4ISJaPxf+M5ICIQDQ1FLy89eRWZS0Z32gRvxU30wy+pu85O3lJzloWrr4EQ==",
+      "sha256": "3a60118604448c7703228b4b07d228a3093737a94913b6d72e0be979c7908af6",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_STATUS"
+      }
+    },
+    {
+      "id": "non-success-status",
+      "raw": "MIIBRgoBAaCCAT8wggE7BgkrBgEFBQcwAQEEggEsMIIBKDCBzqIWBBQwRGajnai6AZMyPr1naNnhbz3w3xgPMjAyNzAxMTUwNzU5MzBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgbRRUtZWo+R0qE3V/pshH2XJPlf5asBNXYcwCv4qht9YEIEc4Zql6rgeb2quHZCyuuWMMlLsOt16SOZAwWyGhNHN0AgEpgAAYDzIwMjcwMTE1MDc1OTMwWqARGA8yMDI3MDExNTA4MDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBBBQUFBQUFBQUFBQUFBQUFBMAoGCCqGSM49BAMCA0kAMEYCIQDJRqBkni+iim3Pfna/yUlyV2KsEZtHMbghIlo/F/4zkgIhANDUUvLz15FZlLRnfaBG/FTfTDL6m7zk7eUnOWhauvgR",
+      "sha256": "d2c40b06d6c6df1a4b2d987c522e63b05d2b31c4ffa8986c170228e4c83130f1",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_STATUS"
+      }
+    },
+    {
+      "id": "octet-string-signature",
+      "raw": "MIIBRgoBAKCCAT8wggE7BgkrBgEFBQcwAQEEggEsMIIBKDCBzqIWBBQwRGajnai6AZMyPr1naNnhbz3w3xgPMjAyNzAxMTUwNzU5MzBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgbRRUtZWo+R0qE3V/pshH2XJPlf5asBNXYcwCv4qht9YEIEc4Zql6rgeb2quHZCyuuWMMlLsOt16SOZAwWyGhNHN0AgEpgAAYDzIwMjcwMTE1MDc1OTMwWqARGA8yMDI3MDExNTA4MDUwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBBBQUFBQUFBQUFBQUFBQUFBMAoGCCqGSM49BAMCBEkAMEYCIQDJRqBkni+iim3Pfna/yUlyV2KsEZtHMbghIlo/F/4zkgIhANDUUvLz15FZlLRnfaBG/FTfTDL6m7zk7eUnOWhauvgR",
+      "sha256": "59c515f1e72d393eece4db24c28dcbf51a390b6efbf0227fa6d12ee509071e8d",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "OCSP_SIGNATURE"
+      }
+    }
+  ]
+}

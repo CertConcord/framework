@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 49881,
-      "sha256": "e21810c715b84bb0944b6d075561b3c846cc188fc353bdf4e52a947fd3872586"
+      "bytes": 50096,
+      "sha256": "eee2d0aac210b6b40f0375762d2eac8c73ae7ae322c10c336c047b70f0efe7f4"
     },
     {
       "path": "docs/apple-identity.md",
@@ -229,6 +229,11 @@
       "sha256": "e624106f880f2f1fcf89ef654fcdec8e7563a6ba4758c24293247f49eea12ec3"
     },
     {
+      "path": "docs/ocsp-structure.md",
+      "bytes": 2470,
+      "sha256": "84fb6f362ef218e4c5d0b42e7cc3606fdad0dff6ac68c654f4d6526a7edbf4c2"
+    },
+    {
       "path": "docs/organization-delegation.md",
       "bytes": 26980,
       "sha256": "ad0ae5580a5c9a97d1be8f633bdd43bc9a601ade2cc084f912bb9cbec80d8d3e"
@@ -325,8 +330,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 300230,
-      "sha256": "676f31a2a7c79d568771ab06baccb33e987975576aca5ef47212b076ce92533e"
+      "bytes": 300454,
+      "sha256": "d09a87108332bccc1dfad068983f67997d9eaab2abda33261b92ce8ff254e75c"
     },
     {
       "path": "reference/README.md",
@@ -1219,6 +1224,11 @@
       "sha256": "51d24476cf734296bcec29a6dd022deead2b65615e102c0d2333ba4f9fbe0b13"
     },
     {
+      "path": "reference/ocsp-der-boundaries.test.mjs",
+      "bytes": 12567,
+      "sha256": "21e5ba303c81c72a70bf0c1a2baad56b06c02673cb862d902d60e6a9c0d76b26"
+    },
+    {
       "path": "reference/ocsp-null-status.test.mjs",
       "bytes": 1519,
       "sha256": "b32f09da0c0e318985bf38515f9ca56000a26310242fde18dbbc31ae761a7b88"
@@ -1232,6 +1242,11 @@
       "path": "reference/ocsp-revocation-replay.test.mjs",
       "bytes": 1785,
       "sha256": "9d2dc7c41ae62092d4cd4fd22b343587a5740e845d5f52af0aa07930dad8480d"
+    },
+    {
+      "path": "reference/ocsp-structural-admission.test.mjs",
+      "bytes": 3462,
+      "sha256": "456b8f36885240eb8b36c4f9b658258587d780674b36042ad23d25e76983133e"
     },
     {
       "path": "reference/oid4vp-request-audience.test.mjs",
@@ -1655,8 +1670,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 11922,
-      "sha256": "4340a5384e071c9359fd2d44bf5e70e8dc2201c7656eeec2caef97c92db1a8b1"
+      "bytes": 13870,
+      "sha256": "10936ea793e4ffc6fa07f974ceabf64311dbfbecaad8a8aa1534d6d589b9c4d2"
     },
     {
       "path": "reference/rfc3454-tables.mjs",
@@ -5204,6 +5219,11 @@
       "sha256": "e01ddb9bee1587daa297ce34fdb1947efe48d125fdef60e0c5d6abd00e9ce939"
     },
     {
+      "path": "reference/vectors/ocsp-der-boundaries.json",
+      "bytes": 14245,
+      "sha256": "357028dbe5167540ddd9168aee0f3c54928563ddfccdc72e09b1fc25b9c0f984"
+    },
+    {
       "path": "reference/vectors/ocsp-null-status.json",
       "bytes": 14039,
       "sha256": "ef6c2e864ad15f23f223d4dbdba5ffd9c22413179ceae33fdc73c1c5fbb9fb23"
@@ -5212,6 +5232,11 @@
       "path": "reference/vectors/ocsp-revocation-contract.json",
       "bytes": 93019,
       "sha256": "0eb2248b9c7cab21afc9747337bc07112f55a60a9d575281c181aeb38fd25f13"
+    },
+    {
+      "path": "reference/vectors/ocsp-structural-admission.json",
+      "bytes": 4222,
+      "sha256": "2a15187b2c69e87568a628744fcff7959207f1f3349f1095b91a02347afe3aa0"
     },
     {
       "path": "reference/vectors/oid4vp-request-audience.json",
