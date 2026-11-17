@@ -132,6 +132,7 @@ function hashAlgorithm(node) {
 function attributes(node, signed) {
   if (!node) return [];
   canonicalImplicit(node, signed ? 0xa0 : 0xa1, 'CADES_ATTRIBUTES_ENCODING');
+  check(node.children.length > 0, 'CADES_ATTRIBUTES_ENCODING');
   check(node.children.length <= 256, 'CADES_ATTRIBUTE_LIMIT');
   const seen = new Set();
   return node.children.map((entry) => {
@@ -209,7 +210,10 @@ function parseCMS(raw, content, expectedType = OID.data, profile = 'CADES') {
   const sd = signedData.children,
     version = intValue(sd[0]);
   check(sd[1].tag === 0x31 && sd[1].children.length > 0, 'CADES_DIGEST_ALGORITHMS');
-  sd[1].children.forEach(algorithm);
+  sd[1].children.forEach((entry) => {
+    const id = algorithm(entry);
+    if (HASHES[id]) hashAlgorithm(entry);
+  });
   check(
     sd[2].tag === 0x30 && sd[2].children.length >= 1 && sd[2].children.length <= 2,
     'CADES_CONTENT_ENCODING',
@@ -358,7 +362,11 @@ function essBinding(parsed) {
   );
   let at = 0,
     hashOID = OID.sha256;
-  if (id.children[0].tag === 0x30) hashOID = hashAlgorithm(id.children[at++]);
+  if (id.children[0].tag === 0x30) {
+    hashOID = hashAlgorithm(id.children[at++]);
+    // DER omits a SEQUENCE component equal to its DEFAULT value.
+    check(hashOID !== OID.sha256, 'CADES_SIGNING_CERTIFICATE_ENCODING');
+  }
   const hash = id.children[at++];
   check(
     hash?.tag === 4 && hash.value.length === digest(hashOID, Buffer.alloc(0)).length,

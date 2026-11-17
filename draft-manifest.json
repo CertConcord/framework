@@ -365,8 +365,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 36321,
-      "sha256": "11df069dcd1cc27ecb11888fb5d9aa5458d9ee44dc4c399a1d787b40b427abc3"
+      "bytes": 36616,
+      "sha256": "3921c951aa9887d3306903a854e32a37ac22eab59570f0335d8e053c4a8ccfac"
     },
     {
       "path": "reference/annex-verifier.mjs",
@@ -475,8 +475,8 @@
     },
     {
       "path": "reference/cades-cms-guards.test.mjs",
-      "bytes": 3222,
-      "sha256": "f2dc810fe98285cc5b8240a7c43a16ac1d91690afa8cfd7c727ddc857ae1793e"
+      "bytes": 9351,
+      "sha256": "84408ebf48d95916b4ff8b7dcab4173fd446e2adc682420635b234d2ab52524e"
     },
     {
       "path": "reference/cades-fixtures.mjs",
@@ -2080,8 +2080,8 @@
     },
     {
       "path": "reference/vectors/cades-cms-guards.json",
-      "bytes": 11439,
-      "sha256": "4eed46cb62dd88021706909c56f9300057b8dfd3aadd6506313a7d7064cbe5b7"
+      "bytes": 25503,
+      "sha256": "f0a535956ca30486747e09f0fb29673a8de066abad869e3fe691f2c18b4e327c"
     },
     {
       "path": "reference/vectors/cades-hold-release.json",
