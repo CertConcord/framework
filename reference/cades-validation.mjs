@@ -251,6 +251,20 @@ function certificateUsage(cert, purpose, mail = false) {
         ? 'SMIME_RECIPIENT_KEY_USAGE'
         : 'CADES_SIGNER_KEY_USAGE',
     );
+    if (purpose === 'SIGNER') {
+      const algorithm = parseDER(cert.spki).children[0];
+      if (oidText(algorithm.children[0]) === '1.2.840.10045.2.1') {
+        const keyAgreement = (usage[0] & 0x08) !== 0;
+        const encipherOnly = (usage[0] & 0x01) !== 0;
+        const decipherOnly = (usage[1] & 0x80) !== 0;
+        requireThat(
+          (usage[0] & 0x36) === 0 &&
+            (!(encipherOnly || decipherOnly) || keyAgreement) &&
+            !(encipherOnly && decipherOnly),
+          'CADES_SIGNER_EC_KEY_USAGE',
+        );
+      }
+    }
     if (basic) {
       const constraints = parseDER(basic.value);
       requireThat(
