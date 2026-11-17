@@ -142,6 +142,27 @@ function certificateExtensionProfile(id, value) {
     const names = parseDER(value);
     requireThat(names.tag === 0x30 && names.children?.length > 0,
       'CADES_CERTIFICATE_IAN');
+  } else if (id === '2.5.29.32') {
+    const policies = parseDER(value);
+    requireThat(policies.tag === 0x30 && policies.children?.length > 0,
+      'CADES_CERTIFICATE_POLICIES');
+    const seen = new Set();
+    for (const policy of policies.children) {
+      const fields = policy.children;
+      requireThat(policy.tag === 0x30 && [1, 2].includes(fields?.length) &&
+        fields[0].tag === 6, 'CADES_CERTIFICATE_POLICIES');
+      const policyID = oidText(fields[0]);
+      requireThat(!seen.has(policyID), 'CADES_CERTIFICATE_POLICIES');
+      seen.add(policyID);
+      if (fields.length === 2) {
+        const qualifiers = fields[1];
+        requireThat(qualifiers.tag === 0x30 && qualifiers.children?.length > 0 &&
+          qualifiers.children.every((entry) => entry.tag === 0x30 &&
+            entry.children?.length === 2 && entry.children[0].tag === 6),
+        'CADES_CERTIFICATE_POLICIES');
+        for (const entry of qualifiers.children) oidText(entry.children[0]);
+      }
+    }
   } else if (id === '2.5.29.17') {
     const names = parseDER(value);
     requireThat(
