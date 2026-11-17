@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "profile": "rfc5280-direct-crl-der-structure",
+  "source": "Issuer-signed fixed-time synthetic DER controls; no private key included.",
+  "issuerCertificate": {
+    "raw": "MIIBWjCCAQGgAwIBAgIBAjAKBggqhkjOPQQDAjAVMRMwEQYDVQQDDApDQWRFUyBSb290MB4XDTI2MTExNzA1MDM1NFoXDTI4MTExNjA1MDM1NFowFTETMBEGA1UEAwwKQ0FkRVMgUm9vdDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABF0Q4/eSsrtRdkvsgTrTy4i7WJUplLfDQMJSgFa2CKTmDE1QlLeh23RSwt8AxI/+vpAis2whjl/vAt0Ai9XbAqujQjBAMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBRw5zUaZHAZdVt8AhuYiH4XCGtEfDAKBggqhkjOPQQDAgNHADBEAiAaR3ETrUTpzL0nQbMNt/jbfO13jlyuO0kRT0sxDEz9aQIgMCsMM0SL6yDQV2rVaeROPwSv5ag7/YFV5nYCeh2T5f8=",
+    "bytes": 350,
+    "sha256": "15d3b102f13645daa646e74961ad9ef53ffbb3fbce6ad7183e85af8623587498"
+  },
+  "at": 1800000040,
+  "crls": [
+    {
+      "id": "canonical",
+      "raw": "MIIBADCBpgIBATAKBggqhkjOPQQDAjAVMRMwEQYDVQQDDApDQWRFUyBSb290Fw0yNzAxMTUwNzU4MjBaFw0yNzAxMTUwODE2NDBaMCMwIQICJw8XDTI3MDExNTA3NTkxMFowDDAKBgNVHRUEAwoBAaA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAgeilbPaIzBFYGgbykjCBGjZ0GUbM/Sjmz3JySodEXtfwwCgYIKoZIzj0EAwIDSQAwRgIhAL26TfuMIbDD9kW9y37pZ6iXUrm7O1JVBTO6RM1zRQPwAiEAp/u4gfIPZhtfI5Iu8hWMjvFIgVb/ZGndkcUO+dSarr4=",
+      "bytes": 260,
+      "sha256": "ab1782db14169ef88607ae2d88a72a7c789eaa3373b3324e46d944381d21e658"
+    },
+    {
+      "id": "crl-extensions-wrapper-extra-null",
+      "raw": "MIIBATCBqAIBATAKBggqhkjOPQQDAjAVMRMwEQYDVQQDDApDQWRFUyBSb290Fw0yNzAxMTUwNzU4MjBaFw0yNzAxMTUwODE2NDBaMCMwIQICJw8XDTI3MDExNTA3NTkxMFowDDAKBgNVHRUEAwoBAaA9MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAgeilbPaIzBFYGgbykjCBGjZ0GUbM/Sjmz3JySodEXtfwFADAKBggqhkjOPQQDAgNIADBFAiBQJwB6Y3iv7SPdfSH5Pi3O3r+IFZEn54B+yWMeRnTXrQIhAONVhjwm174SEBefeegj58B7fBh6KEkVwHAtZtvWVjYz",
+      "bytes": 261,
+      "sha256": "96a844d33d036156722bcd429612174f722c7a158b98bf67283ccecc16cf2840"
+    },
+    {
+      "id": "crl-extensions-collection-context-a1",
+      "raw": "MIH+MIGmAgEBMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCkNBZEVTIFJvb3QXDTI3MDExNTA3NTgyMFoXDTI3MDExNTA4MTY0MFowIzAhAgInDxcNMjcwMTE1MDc1OTEwWjAMMAoGA1UdFQQDCgEBoDuhOTAKBgNVHRQEAwIBBzArBgNVHSMEJDAigCB6KVs9ojMEVgaBvKSMIEaNnQZRsz9KObPcnJKh0Re1/DAKBggqhkjOPQQDAgNHADBEAiAf6QokOtZz62+EFN/VLCZXeAZvyk3gMuPX/mQHZJwk6QIgH5+sK0hKzJAIfz9lii/K0eyGVB8McfyEgcKctgfUlY0=",
+      "bytes": 257,
+      "sha256": "338be3995a1f5ccf9f3897365b91fe78e03a68ac021ac5d4f7ac0df3cd056e45"
+    },
+    {
+      "id": "revoked-certificates-set-tag",
+      "raw": "MIH/MIGmAgEBMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCkNBZEVTIFJvb3QXDTI3MDExNTA3NTgyMFoXDTI3MDExNTA4MTY0MFoxIzAhAgInDxcNMjcwMTE1MDc1OTEwWjAMMAoGA1UdFQQDCgEBoDswOTAKBgNVHRQEAwIBBzArBgNVHSMEJDAigCB6KVs9ojMEVgaBvKSMIEaNnQZRsz9KObPcnJKh0Re1/DAKBggqhkjOPQQDAgNIADBFAiAR/KKtVa85Gdr2h+8IlLxECA1BWEct1pW7E49o53LbbgIhAMzxPvCe5kUUEwggviS50i8d6gO8pV9lnmGcwxZ5XhIs",
+      "bytes": 258,
+      "sha256": "1c64ffa3b044b0f6f27f3fae5a2572b15b42accd99ec5a53693993647b3726ee"
+    },
+    {
+      "id": "entry-extensions-container-context-tag",
+      "raw": "MIH/MIGmAgEBMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCkNBZEVTIFJvb3QXDTI3MDExNTA3NTgyMFoXDTI3MDExNTA4MTY0MFowIzAhAgInDxcNMjcwMTE1MDc1OTEwWqAMMAoGA1UdFQQDCgEBoDswOTAKBgNVHRQEAwIBBzArBgNVHSMEJDAigCB6KVs9ojMEVgaBvKSMIEaNnQZRsz9KObPcnJKh0Re1/DAKBggqhkjOPQQDAgNIADBFAiEAnpCjpOBCBYfHpJ27uwkDiM7iZ01AxlcPZrru0jiTbK0CIGPYerpB1YChP58S68b8831sfNAgaA4SUEbQv7fs0U44",
+      "bytes": 258,
+      "sha256": "5c33f55ca6b8c03d0bd4a665cbd77f3227efd2925c6a3e62e2d98378e63e9d20"
+    },
+    {
+      "id": "entry-extension-item-context-tag",
+      "raw": "MIIBADCBpgIBATAKBggqhkjOPQQDAjAVMRMwEQYDVQQDDApDQWRFUyBSb290Fw0yNzAxMTUwNzU4MjBaFw0yNzAxMTUwODE2NDBaMCMwIQICJw8XDTI3MDExNTA3NTkxMFowDKAKBgNVHRUEAwoBAaA7MDkwCgYDVR0UBAMCAQcwKwYDVR0jBCQwIoAgeilbPaIzBFYGgbykjCBGjZ0GUbM/Sjmz3JySodEXtfwwCgYIKoZIzj0EAwIDSQAwRgIhAO0sTzBGlnM2KsZbGy+6ozMZbDoQDw6zvjhlVA81VgQaAiEAt8BD/qGtNYKuuQR2rFMI6Lswtr/DeozsuVl9mKlYa9M=",
+      "bytes": 260,
+      "sha256": "be544fef79a14314214c3ba987e858e0447723c64b2d916470d2fe2cbf136d1d"
+    },
+    {
+      "id": "entry-extension-critical-null",
+      "raw": "MIIBADCBqAIBATAKBggqhkjOPQQDAjAVMRMwEQYDVQQDDApDQWRFUyBSb290Fw0yNzAxMTUwNzU4MjBaFw0yNzAxMTUwODE2NDBaMCUwIwICJw8XDTI3MDExNTA3NTkxMFowDjAMBgNVHRUFAAQDCgEBoDswOTAKBgNVHRQEAwIBBzArBgNVHSMEJDAigCB6KVs9ojMEVgaBvKSMIEaNnQZRsz9KObPcnJKh0Re1/DAKBggqhkjOPQQDAgNHADBEAiANanyvX2MtYFl4dbhLb6I58fchM7sTLcbiObGHjd4KfAIgY+2jpd0uEEA0TvJH1foFxI13jX+WtVpSTkjmdeJedLE=",
+      "bytes": 260,
+      "sha256": "702a2b30471ae4f9b18e1ff34a05527a855d3bdd2b54a770562121e720c472ff"
+    },
+    {
+      "id": "tbscertlist-root-context-tag",
+      "raw": "MIH/oIGmAgEBMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCkNBZEVTIFJvb3QXDTI3MDExNTA3NTgyMFoXDTI3MDExNTA4MTY0MFowIzAhAgInDxcNMjcwMTE1MDc1OTEwWjAMMAoGA1UdFQQDCgEBoDswOTAKBgNVHRQEAwIBBzArBgNVHSMEJDAigCB6KVs9ojMEVgaBvKSMIEaNnQZRsz9KObPcnJKh0Re1/DAKBggqhkjOPQQDAgNIADBFAiEAwRJWLZV/irNDDCVsGGHrMTbdgbJCDe8OjKwoxuu8xJQCIFavvLRDUKNoUVzOQeK8ty5jJGzmW0YWmqfwKYO4MIXd",
+      "bytes": 258,
+      "sha256": "e27fd5519ceadb960b4485dc8e8a77ea39a82aef67753469fbc1951dd120c79a"
+    },
+    {
+      "id": "interstitial-null-skips-revoked",
+      "raw": "MIIBADCBqAIBATAKBggqhkjOPQQDAjAVMRMwEQYDVQQDDApDQWRFUyBSb290Fw0yNzAxMTUwNzU4MjBaFw0yNzAxMTUwODE2NDBaMCMwIQICJw8XDTI3MDExNTA3NTkxMFowDDAKBgNVHRUEAwoBAQUAoDswOTAKBgNVHRQEAwIBBzArBgNVHSMEJDAigCB6KVs9ojMEVgaBvKSMIEaNnQZRsz9KObPcnJKh0Re1/DAKBggqhkjOPQQDAgNHADBEAiBPr2d7yL0tr0EIfVsq+Yv8LB9fFQiVurvOgk32sd90xwIgRzj12I4B+51c6Y8kwMSWY+gBm0eOBtwXjHGsobErOiA=",
+      "bytes": 260,
+      "sha256": "8cf6408241b1437bf24d3993d717116e2a6930ba83a8b347ad63076ad52de2e8"
+    }
+  ],
+  "queries": [
+    {
+      "id": "canonical-good",
+      "crl": "canonical",
+      "serial": "6",
+      "expected": {
+        "status": "GOOD",
+        "overall": "VALID",
+        "reason": null
+      }
+    },
+    {
+      "id": "canonical-revoked",
+      "crl": "canonical",
+      "serial": "9999",
+      "expected": {
+        "status": "REVOKED",
+        "overall": "INVALID",
+        "reason": "CRL_REVOKED"
+      }
+    },
+    {
+      "id": "crl-extensions-wrapper-extra-null",
+      "crl": "crl-extensions-wrapper-extra-null",
+      "serial": "6",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      }
+    },
+    {
+      "id": "crl-extensions-collection-context-a1",
+      "crl": "crl-extensions-collection-context-a1",
+      "serial": "6",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "STATUS_EXTENSION"
+      }
+    },
+    {
+      "id": "revoked-certificates-set-tag",
+      "crl": "revoked-certificates-set-tag",
+      "serial": "6",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      }
+    },
+    {
+      "id": "entry-extensions-container-context-tag",
+      "crl": "entry-extensions-container-context-tag",
+      "serial": "6",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      }
+    },
+    {
+      "id": "entry-extension-item-context-tag",
+      "crl": "entry-extension-item-context-tag",
+      "serial": "6",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "STATUS_EXTENSION"
+      }
+    },
+    {
+      "id": "entry-extension-critical-null",
+      "crl": "entry-extension-critical-null",
+      "serial": "6",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "STATUS_EXTENSION"
+      }
+    },
+    {
+      "id": "tbscertlist-root-context-tag",
+      "crl": "tbscertlist-root-context-tag",
+      "serial": "6",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      }
+    },
+    {
+      "id": "interstitial-null-skips-revoked",
+      "crl": "interstitial-null-skips-revoked",
+      "serial": "9999",
+      "expected": {
+        "status": "INVALID",
+        "overall": "INVALID",
+        "reason": "CRL_STRUCTURE"
+      }
+    }
+  ]
+}
