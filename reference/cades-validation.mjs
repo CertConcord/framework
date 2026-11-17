@@ -138,7 +138,10 @@ function certificateExtensionProfile(id, value) {
     const names = parseDER(value);
     requireThat(
       names.tag === 0x30 && names.children?.length > 0 &&
-        names.children.every((name) => name.value.length > 0),
+        names.children.every((name) => name.value.length > 0 &&
+          (name.tag !== 0xa4 ||
+            (name.children?.length === 1 && name.children[0].tag === 0x30 &&
+              name.children[0].children?.length > 0))),
       'CADES_CERTIFICATE_SAN',
     );
   }
@@ -156,7 +159,7 @@ function certificateProfile(cert, purpose) {
       !['2.5.29.30', '2.5.29.36', '2.5.29.54'].includes(id),
       'CADES_CERTIFICATE_CONSTRAINTS_UNSUPPORTED',
     );
-    if (purpose !== undefined) certificateExtensionProfile(id, extension.value);
+    if (purpose === 'SIGNER') certificateExtensionProfile(id, extension.value);
   }
   if (purpose === 'SMIME_RECIPIENT_ENCRYPTION') recipientKey(cert);
   else p256(cert.publicKey);

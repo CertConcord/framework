@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 22158,
-      "sha256": "780416cf71f4b6cedca73a83aa255505ddf1f3b3b584bee14acf5c4c742f3384"
+      "bytes": 22294,
+      "sha256": "85cb222f2596997facc23454287111bfbfd57118133ba4b1a93989250f2a7725"
     },
     {
       "path": "docs/components.md",
@@ -475,8 +475,8 @@
     },
     {
       "path": "reference/cades-certificate-extension-cardinality.test.mjs",
-      "bytes": 5911,
-      "sha256": "af5ba596ac2bf3c5cfa523b13cf8afcc72742e8debd19b065695795011e09835"
+      "bytes": 6405,
+      "sha256": "63e21997cd7ee88ef0c1973650b25ee9867a309c077f22b163e53750ece13d25"
     },
     {
       "path": "reference/cades-cms-guards.test.mjs",
@@ -525,8 +525,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 31836,
-      "sha256": "eb622455d91e65810e907ec2c352b51e8895757fda2e48fb94cc15ee077c1c11"
+      "bytes": 32001,
+      "sha256": "02ea53241cc45a785af9bc8e921ac01044fcd3a9d5a3bbfa61a7d1781faeb93e"
     },
     {
       "path": "reference/cades.mjs",
@@ -2090,8 +2090,8 @@
     },
     {
       "path": "reference/vectors/cades-certificate-extension-cardinality.json",
-      "bytes": 20753,
-      "sha256": "f73f0e6d186d87e265e7abae5a98d96ec289d7f0bfac451e68f2e8938aa1e84e"
+      "bytes": 25580,
+      "sha256": "4c9107c65e690a8c4269f302c6d569920ed390842243197c1c5e643b694b09e2"
     },
     {
       "path": "reference/vectors/cades-cms-guards.json",
