@@ -37,7 +37,7 @@ const classified = (error) =>
   );
 
 function extensions(node) {
-  requireThat(node?.tag === 0x30 && node.children, 'CADES_EXTENSION_STRUCTURE');
+  requireThat(node?.tag === 0x30 && node.children?.length > 0, 'CADES_EXTENSION_STRUCTURE');
   const values = new Map();
   for (const entry of node.children) {
     const parts = entry.children;
@@ -402,7 +402,10 @@ function parseCRL(raw, issuer) {
   requireThat(nextUpdate > thisUpdate, 'CADES_CRL_INTERVAL');
   let index = 5,
     records = [];
-  if (fields[index]?.tag === 0x30) records = fields[index++].children;
+  if (fields[index]?.tag === 0x30) {
+    requireThat(fields[index].children?.length > 0, 'CADES_CRL_REVOKED_LIST_EMPTY');
+    records = fields[index++].children;
+  }
   requireThat(
     fields[index]?.tag === 0xa0 &&
       fields[index].children?.length === 1 &&

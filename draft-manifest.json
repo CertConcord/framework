@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 20405,
-      "sha256": "b9980e800bbc7c6a809ec8ad58858359b9c07fc8d6bfa4080f9bc4dd14c38b48"
+      "bytes": 20962,
+      "sha256": "513573f570c700c6359c35f4e630464e3153414e2b5b1bc2acabf3c8515c5edf"
     },
     {
       "path": "docs/components.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 302489,
-      "sha256": "95e99702e0f3d95b2482202708a1c78702889a07b2ecf81527c85f9682601290"
+      "bytes": 302583,
+      "sha256": "bc974334863da0eee23d9649878fb88932bdf549fa47dc2c27943868a473bbe2"
     },
     {
       "path": "reference/README.md",
@@ -479,6 +479,11 @@
       "sha256": "84408ebf48d95916b4ff8b7dcab4173fd446e2adc682420635b234d2ab52524e"
     },
     {
+      "path": "reference/cades-crl-admission.test.mjs",
+      "bytes": 4829,
+      "sha256": "0a8abffe945d2e129b4985d5d00452a87c87db1c382e3b675b0a0be5970512e4"
+    },
+    {
       "path": "reference/cades-fixtures.mjs",
       "bytes": 17304,
       "sha256": "c5498f76a39219a7817e6a1c10306971bffd30ade96100f64c19c5fbe277f276"
@@ -515,8 +520,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 30828,
-      "sha256": "1785314dc9a63243c45083b2d37e8f3bee4c13b060b8524d472d99d0d4887529"
+      "bytes": 30935,
+      "sha256": "3696a449485666f5fdbe879943b5f50cf252c9d617dbb8d791d36ed48280addb"
     },
     {
       "path": "reference/cades.mjs",
@@ -2082,6 +2087,11 @@
       "path": "reference/vectors/cades-cms-guards.json",
       "bytes": 25503,
       "sha256": "f0a535956ca30486747e09f0fb29673a8de066abad869e3fe691f2c18b4e327c"
+    },
+    {
+      "path": "reference/vectors/cades-crl-admission.json",
+      "bytes": 5695,
+      "sha256": "0a32ea0816bdcba427e8e4b48b9267fd6771b0b24029c1dd463423f048ead83b"
     },
     {
       "path": "reference/vectors/cades-hold-release.json",
