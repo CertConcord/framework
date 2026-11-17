@@ -325,8 +325,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 302301,
-      "sha256": "edccad4c7e76e8559b6ab362abef1b1cc99d34e8b98561816d5687eb6a462a62"
+      "bytes": 302489,
+      "sha256": "95e99702e0f3d95b2482202708a1c78702889a07b2ecf81527c85f9682601290"
     },
     {
       "path": "reference/README.md",
@@ -365,8 +365,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 35808,
-      "sha256": "2ab50599b408ac8b25a5329d64f3648c1117e90ee79018e2d20928c37407503d"
+      "bytes": 36321,
+      "sha256": "11df069dcd1cc27ecb11888fb5d9aa5458d9ee44dc4c399a1d787b40b427abc3"
     },
     {
       "path": "reference/annex-verifier.mjs",
@@ -472,6 +472,11 @@
       "path": "reference/cades-boundaries.test.mjs",
       "bytes": 7889,
       "sha256": "bfa90b55e7196bb50211590d1d41b78d22b0028f7166a523e0ca06cfd9ea9032"
+    },
+    {
+      "path": "reference/cades-cms-guards.test.mjs",
+      "bytes": 3222,
+      "sha256": "f2dc810fe98285cc5b8240a7c43a16ac1d91690afa8cfd7c727ddc857ae1793e"
     },
     {
       "path": "reference/cades-fixtures.mjs",
@@ -1634,6 +1639,11 @@
       "sha256": "4340a5384e071c9359fd2d44bf5e70e8dc2201c7656eeec2caef97c92db1a8b1"
     },
     {
+      "path": "reference/rfc3454-tables.mjs",
+      "bytes": 40064,
+      "sha256": "ba504ce7014c541e0b6ca6f2d4004b0ce4c2b1aa8ea54662dee29bb6fd645761"
+    },
+    {
       "path": "reference/schemas.cddl",
       "bytes": 20072,
       "sha256": "03aa86f7fd73132a2171e11399d30404bfcd78c43d0cfe4a30fbed60e900650f"
@@ -2067,6 +2077,11 @@
       "path": "reference/vectors/authority-rsa-equivalence.json",
       "bytes": 318720,
       "sha256": "0429adc19325c99825e073dd810285e25125db1e1030e4a75370864d83a35295"
+    },
+    {
+      "path": "reference/vectors/cades-cms-guards.json",
+      "bytes": 11439,
+      "sha256": "4eed46cb62dd88021706909c56f9300057b8dfd3aadd6506313a7d7064cbe5b7"
     },
     {
       "path": "reference/vectors/cades-hold-release.json",
@@ -13037,6 +13052,16 @@
       "path": "reference/witness-size-contract.test.mjs",
       "bytes": 4693,
       "sha256": "5cc37cafc9295b9f052b23e5ed5d28e22f3bfd6cfc7a19f7db805c53a8c69158"
+    },
+    {
+      "path": "reference/x509-name.mjs",
+      "bytes": 5306,
+      "sha256": "ee87377d35be74110c1b124dcf7909485486c08cdfd49457007f98a3a314cc9f"
+    },
+    {
+      "path": "reference/x509-name.test.mjs",
+      "bytes": 2573,
+      "sha256": "670aeed40c81859e1d1425117b33c1b75ec1be650e66350b77b2223e8fe0ab1f"
     },
     {
       "path": "reference/xmlers-contract.test.mjs",
