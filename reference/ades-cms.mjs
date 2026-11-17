@@ -208,6 +208,7 @@ function parseCMS(raw, content, expectedType = OID.data, profile = 'CADES') {
   const sd = signedData.children,
     version = intValue(sd[0]);
   check(sd[1].tag === 0x31 && sd[1].children.length > 0, 'CADES_DIGEST_ALGORITHMS');
+  sd[1].children.forEach(algorithm);
   check(
     sd[2].tag === 0x30 && sd[2].children.length >= 1 && sd[2].children.length <= 2,
     'CADES_CONTENT_ENCODING',
