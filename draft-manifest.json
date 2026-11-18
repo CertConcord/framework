@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 29545,
-      "sha256": "ee7abea1e698a8f1ccec2f7688330902fef8fda688a781230e1c443b8ab22915"
+      "bytes": 31720,
+      "sha256": "592e74079df0b9d5e1b8ca96beb3f3b12d0bfd3c46bf18d79112557e2ea9fd43"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 304324,
-      "sha256": "ad29b5436fb9e949df5c5d619fb58234d95bac273110576088f998200083e16b"
+      "bytes": 304576,
+      "sha256": "c0a612b97be55049390429afe4e3e3c94db7acf0fb3997c14ba406a4bec98ec9"
     },
     {
       "path": "reference/README.md",
@@ -549,6 +549,16 @@
       "sha256": "452d0df501a366b5b903ea72cb5c8b80e01be8a98a6fffd31ab587360ae1b6ae"
     },
     {
+      "path": "reference/cades-signer-freshestcrl-cardinality.test.mjs",
+      "bytes": 4762,
+      "sha256": "028c22b8f6df810169987cc43c03390cbf26f48c65f5956a4e5a3d24aa515816"
+    },
+    {
+      "path": "reference/cades-signer-generalname-structure.test.mjs",
+      "bytes": 4416,
+      "sha256": "1610cb736835f662c7e23e76bf3d8bfff41e285d639b9a86981be390b7ade31e"
+    },
+    {
       "path": "reference/cades-signer-san-generalname.test.mjs",
       "bytes": 5068,
       "sha256": "c68e2b8269bb42eaa2dba3164a844906774250246cab3575cae6cd61252dcb2f"
@@ -560,8 +570,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 37024,
-      "sha256": "6af557acad50b6a07431817ccc154cd5ebf27b1aa3ebd90a5f20f20633276baa"
+      "bytes": 37980,
+      "sha256": "3ae5c9dbc541a22b27fda105a54a8c7242302fa77442e1e23d0d5a02ea39e798"
     },
     {
       "path": "reference/cades.mjs",
@@ -2207,6 +2217,16 @@
       "path": "reference/vectors/cades-signer-crldp.json",
       "bytes": 25881,
       "sha256": "edb1c006c19391929efee32fd4ab2982f2478d0f10c52e171a57972465e91179"
+    },
+    {
+      "path": "reference/vectors/cades-signer-freshestcrl-cardinality.json",
+      "bytes": 8554,
+      "sha256": "64a32ee554cb78cb5f9071a2ab7b6c4c310e3360dff294b7f9585dda41eb6758"
+    },
+    {
+      "path": "reference/vectors/cades-signer-generalname-structure.json",
+      "bytes": 47609,
+      "sha256": "d174ec450595d286699f674ac3612a5bd072a1ec8d22d7e55722ff10b0f1ef01"
     },
     {
       "path": "reference/vectors/cades-signer-san-generalname.json",
