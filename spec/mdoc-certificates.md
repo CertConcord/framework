@@ -14,6 +14,8 @@ CC-MDOC-01: External identity validation MUST NOT automatically import its issue
 
 CC-MDOC-02: A CA, including a government CA, MAY directly issue a native signer mdoc when it implements the selected CertConcord profile and is admitted by the relying party. Direct issuance does not require an intermediary CA. Other adopting CAs MAY likewise issue native mdoc personal signing certificates.
 
+For CC-MDOC-02's X.509 certificate, the issuing CA MUST assign a positive serial number unique among that CA's certificates. A conforming CA MUST NOT encode the serial number in more than 20 octets ([RFC 5280 section 4.1.2.2](https://www.rfc-editor.org/rfc/rfc5280.html#section-4.1.2.2)). The reference TBS construction enforces the positive and length bounds before signing; the CA's issuance state must enforce uniqueness. An external certificate with serial zero remains parseable for a separate relying-party decision and is not rejected merely because the issuer-side helper would refuse to create it.
+
 CC-MDOC-03: A signer mdoc MUST certify the exact document key, subject, permitted signing purposes, algorithms and profile, issuer authority, validity/status and evidence requirements. A combined identity/signing mdoc MUST separately define and protect these capabilities. Neither a normal mDL nor an ordinary mdoc presentation implicitly carries these semantics.
 
 CC-MDOC-04: The signing profile MUST define the relationship among holder/device authentication keys and document operation keys, exact signature input, user authorization, key admission, custody, lifecycle and independent verification. Same-key and separate-key designs require their own explicit rules; the framework does not decide every future design in advance.
