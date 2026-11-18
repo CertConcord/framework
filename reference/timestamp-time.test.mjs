@@ -17,7 +17,11 @@ const vectors = JSON.parse(
       createPublicKey({ key: bytes(raw), format: 'der', type: 'spki' }),
     ]),
   ),
-  query = { ...vectors.query, imprint: bytes(vectors.query.imprint) };
+  query = {
+    ...vectors.query,
+    imprint: bytes(vectors.query.imprint),
+    trustedIssuerName: p.parseCertificate(bytes(vectors.certificates.tsa.raw)).issuer,
+  };
 
 // Independent rational oracle: binary64 is an integer significand times a power of two.
 function rational(value) {

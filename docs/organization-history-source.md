@@ -48,7 +48,7 @@ preservation:
   timestampAuthorities: [archive timestamp pin]
 ```
 
-Each timestamp pin contains exact X.509 DER `certificate`, canonical public SPKI DER `issuerPublicKeyDER`, explicit policy OID `policy`, finite exclusive `validUntil`, explicit `signatureProfile` (`CERTCONCORD-PQ` or `EXTERNAL-RFC3161`), and optional `revokedAt`. Publication pins additionally require `validFrom` and finite exclusive `knowledgeValidUntil`. Duplicate roots and duplicate timestamp certificate pins are rejected.
+Each timestamp pin contains exact X.509 DER `certificate`, canonical public SPKI DER `issuerPublicKeyDER`, explicit policy OID `policy`, finite exclusive `validUntil`, explicit `signatureProfile` (`CERTCONCORD-PQ` or `EXTERNAL-RFC3161`), and optional `revokedAt`. An `EXTERNAL-RFC3161` pin also requires the exact DER `trustedIssuerName` paired with its trusted issuer key; the name must match the pinned TSA certificate's issuer. Publication pins additionally require `validFrom` and finite exclusive `knowledgeValidUntil`. Duplicate roots and duplicate timestamp certificate pins are rejected.
 
 Publication pins are externally selected bootstrap trust, independent of the RTM they authenticate. The adapter verifies the actual RFC 3161 signature, certificate, issuer, policy, manifest-publication imprint and complete accuracy interval. It also checks the selected appointment, protection, hash and knowledge-coverage bounds. It never substitutes an unconditional positive timestamp status. Direct publication proofs become non-VALID after their selected protection/coverage bounds; this adapter does not invent an archival renewal for them.
 

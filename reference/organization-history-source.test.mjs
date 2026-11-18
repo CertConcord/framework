@@ -85,6 +85,18 @@ function verify(value = descriptor(), input = fixture.input) {
   }
 }
 
+test('external timestamp source pins require a trusted issuer Name paired with the issuer key', () => {
+  const value = descriptor();
+  const pin = value.configuration.preservation.timestampAuthorities[0];
+  pin.signatureProfile = 'EXTERNAL-RFC3161';
+  assert.throws(() => sourceFor(value));
+  pin.trustedIssuerName = p.parseCertificate(pin.certificate).issuer;
+  const source = sourceFor(value);
+  source.close();
+  pin.trustedIssuerName = p.name('Unrelated issuer');
+  assert.throws(() => sourceFor(value), { code: 'ORG_HISTORY_SOURCE_TSA_ISSUER_NAME' });
+});
+
 test('declarative source verifies the saved original using only declared public material', () => {
   const expected = createOrganizationHistoryVerifier(fixture.options).verify(fixture.input);
   assert.equal(expected.overall, 'VALID');

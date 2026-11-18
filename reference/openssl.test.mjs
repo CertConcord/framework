@@ -278,6 +278,7 @@ test(
           policy,
           certificate: x509.raw,
           issuerKey: x509.publicKey,
+          trustedIssuerName: p.parseCertificate(x509.raw).subject,
         }).nonce,
         nonce,
       );
@@ -289,6 +290,7 @@ test(
             policy,
             certificate: x509.raw,
             issuerKey: x509.publicKey,
+            trustedIssuerName: p.parseCertificate(x509.raw).subject,
           }),
         /BINDING/,
       );

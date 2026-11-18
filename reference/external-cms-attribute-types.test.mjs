@@ -4,7 +4,7 @@ import { createHash, verify as verifySignature, X509Certificate } from 'node:cry
 import { readFileSync } from 'node:fs';
 import { der, equal, intValue, oidText, parseDER, sha256 } from './core.mjs';
 import { verifyExternalCMS } from './external-cms.mjs';
-import { OID } from './pki.mjs';
+import { OID, parseCertificate } from './pki.mjs';
 import { verifyExternalTimestampToken } from './timestamp.mjs';
 
 const vectors = JSON.parse(
@@ -23,6 +23,7 @@ const timestampOptions = (item, tsa, root) => ({
   policy: '1.3.6.1.4.1.55555.91.1',
   certificate: tsa,
   issuerKey: new X509Certificate(root).publicKey,
+  trustedIssuerName: parseCertificate(root).subject,
   at: 1800000040,
   maxFutureSkew: 0,
   revokedAt: Infinity,

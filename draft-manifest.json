@@ -245,8 +245,8 @@
     },
     {
       "path": "docs/organization-history-source.md",
-      "bytes": 18022,
-      "sha256": "a9f50a4309a3c4ff522a83e9e744fd45efabe5d9a6040f073a53a9f97fa5b739"
+      "bytes": 18189,
+      "sha256": "29a0ab22965898c258944c88291b86d4e55109402fd4c343428d3d56f6ef72c4"
     },
     {
       "path": "docs/organization-history.md",
@@ -290,8 +290,8 @@
     },
     {
       "path": "docs/timestamp-names.md",
-      "bytes": 3175,
-      "sha256": "1fa65526af061e36a07574af8eede296402a8722479af0461ead9043a5a1614d"
+      "bytes": 3749,
+      "sha256": "a762ecd02ea32bc0d26b0f9d68342f445c75edd31279600fd9058a148f8c0bdb"
     },
     {
       "path": "docs/timestamp-rfc3161-compat.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 301064,
-      "sha256": "b64d4a23d8ef665f39551e3178a8bb1e1569f8903af1fe8be3d0bc39301bbb33"
+      "bytes": 303906,
+      "sha256": "6ceea0ac9cc10f14367acb2f380d106e1c0adfdc9d8b612d75c540f9916af90e"
     },
     {
       "path": "reference/README.md",
@@ -880,18 +880,23 @@
     },
     {
       "path": "reference/external-cms-attribute-types.test.mjs",
-      "bytes": 3597,
-      "sha256": "59c80b79467b3c3f0739543a2feedd1d894da6e4e12819b0ca8dce2a84e3c213"
+      "bytes": 3668,
+      "sha256": "3e9204985a4d1bd2463fbb347d78fab3023e0b59a9a45d40ae95411d3782ecac"
     },
     {
       "path": "reference/external-cms-container-shape.test.mjs",
-      "bytes": 3967,
-      "sha256": "94bf9fc0c7e6e52e25e09814dc939d38178a85fa1b9adac4c0b0f255b8578019"
+      "bytes": 4038,
+      "sha256": "f9f2adbca331a799df6facaafe4f31a6982e3130caeb0d520eb76071d83e3f89"
     },
     {
       "path": "reference/external-cms.mjs",
       "bytes": 7802,
       "sha256": "0ebb879eeb3bb0e2262c5449513f054b0779fdf149cf81ab1f114e559333aa81"
+    },
+    {
+      "path": "reference/external-tsa-certificate-admission.test.mjs",
+      "bytes": 3804,
+      "sha256": "bfbf8284a4b04d8908628f7bccb17fa6a6a085f7d8920dcba7a63b12979e04ad"
     },
     {
       "path": "reference/fixtures-history-durable-independent.mjs",
@@ -1290,8 +1295,8 @@
     },
     {
       "path": "reference/openssl.test.mjs",
-      "bytes": 9726,
-      "sha256": "abe94fd1f172d83c8fdbb53288caa8c5e67a3d62606ab75b2a60f207fcfccd3a"
+      "bytes": 9862,
+      "sha256": "a9ca3ce898beb9b57a77f4c1d857f8b539090a1c1fc2096d5ce2618bbea78da0"
     },
     {
       "path": "reference/organization-delegation-api.test.mjs",
@@ -1390,13 +1395,13 @@
     },
     {
       "path": "reference/organization-history-source.mjs",
-      "bytes": 27359,
-      "sha256": "77f7e8019fde0e445b1dec0a2e4ba39120090be2076e85ff28a21784a607a782"
+      "bytes": 27839,
+      "sha256": "cf5acd08d23b7927206964feadd3cdf26c7b72282aad8fd51eabcf9e5c406d7f"
     },
     {
       "path": "reference/organization-history-source.test.mjs",
-      "bytes": 18435,
-      "sha256": "2f1b26b282411af3878a1b76949a401dfd8891778ede7c66522a997de20dbcec"
+      "bytes": 18998,
+      "sha256": "c40cf8422647cce4281a0c7e0106e9212b366780b60f6cc8ea283870ccbf96c4"
     },
     {
       "path": "reference/organization-history-vector-semantics.mjs",
@@ -1760,8 +1765,8 @@
     },
     {
       "path": "reference/sdk/index.d.ts",
-      "bytes": 10593,
-      "sha256": "f2b12c863266553b4041f67341f4347fa5758a857806de5997a5c0b10aa2be22"
+      "bytes": 10860,
+      "sha256": "d3ec43feefd7dfa31c4e1633409d0f242332461a317af05a752e222049d413c1"
     },
     {
       "path": "reference/sdk/index.mjs",
@@ -2030,8 +2035,8 @@
     },
     {
       "path": "reference/timestamp-name.test.mjs",
-      "bytes": 5929,
-      "sha256": "b052f186b84248db2d3e2b38ab7e641b9661b9938cda30c57ecc91d6183b3919"
+      "bytes": 6036,
+      "sha256": "0fdf68ee8bdaffadb3d6526c974f918779b2953bbd8118bd6fe9067609905dbb"
     },
     {
       "path": "reference/timestamp-protocol.mjs",
@@ -2075,8 +2080,8 @@
     },
     {
       "path": "reference/timestamp-time.test.mjs",
-      "bytes": 6691,
-      "sha256": "81bf977c347fee35c05ac828e2b61ad98c5c5653e85ccdcd49d11a43952fa7ce"
+      "bytes": 6789,
+      "sha256": "62e2bbaf82be17e101b4d1c33243b5c9d043d60808389043377a1c466ed93112"
     },
     {
       "path": "reference/timestamp-verifier.test.mjs",
@@ -2085,8 +2090,8 @@
     },
     {
       "path": "reference/timestamp.mjs",
-      "bytes": 14772,
-      "sha256": "ab31b5851859b214afa971345dd6f89d913321e1b4fddb65a5b952bb4681a227"
+      "bytes": 15735,
+      "sha256": "9cc769030e171b52241c1b7d2df84041d54f37a3324f254d0e58245651cc45fe"
     },
     {
       "path": "reference/tpm-simulator-check.mjs",
@@ -5262,6 +5267,11 @@
       "path": "reference/vectors/external-cms-container-shape.json",
       "bytes": 10004,
       "sha256": "20a318cb5fdf35f5f7888cb99b361ced3d5ba60e5e087baede60f65dc746d76a"
+    },
+    {
+      "path": "reference/vectors/external-tsa-certificate-admission.json",
+      "bytes": 19416,
+      "sha256": "d7286a8ee576aab5f4c648b310993bd29fc0c0e2eecabaa24c9d5c7aa383b14c"
     },
     {
       "path": "reference/vectors/jose-p256-admission.json",
