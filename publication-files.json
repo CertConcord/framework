@@ -286,6 +286,7 @@
   "reference/original-status-vectors.test.mjs",
   "reference/package.json",
   "reference/pades-capabilities.test.mjs",
+  "reference/pades-claimed-time-v131.test.mjs",
   "reference/pades-dates.test.mjs",
   "reference/pades-fixtures.mjs",
   "reference/pades-io.mjs",
