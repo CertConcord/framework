@@ -14,7 +14,16 @@ import {
   equal,
   now,
 } from './core.mjs';
-import { algID, OID, generalizedTime, signCMS, verifyCMS, attribute } from './pki.mjs';
+import {
+  algID,
+  OID,
+  generalizedTime,
+  signCMS,
+  verifyCMS,
+  attribute,
+  parseCertificate,
+  validateKeyUsage,
+} from './pki.mjs';
 import { verifyExternalCMS } from './external-cms.mjs';
 import { readBody } from './transport.mjs';
 import { VerificationError } from './verification-result.mjs';
@@ -287,6 +296,7 @@ export function verifyTimestampToken(
     policy,
     certificate,
     issuerKey,
+    trustedIssuerName,
     at = now(),
     maxFutureSkew = 30,
     revokedAt = Infinity,
@@ -301,6 +311,7 @@ export function verifyTimestampToken(
       policy,
       certificate,
       issuerKey,
+      trustedIssuerName,
       at,
       maxFutureSkew,
       revokedAt,
@@ -393,6 +404,7 @@ export function verifyExternalTimestampToken(
     policy,
     certificate,
     issuerKey,
+    trustedIssuerName,
     at = now(),
     maxFutureSkew = 30,
     revokedAt = Infinity,
@@ -418,6 +430,22 @@ export function verifyExternalTimestampToken(
       info.genTime * 1000 < Date.parse(cert.validTo),
     'TSA_TIME_OR_REVOCATION',
   );
+  requireThat(certificate && issuerKey && Buffer.isBuffer(trustedIssuerName), 'TSA_TRUST_REQUIRED');
+  const anchorName = parseDER(trustedIssuerName),
+    parsedCertificate = parseCertificate(certificate);
+  requireThat(
+    anchorName.tag === 0x30 && anchorName.children?.length > 0 &&
+      equal(anchorName.raw, trustedIssuerName) &&
+      equal(parsedCertificate.issuer, trustedIssuerName),
+    'TSA_ISSUER_NAME',
+  );
+  const processedCritical = new Set(['2.5.29.19', '2.5.29.15', '2.5.29.37']);
+  for (const [id, extension] of parsedCertificate.extensions)
+    requireThat(!extension.critical || processedCritical.has(id), 'TSA_UNKNOWN_CRITICAL_EXTENSION');
+  const usage = validateKeyUsage(
+    parsedCertificate.extensions.get('2.5.29.15'), undefined, 'TSA_KEY_USAGE',
+  );
+  requireThat((usage[0] & 0xc0) !== 0, 'TSA_KEY_USAGE');
   requireThat(
     !cert.ca &&
       cert.keyUsage?.length === 1 &&

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash, createPublicKey, X509Certificate, verify } from 'node:crypto';
 import { parseDER, der, oidText } from './core.mjs';
-import { OID } from './pki.mjs';
+import { OID, parseCertificate } from './pki.mjs';
 import { parseTSTInfo, verifyTimestampToken } from './timestamp.mjs';
 
 const vectors = JSON.parse(
@@ -21,6 +21,7 @@ const vectors = JSON.parse(
     ...vectors.query,
     imprint: bytes(vectors.query.imprint),
     nonce: BigInt(vectors.query.nonce),
+    trustedIssuerName: parseCertificate(bytes(vectors.certificates.subject.raw)).issuer,
   };
 
 test('RFC3161 timestamp admission corpus binds exact signed bytes and independent certificate controls', () => {

@@ -88,14 +88,16 @@ export interface CommonTrust {
     certificate: Buffer;
     issuerKey: KeyObject;
     policy: string;
-    signatureProfile?: 'CERTCONCORD-PQ' | 'EXTERNAL-RFC3161';
     status: (input: {
       certificate: Buffer;
       genTime: number;
       stateTime: number;
       knowledgeTime: number;
     }) => boolean | AuthorityDecision;
-  };
+  } & (
+    | { signatureProfile?: 'CERTCONCORD-PQ'; trustedIssuerName?: never }
+    | { signatureProfile: 'EXTERNAL-RFC3161'; trustedIssuerName: Buffer }
+  );
   passkeyStatus?: (binding: unknown, time: { at: number; knowledgeTime: number }) => boolean;
   executionBindingCertificate?: Buffer;
   executionStatus?: (binding: unknown, time: { at: number; knowledgeTime: number }) => boolean;
@@ -191,20 +193,22 @@ export interface OrganizationHistoryTrust {
   hashDeadlines: Record<string, number>;
   keyDeadlines: Record<string, number>;
 }
-export interface OrganizationHistoryTimestampTrust {
+export type OrganizationHistoryTimestampTrust = {
   certificate: Buffer;
   issuerKey: KeyObject;
   policy: string;
   validUntil: number;
   revokedAt?: number;
-  signatureProfile?: 'CERTCONCORD-PQ' | 'EXTERNAL-RFC3161';
   status: (query: {
     certificate: Buffer;
     genTime: number;
     stateTime: number;
     knowledgeTime: number;
   }) => boolean | AuthorityDecision;
-}
+} & (
+  | { signatureProfile?: 'CERTCONCORD-PQ'; trustedIssuerName?: never }
+  | { signatureProfile: 'EXTERNAL-RFC3161'; trustedIssuerName: Buffer }
+);
 export interface OrganizationHistoryView extends VerificationResult {
   readonly scope: 'AS_KNOWN_AT_PROOF_TIME' | 'HISTORICAL_EVIDENCE_UNDER_CURRENT_KNOWLEDGE';
   readonly stateTime: number | null;
@@ -230,15 +234,17 @@ export interface OrganizationHistoryResult extends VerificationResult {
     evidenceID: string | null;
   }>;
 }
-export interface OrganizationHistoryTimestampPin {
+export type OrganizationHistoryTimestampPin = {
   certificate: Buffer;
   /** Exact canonical public SPKI DER; private keys and KeyObject values are not accepted. */
   issuerPublicKeyDER: Buffer;
   policy: string;
   validUntil: number;
   revokedAt?: number;
-  signatureProfile: 'CERTCONCORD-PQ' | 'EXTERNAL-RFC3161';
-}
+} & (
+  | { signatureProfile: 'CERTCONCORD-PQ'; trustedIssuerName?: never }
+  | { signatureProfile: 'EXTERNAL-RFC3161'; trustedIssuerName: Buffer }
+);
 export interface OrganizationHistorySourceConfiguration {
   schemaVersion: 1;
   trust: OrganizationHistoryTrust;

@@ -90,12 +90,23 @@ function timestampPins(values, publication) {
         'policy',
         'validUntil',
         'signatureProfile',
+        ...(pin.signatureProfile === 'EXTERNAL-RFC3161' ? ['trustedIssuerName'] : []),
         ...(publication ? ['validFrom', 'knowledgeValidUntil'] : []),
       ],
       ['revokedAt'],
     );
     binary(pin.certificate, 65536);
     const certificate = parseCertificate(pin.certificate);
+    if (pin.signatureProfile === 'EXTERNAL-RFC3161') {
+      binary(pin.trustedIssuerName, 4096);
+      const name = parseDER(pin.trustedIssuerName);
+      need(
+        name.tag === 0x30 && name.children?.length > 0 &&
+          equal(name.raw, pin.trustedIssuerName) &&
+          equal(certificate.issuer, pin.trustedIssuerName),
+        'ORG_HISTORY_SOURCE_TSA_ISSUER_NAME',
+      );
+    }
     need(
       typeof pin.policy === 'string' &&
         oid.test(pin.policy) &&
