@@ -124,6 +124,16 @@ function recipientKey(cert) {
   );
 }
 
+function validOIDContents(value) {
+  try {
+    oidText({ tag: 6, value });
+    return true;
+  } catch (error) {
+    if (error instanceof ProtocolError) return false;
+    throw error;
+  }
+}
+
 function certificateExtensionProfile(id, value) {
   if (id === '2.5.29.31') {
     const points = parseDER(value);
@@ -171,6 +181,17 @@ function certificateExtensionProfile(id, value) {
     requireThat(
       names.tag === 0x30 && names.children?.length > 0 &&
         names.children.every((name) => name.value.length > 0 &&
+          (name.tag !== 0xa0 ||
+            (name.children?.length === 2 && name.children[0].tag === 6 &&
+              validOIDContents(name.children[0].value) &&
+              name.children[1].tag === 0xa0 &&
+              name.children[1].children?.length === 1)) &&
+          (name.tag !== 0xa5 ||
+            ([1, 2].includes(name.children?.length) &&
+              name.children.at(-1).tag === 0xa1 &&
+              (name.children.length === 1 || name.children[0].tag === 0xa0))) &&
+          (name.tag !== 0x87 || [4, 16].includes(name.value.length)) &&
+          (name.tag !== 0x88 || validOIDContents(name.value)) &&
           (name.tag !== 0xa4 ||
             (name.children?.length === 1 && name.children[0].tag === 0x30 &&
               name.children[0].children?.length > 0))),
