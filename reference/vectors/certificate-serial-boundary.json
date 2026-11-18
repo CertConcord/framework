@@ -1,0 +1,21 @@
+{
+  "schema": "certconcord.reference.certificate-serial-boundary.v1",
+  "basis": "RFC 5280 section 4.1.2.2",
+  "cases": {
+    "positive": {
+      "serialDER": "020101",
+      "issuer": "ISSUED",
+      "mdocReceiver": "PARSED",
+      "cadesReceiver": "VALID"
+    },
+    "zero": {
+      "serialDER": "020100",
+      "issuer": "CERTIFICATE_SERIAL_POSITIVE",
+      "mdocReceiver": "PARSED",
+      "cadesReceiver": "UNSUPPORTED",
+      "cadesReason": "CADES_CERTIFICATE_SERIAL_UNSUPPORTED"
+    }
+  },
+  "issuerLengthBoundary": { "acceptedDEROctets": 20, "rejectedDEROctets": 21 },
+  "limit": "CAdES serial-zero acceptance is outside the selected complete-CRL profile; this vector does not claim production trust."
+}

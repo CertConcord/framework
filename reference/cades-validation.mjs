@@ -92,7 +92,10 @@ function certificate(raw) {
   requireThat(Buffer.isBuffer(raw), 'CADES_CERTIFICATE_STRUCTURE');
   const parsed = parseCertificate(raw),
     native = new X509Certificate(raw);
-  requireThat(parsed.serial > 0n, 'CADES_CERTIFICATE_SERIAL');
+  if (parsed.serial === 0n)
+    throw Object.assign(new ProtocolError('CADES_CERTIFICATE_SERIAL_UNSUPPORTED'), {
+      overall: 'UNSUPPORTED',
+    });
   return { ...parsed, native };
 }
 

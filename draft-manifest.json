@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 24497,
-      "sha256": "8a51e6304bbea81270bc6d283ef138043dbbe52dd768751349874f7529713518"
+      "bytes": 25640,
+      "sha256": "c6d269da6bfa596bc5c3ce8079491ff43cf9c2616b71b5ca859eab690cad88b2"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 300688,
-      "sha256": "e1a9301617d2c85730beba5164e202eede9b28c956472659be1735d38a21d90a"
+      "bytes": 300796,
+      "sha256": "abdb1be980f51d635d71f59ca1dc0b2e7feba8086cad75df73f495574256b7c6"
     },
     {
       "path": "reference/README.md",
@@ -545,8 +545,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 33913,
-      "sha256": "7455fec67cdc13996a2ee723a78b422fa78b254905a6abf010483bfed199bc2a"
+      "bytes": 34001,
+      "sha256": "2a817844e2830b36ae1b2521aaebb70d1eaab8f27b3fa10a30e4ce8ba264cfc8"
     },
     {
       "path": "reference/cades.mjs",
@@ -582,6 +582,11 @@
       "path": "reference/certificate-name-admission.test.mjs",
       "bytes": 5195,
       "sha256": "b4200e630f7501a7405f449f2a39a60b9f29324312f227e9a19af157afe10966"
+    },
+    {
+      "path": "reference/certificate-serial-boundary.test.mjs",
+      "bytes": 5676,
+      "sha256": "ef623cb308d510e228d6ff48dab7dbae3a6105c70321b3196a49bb436ab39851"
     },
     {
       "path": "reference/certificate-validity-endpoint-vectors.test.mjs",
@@ -1555,8 +1560,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 23549,
-      "sha256": "609d5815e3134560d4b61957eb1393fb096b392e77e51d0f5f18fe18c29aab49"
+      "bytes": 23782,
+      "sha256": "adc902f035a890d4b255b3c8d720f93c568488759d54069d0b5a258b1324b74d"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -2167,6 +2172,11 @@
       "path": "reference/vectors/certificate-name-admission.json",
       "bytes": 10418,
       "sha256": "d2dff9c3c39703084aa7b949c77d4b664220678e476e5f41761b8a8dfae5a1f8"
+    },
+    {
+      "path": "reference/vectors/certificate-serial-boundary.json",
+      "bytes": 711,
+      "sha256": "9cf83d6e7fcd3757afa60fdd528f05ee5f48b95fd0dbbed2590f0e9fcccbe772"
     },
     {
       "path": "reference/vectors/certificate-validity-endpoints.README.md",
@@ -13390,8 +13400,8 @@
     },
     {
       "path": "spec/mdoc-certificates.md",
-      "bytes": 4088,
-      "sha256": "77b9bf58141770b050b90f409dbbe52289496b2b0a9c6b42097309ad457bd51f"
+      "bytes": 4696,
+      "sha256": "a7b13f2e6e40f44e6b6c108ad8acf0ca9d01d8ec752d0788c316e634953cbd0c"
     },
     {
       "path": "spec/passkey-credentials.md",

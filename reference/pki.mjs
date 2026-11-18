@@ -151,6 +151,10 @@ export function tbsCertificate({
 }) {
   const p = profiles[profileID];
   requireThat(p || ca, 'UNKNOWN_PROFILE');
+  const encodedSerial = integer(serial);
+  const serialNode = parseDER(encodedSerial);
+  requireThat(intValue(serialNode) > 0n, 'CERTIFICATE_SERIAL_POSITIVE');
+  requireThat(serialNode.value.length <= 20, 'CERTIFICATE_SERIAL_LENGTH');
   requireThat(
     notAfter > notBefore && (ca || notAfter - notBefore <= p.days * 86400),
     'CERTIFICATE_LIFETIME',
@@ -188,7 +192,7 @@ export function tbsCertificate({
   extensions.push(...extraExtensions);
   return seq(
     der(0xa0, integer(2)),
-    integer(serial),
+    encodedSerial,
     algID(signatureAlgorithm),
     issuer,
     seq(certificateTime(notBefore), certificateTime(notAfter)),
