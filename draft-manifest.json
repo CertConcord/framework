@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 303906,
-      "sha256": "6ceea0ac9cc10f14367acb2f380d106e1c0adfdc9d8b612d75c540f9916af90e"
+      "bytes": 304016,
+      "sha256": "d6060c48e00e0f10ebd639679a45053a2d4ba338d1342bd93d02ced97e9a6710"
     },
     {
       "path": "reference/README.md",
@@ -2049,6 +2049,11 @@
       "sha256": "3dc722d956789b3aea43c05368f46d82f1397a3aaa2973b129047dd2f8635351"
     },
     {
+      "path": "reference/timestamp-request-structure.test.mjs",
+      "bytes": 2241,
+      "sha256": "895be206b1204e98d080b7e6b2eb3420223202dcbdac7641be13665da6c45f2c"
+    },
+    {
       "path": "reference/timestamp-revocation-fixtures.mjs",
       "bytes": 1817,
       "sha256": "844bae040dfed8cc3d8b43d1f137a8bad1104c9e7f91b5f69fc44024e63f87d0"
@@ -2090,8 +2095,8 @@
     },
     {
       "path": "reference/timestamp.mjs",
-      "bytes": 15735,
-      "sha256": "9cc769030e171b52241c1b7d2df84041d54f37a3324f254d0e58245651cc45fe"
+      "bytes": 15815,
+      "sha256": "4fd31620af38e0ced1106f311fe0747b70933d5608d74bcbb08b9eb12bacc696"
     },
     {
       "path": "reference/tpm-simulator-check.mjs",
@@ -13047,6 +13052,11 @@
       "path": "reference/vectors/timestamp-name-contract.json",
       "bytes": 801550,
       "sha256": "f5c2f61a5f1e5a8f5f524af4c318365d2f741a4e11a10062de829469944a78ab"
+    },
+    {
+      "path": "reference/vectors/timestamp-request-structure.json",
+      "bytes": 868,
+      "sha256": "851610816fcd1c6d21765f59015dad221a4b18a58205e0be145cb3472ab74870"
     },
     {
       "path": "reference/vectors/timestamp-time-contract.json",

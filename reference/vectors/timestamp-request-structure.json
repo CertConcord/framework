@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "standard": "RFC 3161 section 2.4.1",
+  "hashOID": "2.16.840.1.101.3.4.2.1",
+  "imprintHex": "d1007ca624eb82066a82ad0085845c8add44e87a76df6cdf01d37635b3544dbd",
+  "policy": "1.3.6.1.4.1.55555.91.1",
+  "nonce": "9156438538392878302",
+  "positive": {
+    "id": "valid-request",
+    "bytes": 79,
+    "sha256": "a54a510a6dcc640959725c6a4ef3e0b749cc03bc4e31db76a93e1ba5fd08ee70",
+    "base64": "ME0CAQEwLzALBglghkgBZQMEAgEEINEAfKYk64IGaoKtAIWEXIrdROh6dt9s3wHTdjWzVE29BgorBgEEAYOyA1sBAgh/EjRWeJq83gEB/w=="
+  },
+  "negative": [
+    {
+      "id": "outer-context-tag",
+      "bytes": 79,
+      "sha256": "4e0618e75b77d896ae264be0e41a924829aac1e2c7b13b2150dbc7f5194ccd0f",
+      "base64": "oE0CAQEwLzALBglghkgBZQMEAgEEINEAfKYk64IGaoKtAIWEXIrdROh6dt9s3wHTdjWzVE29BgorBgEEAYOyA1sBAgh/EjRWeJq83gEB/w==",
+      "error": "TSA_REQUEST_STRUCTURE"
+    }
+  ]
+}
