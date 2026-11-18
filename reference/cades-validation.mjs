@@ -18,6 +18,7 @@ const EMAIL_EKU = '1.3.6.1.5.5.7.3.4';
 const EMAIL_NAME = '1.2.840.113549.1.9.1';
 const SMTP_UTF8_NAME = '1.3.6.1.5.5.7.8.9';
 const RSA_KEY = '1.2.840.113549.1.1.1';
+const GENERAL_NAME_TAGS = new Set([0xa0, 0x81, 0x82, 0xa3, 0xa4, 0xa5, 0x86, 0x87, 0x88]);
 const mailPurpose = (purpose) => ['SMIME_SIGNING', 'SMIME_RECIPIENT_ENCRYPTION'].includes(purpose);
 const outcome = (overall, reason, details = {}) => ({ overall, reason, ...details });
 const instant = (value) => Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
@@ -154,11 +155,13 @@ function validOIDContents(value) {
 }
 
 function certificateExtensionProfile(id, value, issuer) {
-  if (id === '2.5.29.31') {
+  if (id === '2.5.29.31' || id === '2.5.29.46') {
+    const reason = id === '2.5.29.31' ? 'CADES_CERTIFICATE_CRLDP' :
+      'CADES_CERTIFICATE_FRESHESTCRL';
     const points = parseDER(value);
     requireThat(
       points.tag === 0x30 && points.children?.length > 0,
-      'CADES_CERTIFICATE_CRLDP',
+      reason,
     );
     for (const point of points.children) {
       const fields = point.children;
@@ -170,41 +173,48 @@ function certificateExtensionProfile(id, value, issuer) {
               [0xa0, 0x81, 0xa2].indexOf(fields[index - 1].tag) <
                 [0xa0, 0x81, 0xa2].indexOf(field.tag))) &&
           fields.some((field) => [0xa0, 0xa2].includes(field.tag)),
-        'CADES_CERTIFICATE_CRLDP',
+        reason,
       );
       for (const field of fields) {
         if (field.tag === 0xa0) {
           const name = field.children?.[0];
           requireThat(field.children.length === 1 &&
             ((name.tag === 0xa0 && name.children?.length > 0 &&
-              name.children.every((entry) => entry.value.length > 0 &&
+              name.children.every((entry) => GENERAL_NAME_TAGS.has(entry.tag) &&
+                entry.value.length > 0 &&
                 (entry.tag !== 0x86 || entry.value.every((byte) => byte < 128)))) ||
              (name.tag === 0xa1 && name.children?.length > 0)),
-          'CADES_CERTIFICATE_CRLDP');
+          reason);
         } else if (field.tag === 0x81) {
           const bits = field.value, unused = bits[0];
           requireThat(bits.length > 1 && unused <= 7 &&
             (bits.at(-1) & ((1 << unused) - 1)) === 0 &&
             (bits[1] & 0x80) === 0,
-          'CADES_CERTIFICATE_CRLDP');
+          reason);
         } else {
           requireThat(field.children?.length > 0,
-            'CADES_CERTIFICATE_CRLDP');
+            reason);
           for (const name of field.children) {
             if (name.tag === 0xa4 && name.children?.length === 1)
               requireThat(!equal(name.children[0].raw, issuer),
-                'CADES_CERTIFICATE_CRLDP');
+                reason);
           }
         }
       }
     }
   } else if (id === '1.3.6.1.5.5.7.1.1') {
     const descriptions = parseDER(value);
-    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0,
+    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0 &&
+      descriptions.children.every((entry) => entry.tag === 0x30 &&
+        entry.children?.length === 2 && entry.children[0].tag === 6 &&
+        GENERAL_NAME_TAGS.has(entry.children[1].tag)),
       'CADES_CERTIFICATE_AIA');
   } else if (id === '1.3.6.1.5.5.7.1.11') {
     const descriptions = parseDER(value);
-    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0,
+    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0 &&
+      descriptions.children.every((entry) => entry.tag === 0x30 &&
+        entry.children?.length === 2 && entry.children[0].tag === 6 &&
+        GENERAL_NAME_TAGS.has(entry.children[1].tag)),
       'CADES_CERTIFICATE_SIA');
   } else if (id === '2.5.29.18') {
     const names = parseDER(value);
@@ -235,7 +245,8 @@ function certificateExtensionProfile(id, value, issuer) {
     const names = parseDER(value);
     requireThat(
       names.tag === 0x30 && names.children?.length > 0 &&
-        names.children.every((name) => name.value.length > 0 &&
+        names.children.every((name) => GENERAL_NAME_TAGS.has(name.tag) &&
+          name.value.length > 0 &&
           sanLexicalName(name) &&
           (name.tag !== 0xa0 ||
             (name.children?.length === 2 && name.children[0].tag === 6 &&
