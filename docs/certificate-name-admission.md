@@ -1,0 +1,9 @@
+# Document signer Name admission
+
+The reference certificate parser checks the DER subject `Name` before certificate status or document trust admission. A nonempty name contains nonempty RDN sets of two-member `AttributeTypeAndValue` sequences. An empty subject requires a critical `subjectAltName` extension, as specified by [RFC 5280 sections 4.1.2.6 and 4.2.1.6](https://www.rfc-editor.org/rfc/rfc5280.html#section-4.2.1.6). An issuer-signed certificate with an empty subject and no critical SAN receives `CERTIFICATE_EMPTY_SUBJECT`.
+
+For a subject `commonName` attribute, the parser accepts the five ASN.1 string tags in [RFC 5280 Appendix A](https://www.rfc-editor.org/rfc/rfc5280.html#appendix-A): TeletexString, PrintableString, UniversalString, UTF8String and BMPString. `IA5String` is not in that CHOICE and receives `CERTIFICATE_COMMON_NAME_TYPE`. This check covers the ASN.1 type; it does not claim full character repertoire or name comparison conformance.
+
+The selected ordinary CAdES signer profile still treats critical SAN as unsupported. The empty-subject rule therefore closes acceptance of a certificate with no subject identity; it does not add SAN identity processing. A profile that admits critical SAN must separately validate the encoded `GeneralNames` and bind the selected identity to the signing key.
+
+[Frozen certificate-name vectors](../reference/vectors/certificate-name-admission.json) contain four root-signed signer certificates and detached CMS documents: nonempty UTF8String control, empty subject without SAN, empty subject with critical SAN, and commonName IA5String. The [regressions](../reference/certificate-name-admission.test.mjs) verify issuer and CMS signatures independently before checking direct certificate and CAdES B-level outcomes at a fixed time. These synthetic inputs do not establish production CA trust or PAdES long-term acceptance.

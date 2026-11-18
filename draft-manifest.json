@@ -149,6 +149,11 @@
       "sha256": "8a51e6304bbea81270bc6d283ef138043dbbe52dd768751349874f7529713518"
     },
     {
+      "path": "docs/certificate-name-admission.md",
+      "bytes": 1888,
+      "sha256": "4c5434e221a0521ce2e57542aba1f816a8689f56f3bec90cc76bb81488c5c3c3"
+    },
+    {
       "path": "docs/components.md",
       "bytes": 5451,
       "sha256": "d534b275e34c024dc7034cfdf749b480dd82042e3ab331c38617f88d0a8c5969"
@@ -330,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 300542,
-      "sha256": "1abb3e7de6dfaf74cb8fa205b86b0029bcda7fda328554cfd4e2334ee2ab2a2a"
+      "bytes": 300688,
+      "sha256": "e1a9301617d2c85730beba5164e202eede9b28c956472659be1735d38a21d90a"
     },
     {
       "path": "reference/README.md",
@@ -572,6 +577,11 @@
       "path": "reference/certificate-key-usage.test.mjs",
       "bytes": 3920,
       "sha256": "fec6d87c96a023106bca10f5bae83976574607ca03590bacc0d5bca47e935c46"
+    },
+    {
+      "path": "reference/certificate-name-admission.test.mjs",
+      "bytes": 5195,
+      "sha256": "b4200e630f7501a7405f449f2a39a60b9f29324312f227e9a19af157afe10966"
     },
     {
       "path": "reference/certificate-validity-endpoint-vectors.test.mjs",
@@ -1545,8 +1555,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 22723,
-      "sha256": "48013323f35cd9065da800b3eb372619e3fe5b7e6faa33e79afaf093f37f46e2"
+      "bytes": 23549,
+      "sha256": "609d5815e3134560d4b61957eb1393fb096b392e77e51d0f5f18fe18c29aab49"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -2152,6 +2162,11 @@
       "path": "reference/vectors/certificate-asn1-admission.json",
       "bytes": 133060,
       "sha256": "a966b36710e4cc4470cfb2b795e1765377b34abe73034e6f8ba6018cfc737b6e"
+    },
+    {
+      "path": "reference/vectors/certificate-name-admission.json",
+      "bytes": 10418,
+      "sha256": "d2dff9c3c39703084aa7b949c77d4b664220678e476e5f41761b8a8dfae5a1f8"
     },
     {
       "path": "reference/vectors/certificate-validity-endpoints.README.md",

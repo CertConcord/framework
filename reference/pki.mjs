@@ -285,6 +285,27 @@ export function parseCertificate(raw) {
       'CERTIFICATE_SPKI',
     );
   requireThat(t[3].tag === 0x30 && t[3].children?.length > 0, 'CERTIFICATE_ISSUER_NAME');
+  const subjectName = t[5];
+  requireThat(subjectName.tag === 0x30 && subjectName.children, 'CERTIFICATE_SUBJECT_NAME');
+  requireThat(
+    subjectName.children.length > 0 || extensions.get('2.5.29.17')?.critical,
+    'CERTIFICATE_EMPTY_SUBJECT',
+  );
+  for (const rdn of subjectName.children) {
+    requireThat(rdn.tag === 0x31 && rdn.children?.length > 0, 'CERTIFICATE_SUBJECT_NAME');
+    for (const attribute of rdn.children) {
+      requireThat(
+        attribute.tag === 0x30 && attribute.children?.length === 2 &&
+          attribute.children[0].tag === 6,
+        'CERTIFICATE_SUBJECT_NAME',
+      );
+      if (oidText(attribute.children[0]) === '2.5.4.3')
+        requireThat(
+          [0x0c, 0x13, 0x14, 0x1c, 0x1e].includes(attribute.children[1].tag),
+          'CERTIFICATE_COMMON_NAME_TYPE',
+        );
+    }
+  }
   const time = (n) => {
     let s = n.value.toString('ascii');
     if (n.tag === 23) {
