@@ -30,11 +30,50 @@ function hashAlgorithm(n) {
   );
   return hashes[oidText(a[0])];
 }
+function signedDataVersion(sd, contentType, signerVersion) {
+  // RFC 5652 section 5.1 assigns the version from the actual certificate,
+  // revocation and signer choices, not from the digest or signature result.
+  const certificates = sd.find((n) => n.tag === 0xa0)?.children ?? [],
+    crls = sd.find((n) => n.tag === 0xa1)?.children ?? [];
+  if (certificates.some((n) => n.tag === 0xa3) || crls.some((n) => n.tag === 0xa1)) return 5n;
+  if (certificates.some((n) => n.tag === 0xa2)) return 4n;
+  if (certificates.some((n) => n.tag === 0xa1) || signerVersion === 3n || contentType !== OID.data)
+    return 3n;
+  return 1n;
+}
 export function verifyExternalCMS(raw, { certificate, expectedContentType, content }) {
   const root = parseDER(raw);
+  requireThat(
+    root.tag === 0x30 &&
+      root.children?.length === 2 &&
+      root.children[0].tag === 0x06 &&
+      root.children[1].tag === 0xa0 &&
+      root.children[1].children?.length === 1 &&
+      root.children[1].children[0].tag === 0x30,
+    'CMS_CONTENT_INFO_STRUCTURE',
+  );
   requireThat(oidText(root.children[0]) === OID.signed, 'CMS_TYPE');
-  const sd = root.children[1].children[0].children,
-    eci = sd[2].children;
+  const sd = root.children[1].children[0].children;
+  let signerIndex = 3;
+  if (sd[signerIndex]?.tag === 0xa0) signerIndex++;
+  if (sd[signerIndex]?.tag === 0xa1) signerIndex++;
+  requireThat(
+    sd.length === signerIndex + 1 && sd[signerIndex].tag === 0x31,
+    'CMS_SIGNED_DATA_STRUCTURE',
+  );
+  const encapContentInfo = sd[2];
+  requireThat(
+    encapContentInfo?.tag === 0x30 &&
+      encapContentInfo.children?.length >= 1 &&
+      encapContentInfo.children.length <= 2 &&
+      encapContentInfo.children[0].tag === 0x06 &&
+      (!encapContentInfo.children[1] ||
+        (encapContentInfo.children[1].tag === 0xa0 &&
+          encapContentInfo.children[1].children?.length === 1 &&
+          encapContentInfo.children[1].children[0].tag === 0x04)),
+    'CMS_ENCAP_CONTENT_INFO_STRUCTURE',
+  );
+  const eci = encapContentInfo.children;
   requireThat(oidText(eci[0]) === expectedContentType, 'CMS_TYPE');
   const embedded = eci[1]?.children[0].value;
   if (embedded && content) requireThat(equal(embedded, content), 'CMS_CONTENT_CONFLICT');
@@ -50,7 +89,7 @@ export function verifyExternalCMS(raw, { certificate, expectedContentType, conte
     shift = cert[0].tag === 0xa0 ? 1 : 0,
     serial = cert[shift],
     issuer = cert[shift + 2],
-    sis = sd.at(-1).children;
+    sis = sd[signerIndex].children;
   requireThat(sis.length === 1, 'CMS_SIGNER_COUNT');
   const si = sis[0].children;
   requireThat(
@@ -60,9 +99,10 @@ export function verifyExternalCMS(raw, { certificate, expectedContentType, conte
       equal(si[1].raw, seq(issuer.raw, serial.raw)),
     'CMS_SIGNER',
   );
+  requireThat(intValue(sd[0]) === signedDataVersion(sd, expectedContentType, 1n), 'CMS_VERSION');
   const hash = hashAlgorithm(si[2]);
   requireThat(
-    sd[1].children.some((n) => hashAlgorithm(n) === hash),
+    sd[1].tag === 0x31 && sd[1].children.some((n) => hashAlgorithm(n) === hash),
     'CMS_DIGEST_SET',
   );
   requireThat(si[3].tag === 0xa0, 'CMS_SIGNED_ATTRS');
@@ -70,13 +110,25 @@ export function verifyExternalCMS(raw, { certificate, expectedContentType, conte
   parseDER(tbs);
   const attrs = new Map();
   for (const a of si[3].children) {
+    requireThat(
+      a.tag === 0x30 &&
+        a.children?.length === 2 &&
+        a.children[0].tag === 0x06 &&
+        a.children[1].tag === 0x31 &&
+        a.children[1].children?.length === 1,
+      'CMS_ATTRIBUTE_STRUCTURE',
+    );
     const id = oidText(a.children[0]);
-    requireThat(!attrs.has(id) && a.children[1].children.length === 1, 'CMS_DUPLICATE_ATTRIBUTE');
+    requireThat(!attrs.has(id), 'CMS_DUPLICATE_ATTRIBUTE');
     attrs.set(id, a.children[1].children[0]);
   }
+  const contentType = attrs.get(OID.contentType),
+    messageDigest = attrs.get(OID.messageDigest);
+  requireThat(contentType && messageDigest, 'CMS_CONTENT_DIGEST');
+  requireThat(contentType.tag === 0x06 && messageDigest.tag === 0x04, 'CMS_ATTRIBUTE_STRUCTURE');
   requireThat(
-    oidText(attrs.get(OID.contentType)) === expectedContentType &&
-      equal(attrs.get(OID.messageDigest)?.value, digest(hash, content)),
+    oidText(contentType) === expectedContentType &&
+      equal(messageDigest.value, digest(hash, content)),
     'CMS_CONTENT_DIGEST',
   );
   const ess = attrs.get(OID.ess);
