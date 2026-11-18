@@ -19,6 +19,7 @@ const EMAIL_NAME = '1.2.840.113549.1.9.1';
 const SMTP_UTF8_NAME = '1.3.6.1.5.5.7.8.9';
 const RSA_KEY = '1.2.840.113549.1.1.1';
 const GENERAL_NAME_TAGS = new Set([0xa0, 0x81, 0x82, 0xa3, 0xa4, 0xa5, 0x86, 0x87, 0x88]);
+const DIRECTORY_STRING_TAGS = new Set([0x0c, 0x13, 0x14, 0x1c, 0x1e]);
 const mailPurpose = (purpose) => ['SMIME_SIGNING', 'SMIME_RECIPIENT_ENCRYPTION'].includes(purpose);
 const outcome = (overall, reason, details = {}) => ({ overall, reason, ...details });
 const instant = (value) => Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
@@ -121,6 +122,12 @@ function sanLexicalName(name) {
       !sanHasInteriorEmptyLabel(name.value, domainStart);
   }
   return true;
+}
+
+function directoryString(wrapper) {
+  return wrapper.children?.length === 1 &&
+    DIRECTORY_STRING_TAGS.has(wrapper.children[0].tag) &&
+    wrapper.children[0].value.length > 0;
 }
 
 function recipientKey(cert) {
@@ -256,7 +263,9 @@ function certificateExtensionProfile(id, value, issuer) {
           (name.tag !== 0xa5 ||
             ([1, 2].includes(name.children?.length) &&
               name.children.at(-1).tag === 0xa1 &&
-              (name.children.length === 1 || name.children[0].tag === 0xa0))) &&
+              directoryString(name.children.at(-1)) &&
+              (name.children.length === 1 ||
+                (name.children[0].tag === 0xa0 && directoryString(name.children[0]))))) &&
           (name.tag !== 0x87 || [4, 16].includes(name.value.length)) &&
           (name.tag !== 0x88 || validOIDContents(name.value)) &&
           (name.tag !== 0xa4 ||

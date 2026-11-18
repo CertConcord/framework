@@ -9,7 +9,7 @@ import { cmsView } from './cades-fixtures.mjs';
 
 const raw = readFileSync(new URL('./vectors/cades-signer-generalname-structure.json', import.meta.url));
 assert.equal(createHash('sha256').update(raw).digest('hex'),
-  'b0bcee6070b6745eb54071e30403506816e5a1abef68f53e6e595638fb378383');
+  'd174ec450595d286699f674ac3612a5bd072a1ec8d22d7e55722ff10b0f1ef01');
 const vectors = JSON.parse(raw);
 assert.equal(vectors.schema, 'certconcord.cades-signer-generalname-structure.v1');
 assert.equal(vectors.baseMain, '7bfccab63fe43ec9411bb9302fe6f8444bd8aaad');
