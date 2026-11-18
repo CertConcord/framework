@@ -134,15 +134,51 @@ function validOIDContents(value) {
   }
 }
 
-function certificateExtensionProfile(id, value) {
+function certificateExtensionProfile(id, value, issuer) {
   if (id === '2.5.29.31') {
     const points = parseDER(value);
     requireThat(
-      points.tag === 0x30 && points.children?.length > 0 &&
-        points.children.every((point) => point.tag === 0x30 &&
-          point.children?.some((part) => [0xa0, 0xa2].includes(part.tag))),
+      points.tag === 0x30 && points.children?.length > 0,
       'CADES_CERTIFICATE_CRLDP',
     );
+    for (const point of points.children) {
+      const fields = point.children;
+      requireThat(
+        point.tag === 0x30 && fields?.length > 0 &&
+          fields.every((field, index) =>
+            [0xa0, 0x81, 0xa2].includes(field.tag) &&
+            (index === 0 ||
+              [0xa0, 0x81, 0xa2].indexOf(fields[index - 1].tag) <
+                [0xa0, 0x81, 0xa2].indexOf(field.tag))) &&
+          fields.some((field) => [0xa0, 0xa2].includes(field.tag)),
+        'CADES_CERTIFICATE_CRLDP',
+      );
+      for (const field of fields) {
+        if (field.tag === 0xa0) {
+          const name = field.children?.[0];
+          requireThat(field.children.length === 1 &&
+            ((name.tag === 0xa0 && name.children?.length > 0 &&
+              name.children.every((entry) => entry.value.length > 0 &&
+                (entry.tag !== 0x86 || entry.value.every((byte) => byte < 128)))) ||
+             (name.tag === 0xa1 && name.children?.length > 0)),
+          'CADES_CERTIFICATE_CRLDP');
+        } else if (field.tag === 0x81) {
+          const bits = field.value, unused = bits[0];
+          requireThat(bits.length > 1 && unused <= 7 &&
+            (bits.at(-1) & ((1 << unused) - 1)) === 0 &&
+            (bits[1] & 0x80) === 0,
+          'CADES_CERTIFICATE_CRLDP');
+        } else {
+          requireThat(field.children?.length > 0,
+            'CADES_CERTIFICATE_CRLDP');
+          for (const name of field.children) {
+            if (name.tag === 0xa4 && name.children?.length === 1)
+              requireThat(!equal(name.children[0].raw, issuer),
+                'CADES_CERTIFICATE_CRLDP');
+          }
+        }
+      }
+    }
   } else if (id === '1.3.6.1.5.5.7.1.1') {
     const descriptions = parseDER(value);
     requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0,
@@ -212,7 +248,7 @@ function certificateProfile(cert, purpose) {
       !['2.5.29.30', '2.5.29.36', '2.5.29.54'].includes(id),
       'CADES_CERTIFICATE_CONSTRAINTS_UNSUPPORTED',
     );
-    if (purpose === 'SIGNER') certificateExtensionProfile(id, extension.value);
+    if (purpose === 'SIGNER') certificateExtensionProfile(id, extension.value, cert.issuer);
   }
   if (purpose === 'SMIME_RECIPIENT_ENCRYPTION') recipientKey(cert);
   else p256(cert.publicKey);
