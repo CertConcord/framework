@@ -624,8 +624,8 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
         'PADES_SIGNATURE_TYPE',
       );
       check(get(signature, 'Filter') instanceof PDFName, 'PADES_SIGNATURE_FILTER');
-      // EN 319 142-1 V1.2.1 Table 1 forbids Cert for baseline approval
-      // signatures as well as for document timestamps (clause 5.4.3).
+      // The selected PAdES baseline forbids Cert for approval signatures
+      // and document timestamps (clause 5.4.3).
       check(get(signature, 'Cert') === undefined, 'PADES_SIGNATURE_CERT_FORBIDDEN');
       const selected = kind === 'TIMESTAMP' ? 'ETSI.RFC3161' : 'ETSI.CAdES.detached';
       if (name(get(signature, 'SubFilter')) !== selected) diagnostic('PADES_SUBFILTER_UNSUPPORTED');
@@ -693,10 +693,9 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
       check(secondStart <= revisions[signedIndex].xrefOffset, 'PADES_SIGNATURE_REVISION');
       if (signedIndex === index) rev.length = signedRevisionLength;
       let signingTime;
+      const hasM = kind === 'SIGNATURE' && get(signature, 'M') !== undefined;
       if (kind === 'SIGNATURE') {
-        if (get(signature, 'M') === undefined)
-          diagnostic('PADES_SIGNING_TIME_REQUIRED', 'INDETERMINATE');
-        else
+        if (hasM)
           try {
             signingTime = pdfDate(get(signature, 'M'));
           } catch (error) {
@@ -711,6 +710,7 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
         cms: derFromHex(get(signature, 'Contents')),
         byteRange,
         signedRevisionLength,
+        hasM,
         signingTime,
         revisionIndex: signedIndex,
       });

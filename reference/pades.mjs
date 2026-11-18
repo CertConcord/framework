@@ -124,6 +124,21 @@ function structuralDecisions(structure, failures) {
       failures.push(result(overall, item.reason ?? 'PADES_STRUCTURE_RESULT'));
   }
 }
+function claimedTimeDecisions(approval, inspected, failures) {
+  const cmsTimePresent = inspected?.parsed?.signed?.some(
+    (attribute) => attribute.id === '1.2.840.113549.1.9.5',
+  );
+  if (!approval.hasM && !cmsTimePresent)
+    failures.push(result('INDETERMINATE', 'PADES_SIGNING_TIME_REQUIRED'));
+  if (
+    approval.hasM &&
+    cmsTimePresent &&
+    Number.isSafeInteger(approval.signingTime) &&
+    Number.isSafeInteger(inspected?.signature?.claimedSigningTime) &&
+    approval.signingTime !== inspected.signature.claimedSigningTime
+  )
+    failures.push(result('INVALID', 'PADES_SIGNING_TIME_MISMATCH'));
+}
 function policyCheck(policy) {
   check(
     Array.isArray(policy.trustedRoots) && policy.trustedRoots.length > 0,
@@ -402,6 +417,7 @@ export async function verifyPAdES(
     check(approvals.length > 0, 'PADES_APPROVAL_MISSING', 'INDETERMINATE');
     check(approvals.length === 1, 'PADES_APPROVAL_COUNT', 'UNSUPPORTED');
     const approval = approvals[0];
+    claimedTimeDecisions(approval, approval, failures);
     attempt(failures, () => policyCheck(policy));
     if (originalPDF !== undefined) {
       await (async () => {
@@ -639,6 +655,7 @@ export async function preparePAdESAugmentation(
       content: signedContent(pdf, approval.byteRange, approval.signedRevisionLength),
     });
     initialFailures.push(...checked.failures);
+    claimedTimeDecisions(approval, checked, initialFailures);
   }
   attempt(initialFailures, () =>
     check(approvals.length === 1, 'PADES_APPROVAL_COUNT', 'UNSUPPORTED'),
