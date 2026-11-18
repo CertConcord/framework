@@ -285,8 +285,8 @@
     },
     {
       "path": "docs/timestamp-application.md",
-      "bytes": 15525,
-      "sha256": "aa8122c4498ad1eae8cfcc977adffc1c8b9351d28a5f4e4df407a718f606fe4d"
+      "bytes": 16830,
+      "sha256": "52611e4fad8339eb72754a846e60ed387b2c0a26eeb591407b0e633d1a59c54f"
     },
     {
       "path": "docs/timestamp-names.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 300844,
-      "sha256": "9fc5887c050d27bfd832407943b6f18445eabc3efefaae9e3c245e10af212816"
+      "bytes": 301064,
+      "sha256": "b64d4a23d8ef665f39551e3178a8bb1e1569f8903af1fe8be3d0bc39301bbb33"
     },
     {
       "path": "reference/README.md",
@@ -879,9 +879,19 @@
       "sha256": "6afbd5bf37a74d730de7629e0ddf009facc6729832edeaa329aa31d8c8a91bbc"
     },
     {
+      "path": "reference/external-cms-attribute-types.test.mjs",
+      "bytes": 3597,
+      "sha256": "59c80b79467b3c3f0739543a2feedd1d894da6e4e12819b0ca8dce2a84e3c213"
+    },
+    {
+      "path": "reference/external-cms-container-shape.test.mjs",
+      "bytes": 3967,
+      "sha256": "94bf9fc0c7e6e52e25e09814dc939d38178a85fa1b9adac4c0b0f255b8578019"
+    },
+    {
       "path": "reference/external-cms.mjs",
-      "bytes": 5557,
-      "sha256": "4fbbce78006e4379633cc453f2e23f07506c48c41fe111a6a194e29111d4da88"
+      "bytes": 7802,
+      "sha256": "0ebb879eeb3bb0e2262c5449513f054b0779fdf149cf81ab1f114e559333aa81"
     },
     {
       "path": "reference/fixtures-history-durable-independent.mjs",
@@ -5242,6 +5252,16 @@
       "path": "reference/vectors/document-acceptance/manifest.json",
       "bytes": 66603,
       "sha256": "870963954ff118c054ec6524a5fb86ee24204b7e581ad1bc708ca13d38b7440c"
+    },
+    {
+      "path": "reference/vectors/external-cms-attribute-types.json",
+      "bytes": 25436,
+      "sha256": "11931b645eed2f73c4961a46a5cee3749a4b9f7bb98b853d93b12671c6e0ee84"
+    },
+    {
+      "path": "reference/vectors/external-cms-container-shape.json",
+      "bytes": 10004,
+      "sha256": "20a318cb5fdf35f5f7888cb99b361ced3d5ba60e5e087baede60f65dc746d76a"
     },
     {
       "path": "reference/vectors/jose-p256-admission.json",
