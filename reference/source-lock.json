@@ -707,10 +707,10 @@
     },
     {
       "id": "pades",
-      "url": "https://www.etsi.org/deliver/etsi_EN/319100_319199/31914201/01.02.01_60/en_31914201v010201p.pdf",
-      "sha256": "93e01407673ae22bdd0fadfc3a85df76411f1cfb1a3b53db47326a9d9658efb3",
-      "bytes": 215803,
-      "retrievedAt": "2026-10-05T22:08:27.915Z"
+      "url": "https://www.etsi.org/deliver/etsi_en/319100_319199/31914201/01.03.01_60/en_31914201v010301p.pdf",
+      "sha256": "10c8ee4bd975013fa7d9a1434f56e48e7f2fe847472f0557704e633ff74d4b4c",
+      "bytes": 255009,
+      "retrievedAt": "2026-11-18T03:20:09Z"
     },
     {
       "id": "jades",

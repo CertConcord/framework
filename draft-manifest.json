@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 50096,
-      "sha256": "eee2d0aac210b6b40f0375762d2eac8c73ae7ae322c10c336c047b70f0efe7f4"
+      "bytes": 50291,
+      "sha256": "d3db1f488e7a8acef5cee32661d9af3cfa88d7b44913dae0f7857711c75d39f4"
     },
     {
       "path": "docs/apple-identity.md",
@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 12591,
-      "sha256": "cc0698bc997abb9d93d9f38df7e568957cee3fc7a25bd6ec7dd5af23743c3798"
+      "bytes": 13212,
+      "sha256": "0e41523e2009cb8e863cd6af9449d8e6254f0e14a8919b74139a40832ca2f29d"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "docs/upstream-baseline.md",
-      "bytes": 39463,
-      "sha256": "3ef23de98b532a32f5e6806b271760cd25bc8ecf127dfd92376b052f9bc86d57"
+      "bytes": 40155,
+      "sha256": "9494609850f07b28e565a8ac09b8014a3c41a61343606cd729be7c58318bdb55"
     },
     {
       "path": "docs/webauthn-authenticator-extensions.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 300796,
-      "sha256": "abdb1be980f51d635d71f59ca1dc0b2e7feba8086cad75df73f495574256b7c6"
+      "bytes": 300844,
+      "sha256": "9fc5887c050d27bfd832407943b6f18445eabc3efefaae9e3c245e10af212816"
     },
     {
       "path": "reference/README.md",
@@ -375,8 +375,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 36616,
-      "sha256": "3921c951aa9887d3306903a854e32a37ac22eab59570f0335d8e053c4a8ccfac"
+      "bytes": 36631,
+      "sha256": "7374165bda156589881830e88e0a1e9430014085eda0ac36abc7aa42c8cf5877"
     },
     {
       "path": "reference/annex-verifier.mjs",
@@ -1439,6 +1439,11 @@
       "sha256": "fe94b5151b28bfeb6f74e1c80d489475eadffddf47bfeaa5414e6213445fd8a2"
     },
     {
+      "path": "reference/pades-claimed-time-v131.test.mjs",
+      "bytes": 5286,
+      "sha256": "02cc66be6a170def7b5ca0f20fb06ef89d0dba5a08053ca92816ca525ce57f5d"
+    },
+    {
       "path": "reference/pades-dates.test.mjs",
       "bytes": 2887,
       "sha256": "08b0972e00595652ef1ae2164c9ca4a92d5674a46bbe9b70a042827f477e531a"
@@ -1465,13 +1470,13 @@
     },
     {
       "path": "reference/pades-security.test.mjs",
-      "bytes": 15198,
-      "sha256": "8ff9548355a0f74e32b145b076b153cc4866e7f2fb4d9259a54ede1015acef66"
+      "bytes": 15106,
+      "sha256": "9fcee8f1df1a18be50abe4e240564e83f1d09d73abd46b0cf836868a091583a6"
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 48958,
-      "sha256": "065bedc34153cb704980e253c93489968f6b5f2f302453cdb59e74c57c2cf364"
+      "bytes": 48918,
+      "sha256": "039889de79c3b41d3ed5f7ba30d4975b4d3d8e91bf746e1424e51f988fd5daa7"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -1490,8 +1495,8 @@
     },
     {
       "path": "reference/pades.mjs",
-      "bytes": 26501,
-      "sha256": "99cb57aab445a1816f41e5d62bff21f1124b6c304741434a28a82064a3236e4b"
+      "bytes": 27234,
+      "sha256": "d08b72ab9db1ff30a856f8721f11b1c56686dcf54170f8159cbb0f82e8af4177"
     },
     {
       "path": "reference/pades.test.mjs",
@@ -1890,13 +1895,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 43513,
-      "sha256": "42d1dc4079a1ca842b89007a5ee61813ba387e99c3ecda286d10de78cc37a137"
+      "bytes": 43509,
+      "sha256": "6e1cd0ca60d23be7658f0cf76b5da46df2ed2b8eaadf923e4fca6932013be599"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 17051,
-      "sha256": "1158aae5631224a84fa82952b9082f2c2a84ed049eb8899bf89f055324012502"
+      "sha256": "d6715fd1435ab2f49c468748309ed8ae6ca5cc9f93526b00dff5338cc98a98cd"
     },
     {
       "path": "reference/state-security.test.mjs",

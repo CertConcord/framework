@@ -577,7 +577,7 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
     hashOID,
     signatureOID,
     essHash: ess?.hashOID,
-    ...(profile === 'SMIME' ? { claimedSigningTime } : {}),
+    ...(['PADES', 'SMIME'].includes(profile) ? { claimedSigningTime } : {}),
   };
 }
 
@@ -674,7 +674,7 @@ function inspectSmimeAttributes(parsed, failures) {
     });
 }
 
-// These are the optional CMS services listed in EN 319 142-1 V1.2.1
+// These are the optional CMS services listed in EN 319 142-1 V1.3.1
 // Table 1, but not implemented by the selected document-timestamp route.
 const PADES_OPTIONAL = new Set([
   '1.2.840.113549.1.9.16.2.12',
@@ -685,7 +685,6 @@ const PADES_OPTIONAL = new Set([
   OID.timestamp,
 ]);
 const PADES_FORBIDDEN = new Set([
-  SIGNING_TIME,
   ALGORITHM_PROTECTION,
   LEGACY_ALGORITHM_PROTECTION,
   MIME_TYPE,
@@ -704,7 +703,7 @@ function inspectPAdESAttributes(parsed, failures) {
   if (parsed.eci.length !== 1) failures.push(result('INVALID', 'PADES_DETACHED_CONTENT_REQUIRED'));
   for (const attr of [...parsed.signed, ...parsed.unsigned]) {
     if (PADES_FORBIDDEN.has(attr.id)) failures.push(result('INVALID', 'PADES_ATTRIBUTE_FORBIDDEN'));
-    else if (![OID.contentType, OID.messageDigest, OID.ess].includes(attr.id))
+    else if (![OID.contentType, OID.messageDigest, OID.ess, SIGNING_TIME].includes(attr.id))
       failures.push(result('UNSUPPORTED', 'PADES_ATTRIBUTE_UNSUPPORTED'));
   }
 }

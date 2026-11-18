@@ -42,7 +42,7 @@ export const sources = {
   cryptoSuites:
     'https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/02.01.01_60/ts_119312v020101p.pdf',
   pades:
-    'https://www.etsi.org/deliver/etsi_EN/319100_319199/31914201/01.02.01_60/en_31914201v010201p.pdf',
+    'https://www.etsi.org/deliver/etsi_en/319100_319199/31914201/01.03.01_60/en_31914201v010301p.pdf',
   pdf17Authorized:
     'https://raw.githubusercontent.com/adobe/dc-acrobat-sdk-docs/b21b8bca628d7e436b5d19e00ae161c0f5e52e4a/docs/standards/pdfstandards/pdf/PDF32000_2008.pdf',
   jades:

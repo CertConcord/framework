@@ -83,7 +83,6 @@ for (const oid of [O.contentType, O.messageDigest, O.ess]) {
 }
 
 for (const [name, additionalSigned, unsigned] of [
-  ['CMS signing-time', [attr(O.signingTime, c.der(23, Buffer.from('270115080010Z')))], []],
   [
     'CMS algorithm protection',
     [attr('1.2.840.113549.1.9.52', c.seq(c.seq(c.oid(O.sha256)), c.der(0xa1, c.oid(O.es256))))],
