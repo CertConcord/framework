@@ -18,6 +18,13 @@
       "sha256": "4e0618e75b77d896ae264be0e41a924829aac1e2c7b13b2150dbc7f5194ccd0f",
       "base64": "oE0CAQEwLzALBglghkgBZQMEAgEEINEAfKYk64IGaoKtAIWEXIrdROh6dt9s3wHTdjWzVE29BgorBgEEAYOyA1sBAgh/EjRWeJq83gEB/w==",
       "error": "TSA_REQUEST_STRUCTURE"
+    },
+    {
+      "id": "message-imprint-extra-member",
+      "bytes": 81,
+      "sha256": "ad259ed3ed035fb26578e8d4517cccc511d76dac17c51f8f9fa6d37f33df7f2a",
+      "base64": "ME8CAQEwMTALBglghkgBZQMEAgEEINEAfKYk64IGaoKtAIWEXIrdROh6dt9s3wHTdjWzVE29BQAGCisGAQQBg7IDWwECCH8SNFZ4mrzeAQH/",
+      "error": "TSA_MESSAGE_IMPRINT"
     }
   ]
 }

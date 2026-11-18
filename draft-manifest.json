@@ -295,8 +295,8 @@
     },
     {
       "path": "docs/timestamp-rfc3161-compat.md",
-      "bytes": 2835,
-      "sha256": "54ba51822611c695659fec1de56a9e0f1a4094790e301d4e5927d6cf1dbf2619"
+      "bytes": 3645,
+      "sha256": "75b09036f5cd9759e7ee1e0fffe3e28317bbbcc4316cd24bb34bb6bab06a2013"
     },
     {
       "path": "docs/timestamp-time.md",
@@ -2095,8 +2095,8 @@
     },
     {
       "path": "reference/timestamp.mjs",
-      "bytes": 15815,
-      "sha256": "4fd31620af38e0ced1106f311fe0747b70933d5608d74bcbb08b9eb12bacc696"
+      "bytes": 15903,
+      "sha256": "ba62bc11ac68aa29ea68691f1f28612e72d6a6016c37f4b2f04199d33d844b97"
     },
     {
       "path": "reference/tpm-simulator-check.mjs",
@@ -13055,8 +13055,8 @@
     },
     {
       "path": "reference/vectors/timestamp-request-structure.json",
-      "bytes": 868,
-      "sha256": "851610816fcd1c6d21765f59015dad221a4b18a58205e0be145cb3472ab74870"
+      "bytes": 1222,
+      "sha256": "33972b593e8681d6e1a6bcca916df82ee2533ebaa2c98dcb201cdf5c52038014"
     },
     {
       "path": "reference/vectors/timestamp-time-contract.json",
