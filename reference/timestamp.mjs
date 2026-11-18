@@ -58,8 +58,11 @@ export function timestampRequest(
   };
 }
 export function parseTimestampRequest(raw) {
-  const a = parseDER(raw).children;
+  const root = parseDER(raw);
+  requireThat(root.tag === 0x30, 'TSA_REQUEST_STRUCTURE');
+  const a = root.children;
   requireThat(a?.length >= 2 && intValue(a[0]) === 1n, 'TSA_VERSION');
+  requireThat(a[1].tag === 0x30 && a[1].children?.length === 2, 'TSA_MESSAGE_IMPRINT');
   const hashOID = oidText(a[1].children[0].children[0]),
     imprint = a[1].children[1].value;
   requireThat(
