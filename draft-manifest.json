@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 28258,
-      "sha256": "6237c8749ce8daa437b3e3a78c2cd7c1c9e28a92a62137a70e1681cdadc79c82"
+      "bytes": 29545,
+      "sha256": "ee7abea1e698a8f1ccec2f7688330902fef8fda688a781230e1c443b8ab22915"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 304220,
-      "sha256": "83253c0e89b6b253a7cdf6b0599cfba49b1709124f60a662633925c2185381b8"
+      "bytes": 304324,
+      "sha256": "ad29b5436fb9e949df5c5d619fb58234d95bac273110576088f998200083e16b"
     },
     {
       "path": "reference/README.md",
@@ -554,9 +554,14 @@
       "sha256": "c68e2b8269bb42eaa2dba3164a844906774250246cab3575cae6cd61252dcb2f"
     },
     {
+      "path": "reference/cades-signer-san-lexical.test.mjs",
+      "bytes": 4384,
+      "sha256": "9ad0accd4b5dd119cb55d237af0b92fc200c8449ebd56f06e869320087d721a5"
+    },
+    {
       "path": "reference/cades-validation.mjs",
-      "bytes": 36343,
-      "sha256": "bcb765f9c2d9e72aa4610ad527aa5c882d71e67bf0c3d7d1181c378caa9a84f1"
+      "bytes": 37024,
+      "sha256": "6af557acad50b6a07431817ccc154cd5ebf27b1aa3ebd90a5f20f20633276baa"
     },
     {
       "path": "reference/cades.mjs",
@@ -2207,6 +2212,11 @@
       "path": "reference/vectors/cades-signer-san-generalname.json",
       "bytes": 39583,
       "sha256": "e72ca0b808180c82a8c2308084d75360475a20ef9d69c9440692bc39a14cb68c"
+    },
+    {
+      "path": "reference/vectors/cades-signer-san-lexical.json",
+      "bytes": 23107,
+      "sha256": "e06bafe6914bcab731b57d530ba9af072ebbd44b69a20cd041aba49edac7bf03"
     },
     {
       "path": "reference/vectors/certificate-asn1-admission.json",

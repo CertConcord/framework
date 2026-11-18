@@ -103,6 +103,25 @@ function mailRequire(condition, reason, overall = 'INVALID') {
   if (!condition) throw Object.assign(new ProtocolError(reason), { overall });
 }
 
+function sanHasInteriorEmptyLabel(value, start = 0) {
+  for (let i = start + 1; i < value.length; i++)
+    if (value[i - 1] === 0x2e && value[i] === 0x2e) return true;
+  return false;
+}
+
+function sanLexicalName(name) {
+  if (name.tag === 0x86) return name.value.every((byte) => byte < 128);
+  if (name.tag === 0x82)
+    return name.value.every((byte) => byte < 128) &&
+      !sanHasInteriorEmptyLabel(name.value);
+  if (name.tag === 0x81) {
+    const domainStart = name.value.lastIndexOf(0x40) + 1;
+    return domainStart === 0 || name.value[domainStart] === 0x5b ||
+      !sanHasInteriorEmptyLabel(name.value, domainStart);
+  }
+  return true;
+}
+
 function recipientKey(cert) {
   mailRequire(
     cert.publicKey.asymmetricKeyType === 'rsa' &&
@@ -217,6 +236,7 @@ function certificateExtensionProfile(id, value, issuer) {
     requireThat(
       names.tag === 0x30 && names.children?.length > 0 &&
         names.children.every((name) => name.value.length > 0 &&
+          sanLexicalName(name) &&
           (name.tag !== 0xa0 ||
             (name.children?.length === 2 && name.children[0].tag === 6 &&
               validOIDContents(name.children[0].value) &&
