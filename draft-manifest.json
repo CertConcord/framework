@@ -16,12 +16,12 @@
     {
       "path": ".github/workflows/ci.yml",
       "bytes": 4170,
-      "sha256": "8fca11dbf362de3445906f2bae5cd2c61f81d2d6b89dd7b94a4ce1b47a30fb8f"
+      "sha256": "3901071b71b286ab0ccb3978c47116f4807acf0e7eb22394a59dbd499e0d5c93"
     },
     {
       "path": ".github/workflows/codeql.yml",
       "bytes": 2194,
-      "sha256": "7715c9b7a20f7c804532b7eec15beb224d1a1961926f63cea65d493289b87e14"
+      "sha256": "11bed89abaf41978ac27d965260e0b8594ca9022b7dd1e0eabb7cd812af41ad1"
     },
     {
       "path": ".github/workflows/contributions.yml",
@@ -326,7 +326,7 @@
     {
       "path": "package-lock.json",
       "bytes": 94485,
-      "sha256": "8ba1dccd29f65ad62e7f6011862094f7473b68c3797b140b792da244c46afd51"
+      "sha256": "08a25be85efc01972eeee5d5a70fc462f948d6e827d5e89c3dca972b3010571f"
     },
     {
       "path": "package.json",
@@ -366,7 +366,7 @@
     {
       "path": "reference/adapter-lock.json",
       "bytes": 46651,
-      "sha256": "b42ceb801286610cbf121a391048cec66dd6a6d65d9883e2f7195a4ff757b3c3"
+      "sha256": "e4c868213d37c82a09a32165b315053bbfe0a50d7e178e2a563b8a21bea1c42f"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1456,7 +1456,7 @@
     {
       "path": "reference/package.json",
       "bytes": 1489,
-      "sha256": "abd7f2f1fc8b0d6b93b50b3a16b5fb9ae6ffe25078c301c528ddf9cab35e36ca"
+      "sha256": "88f1ee1e2756405221bcd46fff7daa66fdc41e3038667fad1938031afc8da2e0"
     },
     {
       "path": "reference/pades-capabilities.test.mjs",
@@ -1921,12 +1921,12 @@
     {
       "path": "reference/source-lock.json",
       "bytes": 43509,
-      "sha256": "6e1cd0ca60d23be7658f0cf76b5da46df2ed2b8eaadf923e4fca6932013be599"
+      "sha256": "aa64fa5736236d454cfe407abbdeb4011637b16834b22427a7ec725accd10ad5"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 17051,
-      "sha256": "d6715fd1435ab2f49c468748309ed8ae6ca5cc9f93526b00dff5338cc98a98cd"
+      "sha256": "086a20d8451c4efeba1e33e8aace32219e15e35c4bc9c4c763ab16102fa5cd80"
     },
     {
       "path": "reference/state-security.test.mjs",
