@@ -963,13 +963,13 @@
       "integrity": "sha512-7QZxpPX25pga1WiMueduWxmrHMVBFrZPH6ZUaozGYa/H98JH6NVBSET3qVw+4NxzoraIW7rJ81YxSU9IalvCpg=="
     },
     {
-      "id": "nodemailer1040",
-      "url": "https://registry.npmjs.org/nodemailer/-/nodemailer-10.4.0.tgz",
-      "sha256": "2db223e7e5af809a440f1d73971ac40c985b2142edaec944899a744dcb9032a8",
-      "bytes": 399435,
-      "retrievedAt": "2026-11-11T19:29:04.504Z",
+      "id": "nodemailer1050",
+      "url": "https://registry.npmjs.org/nodemailer/-/nodemailer-10.5.0.tgz",
+      "sha256": "ff20e6d822a2f4bb311572311d2231fc39925896bf754b59803017a85696134d",
+      "bytes": 412406,
+      "retrievedAt": "2026-11-18T15:53:19.099Z",
       "license": "MIT-0",
-      "integrity": "sha512-fyy6r4Q5euRJ9Qr3Cts9K7SZrfe9zmz9oLOYiAR02MEJRDRci+99y0OoYBYBgpLffOqkkjXrB/d26VfiMje/kA=="
+      "integrity": "sha512-L/w/HH5MqpzMDuZD7fQdt/+KqymuvrpaApaIjAH2XA3ILePwlcvXCVVvP75xVrXCEt2ggK2marrrHHFB5Qu0kA=="
     },
     {
       "id": "saferBuffer212",
