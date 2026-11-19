@@ -111,11 +111,29 @@ function sanHasInteriorEmptyLabel(value, start = 0) {
   return false;
 }
 
+function sanDNSLabelBoundaries(value) {
+  let start = 0;
+  for (let end = 0; end <= value.length; end++) {
+    if (end < value.length && value[end] !== 0x2e) continue;
+    const length = end - start;
+    if (length > 63 || (length === 0 && end < value.length)) return false;
+    if (length > 0) {
+      const first = value[start];
+      if (!((first >= 0x41 && first <= 0x5a) ||
+        (first >= 0x61 && first <= 0x7a) ||
+        (first >= 0x30 && first <= 0x39))) return false;
+    }
+    start = end + 1;
+  }
+  return true;
+}
+
 function sanLexicalName(name) {
   if (name.tag === 0x86) return name.value.every((byte) => byte < 128);
   if (name.tag === 0x82)
     return name.value.every((byte) => byte < 128) &&
-      !sanHasInteriorEmptyLabel(name.value);
+      !sanHasInteriorEmptyLabel(name.value) &&
+      sanDNSLabelBoundaries(name.value);
   if (name.tag === 0x81) {
     const domainStart = name.value.lastIndexOf(0x40) + 1;
     return domainStart === 0 || name.value[domainStart] === 0x5b ||
