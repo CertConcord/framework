@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 50291,
-      "sha256": "d3db1f488e7a8acef5cee32661d9af3cfa88d7b44913dae0f7857711c75d39f4"
+      "bytes": 51232,
+      "sha256": "70f7a105671aa40cc0a02201f704e2ff93fe19992a64c295d218e35634ad638a"
     },
     {
       "path": "docs/apple-identity.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 302158,
-      "sha256": "8ab6e783b9c83945865c819537258a3a630a513f72fe21f86304c5313f64a41d"
+      "bytes": 302240,
+      "sha256": "2f572d70223723d3570c50c27f8a75d88d0f3d88cbd6d72d275520c484408482"
     },
     {
       "path": "reference/README.md",
@@ -349,14 +349,19 @@
       "sha256": "d1559d219eac8dd2c9a6eb7ab00dc45d82bf0998634719257617eb4bd62eb9ea"
     },
     {
+      "path": "reference/acme-pem-chain.test.mjs",
+      "bytes": 4437,
+      "sha256": "4c57165ed5071f683a63be913325a0c061d69882edd6d9aa5b4857a02087f101"
+    },
+    {
       "path": "reference/acme-profile-metadata.test.mjs",
       "bytes": 9516,
       "sha256": "01df66bc7878c9cea9c16dd36f2e0f7adbe824eccd75ce25092739be6082c92c"
     },
     {
       "path": "reference/acme.mjs",
-      "bytes": 23989,
-      "sha256": "c75aaba1bbb416367ff78ce775ccef793d9c427498950fd58d8066f7f73fad21"
+      "bytes": 25364,
+      "sha256": "ba07a3c3c477ad4fdb0380d0a73a440d0e62a61fa9f996a28ddbc99ab4b93cb3"
     },
     {
       "path": "reference/acme.test.mjs",
@@ -365,8 +370,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46651,
-      "sha256": "e4c868213d37c82a09a32165b315053bbfe0a50d7e178e2a563b8a21bea1c42f"
+      "bytes": 46678,
+      "sha256": "4799016692c2dada38f52bce216f847583c81b919b0b4be4e87d26008c89be28"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -2177,6 +2182,11 @@
       "path": "reference/vectors/acme-dns-ia5.json",
       "bytes": 28445,
       "sha256": "2d8f8fc4ee2fab067728b140674b8395f8c6d7bf7319de71d06cc2f72d6d6a6b"
+    },
+    {
+      "path": "reference/vectors/acme-pem-chain.json",
+      "bytes": 3713,
+      "sha256": "93e7e505d88a973a0c01b85a55acfc232dc1d4c5fb5e001b4895d0cc90486de6"
     },
     {
       "path": "reference/vectors/acme-profile-metadata.json",
