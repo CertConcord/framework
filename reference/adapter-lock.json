@@ -110,7 +110,7 @@
       "version": "1.0.0",
       "wireProfile": "RFC 8555 + profiles draft-02; account/update/rollover, DNS-01, order/finalize/certificate/revoke; RA callback required",
       "modules": ["acme.mjs"],
-      "tests": ["acme.test.mjs", "enrollment-network.test.mjs", "security-engineering.test.mjs"],
+      "tests": ["acme.test.mjs", "acme-pem-chain.test.mjs", "enrollment-network.test.mjs", "security-engineering.test.mjs"],
       "sources": ["rfc8555", "acmeProfiles"],
       "inputSemantics": "Exact adapter-defined bytes; upstream encodings preserved as specified in ADAPTERS.md",
       "environment": "Node.js 24.15+; external peer credentials/trust as applicable",

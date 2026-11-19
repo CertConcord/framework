@@ -41,6 +41,37 @@ export async function verifyDNS01({ identifier, keyAuthorization }) {
     records = await resolveTxt('_acme-challenge.' + identifier.value);
   return records.some((parts) => parts.join('') === expected);
 }
+function certificateChain(body) {
+  requireThat(Buffer.isBuffer(body), 'ACME_CERTIFICATE_CHAIN');
+  const lines = body.toString('latin1').split(/\r\n|\r|\n/);
+  requireThat(lines.pop() === '', 'ACME_CERTIFICATE_CHAIN');
+  let index = 0,
+    count = 0;
+  while (index < lines.length) {
+    requireThat(lines[index++] === '-----BEGIN CERTIFICATE-----', 'ACME_CERTIFICATE_CHAIN');
+    const encoded = [];
+    while (index < lines.length && lines[index] !== '-----END CERTIFICATE-----')
+      encoded.push(lines[index++]);
+    requireThat(index < lines.length && encoded.length > 0, 'ACME_CERTIFICATE_CHAIN');
+    for (const line of encoded.slice(0, -1))
+      requireThat(/^[A-Za-z0-9+/]{64}$/.test(line), 'ACME_CERTIFICATE_CHAIN');
+    requireThat(
+      /^(?:[A-Za-z0-9+/]{4}){0,15}(?:[A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$/.test(
+        encoded.at(-1),
+      ),
+      'ACME_CERTIFICATE_CHAIN',
+    );
+    const base64 = encoded.join('');
+    requireThat(
+      Buffer.from(base64, 'base64').toString('base64') === base64,
+      'ACME_CERTIFICATE_CHAIN',
+    );
+    index++;
+    count++;
+  }
+  requireThat(count > 0, 'ACME_CERTIFICATE_CHAIN');
+  return body;
+}
 export class ACMEClient {
   constructor({ directoryURL, privateKey, allowLoopback = false }) {
     endpoint(directoryURL, { allowLoopback });
@@ -187,7 +218,12 @@ export class ACMEClient {
     }
     requireThat(result.status === 'valid' && result.certificate, 'ACME_ORDER_NOT_VALID');
     const certificate = await this.post(result.certificate, null);
-    return certificate.body;
+    requireThat(
+      certificate.headers?.get('content-type')?.trim().toLowerCase() ===
+        'application/pem-certificate-chain',
+      'ACME_CERTIFICATE_MEDIA_TYPE',
+    );
+    return certificateChain(certificate.body);
   }
   async revoke(certificate, reason = 0) {
     return this.post(this.directory.revokeCert, { certificate: b64u(certificate), reason });
