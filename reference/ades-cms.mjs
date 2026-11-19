@@ -29,6 +29,8 @@ const ARCHIVE = '0.4.0.1733.2.4';
 const INDEX = '0.4.0.19122.1.5';
 const ECDSA_SHA256 = '1.2.840.10045.4.3.2';
 const HASHES = { [OID.sha256]: 'sha256', [OID.sha512]: 'sha512' };
+const ESS_SHA384 = '2.16.840.1.101.3.4.2.2';
+const ESS_HASHES = { ...HASHES, [ESS_SHA384]: 'sha384' };
 const LEGACY = new Set([
   '1.2.840.113549.1.9.6', // countersignature
   '1.2.840.113549.1.9.16.2.21', // complete-certificate-references
@@ -60,9 +62,9 @@ const LEGACY = new Set([
   '0.4.0.1733.2.5', // legacy ATS hash index
 ]);
 const instant = (n) => Number.isFinite(n) && n >= 0 && n <= Number.MAX_SAFE_INTEGER;
-const digest = (id, input) => {
-  if (!HASHES[id]) throw failure('UNSUPPORTED', 'CADES_HASH_UNSUPPORTED');
-  return createHash(HASHES[id]).update(input).digest();
+const digest = (id, input, hashes = HASHES) => {
+  if (!hashes[id]) throw failure('UNSUPPORTED', 'CADES_HASH_UNSUPPORTED');
+  return createHash(hashes[id]).update(input).digest();
 };
 const result = (overall, reason, extra = {}) => Object.freeze({ overall, reason, ...extra });
 function failure(overall, code) {
@@ -120,13 +122,13 @@ function algorithm(node) {
   );
   return oidText(node.children[0]);
 }
-function hashAlgorithm(node) {
+function hashAlgorithm(node, hashes = HASHES) {
   const id = algorithm(node);
   check(
     !node.children[1] || equal(node.children[1].raw, Buffer.from('0500', 'hex')),
     'CADES_HASH_PARAMETERS',
   );
-  check(HASHES[id], 'CADES_HASH_UNSUPPORTED', 'UNSUPPORTED');
+  check(hashes[id], 'CADES_HASH_UNSUPPORTED', 'UNSUPPORTED');
   return id;
 }
 function attributes(node, signed) {
@@ -329,17 +331,23 @@ function certificateIdentity(raw) {
 }
 function sameIssuerAndSerial(left, right) {
   try {
-    const a = parseDER(left), b = parseDER(right);
-    return a.tag === 0x30 && b.tag === 0x30 &&
-      a.children.length === 2 && b.children.length === 2 &&
-      a.children[1].tag === 2 && b.children[1].tag === 2 &&
+    const a = parseDER(left),
+      b = parseDER(right);
+    return (
+      a.tag === 0x30 &&
+      b.tag === 0x30 &&
+      a.children.length === 2 &&
+      b.children.length === 2 &&
+      a.children[1].tag === 2 &&
+      b.children[1].tag === 2 &&
       equal(a.children[1].raw, b.children[1].raw) &&
-      sameDistinguishedName(a.children[0].raw, b.children[0].raw);
+      sameDistinguishedName(a.children[0].raw, b.children[0].raw)
+    );
   } catch {
     return false;
   }
 }
-function essBinding(parsed) {
+function essBinding(parsed, hashes) {
   const value = one(parsed, OID.ess);
   check(value, 'CADES_SIGNING_CERTIFICATE_MISSING', 'INDETERMINATE');
   check(
@@ -363,13 +371,13 @@ function essBinding(parsed) {
   let at = 0,
     hashOID = OID.sha256;
   if (id.children[0].tag === 0x30) {
-    hashOID = hashAlgorithm(id.children[at++]);
+    hashOID = hashAlgorithm(id.children[at++], hashes);
     // DER omits a SEQUENCE component equal to its DEFAULT value.
     check(hashOID !== OID.sha256, 'CADES_SIGNING_CERTIFICATE_ENCODING');
   }
   const hash = id.children[at++];
   check(
-    hash?.tag === 4 && hash.value.length === digest(hashOID, Buffer.alloc(0)).length,
+    hash?.tag === 4 && hash.value.length === digest(hashOID, Buffer.alloc(0), hashes).length,
     'CADES_SIGNING_CERTIFICATE_HASH',
   );
   const issuerSerial = id.children[at++];
@@ -471,10 +479,11 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
       if (hashOID)
         check(equal(messageDigest.value, digest(hashOID, parsed.content)), 'CADES_CONTENT_DIGEST');
     });
+  const essHashes = profile === 'CADES' ? ESS_HASHES : HASHES;
   const ess =
     profile === 'SMIME' && !one(parsed, OID.ess)
       ? undefined
-      : attempt(failures, () => essBinding(parsed));
+      : attempt(failures, () => essBinding(parsed, essHashes));
   const candidates = [];
   const unselectedIdentifier = parsed.si[1].tag === 0x80;
   const certificateCandidates = union(parsed.certificates, externalCertificates);
@@ -487,13 +496,13 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
     if (
       identity &&
       (unselectedIdentifier
-        ? ess && equal(digest(ess.hashOID, cert), ess.hash)
+        ? ess && equal(digest(ess.hashOID, cert, essHashes), ess.hash)
         : sameIssuerAndSerial(identity.sid, parsed.si[1].raw))
     )
       candidates.push({ cert, ...identity });
   }
   let selected = ess
-    ? candidates.find((c) => equal(digest(ess.hashOID, c.cert), ess.hash))
+    ? candidates.find((c) => equal(digest(ess.hashOID, c.cert, essHashes), ess.hash))
     : candidates[0];
   if (!selected && candidates.length) {
     failures.push(result('INVALID', 'CADES_SIGNING_CERTIFICATE_BINDING'));
@@ -532,7 +541,9 @@ function inspectSignature(parsed, failures, profile = 'CADES', externalCertifica
           binding[0].children.length === 1 &&
           binding[0].children.some(
             (n) =>
-              n.tag === 0xa4 && n.children.length === 1 && sameDistinguishedName(n.children[0].raw, sid[0].raw),
+              n.tag === 0xa4 &&
+              n.children.length === 1 &&
+              sameDistinguishedName(n.children[0].raw, sid[0].raw),
           ) &&
           equal(binding[1].raw, sid[1].raw),
         'CADES_ESS_ISSUER_SERIAL',

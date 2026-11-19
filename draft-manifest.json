@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 32688,
-      "sha256": "6f690ab28862dc907cebd43e4e439be204cfe493d335ad8d66ccf297c3062f2b"
+      "bytes": 33231,
+      "sha256": "ecf19fb2ee9d95cdc1c900bc97b8e110cf2b31ca323873d63369b857202de398"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 304688,
-      "sha256": "03e8abddcf4ae57a64b2eee632e851b9c2b3e6bf4d1db7de06308499d4079960"
+      "bytes": 302040,
+      "sha256": "fc8e58a1acc5042d4a904c0f9c4f207b7407f1128bca66d934381d21621a46e8"
     },
     {
       "path": "reference/README.md",
@@ -375,8 +375,8 @@
     },
     {
       "path": "reference/ades-cms.mjs",
-      "bytes": 36631,
-      "sha256": "7374165bda156589881830e88e0a1e9430014085eda0ac36abc7aa42c8cf5877"
+      "bytes": 36954,
+      "sha256": "4b164706ebfc59db35ef914c8a04930982f6e04c9b67ebb4610391aec5d67406"
     },
     {
       "path": "reference/annex-verifier.mjs",
@@ -507,6 +507,11 @@
       "path": "reference/cades-ec-signer-key-usage.test.mjs",
       "bytes": 4619,
       "sha256": "a502be97d357e5670a9dfd29dc2fd26b383b8156f6f467f0ce8e904d1c71bf42"
+    },
+    {
+      "path": "reference/cades-ess-sha384.test.mjs",
+      "bytes": 7408,
+      "sha256": "f0c204fda8a8e67543aa9972d03d2b85345a5a6d9f1089a84092c866cad265e9"
     },
     {
       "path": "reference/cades-fixtures.mjs",
@@ -2212,6 +2217,11 @@
       "path": "reference/vectors/cades-ec-signer-key-usage.json",
       "bytes": 25366,
       "sha256": "303388f418797a3b5b68bd68657f0c138486c53a0e25390051d22ee89c7a8221"
+    },
+    {
+      "path": "reference/vectors/cades-ess-sha384.json",
+      "bytes": 12190,
+      "sha256": "2defc4714b3261e15f68e2ff0c412b108b18d35d005f111049bffb6bfa60b05b"
     },
     {
       "path": "reference/vectors/cades-hold-release.json",
