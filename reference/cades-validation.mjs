@@ -10,6 +10,7 @@ import {
   ProtocolError,
 } from './core.mjs';
 import { parseCertificate, validateKeyUsage, generalizedTime } from './pki.mjs';
+import { sameDistinguishedName } from './x509-name.mjs';
 
 const ES256 = '1.2.840.10045.4.3.2';
 const SHA256 = '2.16.840.1.101.3.4.2.1';
@@ -895,7 +896,9 @@ function validateMaterial(
   const anchors = (policy.trustedRoots ?? [])
     .map((raw) => capture(() => certificate(raw)))
     .filter(Boolean);
-  const matches = anchors.filter((candidate) => equal(candidate.subject, leaf.issuer));
+  const matches = anchors.filter((candidate) =>
+    capture(() => sameDistinguishedName(candidate.subject, leaf.issuer)),
+  );
   if (matches.length !== 1) {
     const intermediate =
       !matches.length &&
