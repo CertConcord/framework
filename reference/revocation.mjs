@@ -140,7 +140,8 @@ export function issueCRL({
         Number.isInteger(e.reason) &&
         e.reason >= 0 &&
         e.reason <= 10 &&
-        e.reason !== 7,
+        e.reason !== 7 &&
+        e.reason !== 8,
       'CRL_ENTRY',
     );
     seen.add(id);

@@ -636,7 +636,7 @@ function parseCRL(raw, issuer) {
     for (const [id, value] of ext) {
       requireThat(id !== '2.5.29.29', 'CADES_INDIRECT_CRL_UNSUPPORTED');
       requireThat(
-        !value.critical || ['2.5.29.21', '2.5.29.24'].includes(id),
+        !value.critical || id === '2.5.29.21',
         'CADES_CRL_ENTRY_EXTENSION_UNSUPPORTED',
       );
     }
@@ -657,7 +657,6 @@ function parseCRL(raw, issuer) {
       const value = parseDER(ext.get('2.5.29.24').value);
       requireThat(value.tag === 24, 'CADES_INVALIDITY_DATE');
       invalidityDate = time(value);
-      requireThat(invalidityDate <= revokedAt, 'CADES_INVALIDITY_DATE');
     }
     revoked.set(serial, {
       effectiveTime: Math.min(revokedAt, invalidityDate),
