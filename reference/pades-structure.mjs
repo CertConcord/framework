@@ -42,12 +42,17 @@ function integer(value, code) {
   check(Number.isSafeInteger(n) && n >= 0, code);
   return n;
 }
+function sourceInteger(value, code, integerObjects) {
+  check(value instanceof PDFNumber && integerObjects.has(value), code);
+  return integer(value, code);
+}
 
 class StrictObjectParser extends PDFObjectParser {
-  constructor(raw, offset, context, spans, budget) {
+  constructor(raw, offset, context, spans, integerObjects, budget) {
     super(PDFObjectParser.forBytes(raw, context).bytes, context);
     this.raw = raw;
     this.spans = spans;
+    this.integerObjects = integerObjects;
     this.budget = budget;
     this.depth = 0;
     this.bytes.moveTo(offset);
@@ -76,6 +81,17 @@ class StrictObjectParser extends PDFObjectParser {
     const token = this.raw.subarray(start, this.bytes.offset()).toString('ascii');
     check(/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(token) && Number.isFinite(value), 'PADES_NUMBER');
     check(Math.abs(value) <= Number.MAX_SAFE_INTEGER, 'PADES_NUMBER_LIMIT', 'UNSUPPORTED');
+    return value;
+  }
+  parseNumberOrRef() {
+    const start = this.bytes.offset(),
+      value = super.parseNumberOrRef();
+    if (value instanceof PDFNumber) {
+      let end = start;
+      while (!delimiter(this.raw[end])) end++;
+      const token = this.raw.toString('ascii', start, end);
+      if (/^[+-]?\d+$/.test(token)) this.integerObjects.add(value);
+    }
     return value;
   }
   parseName() {
@@ -274,6 +290,7 @@ function parseDocument(input) {
     'UNSUPPORTED',
   );
   const spans = new WeakMap(),
+    integerObjects = new WeakSet(),
     budget = { nodes: 0 },
     context = PDFContext.create(),
     definitions = new Map();
@@ -283,7 +300,7 @@ function parseDocument(input) {
     if (!diagnostics.some((item) => item.reason === reason && item.overall === overall))
       diagnostics.push(report(overall, reason));
   };
-  const parser = (offset) => new StrictObjectParser(raw, offset, context, spans, budget);
+  const parser = (offset) => new StrictObjectParser(raw, offset, context, spans, integerObjects, budget);
   const text = raw.toString('latin1');
   const firstParser = parser(0);
   firstParser.skipWhitespaceAndComments();
@@ -458,11 +475,15 @@ function parseDocument(input) {
     inspectCapabilities(rev, diagnostic);
     rev.form = rev.resolve(get(rev.catalog, 'AcroForm'));
     check(rev.form === undefined || rev.form instanceof PDFDict, 'PADES_ACROFORM');
+    if (rev.form && get(rev.form, 'SigFlags') !== undefined) {
+      const flags = sourceInteger(rev.resolve(get(rev.form, 'SigFlags')), 'PADES_SIG_FLAGS', integerObjects);
+      check(flags <= 3, 'PADES_SIG_FLAGS');
+    }
     rev.fieldsValue = get(rev.form, 'Fields');
     const fields = rev.resolve(rev.fieldsValue);
     check(!rev.form || fields instanceof PDFArray, 'PADES_FIELDS');
     rev.fields = fields?.asArray() ?? [];
-    rev.signatures = collectSignatures(rev, raw, spans, revisions, i, diagnostic);
+    rev.signatures = collectSignatures(rev, raw, spans, integerObjects, revisions, i, diagnostic);
     rev.material = dssMaterial(rev, diagnostic);
   }
   const signatures = [],
@@ -575,7 +596,7 @@ function inspectCapabilities(rev, diagnostic) {
   }
 }
 
-function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
+function collectSignatures(rev, raw, spans, integerObjects, revisions, index, diagnostic) {
   const found = [],
     fieldsSeen = new Set(),
     signatureIDs = new Set(),
@@ -595,10 +616,12 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
         partialName instanceof PDFHexString,
       'PADES_FIELD_NAME',
     );
+    const component = partialName?.decodeText();
+    check(component === undefined || !component.includes('.'), 'PADES_FIELD_NAME');
     const qualifiedName =
-      partialName === undefined
+      component === undefined
         ? parentName
-        : [parentName, partialName.decodeText()].filter(Boolean).join('.');
+        : [parentName, component].filter(Boolean).join('.');
     if (partialName !== undefined) {
       check(!fieldNames.has(qualifiedName), 'PADES_DUPLICATE_FIELD_NAME');
       fieldNames.add(qualifiedName);
@@ -618,9 +641,10 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
       signatureIDs.add(signatureID);
       for (const item of signature.values())
         check(!(item instanceof PDFRef), 'PADES_SIGNATURE_DIRECT_VALUES');
-      const kind = name(get(signature, 'Type')) === 'DocTimeStamp' ? 'TIMESTAMP' : 'SIGNATURE';
+      const typeValue = get(signature, 'Type'),
+        kind = name(typeValue) === 'DocTimeStamp' ? 'TIMESTAMP' : 'SIGNATURE';
       check(
-        name(get(signature, 'Type')) === (kind === 'TIMESTAMP' ? 'DocTimeStamp' : 'Sig'),
+        typeValue === undefined || name(typeValue) === (kind === 'TIMESTAMP' ? 'DocTimeStamp' : 'Sig'),
         'PADES_SIGNATURE_TYPE',
       );
       check(get(signature, 'Filter') instanceof PDFName, 'PADES_SIGNATURE_FILTER');
@@ -662,7 +686,7 @@ function collectSignatures(rev, raw, spans, revisions, index, diagnostic) {
           diagnostic('PADES_SIGNATURE_EXTENSION_UNSUPPORTED');
       const ranges = get(signature, 'ByteRange');
       check(ranges instanceof PDFArray && ranges.size() === 4, 'PADES_BYTE_RANGE');
-      const byteRange = ranges.asArray().map((v) => integer(v, 'PADES_BYTE_RANGE'));
+      const byteRange = ranges.asArray().map((v) => sourceInteger(v, 'PADES_BYTE_RANGE', integerObjects));
       const [start, firstLength, secondStart, secondLength] = byteRange;
       check(
         start === 0 &&

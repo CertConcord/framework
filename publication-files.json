@@ -311,6 +311,7 @@
   "reference/pades-lexer.test.mjs",
   "reference/pades-revision-security.test.mjs",
   "reference/pades-security.test.mjs",
+  "reference/pades-signed-field-structure.test.mjs",
   "reference/pades-structure.mjs",
   "reference/pades-structure.test.mjs",
   "reference/pades-time-boundaries.test.mjs",
