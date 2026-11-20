@@ -25,10 +25,12 @@ const DIRECTORY_STRING_TAGS = new Set([0x0c, 0x13, 0x14, 0x1c, 0x1e]);
 const CRL_DIRECTORY_NAME_OIDS = new Set([
   '2.5.4.3', '2.5.4.4', '2.5.4.7', '2.5.4.8', '2.5.4.9',
   '2.5.4.10', '2.5.4.11', '2.5.4.12', '2.5.4.41',
-  '2.5.4.15', '2.5.4.17', '2.5.4.18', '2.5.4.19',
-  '2.5.4.42', '2.5.4.43', '2.5.4.44', '2.5.4.65',
+  '2.5.4.13', '2.5.4.15', '2.5.4.17', '2.5.4.18', '2.5.4.19',
+  '2.5.4.42', '2.5.4.43', '2.5.4.44', '2.5.4.51', '2.5.4.65',
 ]);
-const CRL_PRINTABLE_NAME_OIDS = new Set(['2.5.4.5', '2.5.4.6', '2.5.4.46']);
+const CRL_PRINTABLE_NAME_OIDS = new Set([
+  '2.5.4.5', '2.5.4.6', '2.5.4.20', '2.5.4.27', '2.5.4.46',
+]);
 const CRL_IA5_NAME_OIDS = new Set([
   '0.9.2342.19200300.100.1.25', '1.2.840.113549.1.9.1',
 ]);
@@ -595,10 +597,20 @@ function crlAttribute(node) {
     return DIRECTORY_STRING_TAGS.has(value.tag) && directoryString({ children: [value] });
   if (CRL_PRINTABLE_NAME_OIDS.has(id))
     return value.tag === 0x13 && directoryString({ children: [value] }) &&
-      (id !== '2.5.4.6' || value.value.length === 2);
+      (id !== '2.5.4.6' || value.value.length === 2) &&
+      (id !== '2.5.4.20' || (value.value.length <= 32 &&
+        /^[+ 0-9-]+$/.test(value.value.toString('ascii'))));
   if (CRL_IA5_NAME_OIDS.has(id))
     return value.tag === 0x16 && value.value.every(byte => byte > 0x20 && byte < 0x7f);
+  // Other X.520 names and RFC 4519 uid have known, unselected value syntaxes.
+  if (id.startsWith('2.5.4.') || id === '0.9.2342.19200300.100.1.1') return false;
   return !DIRECTORY_STRING_TAGS.has(value.tag) || directoryString({ children: [value] });
+}
+
+function crlOrderedAttributes(children) {
+  return children?.length > 0 && children.every(crlAttribute) &&
+    children.every((entry, index) => index === 0 ||
+      Buffer.compare(children[index - 1].raw, entry.raw) <= 0);
 }
 
 function crlDNSName(value) {
@@ -667,7 +679,7 @@ function crlGeneralName(name) {
     return name.children?.length === 1 && name.children[0].tag === 0x30 &&
       name.children[0].children?.length > 0 &&
       name.children[0].children.every((rdn) => rdn.tag === 0x31 &&
-        rdn.children?.length > 0 && rdn.children.every(crlAttribute));
+        crlOrderedAttributes(rdn.children));
   if (name.tag === 0xa5)
     return [1, 2].includes(name.children?.length) &&
       name.children.at(-1).tag === 0xa1 &&
@@ -690,8 +702,7 @@ function crlExtensionProfile(id, value) {
         field.tag === 0xa0 && field.children?.length === 1 &&
         ((name.tag === 0xa0 && name.children?.length > 0 &&
           name.children.every(crlGeneralName)) ||
-         (name.tag === 0xa1 && name.children?.length > 0 &&
-          name.children.every(crlAttribute))),
+         (name.tag === 0xa1 && crlOrderedAttributes(name.children))),
       'CADES_CRL_FRESHEST');
     }
   } else if (id === '1.3.6.1.5.5.7.1.1') {

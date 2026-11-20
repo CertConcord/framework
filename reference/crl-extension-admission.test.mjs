@@ -46,6 +46,18 @@ const unknownBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0xff])));
 const businessBoolean = nameFor('2.5.4.15', c.der(0x01, Buffer.from([0xff])));
 const countryUTF8 = nameFor('2.5.4.6', c.der(0x0c, Buffer.from('US', 'utf8')));
 const countryPrintable = nameFor('2.5.4.6', c.der(0x13, Buffer.from('US', 'ascii')));
+const descriptionBoolean = nameFor('2.5.4.13', c.der(0x01, Buffer.from([0xff])));
+const descriptionUTF8 = nameFor('2.5.4.13', c.der(0x0c, Buffer.from('CRL locator', 'utf8')));
+const telephoneBoolean = nameFor('2.5.4.20', c.der(0x01, Buffer.from([0xff])));
+const telephonePrintable = nameFor('2.5.4.20', c.der(0x13, Buffer.from('+1 234 567 8901', 'ascii')));
+const destinationBoolean = nameFor('2.5.4.27', c.der(0x01, Buffer.from([0xff])));
+const houseBoolean = nameFor('2.5.4.51', c.der(0x01, Buffer.from([0xff])));
+const memberBoolean = nameFor('2.5.4.31', c.der(0x01, Buffer.from([0xff])));
+const cnRelative = c.seq(c.oid('2.5.4.3'), c.der(0x0c, Buffer.from('A', 'utf8')));
+const ouRelative = c.seq(c.oid('2.5.4.11'), c.der(0x0c, Buffer.from('B', 'utf8')));
+const relativePoint = values => c.seq(c.der(0xa0, c.der(0xa1, Buffer.concat(values))));
+const orderedRelativePoint = relativePoint([cnRelative, ouRelative]);
+const reversedRelativePoint = relativePoint([ouRelative, cnRelative]);
 const freshest = (points, critical = false) =>
   p.extension(freshestOID, c.seq(...points), critical);
 const aia = (method, location = uri) => p.extension('1.3.6.1.5.5.7.1.1',
@@ -81,6 +93,10 @@ for (const [name, extensions, overall, reason] of [
   ['numeric original Freshest URI host', [freshest([pointFor(numericURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['dotted IPv4 Freshest URI host', [freshest([pointFor(dottedIPv4URI)])], 'VALID', 'CADES_VALID'],
   ['CN BOOLEAN Freshest directoryName', [freshest([pointFor(cnBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['description BOOLEAN Freshest directoryName', [freshest([pointFor(descriptionBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['telephoneNumber BOOLEAN Freshest directoryName', [freshest([pointFor(telephoneBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['ordered implicit Freshest RDN', [freshest([orderedRelativePoint])], 'VALID', 'CADES_VALID'],
+  ['reverse-order implicit Freshest RDN', [freshest([reversedRelativePoint])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['valid Freshest EDI partyName', [freshest([pointFor(validEDI)])], 'VALID', 'CADES_VALID'],
   ['invalid Freshest EDI PrintableString', [freshest([pointFor(malformedEDI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['valid Freshest IPv6 URI locator', [freshest([pointFor(ipv6URI)])], 'VALID', 'CADES_VALID'],
@@ -101,6 +117,8 @@ for (const [name, extensions, overall, reason] of [
   ['numeric original caIssuers URI host', [aia(caIssuersOID, numericURI)], 'INVALID', 'CADES_CRL_AIA'],
   ['dotted IPv4 caIssuers URI host', [aia(caIssuersOID, dottedIPv4URI)], 'VALID', 'CADES_VALID'],
   ['CN BOOLEAN caIssuers directoryName', [aia(caIssuersOID, cnBoolean)], 'INVALID', 'CADES_CRL_AIA'],
+  ['description BOOLEAN caIssuers directoryName', [aia(caIssuersOID, descriptionBoolean)], 'INVALID', 'CADES_CRL_AIA'],
+  ['telephoneNumber BOOLEAN caIssuers directoryName', [aia(caIssuersOID, telephoneBoolean)], 'INVALID', 'CADES_CRL_AIA'],
   ['valid caIssuers EDI partyName', [aia(caIssuersOID, validEDI)], 'VALID', 'CADES_VALID'],
   ['invalid caIssuers EDI PrintableString', [aia(caIssuersOID, malformedEDI)], 'INVALID', 'CADES_CRL_AIA'],
   ['malformed caIssuers directoryName PrintableString', [aia(caIssuersOID, malformedNamePrintable)], 'INVALID', 'CADES_CRL_AIA'],
@@ -118,6 +136,13 @@ for (const [name, extensions, overall, reason] of [
   ['numeric original CRL issuerAltName URI host', [issuerAltName([numericURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['dotted IPv4 CRL issuerAltName URI host', [issuerAltName([dottedIPv4URI])], 'VALID', 'CADES_VALID'],
   ['CN BOOLEAN CRL issuerAltName directoryName', [issuerAltName([cnBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['description BOOLEAN CRL issuerAltName directoryName', [issuerAltName([descriptionBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['telephoneNumber BOOLEAN CRL issuerAltName directoryName', [issuerAltName([telephoneBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['destinationIndicator BOOLEAN CRL issuerAltName directoryName', [issuerAltName([destinationBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['houseIdentifier BOOLEAN CRL issuerAltName directoryName', [issuerAltName([houseBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['member BOOLEAN CRL issuerAltName directoryName', [issuerAltName([memberBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['description UTF8 CRL issuerAltName directoryName', [issuerAltName([descriptionUTF8])], 'VALID', 'CADES_VALID'],
+  ['telephoneNumber Printable CRL issuerAltName directoryName', [issuerAltName([telephonePrintable])], 'VALID', 'CADES_VALID'],
   ['businessCategory BOOLEAN CRL issuerAltName directoryName', [issuerAltName([businessBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['countryName UTF8 CRL issuerAltName directoryName', [issuerAltName([countryUTF8])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['countryName Printable CRL issuerAltName directoryName', [issuerAltName([countryPrintable])], 'VALID', 'CADES_VALID'],

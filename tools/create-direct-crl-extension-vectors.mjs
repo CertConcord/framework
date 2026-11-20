@@ -32,6 +32,18 @@ const nameFor = (id, value) => c.der(0xa4,
   c.seq(c.der(0x31, c.seq(c.oid(id), value))));
 const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
 const unknownBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0xff])));
+const descriptionBoolean = nameFor('2.5.4.13', c.der(0x01, Buffer.from([0xff])));
+const descriptionUTF8 = nameFor('2.5.4.13', c.der(0x0c, Buffer.from('CRL locator', 'utf8')));
+const telephoneBoolean = nameFor('2.5.4.20', c.der(0x01, Buffer.from([0xff])));
+const telephonePrintable = nameFor('2.5.4.20', c.der(0x13, Buffer.from('+1 234 567 8901', 'ascii')));
+const destinationBoolean = nameFor('2.5.4.27', c.der(0x01, Buffer.from([0xff])));
+const houseBoolean = nameFor('2.5.4.51', c.der(0x01, Buffer.from([0xff])));
+const memberBoolean = nameFor('2.5.4.31', c.der(0x01, Buffer.from([0xff])));
+const cnRelative = c.seq(c.oid('2.5.4.3'), c.der(0x0c, Buffer.from('A', 'utf8')));
+const ouRelative = c.seq(c.oid('2.5.4.11'), c.der(0x0c, Buffer.from('B', 'utf8')));
+const relativePoint = values => c.seq(c.der(0xa0, c.der(0xa1, Buffer.concat(values))));
+const orderedRelativePoint = relativePoint([cnRelative, ouRelative]);
+const reversedRelativePoint = relativePoint([ouRelative, cnRelative]);
 const freshest = (points, critical = false) =>
   p.extension('2.5.29.46', c.seq(...points), critical);
 const aia = (method, location = uri) => p.extension('1.3.6.1.5.5.7.1.1',
@@ -57,6 +69,10 @@ try {
     ['freshestNumericURI', [freshest([pointFor(numericURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestDottedIPv4URI', [freshest([pointFor(dottedIPv4URI)])], 'VALID', 'CADES_VALID'],
     ['freshestCNBoolean', [freshest([pointFor(cnBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestDescriptionBoolean', [freshest([pointFor(descriptionBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestTelephoneBoolean', [freshest([pointFor(telephoneBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestOrderedRelativeRDN', [freshest([orderedRelativePoint])], 'VALID', 'CADES_VALID'],
+    ['freshestReverseRelativeRDN', [freshest([reversedRelativePoint])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestValidEDI', [freshest([pointFor(validEDI)])], 'VALID', 'CADES_VALID'],
     ['freshestMalformedEDI', [freshest([pointFor(malformedEDI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestRelativeURI', [freshest([pointFor(relativeURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
@@ -76,6 +92,8 @@ try {
     ['aiaNumericURI', [aia('1.3.6.1.5.5.7.48.2', numericURI)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaDottedIPv4URI', [aia('1.3.6.1.5.5.7.48.2', dottedIPv4URI)], 'VALID', 'CADES_VALID'],
     ['aiaCNBoolean', [aia('1.3.6.1.5.5.7.48.2', cnBoolean)], 'INVALID', 'CADES_CRL_AIA'],
+    ['aiaDescriptionBoolean', [aia('1.3.6.1.5.5.7.48.2', descriptionBoolean)], 'INVALID', 'CADES_CRL_AIA'],
+    ['aiaTelephoneBoolean', [aia('1.3.6.1.5.5.7.48.2', telephoneBoolean)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaValidEDI', [aia('1.3.6.1.5.5.7.48.2', validEDI)], 'VALID', 'CADES_VALID'],
     ['aiaMalformedEDI', [aia('1.3.6.1.5.5.7.48.2', malformedEDI)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaOCSPOnly', [aia('1.3.6.1.5.5.7.48.1')], 'INVALID', 'CADES_CRL_AIA'],
@@ -90,6 +108,13 @@ try {
     ['issuerAltNameNumericURI', [ian([numericURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameDottedIPv4URI', [ian([dottedIPv4URI])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameCNBoolean', [ian([cnBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameDescriptionBoolean', [ian([descriptionBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameTelephoneBoolean', [ian([telephoneBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameDestinationBoolean', [ian([destinationBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameHouseBoolean', [ian([houseBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameMemberBoolean', [ian([memberBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameDescriptionUTF8', [ian([descriptionUTF8])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameTelephonePrintable', [ian([telephonePrintable])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameUnknownBoolean', [ian([unknownBoolean])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameValidEDI', [ian([validEDI])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameMalformedEDI', [ian([malformedEDI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
