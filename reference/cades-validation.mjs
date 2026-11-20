@@ -551,6 +551,41 @@ function protectionDeadline(policy, cert) {
   return Math.min(...values);
 }
 
+function crlExtensionProfile(id, value) {
+  if (id === '2.5.29.46') {
+    const points = parseDER(value);
+    requireThat(points.tag === 0x30 && points.children?.length > 0,
+      'CADES_CRL_FRESHEST');
+    for (const point of points.children) {
+      const field = point.children?.[0], name = field?.children?.[0];
+      requireThat(point.tag === 0x30 && point.children.length === 1 &&
+        field.tag === 0xa0 && field.children?.length === 1 &&
+        ((name.tag === 0xa0 && name.children?.length > 0 &&
+          name.children.every((entry) => GENERAL_NAME_TAGS.has(entry.tag) &&
+            entry.value.length > 0 && sanLexicalName(entry))) ||
+         (name.tag === 0xa1 && name.children?.length > 0 &&
+          name.children.every((entry) => entry.tag === 0x30 &&
+            entry.children?.length === 2 && entry.children[0].tag === 6))),
+      'CADES_CRL_FRESHEST');
+    }
+  } else if (id === '1.3.6.1.5.5.7.1.1') {
+    const descriptions = parseDER(value);
+    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0 &&
+      descriptions.children.every((entry) => entry.tag === 0x30 &&
+        entry.children?.length === 2 && entry.children[0].tag === 6 &&
+        oidText(entry.children[0]) === '1.3.6.1.5.5.7.48.2' &&
+        GENERAL_NAME_TAGS.has(entry.children[1].tag) &&
+        entry.children[1].value.length > 0 && sanLexicalName(entry.children[1])),
+    'CADES_CRL_AIA');
+  } else if (id === '2.5.29.18') {
+    const names = parseDER(value);
+    requireThat(names.tag === 0x30 && names.children?.length > 0 &&
+      names.children.every((name) => GENERAL_NAME_TAGS.has(name.tag) &&
+        name.value.length > 0 && sanLexicalName(name)),
+    'CADES_CRL_ISSUER_ALT_NAME');
+  }
+}
+
 function parseCRL(raw, issuer) {
   const root = parseDER(raw),
     parts = root.children;
@@ -604,13 +639,14 @@ function parseCRL(raw, issuer) {
   const ext = extensions(fields[index].children[0]);
   for (const [id, value] of ext) {
     requireThat(
-      !['2.5.29.27', '2.5.29.28', '2.5.29.46'].includes(id),
+      !['2.5.29.27', '2.5.29.28'].includes(id),
       'CADES_CRL_PROFILE_UNSUPPORTED',
     );
     requireThat(
       !value.critical || ['2.5.29.20', '2.5.29.35'].includes(id),
       'CADES_CRL_EXTENSION_UNSUPPORTED',
     );
+    crlExtensionProfile(id, value.value);
   }
   authorityKeyBinding(ext.get('2.5.29.35'), issuer);
   requireThat(ext.has('2.5.29.20') && !ext.get('2.5.29.20').critical, 'CADES_CRL_NUMBER_REQUIRED');

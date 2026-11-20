@@ -93,7 +93,7 @@ function parseCRLReason(raw) {
   );
   return reason.value[0];
 }
-function extMap(node) {
+function extMap(node, allowedCritical = ['2.5.29.20', '2.5.29.21', '2.5.29.24', nonceOID]) {
   requireThat(node.tag === 0x30 && node.children.length > 0, 'STATUS_EXTENSION');
   const out = new Map();
   for (const e of node.children) {
@@ -107,7 +107,7 @@ function extMap(node) {
       'STATUS_EXTENSION',
     );
     requireThat(
-      !critical || ['2.5.29.20', '2.5.29.21', '2.5.29.24', nonceOID].includes(id),
+      !critical || allowedCritical.includes(id),
       'STATUS_CRITICAL_EXTENSION',
     );
     requireThat(e.children.at(-1).tag === 4, 'STATUS_EXTENSION');
@@ -198,7 +198,7 @@ function inspectCRL(
     a.at(-1).tag === 0xa0 && a.at(-1).children.length === 1,
     'CRL_STRUCTURE',
   );
-  const extensions = extMap(a.at(-1).children[0]);
+  const extensions = extMap(a.at(-1).children[0], ['2.5.29.20']);
   requireThat(!extensions.has('2.5.29.27'), 'DELTA_CRL_UNSUPPORTED');
   requireThat(!extensions.has('2.5.29.28'), 'SCOPED_CRL_UNSUPPORTED');
   const number = intValue(parseDER(extensions.get('2.5.29.20')));
@@ -215,7 +215,7 @@ function inspectCRL(
     requireThat(!seen.has(id), 'CRL_DUPLICATE_SERIAL');
     seen.add(id);
     requireThat(!ex || ex.tag === 0x30, 'CRL_STRUCTURE');
-    const ext = ex ? extMap(ex) : new Map(),
+    const ext = ex ? extMap(ex, ['2.5.29.21', '2.5.29.24']) : new Map(),
       revokedAt = parseCRLTime(when),
       invalidityDate = ext.has('2.5.29.24') ? parseTime(parseDER(ext.get('2.5.29.24'))) : revokedAt,
       reason = ext.has('2.5.29.21') ? parseCRLReason(ext.get('2.5.29.21')) : 0;

@@ -1,0 +1,106 @@
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { writeFileSync } from 'node:fs';
+import * as c from '../reference/core.mjs';
+import * as p from '../reference/pki.mjs';
+import { epoch, fixture, loadCAdES } from '../reference/cades-fixtures.mjs';
+import { issueCRL } from '../reference/revocation.mjs';
+
+const output = process.argv[2];
+assert(output && process.argv.length === 3, 'Provide one new output JSON path');
+const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+const artifact = bytes => ({ bytes: bytes.length, sha256: hash(bytes), derBase64: bytes.toString('base64') });
+const uri = c.der(0x86, Buffer.from('https://example.invalid/delta.crl', 'ascii'));
+const pointName = c.der(0xa0, c.der(0xa0, uri));
+const point = c.seq(pointName);
+const freshest = (points, critical = false) =>
+  p.extension('2.5.29.46', c.seq(...points), critical);
+const aia = method => p.extension('1.3.6.1.5.5.7.1.1',
+  c.seq(c.seq(c.oid(method), uri)));
+const ian = names => p.extension('2.5.29.18', c.seq(...names));
+
+const api = await loadCAdES();
+assert(api, 'CAdES fixture producer required');
+const f = fixture();
+let document;
+try {
+  const cms = f.baseCMS(api);
+  const cases = [];
+  for (const [id, extensions, overall, reason] of [
+    ['baseline', [], 'VALID', 'CADES_VALID'],
+    ['freshest', [freshest([point])], 'VALID', 'CADES_VALID'],
+    ['freshestTwoLocations', [freshest([point, point])], 'VALID', 'CADES_VALID'],
+    ['freshestCritical', [freshest([point], true)], 'UNSUPPORTED', 'CADES_CRL_EXTENSION_UNSUPPORTED'],
+    ['freshestEmpty', [freshest([])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestReasons', [freshest([c.seq(pointName, c.der(0x81, Buffer.from([7, 0x80])))])],
+      'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestCRLIssuer', [freshest([c.seq(pointName, c.der(0xa2, uri))])],
+      'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestWithDelta', [freshest([point]), p.extension('2.5.29.27', c.integer(1), true)],
+      'UNSUPPORTED', 'CADES_CRL_PROFILE_UNSUPPORTED'],
+    ['aiaCaIssuers', [aia('1.3.6.1.5.5.7.48.2')], 'VALID', 'CADES_VALID'],
+    ['aiaOCSPOnly', [aia('1.3.6.1.5.5.7.48.1')], 'INVALID', 'CADES_CRL_AIA'],
+    ['issuerAltName', [ian([uri])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameEmpty', [ian([])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ])
+    cases.push({ id, crl: artifact(f.crl({ extensions })), expected: { overall, reason } });
+  document = {
+    at: epoch + 40,
+    root: artifact(f.root.der),
+    signer: artifact(f.signer.der),
+    content: artifact(f.content),
+    cms: artifact(cms),
+    cases,
+  };
+} finally {
+  f.close();
+}
+
+const at = 1792530000;
+const key = c.generate('ec');
+const issuerName = p.name('Synthetic frozen CRL critical issuer');
+const fields = c.parseDER(p.tbsCertificate({
+  publicKey: key.publicKey, issuer: issuerName, subject: issuerName,
+  serial: 1, signatureAlgorithm: 'ec', ca: true,
+  notBefore: at - 3600, notAfter: at + 3600,
+})).children;
+const certificateExtensions = fields.at(-1).children[0].children
+  .filter(entry => c.oidText(entry.children[0]) !== '2.5.29.15')
+  .map(entry => entry.raw);
+const tbs = c.seq(...fields.slice(0, -1).map(field => field.raw),
+  c.der(0xa3, c.seq(...certificateExtensions,
+    p.extension('2.5.29.15', c.der(3, Buffer.from([1, 0x02])), true))));
+const issuerCertificate = p.certificateFromTBS(tbs, 'ec', c.sign(tbs, key.privateKey));
+const certificate = p.issueCertificate({
+  publicKey: c.generate('ec').publicKey,
+  issuer: issuerName, subject: p.name('Synthetic frozen document signer'),
+  serial: 2, notBefore: at - 3600, notAfter: at + 1800,
+}, key.privateKey);
+const positive = issueCRL({ issuer: issuerName, privateKey: key.privateKey,
+  number: 7, thisUpdate: at - 60, nextUpdate: at + 600 });
+const parsed = c.parseDER(positive);
+const crlFields = parsed.children[0].children;
+const members = crlFields.at(-1).children[0].children.map(entry => entry.raw);
+const negativeTBS = c.seq(...crlFields.slice(0, -1).map(field => field.raw),
+  c.der(0xa0, c.seq(...members,
+    p.extension('1.3.6.1.5.5.7.48.1.2', c.octet(Buffer.alloc(16, 0xa5)), true))));
+const criticalNonce = c.seq(negativeTBS, parsed.children[1].raw,
+  c.bit(c.sign(negativeTBS, key.privateKey)));
+const identity = {
+  at, serial: '2',
+  issuerCertificate: artifact(issuerCertificate),
+  certificate: artifact(certificate),
+  positiveCRL: artifact(positive),
+  criticalNonceCRL: artifact(criticalNonce),
+  expected: { positive: 'GOOD', criticalNonce: 'STATUS_CRITICAL_EXTENSION' },
+};
+
+const vectors = {
+  schema: 'certconcord.direct-crl-extension-admission.v1',
+  baseMain: '723af0d3aa8912e6c2eb14e05ec53e12f61123d3',
+  document, identity,
+  limitations: 'Synthetic keys, fixed-time CAdES B and identity CRL adapter. URI is a locator and is never fetched. No delta merge, production trust, LT/LTA or VeriCommons lock claim.',
+};
+writeFileSync(output, JSON.stringify(vectors, null, 2) + '\n', { flag: 'wx' });
+console.log(JSON.stringify({ output, sha256: hash(Buffer.from(JSON.stringify(vectors, null, 2) + '\n')),
+  documentCases: document.cases.length, identityCases: 2 }));
