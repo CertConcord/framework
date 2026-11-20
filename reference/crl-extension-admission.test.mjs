@@ -133,3 +133,30 @@ test('identity CRL rejects signed unprocessed critical OCSP nonce without advanc
     journal.close();
   }
 });
+
+test('identity CRL rejects signed unprocessed critical OCSP nonce in a revoked entry', () => {
+  const value = identityFixture();
+  const positive = issueCRL({ issuer: value.issuerName, privateKey: value.key.privateKey,
+    number: 8, thisUpdate: at - 60, nextUpdate: at + 600,
+    entries: [{ serial: 2, revokedAt: at - 30, reason: 1 }] });
+  const parsed = c.parseDER(positive);
+  const fields = parsed.children[0].children;
+  const entries = fields[5].children;
+  assert.equal(entries.length, 1);
+  const revoked = entries[0].children;
+  const extensionMembers = revoked[2].children.map((extension) => extension.raw);
+  const modifiedEntry = c.seq(revoked[0].raw, revoked[1].raw,
+    c.seq(...extensionMembers, p.extension(nonceOID, c.octet(Buffer.alloc(16, 0xa5)), true)));
+  const tbs = c.seq(...fields.slice(0, 5).map((field) => field.raw),
+    c.seq(modifiedEntry), ...fields.slice(6).map((field) => field.raw));
+  const negative = c.seq(tbs, parsed.children[1].raw,
+    c.bit(c.sign(tbs, value.key.privateKey)));
+  const options = { issuer: value.issuerName, publicKey: value.key.publicKey,
+    serial: 2, at };
+  assert.equal(verifyCRL(positive, options).status, 'REVOKED');
+  assert(c.verify(tbs, c.parseDER(negative).children[2].value.subarray(1),
+    value.key.publicKey), 'negative CRL retains a valid issuer signature');
+  const result = verifyCRL(negative, options);
+  assert.equal(result.status, 'UNSUPPORTED');
+  assert.equal(result.reason, 'STATUS_CRITICAL_EXTENSION');
+});

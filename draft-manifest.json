@@ -755,8 +755,8 @@
     },
     {
       "path": "reference/crl-extension-admission.test.mjs",
-      "bytes": 6719,
-      "sha256": "38794a8c1ae0b012282123234f944c211d48028c11b6ab47eb8ab3ad90b80ee8"
+      "bytes": 8212,
+      "sha256": "60b2110f6746cab9bde3a17bd780167af9afa8d61e1f4ff974811e2dde4352f0"
     },
     {
       "path": "reference/crl-issuer-entry-admission.test.mjs",
