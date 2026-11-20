@@ -26,6 +26,17 @@ const malformedMail = c.der(0x81, Buffer.from('issuer.example', 'ascii'));
 const validMail = c.der(0x81, Buffer.from('ca@issuer.example', 'ascii'));
 const highBitMail = c.der(0x81, Buffer.concat([Buffer.from([0xe3]),
   Buffer.from('a@issuer.example', 'ascii')]));
+const hostlessURI = c.der(0x86, Buffer.from('https://', 'ascii'));
+const malformedEDI = c.der(0xa5, c.der(0xa1, c.der(0x13, Buffer.from([0xff]))));
+const validEDI = c.der(0xa5, c.der(0xa1, c.der(0x13, Buffer.from('Issuer', 'ascii'))));
+const malformedUTF8EDI = c.der(0xa5, c.der(0xa1, c.der(0x0c, Buffer.from([0xc0, 0xaf]))));
+const validUTF8EDI = c.der(0xa5, c.der(0xa1, c.der(0x0c, Buffer.from('Issuer', 'utf8'))));
+const teletexEDI = c.der(0xa5, c.der(0xa1, c.der(0x14, Buffer.from('Issuer', 'ascii'))));
+const malformedNamePrintable = c.der(0xa4, c.seq(c.der(0x31,
+  c.seq(c.oid('2.5.4.3'), c.der(0x13, Buffer.from([0xff]))))));
+const ipv6URI = c.der(0x86, Buffer.from('https://[::1]/delta.crl', 'ascii'));
+const hostlessQueryURI = c.der(0x86, Buffer.from('https://?q=1', 'ascii'));
+const x400Tag = c.der(0xa3, c.seq());
 const freshest = (points, critical = false) =>
   p.extension(freshestOID, c.seq(...points), critical);
 const aia = (method, location = uri) => p.extension('1.3.6.1.5.5.7.1.1',
@@ -57,6 +68,12 @@ for (const [name, extensions, overall, reason] of [
   ['one-octet Freshest IP locator', [freshest([pointFor(malformedIP)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['valid Freshest directoryName locator', [freshest([pointFor(validDirectory)])], 'VALID', 'CADES_VALID'],
   ['NULL Freshest directoryName locator', [freshest([pointFor(malformedDirectory)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['hostless Freshest URI locator', [freshest([pointFor(hostlessURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['valid Freshest EDI partyName', [freshest([pointFor(validEDI)])], 'VALID', 'CADES_VALID'],
+  ['invalid Freshest EDI PrintableString', [freshest([pointFor(malformedEDI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['valid Freshest IPv6 URI locator', [freshest([pointFor(ipv6URI)])], 'VALID', 'CADES_VALID'],
+  ['invalid Freshest EDI UTF8String', [freshest([pointFor(malformedUTF8EDI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['valid Freshest EDI UTF8String', [freshest([pointFor(validUTF8EDI)])], 'VALID', 'CADES_VALID'],
   ['relative Freshest URI locator', [freshest([pointFor(relativeURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['critical Freshest locator', [freshest([point], true)], 'UNSUPPORTED', 'CADES_CRL_EXTENSION_UNSUPPORTED'],
   ['empty Freshest point list', [freshest([])], 'INVALID', 'CADES_CRL_FRESHEST'],
@@ -68,6 +85,10 @@ for (const [name, extensions, overall, reason] of [
   ['valid caIssuers directoryName', [aia(caIssuersOID, validDirectory)], 'VALID', 'CADES_VALID'],
   ['one-octet caIssuers IP', [aia(caIssuersOID, malformedIP)], 'INVALID', 'CADES_CRL_AIA'],
   ['NULL caIssuers directoryName', [aia(caIssuersOID, malformedDirectory)], 'INVALID', 'CADES_CRL_AIA'],
+  ['hostless caIssuers URI', [aia(caIssuersOID, hostlessURI)], 'INVALID', 'CADES_CRL_AIA'],
+  ['valid caIssuers EDI partyName', [aia(caIssuersOID, validEDI)], 'VALID', 'CADES_VALID'],
+  ['invalid caIssuers EDI PrintableString', [aia(caIssuersOID, malformedEDI)], 'INVALID', 'CADES_CRL_AIA'],
+  ['malformed caIssuers directoryName PrintableString', [aia(caIssuersOID, malformedNamePrintable)], 'INVALID', 'CADES_CRL_AIA'],
   ['OCSP-only CRL AIA', [aia(ocspOID)], 'INVALID', 'CADES_CRL_AIA'],
   ['empty CRL issuerAltName', [issuerAltName([])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['valid CRL issuerAltName', [issuerAltName([uri])], 'VALID', 'CADES_VALID'],
@@ -78,6 +99,12 @@ for (const [name, extensions, overall, reason] of [
   ['CRL issuerAltName mailbox without at-sign', [issuerAltName([malformedMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['CRL issuerAltName mailbox with high-bit IA5 byte', [issuerAltName([highBitMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['one-octet CRL issuerAltName IP', [issuerAltName([malformedIP])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['hostless CRL issuerAltName URI', [issuerAltName([hostlessURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['valid CRL issuerAltName EDI partyName', [issuerAltName([validEDI])], 'VALID', 'CADES_VALID'],
+  ['invalid CRL issuerAltName EDI PrintableString', [issuerAltName([malformedEDI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['hostless query CRL issuerAltName URI', [issuerAltName([hostlessQueryURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['unselected CRL issuerAltName x400Address tag', [issuerAltName([x400Tag])], 'UNSUPPORTED', 'CADES_CRL_GENERAL_NAME_UNSUPPORTED'],
+  ['unselected CRL issuerAltName Teletex EDI', [issuerAltName([teletexEDI])], 'UNSUPPORTED', 'CADES_CRL_GENERAL_NAME_UNSUPPORTED'],
   ['NULL CRL issuerAltName directoryName', [issuerAltName([malformedDirectory])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
 ]) {
   test(`issuer-signed complete direct CRL ${name}`, () => {

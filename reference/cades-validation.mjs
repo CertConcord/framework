@@ -1,4 +1,5 @@
 import { X509Certificate, verify as verifySignature } from 'node:crypto';
+import { isIP } from 'node:net';
 import {
   parseDER,
   oidText,
@@ -144,9 +145,32 @@ function sanLexicalName(name) {
 }
 
 function directoryString(wrapper) {
-  return wrapper.children?.length === 1 &&
-    DIRECTORY_STRING_TAGS.has(wrapper.children[0].tag) &&
-    wrapper.children[0].value.length > 0;
+  const node = wrapper.children?.length === 1 ? wrapper.children[0] : null;
+  if (!node || !DIRECTORY_STRING_TAGS.has(node.tag) || !node.value.length) return false;
+  if (node.tag === 0x13)
+    return /^[A-Za-z0-9 '()+,\-./:=?]+$/.test(node.value.toString('latin1'));
+  if (node.tag === 0x0c) {
+    try { new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(node.value); }
+    catch { return false; }
+    return true;
+  }
+  if (node.tag === 0x1e) {
+    if (node.value.length % 2 !== 0) return false;
+    for (let i = 0; i < node.value.length; i += 2) {
+      const cp = node.value.readUInt16BE(i);
+      if (cp >= 0xd800 && cp <= 0xdfff) return false;
+    }
+    return true;
+  }
+  if (node.tag === 0x1c) {
+    if (node.value.length % 4 !== 0) return false;
+    for (let i = 0; i < node.value.length; i += 4) {
+      const cp = node.value.readUInt32BE(i);
+      if (cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff)) return false;
+    }
+    return true;
+  }
+  throw new ProtocolError('CADES_CRL_GENERAL_NAME_UNSUPPORTED'); // TeletexString
 }
 
 function recipientKey(cert) {
@@ -555,7 +579,9 @@ function crlAttribute(node) {
   return node?.tag === 0x30 && node.children?.length === 2 &&
     node.children[0].tag === 6 &&
     validOIDContents(node.children[0].value) &&
-    node.children[1].value.length > 0;
+    node.children[1].value.length > 0 &&
+    (!DIRECTORY_STRING_TAGS.has(node.children[1].tag) ||
+      directoryString({ children: [node.children[1]] }));
 }
 
 function crlDNSName(value) {
@@ -568,10 +594,27 @@ function crlDNSName(value) {
 function crlAbsoluteURI(value) {
   const text = Buffer.from(value).toString('ascii');
   const colon = text.indexOf(':');
-  return colon > 0 && colon < text.length - 1 &&
-    /^[A-Za-z][A-Za-z0-9+.-]*$/.test(text.slice(0, colon)) &&
-    [...text].every((char) => char.charCodeAt(0) > 0x20 && char.charCodeAt(0) < 0x7f) &&
-    !/%(?![0-9A-Fa-f]{2})/.test(text);
+  if (colon <= 0 || colon === text.length - 1 ||
+      !/^[A-Za-z][A-Za-z0-9+.-]*$/.test(text.slice(0, colon)) ||
+      !value.every((byte) => byte > 0x20 && byte < 0x7f) ||
+      !/^[A-Za-z0-9._~:/?#\[\]@!$&'()*+,;=%-]+$/.test(text) ||
+      /%(?![0-9A-Fa-f]{2})/.test(text)) return false;
+  const part = text.slice(colon + 1);
+  if (/^https?$/i.test(text.slice(0, colon)) && !part.startsWith('//')) return false;
+  if (!part.startsWith('//')) return true;
+  const authority = part.slice(2).split(/[/?#]/, 1)[0];
+  if (!authority) return false;
+  try {
+    const host = new URL(text).hostname;
+    if (!host) return false;
+    if (host.startsWith('[') && host.endsWith(']'))
+      return isIP(host.slice(1, -1)) === 6;
+    if (isIP(host) === 4) return true;
+    const dns = host.endsWith('.') ? host.slice(0, -1) : host;
+    return dns.includes('.') && crlDNSName(Buffer.from(dns, 'ascii'));
+  } catch {
+    return false;
+  }
 }
 
 function crlMailName(value) {
@@ -595,7 +638,7 @@ function crlGeneralName(name) {
     return name.children?.length === 2 && name.children[0].tag === 6 &&
       validOIDContents(name.children[0].value) &&
       name.children[1].tag === 0xa0 && name.children[1].children?.length === 1;
-  if (name.tag === 0xa3) return false; // ORAddress is outside this selected profile.
+  if (name.tag === 0xa3) throw new ProtocolError('CADES_CRL_GENERAL_NAME_UNSUPPORTED');
   if (name.tag === 0xa4)
     return name.children?.length === 1 && name.children[0].tag === 0x30 &&
       name.children[0].children?.length > 0 &&

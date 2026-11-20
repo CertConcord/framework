@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 39545,
-      "sha256": "ac571c0621df401121d1a5104d436b18d67a514a0d34a02b193f4eea0b5e625a"
+      "bytes": 40034,
+      "sha256": "941e12abfc716554d5eaee358906b22831526e0ae04ce0d03f9e6d7b8fbc3e4f"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -610,8 +610,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 42565,
-      "sha256": "76474d299936a66b6875307c2505cf8f2c9653543d93603d1aa39c7dc8afa310"
+      "bytes": 44312,
+      "sha256": "989ad07b8fa1e2508c0b9f064c21d239c4fdd3024f3929a58572512f2ae042eb"
     },
     {
       "path": "reference/cades.mjs",
@@ -755,8 +755,8 @@
     },
     {
       "path": "reference/crl-extension-admission.test.mjs",
-      "bytes": 10720,
-      "sha256": "1f48319f269940920762cabec4eb03f7c847f2d774cdb77ef9e0614dc4ca1162"
+      "bytes": 13312,
+      "sha256": "bf8c7e737b1e6a0cfa767f42b0fb36855be464590e5f5adfe348996b19d7a7ed"
     },
     {
       "path": "reference/crl-issuer-entry-admission.test.mjs",
@@ -841,7 +841,7 @@
     {
       "path": "reference/direct-crl-extension-vectors.test.mjs",
       "bytes": 5434,
-      "sha256": "ff0259bf3961be7380239e4a9f59eede12b956d831575a7075c97bce91e2bc90"
+      "sha256": "6a02cd19bbab6c4c03c94166f327d9cd6c8aa71aacc2a23d87d7750a65d1245f"
     },
     {
       "path": "reference/document-demo.mjs",
@@ -2750,8 +2750,8 @@
     },
     {
       "path": "reference/vectors/direct-crl-extension-admission.json",
-      "bytes": 23340,
-      "sha256": "cb2661ffdc6f587852df70a4634e09e893b30d3717e6419ea60f3480aa4eaaa3"
+      "bytes": 29148,
+      "sha256": "a023e4adb9523161e7c2f8a72f3d67b48b17269b15d8fdc3061702da79884aef"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/README.md",
@@ -13745,8 +13745,8 @@
     },
     {
       "path": "tools/create-direct-crl-extension-vectors.mjs",
-      "bytes": 7168,
-      "sha256": "3be596f44bfd032a283d66fd5469ec49cfee8a5cabe22afcbc9f2755ad1c8943"
+      "bytes": 8230,
+      "sha256": "358dd0ff57719a2fa593bd1661502256ad217683794ceff871962e5b5018e9dd"
     },
     {
       "path": "tools/create-jose-p256-admission-vectors.mjs",
