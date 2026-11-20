@@ -37,6 +37,15 @@ const malformedNamePrintable = c.der(0xa4, c.seq(c.der(0x31,
 const ipv6URI = c.der(0x86, Buffer.from('https://[::1]/delta.crl', 'ascii'));
 const hostlessQueryURI = c.der(0x86, Buffer.from('https://?q=1', 'ascii'));
 const x400Tag = c.der(0xa3, c.seq());
+const numericURI = c.der(0x86, Buffer.from('https://2130706433', 'ascii'));
+const dottedIPv4URI = c.der(0x86, Buffer.from('https://127.0.0.1/delta.crl', 'ascii'));
+const nameFor = (id, value) => c.der(0xa4,
+  c.seq(c.der(0x31, c.seq(c.oid(id), value))));
+const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
+const unknownBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0xff])));
+const businessBoolean = nameFor('2.5.4.15', c.der(0x01, Buffer.from([0xff])));
+const countryUTF8 = nameFor('2.5.4.6', c.der(0x0c, Buffer.from('US', 'utf8')));
+const countryPrintable = nameFor('2.5.4.6', c.der(0x13, Buffer.from('US', 'ascii')));
 const freshest = (points, critical = false) =>
   p.extension(freshestOID, c.seq(...points), critical);
 const aia = (method, location = uri) => p.extension('1.3.6.1.5.5.7.1.1',
@@ -69,6 +78,9 @@ for (const [name, extensions, overall, reason] of [
   ['valid Freshest directoryName locator', [freshest([pointFor(validDirectory)])], 'VALID', 'CADES_VALID'],
   ['NULL Freshest directoryName locator', [freshest([pointFor(malformedDirectory)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['hostless Freshest URI locator', [freshest([pointFor(hostlessURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['numeric original Freshest URI host', [freshest([pointFor(numericURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['dotted IPv4 Freshest URI host', [freshest([pointFor(dottedIPv4URI)])], 'VALID', 'CADES_VALID'],
+  ['CN BOOLEAN Freshest directoryName', [freshest([pointFor(cnBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['valid Freshest EDI partyName', [freshest([pointFor(validEDI)])], 'VALID', 'CADES_VALID'],
   ['invalid Freshest EDI PrintableString', [freshest([pointFor(malformedEDI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['valid Freshest IPv6 URI locator', [freshest([pointFor(ipv6URI)])], 'VALID', 'CADES_VALID'],
@@ -86,6 +98,9 @@ for (const [name, extensions, overall, reason] of [
   ['one-octet caIssuers IP', [aia(caIssuersOID, malformedIP)], 'INVALID', 'CADES_CRL_AIA'],
   ['NULL caIssuers directoryName', [aia(caIssuersOID, malformedDirectory)], 'INVALID', 'CADES_CRL_AIA'],
   ['hostless caIssuers URI', [aia(caIssuersOID, hostlessURI)], 'INVALID', 'CADES_CRL_AIA'],
+  ['numeric original caIssuers URI host', [aia(caIssuersOID, numericURI)], 'INVALID', 'CADES_CRL_AIA'],
+  ['dotted IPv4 caIssuers URI host', [aia(caIssuersOID, dottedIPv4URI)], 'VALID', 'CADES_VALID'],
+  ['CN BOOLEAN caIssuers directoryName', [aia(caIssuersOID, cnBoolean)], 'INVALID', 'CADES_CRL_AIA'],
   ['valid caIssuers EDI partyName', [aia(caIssuersOID, validEDI)], 'VALID', 'CADES_VALID'],
   ['invalid caIssuers EDI PrintableString', [aia(caIssuersOID, malformedEDI)], 'INVALID', 'CADES_CRL_AIA'],
   ['malformed caIssuers directoryName PrintableString', [aia(caIssuersOID, malformedNamePrintable)], 'INVALID', 'CADES_CRL_AIA'],
@@ -100,6 +115,13 @@ for (const [name, extensions, overall, reason] of [
   ['CRL issuerAltName mailbox with high-bit IA5 byte', [issuerAltName([highBitMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['one-octet CRL issuerAltName IP', [issuerAltName([malformedIP])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['hostless CRL issuerAltName URI', [issuerAltName([hostlessURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['numeric original CRL issuerAltName URI host', [issuerAltName([numericURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['dotted IPv4 CRL issuerAltName URI host', [issuerAltName([dottedIPv4URI])], 'VALID', 'CADES_VALID'],
+  ['CN BOOLEAN CRL issuerAltName directoryName', [issuerAltName([cnBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['businessCategory BOOLEAN CRL issuerAltName directoryName', [issuerAltName([businessBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['countryName UTF8 CRL issuerAltName directoryName', [issuerAltName([countryUTF8])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['countryName Printable CRL issuerAltName directoryName', [issuerAltName([countryPrintable])], 'VALID', 'CADES_VALID'],
+  ['unknown OID BOOLEAN CRL issuerAltName directoryName', [issuerAltName([unknownBoolean])], 'VALID', 'CADES_VALID'],
   ['valid CRL issuerAltName EDI partyName', [issuerAltName([validEDI])], 'VALID', 'CADES_VALID'],
   ['invalid CRL issuerAltName EDI PrintableString', [issuerAltName([malformedEDI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['hostless query CRL issuerAltName URI', [issuerAltName([hostlessQueryURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],

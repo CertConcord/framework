@@ -26,6 +26,12 @@ const highBitMail = c.der(0x81, Buffer.concat([Buffer.from([0xe3]),
 const hostlessURI = c.der(0x86, Buffer.from('https://', 'ascii'));
 const malformedEDI = c.der(0xa5, c.der(0xa1, c.der(0x13, Buffer.from([0xff]))));
 const validEDI = c.der(0xa5, c.der(0xa1, c.der(0x13, Buffer.from('Issuer', 'ascii'))));
+const numericURI = c.der(0x86, Buffer.from('https://2130706433', 'ascii'));
+const dottedIPv4URI = c.der(0x86, Buffer.from('https://127.0.0.1/delta.crl', 'ascii'));
+const nameFor = (id, value) => c.der(0xa4,
+  c.seq(c.der(0x31, c.seq(c.oid(id), value))));
+const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
+const unknownBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0xff])));
 const freshest = (points, critical = false) =>
   p.extension('2.5.29.46', c.seq(...points), critical);
 const aia = (method, location = uri) => p.extension('1.3.6.1.5.5.7.1.1',
@@ -48,6 +54,9 @@ try {
     ['freshestValidDirectory', [freshest([pointFor(validDirectory)])], 'VALID', 'CADES_VALID'],
     ['freshestMalformedDirectory', [freshest([pointFor(malformedDirectory)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestHostlessURI', [freshest([pointFor(hostlessURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestNumericURI', [freshest([pointFor(numericURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestDottedIPv4URI', [freshest([pointFor(dottedIPv4URI)])], 'VALID', 'CADES_VALID'],
+    ['freshestCNBoolean', [freshest([pointFor(cnBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestValidEDI', [freshest([pointFor(validEDI)])], 'VALID', 'CADES_VALID'],
     ['freshestMalformedEDI', [freshest([pointFor(malformedEDI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestRelativeURI', [freshest([pointFor(relativeURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
@@ -64,6 +73,9 @@ try {
     ['aiaMalformedIP', [aia('1.3.6.1.5.5.7.48.2', malformedIP)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaMalformedDirectory', [aia('1.3.6.1.5.5.7.48.2', malformedDirectory)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaHostlessURI', [aia('1.3.6.1.5.5.7.48.2', hostlessURI)], 'INVALID', 'CADES_CRL_AIA'],
+    ['aiaNumericURI', [aia('1.3.6.1.5.5.7.48.2', numericURI)], 'INVALID', 'CADES_CRL_AIA'],
+    ['aiaDottedIPv4URI', [aia('1.3.6.1.5.5.7.48.2', dottedIPv4URI)], 'VALID', 'CADES_VALID'],
+    ['aiaCNBoolean', [aia('1.3.6.1.5.5.7.48.2', cnBoolean)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaValidEDI', [aia('1.3.6.1.5.5.7.48.2', validEDI)], 'VALID', 'CADES_VALID'],
     ['aiaMalformedEDI', [aia('1.3.6.1.5.5.7.48.2', malformedEDI)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaOCSPOnly', [aia('1.3.6.1.5.5.7.48.1')], 'INVALID', 'CADES_CRL_AIA'],
@@ -75,6 +87,10 @@ try {
     ['issuerAltNameMalformedMail', [ian([malformedMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameHighBitMail', [ian([highBitMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameHostlessURI', [ian([hostlessURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameNumericURI', [ian([numericURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameDottedIPv4URI', [ian([dottedIPv4URI])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameCNBoolean', [ian([cnBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownBoolean', [ian([unknownBoolean])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameValidEDI', [ian([validEDI])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameMalformedEDI', [ian([malformedEDI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameEmpty', [ian([])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],

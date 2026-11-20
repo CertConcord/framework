@@ -22,6 +22,16 @@ const SMTP_UTF8_NAME = '1.3.6.1.5.5.7.8.9';
 const RSA_KEY = '1.2.840.113549.1.1.1';
 const GENERAL_NAME_TAGS = new Set([0xa0, 0x81, 0x82, 0xa3, 0xa4, 0xa5, 0x86, 0x87, 0x88]);
 const DIRECTORY_STRING_TAGS = new Set([0x0c, 0x13, 0x14, 0x1c, 0x1e]);
+const CRL_DIRECTORY_NAME_OIDS = new Set([
+  '2.5.4.3', '2.5.4.4', '2.5.4.7', '2.5.4.8', '2.5.4.9',
+  '2.5.4.10', '2.5.4.11', '2.5.4.12', '2.5.4.41',
+  '2.5.4.15', '2.5.4.17', '2.5.4.18', '2.5.4.19',
+  '2.5.4.42', '2.5.4.43', '2.5.4.44', '2.5.4.65',
+]);
+const CRL_PRINTABLE_NAME_OIDS = new Set(['2.5.4.5', '2.5.4.6', '2.5.4.46']);
+const CRL_IA5_NAME_OIDS = new Set([
+  '0.9.2342.19200300.100.1.25', '1.2.840.113549.1.9.1',
+]);
 const mailPurpose = (purpose) => ['SMIME_SIGNING', 'SMIME_RECIPIENT_ENCRYPTION'].includes(purpose);
 const outcome = (overall, reason, details = {}) => ({ overall, reason, ...details });
 const instant = (value) => Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
@@ -576,12 +586,19 @@ function protectionDeadline(policy, cert) {
 }
 
 function crlAttribute(node) {
-  return node?.tag === 0x30 && node.children?.length === 2 &&
-    node.children[0].tag === 6 &&
-    validOIDContents(node.children[0].value) &&
-    node.children[1].value.length > 0 &&
-    (!DIRECTORY_STRING_TAGS.has(node.children[1].tag) ||
-      directoryString({ children: [node.children[1]] }));
+  if (node?.tag !== 0x30 || node.children?.length !== 2 ||
+      node.children[0].tag !== 6 || !validOIDContents(node.children[0].value))
+    return false;
+  const id = oidText(node.children[0]), value = node.children[1];
+  if (!value.value.length) return false;
+  if (CRL_DIRECTORY_NAME_OIDS.has(id))
+    return DIRECTORY_STRING_TAGS.has(value.tag) && directoryString({ children: [value] });
+  if (CRL_PRINTABLE_NAME_OIDS.has(id))
+    return value.tag === 0x13 && directoryString({ children: [value] }) &&
+      (id !== '2.5.4.6' || value.value.length === 2);
+  if (CRL_IA5_NAME_OIDS.has(id))
+    return value.tag === 0x16 && value.value.every(byte => byte > 0x20 && byte < 0x7f);
+  return !DIRECTORY_STRING_TAGS.has(value.tag) || directoryString({ children: [value] });
 }
 
 function crlDNSName(value) {
@@ -603,18 +620,25 @@ function crlAbsoluteURI(value) {
   if (/^https?$/i.test(text.slice(0, colon)) && !part.startsWith('//')) return false;
   if (!part.startsWith('//')) return true;
   const authority = part.slice(2).split(/[/?#]/, 1)[0];
-  if (!authority) return false;
-  try {
-    const host = new URL(text).hostname;
-    if (!host) return false;
-    if (host.startsWith('[') && host.endsWith(']'))
-      return isIP(host.slice(1, -1)) === 6;
-    if (isIP(host) === 4) return true;
-    const dns = host.endsWith('.') ? host.slice(0, -1) : host;
-    return dns.includes('.') && crlDNSName(Buffer.from(dns, 'ascii'));
-  } catch {
+  if (!authority || authority.indexOf("@") !== authority.lastIndexOf("@")) return false;
+  const at = authority.indexOf("@");
+  if (at >= 0 && !/^[A-Za-z0-9._~!$&'()*+,;=:%-]*$/.test(authority.slice(0, at)))
     return false;
+  const hostPort = authority.slice(at + 1);
+  if (hostPort.startsWith('[')) {
+    const close = hostPort.indexOf(']');
+    if (close < 0 || isIP(hostPort.slice(1, close)) !== 6) return false;
+    const port = hostPort.slice(close + 1);
+    return !port || /^:[0-9]*$/.test(port);
   }
+  const portAt = hostPort.lastIndexOf(':');
+  const host = portAt < 0 ? hostPort : hostPort.slice(0, portAt);
+  const port = portAt < 0 ? "" : hostPort.slice(portAt);
+  if (!host || (port && !/^:[0-9]*$/.test(port))) return false;
+  if (isIP(host) === 4) return true;
+  if (/^[0-9.]+$/.test(host)) return false;
+  const dns = host.endsWith('.') ? host.slice(0, -1) : host;
+  return dns.includes('.') && crlDNSName(Buffer.from(dns, 'ascii'));
 }
 
 function crlMailName(value) {
