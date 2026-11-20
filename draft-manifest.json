@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305818,
-      "sha256": "1378dff97844c84bc3b3f8bc69c0cfa21d9678310090c2a7238fdfe4323ed1bf"
+      "bytes": 305944,
+      "sha256": "d6615b286855e7c6a933329c0194b3240ad01b1eb853ff667caf1bafee696e14"
     },
     {
       "path": "reference/README.md",
@@ -557,6 +557,11 @@
       "path": "reference/cades-printablestring-byte-admission.test.mjs",
       "bytes": 5707,
       "sha256": "13ad1a0c00ee70926a7556c0cfc7f7850af6337972360c7f83fcc617a7d49558"
+    },
+    {
+      "path": "reference/cades-printablestring-byte-vectors.test.mjs",
+      "bytes": 4924,
+      "sha256": "caeb1e86f19b52fadaba22c1162a76b66446e3c711752734295132a9647aa661"
     },
     {
       "path": "reference/cades-root-issuer-dn-equivalence.test.mjs",
@@ -2292,6 +2297,11 @@
       "path": "reference/vectors/cades-hold-release.json",
       "bytes": 25763,
       "sha256": "4ddb578c800acd3249ebaef81525bd1440da34283065f450cac9616cb6be4d9b"
+    },
+    {
+      "path": "reference/vectors/cades-printablestring-byte-admission.json",
+      "bytes": 6785,
+      "sha256": "ea49fbf6d5fa572fea52e425337294c9fae3ff179dcdb18db9ff5a4506963fa2"
     },
     {
       "path": "reference/vectors/cades-root-issuer-dn-equivalence.json",
