@@ -35,6 +35,17 @@ const CRL_PRINTABLE_NAME_OIDS = new Set([
 const CRL_IA5_NAME_OIDS = new Set([
   '0.9.2342.19200300.100.1.25', '1.2.840.113549.1.9.1',
 ]);
+// RFC 5280 Appendix A.1 names and email; X.520 telephone; RFC 4519 DNS label.
+// Appendix A.1 measures string bounds in characters, not DER octets.
+const CRL_ATTRIBUTE_MAX_LENGTH = new Map([
+  ['2.5.4.41', 32768], ['2.5.4.4', 32768],
+  ['2.5.4.42', 32768], ['2.5.4.43', 32768], ['2.5.4.44', 32768],
+  ['2.5.4.3', 64], ['2.5.4.7', 128], ['2.5.4.8', 128],
+  ['2.5.4.10', 64], ['2.5.4.11', 64], ['2.5.4.12', 64],
+  ['2.5.4.65', 128], ['2.5.4.5', 64], ['2.5.4.6', 2],
+  ['2.5.4.20', 32], ['0.9.2342.19200300.100.1.25', 63],
+  ['1.2.840.113549.1.9.1', 255],
+]);
 const mailPurpose = (purpose) => ['SMIME_SIGNING', 'SMIME_RECIPIENT_ENCRYPTION'].includes(purpose);
 const outcome = (overall, reason, details = {}) => ({ overall, reason, ...details });
 const instant = (value) => Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
@@ -588,6 +599,20 @@ function protectionDeadline(policy, cert) {
   return Math.min(...values);
 }
 
+function crlAttributeLength(value) {
+  if (value.tag === 0x0c)
+    return Array.from(new TextDecoder('utf-8', { fatal: true, ignoreBOM: true })
+      .decode(value.value)).length;
+  if (value.tag === 0x1e) return value.value.length / 2;
+  if (value.tag === 0x1c) return value.value.length / 4;
+  return value.value.length;
+}
+
+function crlAttributeWithinBound(id, value) {
+  const maximum = CRL_ATTRIBUTE_MAX_LENGTH.get(id);
+  return maximum === undefined || crlAttributeLength(value) <= maximum;
+}
+
 function crlAttribute(node) {
   if (node?.tag !== 0x30 || node.children?.length !== 2 ||
       node.children[0].tag !== 6 || !validOIDContents(node.children[0].value))
@@ -595,15 +620,17 @@ function crlAttribute(node) {
   const id = oidText(node.children[0]), value = node.children[1];
   if (!value.value.length) return false;
   if (CRL_DIRECTORY_NAME_OIDS.has(id))
-    return DIRECTORY_STRING_TAGS.has(value.tag) && directoryString({ children: [value] });
+    return DIRECTORY_STRING_TAGS.has(value.tag) && directoryString({ children: [value] }) &&
+      crlAttributeWithinBound(id, value);
   if (CRL_PRINTABLE_NAME_OIDS.has(id))
     return value.tag === 0x13 && directoryString({ children: [value] }) &&
+      crlAttributeWithinBound(id, value) &&
       (id !== '2.5.4.6' || value.value.length === 2) &&
-      (id !== '2.5.4.20' || (value.value.length <= 32 &&
-        /^[+ 0-9-]+$/.test(value.value.toString('ascii')))) &&
+      (id !== '2.5.4.20' || /^[+ 0-9-]+$/.test(value.value.toString('ascii'))) &&
       (id !== '2.5.4.27' || /^[A-Za-z]+$/.test(value.value.toString('ascii')));
   if (CRL_IA5_NAME_OIDS.has(id)) {
-    if (value.tag !== 0x16 || !value.value.every(byte => byte > 0x20 && byte < 0x7f))
+    if (value.tag !== 0x16 || !value.value.every(byte => byte > 0x20 && byte < 0x7f) ||
+        !crlAttributeWithinBound(id, value))
       return false;
     if (id === '0.9.2342.19200300.100.1.25')
       return crlDNSLabel(value.value.toString('ascii'));

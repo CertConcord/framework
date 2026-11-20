@@ -68,6 +68,43 @@ const unknownOtherNonminimalOID = otherNameFor('1.2.3.4.6', c.der(0x06, Buffer.f
 const unknownOtherPrivateValueTag = otherNameFor('1.2.3.4.6', c.der(0xc1, Buffer.from([0x00])));
 const nameFor = (id, value) => c.der(0xa4,
   c.seq(c.der(0x31, c.seq(c.oid(id), value))));
+// RFC 5280 Appendix A.1 bounds are characters, including UTF8String scalars.
+const boundedDirectoryNames = [
+  ['name', '2.5.4.41', 32768], ['surname', '2.5.4.4', 32768],
+  ['givenName', '2.5.4.42', 32768], ['initials', '2.5.4.43', 32768],
+  ['generationQualifier', '2.5.4.44', 32768],
+  ['commonName', '2.5.4.3', 64], ['localityName', '2.5.4.7', 128],
+  ['stateOrProvinceName', '2.5.4.8', 128],
+  ['organizationName', '2.5.4.10', 64],
+  ['organizationalUnitName', '2.5.4.11', 64],
+  ['title', '2.5.4.12', 64], ['pseudonym', '2.5.4.65', 128],
+];
+const boundedDirectoryCases = boundedDirectoryNames.flatMap(([label, oid, maximum]) =>
+  [maximum, maximum + 1].map(length => ({
+    label: `${label} ${length} characters`,
+    name: nameFor(oid, c.der(0x0c, Buffer.from('A'.repeat(length), 'utf8'))),
+    overall: length === maximum ? 'VALID' : 'INVALID',
+  })));
+const boundedPrintableCases = [64, 65].map(length => ({
+  label: `serialNumber ${length} characters`,
+  name: nameFor('2.5.4.5', c.der(0x13, Buffer.from('A'.repeat(length), 'ascii'))),
+  overall: length === 64 ? 'VALID' : 'INVALID',
+}));
+const longestDomain = ['a'.repeat(63), 'b'.repeat(63), 'c'.repeat(63), 'd'.repeat(61)].join('.');
+assert.equal(longestDomain.length, 253);
+const boundedEmailCases = [1, 2].map(localLength => ({
+  label: `emailAddress ${localLength + 1 + longestDomain.length} characters`,
+  name: nameFor('1.2.840.113549.1.9.1',
+    c.der(0x16, Buffer.from(`${'a'.repeat(localLength)}@${longestDomain}`, 'ascii'))),
+  overall: localLength === 1 ? 'VALID' : 'INVALID',
+}));
+const boundedMultibyteCases = [64, 65].map(length => ({
+  label: `commonName ${length} UTF8 scalars`,
+  name: nameFor('2.5.4.3', c.der(0x0c, Buffer.from('ü'.repeat(length), 'utf8'))),
+  overall: length === 64 ? 'VALID' : 'INVALID',
+}));
+const boundedNameCases = [...boundedDirectoryCases, ...boundedPrintableCases,
+  ...boundedEmailCases, ...boundedMultibyteCases];
 const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
 const unknownBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0xff])));
 const unknownNoncanonicalBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0x01])));
@@ -235,6 +272,10 @@ for (const [name, extensions, overall, reason] of [
   ['hostless query CRL issuerAltName URI', [issuerAltName([hostlessQueryURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['unselected CRL issuerAltName x400Address tag', [issuerAltName([x400Tag])], 'UNSUPPORTED', 'CADES_CRL_GENERAL_NAME_UNSUPPORTED'],
   ['unselected CRL issuerAltName Teletex EDI', [issuerAltName([teletexEDI])], 'UNSUPPORTED', 'CADES_CRL_GENERAL_NAME_UNSUPPORTED'],
+  ...boundedNameCases.map(({ label, name, overall }) => [
+    `${label} issuerAltName directoryName`, [issuerAltName([name])], overall,
+    overall === 'VALID' ? 'CADES_VALID' : 'CADES_CRL_ISSUER_ALT_NAME',
+  ]),
   ['NULL CRL issuerAltName directoryName', [issuerAltName([malformedDirectory])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
 ]) {
   test(`issuer-signed complete direct CRL ${name}`, () => {
