@@ -143,6 +143,8 @@ export function signatureContainer(
     signingTime = epoch + 10,
     signatureBytes = 8192,
     fieldName,
+    parentFieldName,
+    sigFlags = '3',
     extra = '',
     dictionary,
     transformByteRange,
@@ -157,7 +159,8 @@ export function signatureContainer(
   const state = fixtureState(pdf),
     sig = state.size,
     field = sig + 1,
-    form = sig + 2;
+    parent = parentFieldName === undefined ? undefined : sig + 2,
+    form = sig + (parent === undefined ? 2 : 3);
   fieldName ??= kind === 'SIGNATURE' ? 'Approval' : `Timestamp-${sig}`;
   const oldCatalog = state.objects.get(state.root).body;
   const oldFormRef = /\/AcroForm\s+(\d+)\s+\d+\s+R/.exec(oldCatalog);
@@ -179,9 +182,10 @@ export function signatureContainer(
       { number: sig, body },
       {
         number: field,
-        body: `<< /FT /Sig /T (${fieldName.replace(/[()\\]/g, '_')}) /V ${sig} 0 R >>`,
+        body: `<< /FT /Sig /T (${fieldName.replace(/[()\\]/g, '_')})${parent === undefined ? '' : ` /Parent ${parent} 0 R`} /V ${sig} 0 R >>`,
       },
-      { number: form, body: `<< /Fields [${oldFields} ${field} 0 R] /SigFlags 3 >>` },
+      ...(parent === undefined ? [] : [{ number: parent, body: `<< /T (${parentFieldName.replace(/[()\\]/g, '_')}) /Kids [${field} 0 R] >>` }]),
+      { number: form, body: `<< /Fields [${oldFields} ${parent ?? field} 0 R]${sigFlags === null ? '' : ` /SigFlags ${sigFlags}`} >>` },
       { number: state.root, generation: state.rootGeneration, body: catalog },
     ],
     { objectHeader, objectPrefix, xrefPrefix },
