@@ -664,7 +664,12 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
         ])
           check(get(signature, forbidden) === undefined, 'PADES_TIMESTAMP_FORBIDDEN_FIELD');
         if (get(signature, 'V') !== undefined)
-          check(number(get(signature, 'V')) === 0, 'PADES_TIMESTAMP_VERSION');
+          check(
+            sourceInteger(get(signature, 'V'), 'PADES_TIMESTAMP_VERSION', integerObjects) === 0,
+            'PADES_TIMESTAMP_VERSION',
+          );
+      } else if (get(signature, 'V') !== undefined) {
+        sourceInteger(get(signature, 'V'), 'PADES_SIGNATURE_VERSION', integerObjects);
       }
       if (get(signature, 'Reference')) diagnostic('PADES_TRANSFORM_UNSUPPORTED');
       const allowed = [

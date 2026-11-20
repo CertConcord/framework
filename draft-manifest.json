@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 13982,
-      "sha256": "5a760beb5844d7038ec4077286ae5d9bf3b8949a68e7588722f41ea00af79c4a"
+      "bytes": 14256,
+      "sha256": "748f83a88efec3a309e469b045c5a3e7a7b3e8ede6c8616a5d648f62b2cd63fb"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305944,
-      "sha256": "d6615b286855e7c6a933329c0194b3240ad01b1eb853ff667caf1bafee696e14"
+      "bytes": 306123,
+      "sha256": "4b55abee476af5ea72e87bf75a28f957504f38e8df997c194ddbf735fc981604"
     },
     {
       "path": "reference/README.md",
@@ -1574,6 +1574,16 @@
       "sha256": "9fcee8f1df1a18be50abe4e240564e83f1d09d73abd46b0cf836868a091583a6"
     },
     {
+      "path": "reference/pades-signature-version-admission.test.mjs",
+      "bytes": 2878,
+      "sha256": "10133a586c16073ce291391433cd834777509faee957d53f03fa937d71722da7"
+    },
+    {
+      "path": "reference/pades-signature-version-vectors.test.mjs",
+      "bytes": 3623,
+      "sha256": "3b7d6eff7a62e31ac7430a246c7b0d82e1e82696fdd414eabe8a70ca2a65112e"
+    },
+    {
       "path": "reference/pades-signed-field-structure.test.mjs",
       "bytes": 2505,
       "sha256": "c1efcf4f87bca357d55b5fe260e0e43e9556b10ae2bbd08ae7fc8bac406f592e"
@@ -1585,8 +1595,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 49991,
-      "sha256": "b9ed9551413e7c8a2da4ba4574dd170c6cd54444b70a09dc300ef5f236d49947"
+      "bytes": 50219,
+      "sha256": "0ae30a4e7780d139181461018ba821dac01a182947bebfab69f3413f814aa2aa"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -7957,6 +7967,11 @@
       "path": "reference/vectors/original-status-proof-mtc07-rar2/manifest.json",
       "bytes": 57635,
       "sha256": "b555ebedb7a783d31c08c7870059decf3e5dfec6d9fca23c5d336ac669450480"
+    },
+    {
+      "path": "reference/vectors/pades-signature-version-admission.json",
+      "bytes": 49932,
+      "sha256": "6c1a20d7b4031805ac84b8ad01cc3d1692597e0636098e90241660286fa28502"
     },
     {
       "path": "reference/vectors/pades-signed-field-structure.json",
