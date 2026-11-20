@@ -59,6 +59,14 @@ const nameFor = (id, value) => c.der(0xa4,
   c.seq(c.der(0x31, c.seq(c.oid(id), value))));
 const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
 const unknownBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0xff])));
+const unknownNoncanonicalBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0x01])));
+const unknownConstructedOctet = nameFor('1.2.3.4.5', c.der(0x24, c.der(0x04, Buffer.from([0x41]))));
+const badDomainComponent = nameFor('0.9.2342.19200300.100.1.25', c.der(0x16, Buffer.from('bad@label', 'ascii')));
+const validDomainComponent = nameFor('0.9.2342.19200300.100.1.25', c.der(0x16, Buffer.from('example', 'ascii')));
+const invalidACEDNS = c.der(0x82, Buffer.from('xn--a.example', 'ascii'));
+const validACEDNS = c.der(0x82, Buffer.from('xn--bcher-kva.example', 'ascii'));
+const invalidACEURI = c.der(0x86, Buffer.from('https://xn--a.example/delta.crl', 'ascii'));
+const invalidACEMail = c.der(0x81, Buffer.from('ca@xn--a.example', 'ascii'));
 const descriptionBoolean = nameFor('2.5.4.13', c.der(0x01, Buffer.from([0xff])));
 const descriptionUTF8 = nameFor('2.5.4.13', c.der(0x0c, Buffer.from('CRL locator', 'utf8')));
 const destinationNumeric = nameFor('2.5.4.27', c.der(0x13, Buffer.from('1', 'ascii')));
@@ -183,6 +191,14 @@ try {
     ['issuerAltNameDescriptionUTF8', [ian([descriptionUTF8])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameTelephonePrintable', [ian([telephonePrintable])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameUnknownBoolean', [ian([unknownBoolean])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameUnknownNoncanonicalBoolean', [ian([unknownNoncanonicalBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownConstructedOctet', [ian([unknownConstructedOctet])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameBadDomainComponent', [ian([badDomainComponent])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameValidDomainComponent', [ian([validDomainComponent])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameInvalidACEDNS', [ian([invalidACEDNS])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameValidACEDNS', [ian([validACEDNS])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameInvalidACEURI', [ian([invalidACEURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameInvalidACEMail', [ian([invalidACEMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameValidEDI', [ian([validEDI])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameMalformedEDI', [ian([malformedEDI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameEmpty', [ian([])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],

@@ -602,11 +602,16 @@ function crlAttribute(node) {
       (id !== '2.5.4.20' || (value.value.length <= 32 &&
         /^[+ 0-9-]+$/.test(value.value.toString('ascii')))) &&
       (id !== '2.5.4.27' || /^[A-Za-z]+$/.test(value.value.toString('ascii')));
-  if (CRL_IA5_NAME_OIDS.has(id))
-    return value.tag === 0x16 && value.value.every(byte => byte > 0x20 && byte < 0x7f);
+  if (CRL_IA5_NAME_OIDS.has(id)) {
+    if (value.tag !== 0x16 || !value.value.every(byte => byte > 0x20 && byte < 0x7f))
+      return false;
+    if (id === '0.9.2342.19200300.100.1.25')
+      return crlDNSLabel(value.value.toString('ascii'));
+    return crlMailName(value.value);
+  }
   // Other X.520 names and RFC 4519 uid have known, unselected value syntaxes.
   if (id.startsWith('2.5.4.') || id === '0.9.2342.19200300.100.1.1') return false;
-  return !DIRECTORY_STRING_TAGS.has(value.tag) || directoryString({ children: [value] });
+  return crlOpaqueOtherName(value);
 }
 
 function crlOrderedAttributes(children) {
@@ -615,11 +620,24 @@ function crlOrderedAttributes(children) {
       Buffer.compare(children[index - 1].raw, entry.raw) <= 0);
 }
 
+function crlDNSLabel(label) {
+  if (label.length < 1 || label.length > 63 ||
+      !/^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(label)) return false;
+  if (label.slice(2, 4) !== '--') return true; // NR-LDH
+  const lower = label.toLowerCase();
+  if (!lower.startsWith('xn--')) return false;
+  const unicode = domainToUnicode(lower);
+  return unicode && unicode !== lower && unicode === unicode.normalize('NFC') &&
+    unicode.slice(2, 4) !== '--' && domainToASCII(unicode) === lower &&
+    /^[\p{L}\p{N}\p{M}-]+$/u.test(unicode) &&
+    !/^[\p{M}-]/u.test(unicode) && !unicode.endsWith('-');
+}
+
 function crlDNSName(value) {
+  if (!value.every(byte => byte < 0x80)) return false;
   const text = Buffer.from(value).toString('ascii');
   return text.length > 0 && text.length <= 253 &&
-    text.split('.').every((label) => label.length <= 63 &&
-      /^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(label));
+    text.split('.').every(crlDNSLabel);
 }
 
 function crlURIChars(text, extra = '') {
@@ -679,16 +697,7 @@ function crlSMTPDomain(domain) {
   if (domain !== domain.toLowerCase() || !domain.includes('.') ||
       !Array.from(domain).every(char => char.codePointAt(0) < 0x80) ||
       !crlDNSName(Buffer.from(domain, 'ascii'))) return false;
-  return domain.split('.').every(label => {
-    if (label.slice(2, 4) !== '--') return true; // NR-LDH label
-    if (!label.startsWith('xn--')) return false; // reserved LDH label
-    const unicode = domainToUnicode(label);
-    if (!unicode || unicode === label || unicode !== unicode.normalize('NFC') ||
-        unicode.slice(2, 4) === '--' || domainToASCII(unicode) !== label ||
-        !/^[\p{L}\p{N}\p{M}-]+$/u.test(unicode) ||
-        /^[\p{M}-]/u.test(unicode) || unicode.endsWith('-')) return false;
-    return true;
-  });
+  return true;
 }
 
 // The selected opaque otherName subset admits canonical universal DER values.

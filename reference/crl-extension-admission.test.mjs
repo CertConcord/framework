@@ -70,6 +70,14 @@ const nameFor = (id, value) => c.der(0xa4,
   c.seq(c.der(0x31, c.seq(c.oid(id), value))));
 const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
 const unknownBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0xff])));
+const unknownNoncanonicalBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0x01])));
+const unknownConstructedOctet = nameFor('1.2.3.4.5', c.der(0x24, c.der(0x04, Buffer.from([0x41]))));
+const badDomainComponent = nameFor('0.9.2342.19200300.100.1.25', c.der(0x16, Buffer.from('bad@label', 'ascii')));
+const validDomainComponent = nameFor('0.9.2342.19200300.100.1.25', c.der(0x16, Buffer.from('example', 'ascii')));
+const invalidACEDNS = c.der(0x82, Buffer.from('xn--a.example', 'ascii'));
+const validACEDNS = c.der(0x82, Buffer.from('xn--bcher-kva.example', 'ascii'));
+const invalidACEURI = c.der(0x86, Buffer.from('https://xn--a.example/delta.crl', 'ascii'));
+const invalidACEMail = c.der(0x81, Buffer.from('ca@xn--a.example', 'ascii'));
 const businessBoolean = nameFor('2.5.4.15', c.der(0x01, Buffer.from([0xff])));
 const countryUTF8 = nameFor('2.5.4.6', c.der(0x0c, Buffer.from('US', 'utf8')));
 const countryPrintable = nameFor('2.5.4.6', c.der(0x13, Buffer.from('US', 'ascii')));
@@ -214,6 +222,14 @@ for (const [name, extensions, overall, reason] of [
   ['countryName UTF8 CRL issuerAltName directoryName', [issuerAltName([countryUTF8])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['countryName Printable CRL issuerAltName directoryName', [issuerAltName([countryPrintable])], 'VALID', 'CADES_VALID'],
   ['unknown OID BOOLEAN CRL issuerAltName directoryName', [issuerAltName([unknownBoolean])], 'VALID', 'CADES_VALID'],
+  ['unknown OID noncanonical BOOLEAN directoryName', [issuerAltName([unknownNoncanonicalBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['unknown OID constructed OCTET directoryName', [issuerAltName([unknownConstructedOctet])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['invalid domainComponent directoryName', [issuerAltName([badDomainComponent])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['valid domainComponent directoryName', [issuerAltName([validDomainComponent])], 'VALID', 'CADES_VALID'],
+  ['invalid ACE DNS issuerAltName', [issuerAltName([invalidACEDNS])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['valid ACE DNS issuerAltName', [issuerAltName([validACEDNS])], 'VALID', 'CADES_VALID'],
+  ['invalid ACE URI issuerAltName', [issuerAltName([invalidACEURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['invalid ACE mailbox issuerAltName', [issuerAltName([invalidACEMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['valid CRL issuerAltName EDI partyName', [issuerAltName([validEDI])], 'VALID', 'CADES_VALID'],
   ['invalid CRL issuerAltName EDI PrintableString', [issuerAltName([malformedEDI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['hostless query CRL issuerAltName URI', [issuerAltName([hostlessQueryURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
