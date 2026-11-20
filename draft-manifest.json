@@ -235,8 +235,8 @@
     },
     {
       "path": "docs/ocsp-structure.md",
-      "bytes": 2470,
-      "sha256": "84fb6f362ef218e4c5d0b42e7cc3606fdad0dff6ac68c654f4d6526a7edbf4c2"
+      "bytes": 3481,
+      "sha256": "aa66549f12621f7ba335fab2ef72eb97dbf0ac9a0d7c1b867e5a44a515900fc1"
     },
     {
       "path": "docs/organization-delegation.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305188,
-      "sha256": "693eae1f00fad25be31da3d3e68197e20ce3d138c010b67e04f1287af0d26207"
+      "bytes": 305292,
+      "sha256": "ce72d64d80741d07fcd310bc136084600189f27cb4913b88445c5720c0a40e28"
     },
     {
       "path": "reference/README.md",
@@ -1314,6 +1314,11 @@
       "sha256": "51d24476cf734296bcec29a6dd022deead2b65615e102c0d2333ba4f9fbe0b13"
     },
     {
+      "path": "reference/ocsp-algorithm-admission.test.mjs",
+      "bytes": 3326,
+      "sha256": "f575615536548493906c63744398ce426f259cb30d07c0453cc51d56c1ee5faf"
+    },
+    {
       "path": "reference/ocsp-der-boundaries.test.mjs",
       "bytes": 12567,
       "sha256": "21e5ba303c81c72a70bf0c1a2baad56b06c02673cb862d902d60e6a9c0d76b26"
@@ -1765,8 +1770,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 14509,
-      "sha256": "44005f97ad84a5109d517587710eb9da7a6753dd5777a1147f3b5196bd252373"
+      "bytes": 16227,
+      "sha256": "ab218c689480b76734127e668ab340646291287fc346059ccd714e3fe68df027"
     },
     {
       "path": "reference/rfc3454-tables.mjs",
@@ -5402,6 +5407,11 @@
       "path": "reference/vectors/mtc-versions.json",
       "bytes": 403760,
       "sha256": "e01ddb9bee1587daa297ce34fdb1947efe48d125fdef60e0c5d6abd00e9ce939"
+    },
+    {
+      "path": "reference/vectors/ocsp-algorithm-admission.json",
+      "bytes": 11527,
+      "sha256": "77a7391bdf3949d39374b60475103776e09314d27a7d9e52a340ea750716b9b1"
     },
     {
       "path": "reference/vectors/ocsp-der-boundaries.json",
@@ -13360,8 +13370,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 57615,
-      "sha256": "efaa7cfd8642d57f5c4542b7e41ab141697c85e240212789ca8ac3471796ac1a"
+      "bytes": 58657,
+      "sha256": "6a73406ace9a3bbb04c351dad2073639cf5c0ce469cc774e701bc9e01c035f0d"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",

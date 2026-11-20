@@ -1,4 +1,4 @@
-import { createHash, createPublicKey } from 'node:crypto';
+import { constants, createHash, createPublicKey, verify as verifySignature } from 'node:crypto';
 import { statusResult, evaluateStatusEvidence } from './status-result.mjs';
 import {
   seq,
@@ -23,7 +23,42 @@ import {
 } from './core.mjs';
 import { algID, generalizedTime, extension, parseCertificate } from './pki.mjs';
 const nonceOID = '1.3.6.1.5.5.7.48.1.2',
-  basicOID = '1.3.6.1.5.5.7.48.1.1';
+  basicOID = '1.3.6.1.5.5.7.48.1.1',
+  sha256OID = '2.16.840.1.101.3.4.2.1',
+  sha256WithRSAEncryptionOID = '1.2.840.113549.1.1.11';
+function sha256AlgorithmIdentifier(node) {
+  return node.tag === 0x30 && [1, 2].includes(node.children.length) &&
+    node.children[0].tag === 6 && oidText(node.children[0]) === sha256OID &&
+    (node.children.length === 1 ||
+      (node.children[1].tag === 5 && node.children[1].value.length === 0));
+}
+function matchingOCSPCertID(actual, expectedRaw) {
+  if (equal(actual.raw, expectedRaw)) return true;
+  const expected = parseDER(expectedRaw);
+  return actual.tag === 0x30 && expected.tag === 0x30 &&
+    actual.children.length === 4 && expected.children.length === 4 &&
+    sha256AlgorithmIdentifier(actual.children[0]) &&
+    sha256AlgorithmIdentifier(expected.children[0]) &&
+    [4, 4, 2].every((tag, i) => actual.children[i + 1].tag === tag &&
+      expected.children[i + 1].tag === tag &&
+      equal(actual.children[i + 1].raw, expected.children[i + 1].raw));
+}
+function validOCSPSignature(tbs, algorithm, signature, issuerPublicKey) {
+  if (signature.tag !== 3 || signature.value.length < 2 || signature.value[0] !== 0)
+    return false;
+  const bytes = signature.value.subarray(1);
+  if (issuerPublicKey.asymmetricKeyType === 'rsa') {
+    return algorithm.tag === 0x30 && [1, 2].includes(algorithm.children.length) &&
+      algorithm.children[0].tag === 6 &&
+      oidText(algorithm.children[0]) === sha256WithRSAEncryptionOID &&
+      (algorithm.children.length === 1 ||
+        (algorithm.children[1].tag === 5 && algorithm.children[1].value.length === 0)) &&
+      verifySignature('sha256', tbs.raw,
+        { key: issuerPublicKey, padding: constants.RSA_PKCS1_PADDING }, bytes);
+  }
+  return equal(algorithm.raw, algID(issuerPublicKey.asymmetricKeyType)) &&
+    verify(tbs.raw, bytes, issuerPublicKey);
+}
 function parseTime(n) {
   const s = n.value.toString('ascii');
   requireThat(n.tag === 24 && /^\d{14}Z$/.test(s), 'STATUS_TIME');
@@ -330,13 +365,7 @@ function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime 
         certs.children[0].children.every(isCertificateEnvelope))),
     'OCSP_SIGNATURE',
   );
-  requireThat(
-    signature.tag === 3 &&
-      equal(algorithm.raw, algID(issuerPublicKey.asymmetricKeyType)) &&
-      signature.value[0] === 0 &&
-      verify(tbs.raw, signature.value.subarray(1), issuerPublicKey),
-    'OCSP_SIGNATURE',
-  );
+  requireThat(validOCSPSignature(tbs, algorithm, signature, issuerPublicKey), 'OCSP_SIGNATURE');
   const a = tbs.children,
     rawKey = parseDER(spki(issuerPublicKey)).children[1].value.subarray(1);
   requireThat(
@@ -351,7 +380,7 @@ function inspectOCSP(raw, { request, issuerPublicKey, at = now(), knowledgeTime 
   const s = a[2].children[0].children;
   requireThat(
     s.length === 4 &&
-      equal(s[0].raw, expected.certID),
+      matchingOCSPCertID(s[0], expected.certID),
     'OCSP_CONTEXT',
   );
   requireThat(
