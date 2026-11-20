@@ -63,7 +63,7 @@ function variant(kind, { wrongVersion = false, badSignature = false } = {}) {
         issuerPublicKey: f.root.publicKey,
         serial: f.signer.cert.serial,
       },
-      { nonce: Buffer.alloc(16, 7) },
+      { nonce: Buffer.alloc(32, 7) },
     );
     const response = issueOCSP(request.raw, {
       issuer: f.root.cert.subject,

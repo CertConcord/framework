@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "profile": "ocsp-algorithm-admission",
+  "at": 1800000040,
+  "groups": [
+    {
+      "id": "rsa-response-signature",
+      "request": "MIGBMH8wWDBWMFQwCwYJYIZIAWUDBAIBBCCfIsMxf1JV3Bmbjj0NoKsDHHkdPlUb2AwoDjPTPr6v7gQg/QYuXJw59W0xSLQ56LVNzYnzzb7iK/2tDha/Dk8csJgCAQOiIzAhMB8GCSsGAQUFBzABAgQSBBBSUlJSUlJSUlJSUlJSUlJS",
+      "issuerPublicKeySPKI": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1wWhnIgFoiKcynFl1KL6R1dBcarN2M0b94z6IxJvuDmf2cPwG5B9zpgzhotogfDc2iXa1q6DNsGvWyvI/3P27o1upMD4Ghl7VddtcWoXuWMKMcDLNhGbrqoH97lnHhpOkQAx9/6rn/JUTHCNEQFfGAYZbb2RXSiFaxAtRIPy0sr3d1QsxNywwmGDvv2MeX65YcI5v2nJPdm9NzSzc/n/odq4k9+DSlTxuvIUhuFoSi+LNYxH5EBGj5IvJ4BcEacZuDIAHlMhuSAfvz+0a1ZnSxLVlzjKbarfAtZQpWRapcqSc0Abdpxqu2qkH0D6QNC3xOWFGC/vrR8tSQUccYT8VQIDAQAB",
+      "cases": [
+        {
+          "id": "rsa-sha256-null",
+          "raw": "MIICAwoBAKCCAfwwggH4BgkrBgEFBQcwAQEEggHpMIIB5TCBzqIWBBTrfxptHwzuA4ciUR9htRjzfwO/BBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgnyLDMX9SVdwZm449DaCrAxx5HT5VG9gMKA4z0z6+r+4EIP0GLlycOfVtMUi0Oei1Tc2J882+4iv9rQ4Wvw5PHLCYAgEDgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA5MDAwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBBSUlJSUlJSUlJSUlJSUlJSMA0GCSqGSIb3DQEBCwUAA4IBAQCzHCYW1RgqsWWDu5evrwme1NGOZlkG7osfJtDo0CZvYrgHzxRwzNVY6Q+75xSFQZeByeV9PSAWLWN7wgE++E2e6uh1LrCggUGKZOpcg8U0fAe1fYhLh0POl4OTrHcUp8f9KW8QKSqfqP/ci+0SbMaUDSZM3vjhl8AcFHyYlcnttKvlV/xaxzXZPeYnqF7xuJyzDdIV9C+gOoEz/JDe8NmEcANEO6B0zbcBpU3CpniNDa6t+0444Qo5ds3d/QFDtsaxRD1O2aiJfTTKcjPJ+hh53RecqRYglvJvREVJvv8+Xl+40i4F5Csq9Px9qkp4wXcVyVsXStU97RruM1K7IW9T",
+          "sha256": "bede41006af1e9761e32bacd42291dd5cd8c3420f49030717a481c6372c52827",
+          "expected": {
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "id": "rsa-sha256-absent",
+          "raw": "MIICAQoBAKCCAfowggH2BgkrBgEFBQcwAQEEggHnMIIB4zCBzqIWBBTrfxptHwzuA4ciUR9htRjzfwO/BBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgnyLDMX9SVdwZm449DaCrAxx5HT5VG9gMKA4z0z6+r+4EIP0GLlycOfVtMUi0Oei1Tc2J882+4iv9rQ4Wvw5PHLCYAgEDgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA5MDAwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBBSUlJSUlJSUlJSUlJSUlJSMAsGCSqGSIb3DQEBCwOCAQEAsxwmFtUYKrFlg7uXr68JntTRjmZZBu6LHybQ6NAmb2K4B88UcMzVWOkPu+cUhUGXgcnlfT0gFi1je8IBPvhNnurodS6woIFBimTqXIPFNHwHtX2IS4dDzpeDk6x3FKfH/SlvECkqn6j/3IvtEmzGlA0mTN744ZfAHBR8mJXJ7bSr5Vf8Wsc12T3mJ6he8bicsw3SFfQvoDqBM/yQ3vDZhHADRDugdM23AaVNwqZ4jQ2urftOOOEKOXbN3f0BQ7bGsUQ9TtmoiX00ynIzyfoYed0XnKkWIJbyb0RFSb7/Pl5fuNIuBeQrKvT8fapKeMF3FclbF0rVPe0a7jNSuyFvUw==",
+          "sha256": "ce19ea68b76b5a2cd91d1a7f3c67119bba2fd23e632a98e08012c57d0feaeca4",
+          "expected": {
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "id": "rsa-sha256-octet-parameter",
+          "raw": "MIICAwoBAKCCAfwwggH4BgkrBgEFBQcwAQEEggHpMIIB5TCBzqIWBBTrfxptHwzuA4ciUR9htRjzfwO/BBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgnyLDMX9SVdwZm449DaCrAxx5HT5VG9gMKA4z0z6+r+4EIP0GLlycOfVtMUi0Oei1Tc2J882+4iv9rQ4Wvw5PHLCYAgEDgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA5MDAwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBBSUlJSUlJSUlJSUlJSUlJSMA0GCSqGSIb3DQEBCwQAA4IBAQCzHCYW1RgqsWWDu5evrwme1NGOZlkG7osfJtDo0CZvYrgHzxRwzNVY6Q+75xSFQZeByeV9PSAWLWN7wgE++E2e6uh1LrCggUGKZOpcg8U0fAe1fYhLh0POl4OTrHcUp8f9KW8QKSqfqP/ci+0SbMaUDSZM3vjhl8AcFHyYlcnttKvlV/xaxzXZPeYnqF7xuJyzDdIV9C+gOoEz/JDe8NmEcANEO6B0zbcBpU3CpniNDa6t+0444Qo5ds3d/QFDtsaxRD1O2aiJfTTKcjPJ+hh53RecqRYglvJvREVJvv8+Xl+40i4F5Csq9Px9qkp4wXcVyVsXStU97RruM1K7IW9T",
+          "sha256": "3e154020920f308d8f2f352995d0809499555ed004e77a6f78bf3296c352c36e",
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "OCSP_SIGNATURE"
+          }
+        },
+        {
+          "id": "rsa-sha512-oid-mismatch",
+          "raw": "MIICAwoBAKCCAfwwggH4BgkrBgEFBQcwAQEEggHpMIIB5TCBzqIWBBTrfxptHwzuA4ciUR9htRjzfwO/BBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgnyLDMX9SVdwZm449DaCrAxx5HT5VG9gMKA4z0z6+r+4EIP0GLlycOfVtMUi0Oei1Tc2J882+4iv9rQ4Wvw5PHLCYAgEDgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA5MDAwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBBSUlJSUlJSUlJSUlJSUlJSMA0GCSqGSIb3DQEBDQUAA4IBAQCzHCYW1RgqsWWDu5evrwme1NGOZlkG7osfJtDo0CZvYrgHzxRwzNVY6Q+75xSFQZeByeV9PSAWLWN7wgE++E2e6uh1LrCggUGKZOpcg8U0fAe1fYhLh0POl4OTrHcUp8f9KW8QKSqfqP/ci+0SbMaUDSZM3vjhl8AcFHyYlcnttKvlV/xaxzXZPeYnqF7xuJyzDdIV9C+gOoEz/JDe8NmEcANEO6B0zbcBpU3CpniNDa6t+0444Qo5ds3d/QFDtsaxRD1O2aiJfTTKcjPJ+hh53RecqRYglvJvREVJvv8+Xl+40i4F5Csq9Px9qkp4wXcVyVsXStU97RruM1K7IW9T",
+          "sha256": "6c6f72dd5ef0292394317f11c542c21579837d7125f6b465448609019e4cab80",
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "OCSP_SIGNATURE"
+          }
+        },
+        {
+          "id": "rsa-sha256-bit-flip",
+          "raw": "MIICAwoBAKCCAfwwggH4BgkrBgEFBQcwAQEEggHpMIIB5TCBzqIWBBTrfxptHwzuA4ciUR9htRjzfwO/BBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQgnyLDMX9SVdwZm449DaCrAxx5HT5VG9gMKA4z0z6+r+4EIP0GLlycOfVtMUi0Oei1Tc2J882+4iv9rQ4Wvw5PHLCYAgEDgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA5MDAwMFqhIzAhMB8GCSsGAQUFBzABAgQSBBBSUlJSUlJSUlJSUlJSUlJSMA0GCSqGSIb3DQEBCwUAA4IBAQCzHCYW1RgqsWWDu5evrwme1NGOZlkG7osfJtDo0CZvYrgHzxRwzNVY6Q+75xSFQZeByeV9PSAWLWN7wgE++E2e6uh1LrCggUGKZOpcg8U0fAe1fYhLh0POl4OTrHcUp8f9KW8QKSqfqP/ci+0SbMaUDSZM3vjhl8AcFHyYlcnttKvlV/xaxzXZPeYnqF7xuJyzDdIV9C+gOoEz/JDe8NmEcANEO6B0zbcBpU3CpniNDa6t+0444Qo5ds3d/QFDtsaxRD1O2aiJfTTKcjPJ+hh53RecqRYglvJvREVJvv8+Xl+40i4F5Csq9Px9qkp4wXcVyVsXStU97RruM1K7IW9S",
+          "sha256": "a7ef4dad7f1810aad3f231763a1892930507ec9149385a398717e8bea972da63",
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "OCSP_SIGNATURE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sha256-certid",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQg1ioyeQzEsM6FMdg0Wl7twoUnyioLqZJTzUVXkfLyGPoEIHYWBhL6LDIDHi7j7OwJtF8plq4v8ZbdUwsdqk85AODnAgEGojMwMTAvBgkrBgEFBQcwAQIEIgQgxnx7r71JKvcfNOwtxoAls0Td3Cct7Bt6uoy6zUAOSXM=",
+      "issuerPublicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEXRDj95Kyu1F2S+yBOtPLiLtYlSmUt8NAwlKAVrYIpOYMTVCUt6HbdFLC3wDEj/6+kCKzbCGOX+8C3QCL1dsCqw==",
+      "cases": [
+        {
+          "id": "certid-sha256-absent",
+          "raw": "MIIBVQoBAKCCAU4wggFKBgkrBgEFBQcwAQEEggE7MIIBNzCB3qIWBBRw5zUaZHAZdVt8AhuYiH4XCGtEfBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQg1ioyeQzEsM6FMdg0Wl7twoUnyioLqZJTzUVXkfLyGPoEIHYWBhL6LDIDHi7j7OwJtF8plq4v8ZbdUwsdqk85AODnAgEGgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA4MDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCDGfHuvvUkq9x807C3GgCWzRN3cJy3sG3q6jLrNQA5JczAKBggqhkjOPQQDAgNIADBFAiEA45wQjBzj/01BnsXk29zeQWAGJGAHzMcwo4MxEe6opjwCIHGYFUKnCxiU36LMftQWI2s32FVh/QQ40X96C8amWFCW",
+          "sha256": "ab61af042bba4172113cb840a2a42420e3b2d3ddb14626d5bd6e4b63bfb3b3d7",
+          "expected": {
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "id": "certid-sha256-null",
+          "raw": "MIIBWQoBAKCCAVIwggFOBgkrBgEFBQcwAQEEggE/MIIBOzCB4aIWBBRw5zUaZHAZdVt8AhuYiH4XCGtEfBgPMjAyNzAxMTUwODAwMDBaMIGAMH4wVjANBglghkgBZQMEAgEFAAQg1ioyeQzEsM6FMdg0Wl7twoUnyioLqZJTzUVXkfLyGPoEIHYWBhL6LDIDHi7j7OwJtF8plq4v8ZbdUwsdqk85AODnAgEGgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA4MDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCDGfHuvvUkq9x807C3GgCWzRN3cJy3sG3q6jLrNQA5JczAKBggqhkjOPQQDAgNJADBGAiEAmVu0jnZJAerjUhH4Wh9wPxbKGgacdDe9DjfLsPmNhnICIQDfGx9CW7qbEb+gScajzlp7MNYORS84lt5YjtE7wBNG8w==",
+          "sha256": "f246808b8cdf6b49fde669e798e074a8b30cea066ea617873624bf0a95656017",
+          "expected": {
+            "status": "GOOD",
+            "overall": "VALID"
+          }
+        },
+        {
+          "id": "certid-sha256-octet-parameter",
+          "raw": "MIIBWAoBAKCCAVEwggFNBgkrBgEFBQcwAQEEggE+MIIBOjCB4aIWBBRw5zUaZHAZdVt8AhuYiH4XCGtEfBgPMjAyNzAxMTUwODAwMDBaMIGAMH4wVjANBglghkgBZQMEAgEEAAQg1ioyeQzEsM6FMdg0Wl7twoUnyioLqZJTzUVXkfLyGPoEIHYWBhL6LDIDHi7j7OwJtF8plq4v8ZbdUwsdqk85AODnAgEGgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA4MDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCDGfHuvvUkq9x807C3GgCWzRN3cJy3sG3q6jLrNQA5JczAKBggqhkjOPQQDAgNIADBFAiEAq4gCAA82UGVjRdIt2a6+U/15CsjzwR3/Nwu0wdmOOScCIHhpLqJ8hMYywedTs1E1ncwjDhjzU04A7dXp8QWusB4w",
+          "sha256": "f7bcecf680759571a249e4c0b91ab95b487a258facadd0fb4626111d5d59b687",
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "OCSP_CONTEXT"
+          }
+        },
+        {
+          "id": "certid-sha1-oid-mismatch",
+          "raw": "MIIBUQoBAKCCAUowggFGBgkrBgEFBQcwAQEEggE3MIIBMzCB2qIWBBRw5zUaZHAZdVt8AhuYiH4XCGtEfBgPMjAyNzAxMTUwODAwMDBaMHoweDBQMAcGBSsOAwIaBCDWKjJ5DMSwzoUx2DRaXu3ChSfKKgupklPNRVeR8vIY+gQgdhYGEvosMgMeLuPs7Am0XymWri/xlt1TCx2qTzkA4OcCAQaAABgPMjAyNzAxMTUwODAwMDBaoBEYDzIwMjcwMTE1MDgwNTAwWqEzMDEwLwYJKwYBBQUHMAECBCIEIMZ8e6+9SSr3HzTsLcaAJbNE3dwnLewberqMus1ADklzMAoGCCqGSM49BAMCA0gAMEUCIQC2h+Au8LFsTL9N8AfWs4Tsly/LADrFpxtUVT2Vds53jwIgBiL7RE/YIbQ8Y0bwePvFBjbPoJSYsuNvfIihO636K+Y=",
+          "sha256": "133e092046dc11fccf4c23a1702b5eadd8650453c315d733c97f01fc735a3c5a",
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "OCSP_CONTEXT"
+          }
+        },
+        {
+          "id": "certid-issuer-name-hash-mismatch",
+          "raw": "MIIBVQoBAKCCAU4wggFKBgkrBgEFBQcwAQEEggE7MIIBNzCB3qIWBBRw5zUaZHAZdVt8AhuYiH4XCGtEfBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQg1yoyeQzEsM6FMdg0Wl7twoUnyioLqZJTzUVXkfLyGPoEIHYWBhL6LDIDHi7j7OwJtF8plq4v8ZbdUwsdqk85AODnAgEGgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA4MDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCDGfHuvvUkq9x807C3GgCWzRN3cJy3sG3q6jLrNQA5JczAKBggqhkjOPQQDAgNIADBFAiEA17IrGGqhkAP8j9MYjocawwTC5H9cbjdXtpECyEkvB2wCIC/8ki8ovpF6DH2Bsaf/6jT7aNo4+eEFJUP8J1jasSAP",
+          "sha256": "e2d250e599268000aefd8338e873821a29f4b96e0e38dff5156a97861782ef3b",
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "OCSP_CONTEXT"
+          }
+        },
+        {
+          "id": "certid-issuer-key-hash-mismatch",
+          "raw": "MIIBVQoBAKCCAU4wggFKBgkrBgEFBQcwAQEEggE7MIIBNzCB3qIWBBRw5zUaZHAZdVt8AhuYiH4XCGtEfBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQg1ioyeQzEsM6FMdg0Wl7twoUnyioLqZJTzUVXkfLyGPoEIHcWBhL6LDIDHi7j7OwJtF8plq4v8ZbdUwsdqk85AODnAgEGgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA4MDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCDGfHuvvUkq9x807C3GgCWzRN3cJy3sG3q6jLrNQA5JczAKBggqhkjOPQQDAgNIADBFAiEAzr7TJkPzHLwQTS75/uImljBMqCDw9Lehi+Eepm05e3YCIDnyedStvHzoghp/87r2M6o/I9FwLWiZkn0I6Y9trU57",
+          "sha256": "d33410d1670d1e868508c9d1bc151b3edaadfbf6ba3ae51285fec115619cc853",
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "OCSP_CONTEXT"
+          }
+        },
+        {
+          "id": "certid-serial-mismatch",
+          "raw": "MIIBVgoBAKCCAU8wggFLBgkrBgEFBQcwAQEEggE8MIIBODCB3qIWBBRw5zUaZHAZdVt8AhuYiH4XCGtEfBgPMjAyNzAxMTUwODAwMDBaMH4wfDBUMAsGCWCGSAFlAwQCAQQg1ioyeQzEsM6FMdg0Wl7twoUnyioLqZJTzUVXkfLyGPoEIHYWBhL6LDIDHi7j7OwJtF8plq4v8ZbdUwsdqk85AODnAgEHgAAYDzIwMjcwMTE1MDgwMDAwWqARGA8yMDI3MDExNTA4MDUwMFqhMzAxMC8GCSsGAQUFBzABAgQiBCDGfHuvvUkq9x807C3GgCWzRN3cJy3sG3q6jLrNQA5JczAKBggqhkjOPQQDAgNJADBGAiEAmO6/RdFo+4yR6AJ6EA9Mr1FnsD6V7E2T1kSJby9dAD8CIQDwGNT5ooJB4SVeGNJeq6MsxTJHLVGXbjB7YME9FyEYjw==",
+          "sha256": "ac9de874e6bd5dce6fa89d649df00aed0eb776d477d54bf68247dc0c1f3e06d9",
+          "expected": {
+            "status": "INVALID",
+            "overall": "INVALID",
+            "reason": "OCSP_CONTEXT"
+          }
+        }
+      ]
+    }
+  ]
+}
