@@ -41,6 +41,7 @@ const smtpUnicodeDomain = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.f
 const unknownOtherBoolean = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0xff])));
 const smtpReservedLabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@ab--cd.example.com', 'utf8')));
 const smtpValidALabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@xn--bcher-kva.example', 'utf8')));
+const smtpReservedULabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@xn--ab--cd-8ya.example', 'utf8')));
 const smtpEmojiALabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@xn--e28h.example', 'utf8')));
 const unknownOtherNoncanonicalTrue = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0x01])));
 const unknownOtherNoncanonicalNull = otherNameFor('1.2.3.4.6', c.der(0x05, Buffer.from([0x00])));
@@ -154,6 +155,7 @@ try {
     ['issuerAltNameUnknownOtherBoolean', [ian([unknownOtherBoolean])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameSMTPReservedLabel', [ian([smtpReservedLabel])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameSMTPValidALabel', [ian([smtpValidALabel])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameSMTPReservedULabel', [ian([smtpReservedULabel])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameSMTPEmojiALabel', [ian([smtpEmojiALabel])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameUnknownOtherNoncanonicalTrue', [ian([unknownOtherNoncanonicalTrue])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameUnknownOtherNoncanonicalNull', [ian([unknownOtherNoncanonicalNull])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],

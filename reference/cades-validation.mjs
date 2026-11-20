@@ -684,7 +684,7 @@ function crlSMTPDomain(domain) {
     if (!label.startsWith('xn--')) return false; // reserved LDH label
     const unicode = domainToUnicode(label);
     if (!unicode || unicode === label || unicode !== unicode.normalize('NFC') ||
-        domainToASCII(unicode) !== label ||
+        unicode.slice(2, 4) === '--' || domainToASCII(unicode) !== label ||
         !/^[\p{L}\p{N}\p{M}-]+$/u.test(unicode) ||
         /^[\p{M}-]/u.test(unicode) || unicode.endsWith('-')) return false;
     return true;

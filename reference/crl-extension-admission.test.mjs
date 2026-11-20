@@ -52,6 +52,7 @@ const smtpUnicodeDomain = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.f
 const unknownOtherBoolean = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0xff])));
 const smtpReservedLabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@ab--cd.example.com', 'utf8')));
 const smtpValidALabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@xn--bcher-kva.example', 'utf8')));
+const smtpReservedULabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@xn--ab--cd-8ya.example', 'utf8')));
 const smtpEmojiALabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@xn--e28h.example', 'utf8')));
 const unknownOtherNoncanonicalTrue = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0x01])));
 const unknownOtherNoncanonicalNull = otherNameFor('1.2.3.4.6', c.der(0x05, Buffer.from([0x00])));
@@ -182,6 +183,7 @@ for (const [name, extensions, overall, reason] of [
   ['unknown OID BOOLEAN CRL issuerAltName otherName', [issuerAltName([unknownOtherBoolean])], 'VALID', 'CADES_VALID'],
   ['reserved LDH SMTPUTF8 CRL issuerAltName', [issuerAltName([smtpReservedLabel])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['valid A-label SMTPUTF8 CRL issuerAltName', [issuerAltName([smtpValidALabel])], 'VALID', 'CADES_VALID'],
+  ['reserved U-label encoded as SMTPUTF8 A-label', [issuerAltName([smtpReservedULabel])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['emoji A-label SMTPUTF8 CRL issuerAltName', [issuerAltName([smtpEmojiALabel])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['noncanonical TRUE unknown otherName', [issuerAltName([unknownOtherNoncanonicalTrue])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['noncanonical NULL unknown otherName', [issuerAltName([unknownOtherNoncanonicalNull])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
