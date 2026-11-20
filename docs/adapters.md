@@ -160,6 +160,8 @@ These fresh synthetic certificates, controlled roots, fixed times and simulated 
 
 ### Persistence and parsing boundaries
 
+The shared certificate parser admits [RFC 5280 section 4.1](https://www.rfc-editor.org/rfc/rfc5280.html#section-4.1) `Validity` only as a DER SEQUENCE with exactly `notBefore` and `notAfter`, each using the supported UTCTime or GeneralizedTime choice. It rejects a different container tag, a missing Time or an extra Time before reading the dates, even when the altered TBSCertificate has a valid issuer signature. The [fresh signed synthetic vectors](../reference/vectors/certificate-validity-shape.json) and [parser and validator replay](../reference/certificate-validity-shape.test.mjs) cover that exact field boundary. This is a certificate syntax admission check; it does not establish a complete issuer path or deployed document acceptance.
+
 `certconcord-postgres-journal-v1` implements SEP transaction semantics across service processes. `certconcord-indexed-merkle-v1` preserves existing MTC and C2SP proof encodings using immutable indexed rows. Their schema, recovery constraints and explicit migration procedures are defined in [STORAGE.md](storage.md). PDF verification calls the bounded worker interface in `pdf.mjs`; `pdf-structure.mjs` is an internal parser and does not establish cryptographic validity.
 
 ### Governed execution binding

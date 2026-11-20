@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 51893,
-      "sha256": "1e67ce533b10cf17fe1235468b07df1a9a451527e1e9fbaaaf330c1ee405f224"
+      "bytes": 52643,
+      "sha256": "09ed1c20913be43023d13cfbc7d8728fc9c7b40ad02f2d6906471a693c35032b"
     },
     {
       "path": "docs/apple-identity.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305080,
-      "sha256": "d31c624e7837998f8326c5c3556bf8beabfb92c3562fb2fb08d80acb7b7d81cf"
+      "bytes": 305188,
+      "sha256": "693eae1f00fad25be31da3d3e68197e20ce3d138c010b67e04f1287af0d26207"
     },
     {
       "path": "reference/README.md",
@@ -647,6 +647,11 @@
       "path": "reference/certificate-validity-endpoint.test.mjs",
       "bytes": 7318,
       "sha256": "069f2bc97f5e03a397ef19d4436aa86a1a244ff4535b0c1656945f6c5cec7eea"
+    },
+    {
+      "path": "reference/certificate-validity-shape.test.mjs",
+      "bytes": 1663,
+      "sha256": "b9b562a70889fae7d6703d13cfed63c329a6ad0bdf6377675487524f01bc1e1a"
     },
     {
       "path": "reference/certificate-validity-time.test.mjs",
@@ -1630,8 +1635,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 23782,
-      "sha256": "adc902f035a890d4b255b3c8d720f93c568488759d54069d0b5a258b1324b74d"
+      "bytes": 23884,
+      "sha256": "553639c743096a64579c1c6352f43c9705744faae41331641118bb9537c89732"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -2312,6 +2317,11 @@
       "path": "reference/vectors/certificate-validity-endpoints.json",
       "bytes": 116764,
       "sha256": "13c9ff2268591bf56444c8579b4f3e5d23fd250d4df408bd0372f0d393b30e30"
+    },
+    {
+      "path": "reference/vectors/certificate-validity-shape.json",
+      "bytes": 3788,
+      "sha256": "b213eb9756ef3411b71079084b6e5d9042a6c261ce1e53ffe8d9ee91393ef1e4"
     },
     {
       "path": "reference/vectors/certificate-validity/README.md",
