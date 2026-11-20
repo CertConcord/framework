@@ -1,5 +1,6 @@
 import { X509Certificate, verify as verifySignature } from 'node:crypto';
 import { isIP } from 'node:net';
+import { domainToASCII, domainToUnicode } from 'node:url';
 import {
   parseDER,
   oidText,
@@ -674,6 +675,49 @@ function crlAbsoluteURI(value) {
   return dns.includes('.') && crlDNSName(Buffer.from(dns, 'ascii'));
 }
 
+function crlSMTPDomain(domain) {
+  if (domain !== domain.toLowerCase() || !domain.includes('.') ||
+      !Array.from(domain).every(char => char.codePointAt(0) < 0x80) ||
+      !crlDNSName(Buffer.from(domain, 'ascii'))) return false;
+  return domain.split('.').every(label => {
+    if (label.slice(2, 4) !== '--') return true; // NR-LDH label
+    if (!label.startsWith('xn--')) return false; // reserved LDH label
+    const unicode = domainToUnicode(label);
+    if (!unicode || unicode === label || unicode !== unicode.normalize('NFC') ||
+        domainToASCII(unicode) !== label ||
+        !/^[\p{L}\p{N}\p{M}-]+$/u.test(unicode) ||
+        /^[\p{M}-]/u.test(unicode) || unicode.endsWith('-')) return false;
+    return true;
+  });
+}
+
+// The selected opaque otherName subset admits canonical universal DER values.
+// Unknown contextual/private tag syntaxes remain outside this CRL profile.
+function crlOpaqueOtherName(node) {
+  const bytes = node.value;
+  if (node.tag === 0x01) return bytes.length === 1 && [0x00, 0xff].includes(bytes[0]);
+  if (node.tag === 0x02) return bytes.length > 0; // parseDER checks minimal INTEGER.
+  if (node.tag === 0x03) return bytes.length > 0 && bytes[0] <= 7 &&
+    (bytes.length > 1 || bytes[0] === 0) &&
+    (bytes[0] === 0 || (bytes.at(-1) & ((1 << bytes[0]) - 1)) === 0);
+  if (node.tag === 0x04) return true;
+  if (node.tag === 0x05) return bytes.length === 0;
+  if (node.tag === 0x06) return validOIDContents(bytes);
+  if (node.tag === 0x0a) return bytes.length > 0 &&
+    (bytes.length === 1 || !((bytes[0] === 0 && !(bytes[1] & 0x80)) ||
+      (bytes[0] === 0xff && (bytes[1] & 0x80))));
+  if (node.tag === 0x0c) {
+    try { new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes); }
+    catch { return false; }
+    return true;
+  }
+  if (node.tag === 0x13) return /^[A-Za-z0-9 '()+,\-./:=?]*$/.test(bytes.toString('latin1'));
+  if (node.tag === 0x16) return bytes.every(byte => byte < 0x80);
+  if (node.tag === 0x30 || node.tag === 0x31)
+    return node.children?.every(crlOpaqueOtherName) ?? false;
+  return false;
+}
+
 function crlOtherName(name) {
   if (name.children?.length !== 2 || name.children[0].tag !== 6 ||
       !validOIDContents(name.children[0].value) ||
@@ -691,13 +735,11 @@ function crlOtherName(name) {
       Array.from(local).some(char => char.codePointAt(0) > 0x7f) &&
       /^[\p{L}\p{N}._+-]+$/u.test(local) &&
       !local.startsWith('.') && !local.endsWith('.') && !local.includes('..') &&
-      domain === domain.toLowerCase() && domain.includes('.') &&
-      Array.from(domain).every(char => char.codePointAt(0) < 0x80) &&
-      crlDNSName(Buffer.from(domain, 'ascii'));
+      crlSMTPDomain(domain);
   }
   // Other standard id-on value syntaxes are outside this selected CRL profile.
   if (id.startsWith('1.3.6.1.5.5.7.8.')) return false;
-  return true;
+  return crlOpaqueOtherName(inner);
 }
 function crlMailName(value) {
   if (!value.every((byte) => byte < 128)) return false;

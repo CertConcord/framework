@@ -39,6 +39,21 @@ const smtpInvalidUTF8 = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.fro
 const smtpValidUTF8 = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@example.com', 'utf8')));
 const smtpUnicodeDomain = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@álpha.example', 'utf8')));
 const unknownOtherBoolean = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0xff])));
+const smtpReservedLabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@ab--cd.example.com', 'utf8')));
+const smtpValidALabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@xn--bcher-kva.example', 'utf8')));
+const smtpEmojiALabel = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@xn--e28h.example', 'utf8')));
+const unknownOtherNoncanonicalTrue = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0x01])));
+const unknownOtherNoncanonicalNull = otherNameFor('1.2.3.4.6', c.der(0x05, Buffer.from([0x00])));
+const unknownOtherNoncanonicalBit = otherNameFor('1.2.3.4.6', c.der(0x03, Buffer.from([0x01, 0x01])));
+const unknownOtherConstructedOctet = otherNameFor('1.2.3.4.6', c.der(0x24, c.der(0x04, Buffer.from([0x01]))));
+const unknownOtherCanonicalBit = otherNameFor('1.2.3.4.6', c.der(0x03, Buffer.from([0x01, 0x00])));
+const unknownOtherCanonicalFalse = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0x00])));
+const unknownOtherNestedNoncanonicalTrue = otherNameFor('1.2.3.4.6', c.seq(c.der(0x01, Buffer.from([0x01]))));
+const unknownOtherNestedCanonical = otherNameFor('1.2.3.4.6', c.seq(c.der(0x01, Buffer.from([0xff])), c.der(0x05, Buffer.alloc(0))));
+const unknownOtherNoncanonicalEnum = otherNameFor('1.2.3.4.6', c.der(0x0a, Buffer.from([0x00, 0x01])));
+const unknownOtherInvalidUTF8 = otherNameFor('1.2.3.4.6', c.der(0x0c, Buffer.from([0xc0, 0xaf])));
+const unknownOtherNonminimalOID = otherNameFor('1.2.3.4.6', c.der(0x06, Buffer.from([0x2a, 0x80, 0x03])));
+const unknownOtherPrivateValueTag = otherNameFor('1.2.3.4.6', c.der(0xc1, Buffer.from([0x00])));
 const nameFor = (id, value) => c.der(0xa4,
   c.seq(c.der(0x31, c.seq(c.oid(id), value))));
 const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
@@ -137,6 +152,24 @@ try {
     ['issuerAltNameSMTPMailbox', [ian([smtpValidUTF8])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameSMTPUnicodeDomain', [ian([smtpUnicodeDomain])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameUnknownOtherBoolean', [ian([unknownOtherBoolean])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameSMTPReservedLabel', [ian([smtpReservedLabel])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameSMTPValidALabel', [ian([smtpValidALabel])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameSMTPEmojiALabel', [ian([smtpEmojiALabel])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherNoncanonicalTrue', [ian([unknownOtherNoncanonicalTrue])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherNoncanonicalNull', [ian([unknownOtherNoncanonicalNull])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherNoncanonicalBit', [ian([unknownOtherNoncanonicalBit])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherConstructedOctet', [ian([unknownOtherConstructedOctet])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherCanonicalBit', [ian([unknownOtherCanonicalBit])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameUnknownOtherCanonicalFalse', [ian([unknownOtherCanonicalFalse])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameUnknownOtherNestedNoncanonicalTrue', [ian([unknownOtherNestedNoncanonicalTrue])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherNestedCanonical', [ian([unknownOtherNestedCanonical])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameUnknownOtherNoncanonicalEnum', [ian([unknownOtherNoncanonicalEnum])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherInvalidUTF8', [ian([unknownOtherInvalidUTF8])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherNonminimalOID', [ian([unknownOtherNonminimalOID])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherPrivateValueTag', [ian([unknownOtherPrivateValueTag])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['freshestSMTPReservedLabel', [freshest([pointFor(smtpReservedLabel)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestSMTPValidALabel', [freshest([pointFor(smtpValidALabel)])], 'VALID', 'CADES_VALID'],
+    ['aiaUnknownOtherNoncanonicalTrue', [aia('1.3.6.1.5.5.7.48.2', unknownOtherNoncanonicalTrue)], 'INVALID', 'CADES_CRL_AIA'],
     ['issuerAltNameCNBoolean', [ian([cnBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameDescriptionBoolean', [ian([descriptionBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameTelephoneBoolean', [ian([telephoneBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
