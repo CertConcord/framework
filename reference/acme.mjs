@@ -660,12 +660,14 @@ export class ACMEService {
       );
     }
     if (path === '/revoke-cert') {
+      const reasonPresent = !!p && Object.hasOwn(p, 'reason');
       requireThat(
         p?.certificate &&
-          Number.isInteger(p.reason) &&
-          p.reason >= 0 &&
-          p.reason <= 10 &&
-          ![7, 8].includes(p.reason),
+          (!reasonPresent ||
+            (Number.isInteger(p.reason) &&
+              p.reason >= 0 &&
+              p.reason <= 10 &&
+              ![7, 8].includes(p.reason))),
         'ACME_REVOCATION',
       );
       const certificate = unb64u(p.certificate),
@@ -680,7 +682,11 @@ export class ACMEService {
         }),
         'ACME_REVOCATION_AUTHORITY',
       );
-      await this.revoke({ certificate, reason: p.reason, accountID: kid });
+      await this.revoke({
+        certificate,
+        ...(reasonPresent ? { reason: p.reason } : {}),
+        accountID: kid,
+      });
       return result({});
     }
     throw Error('ACME_RESOURCE_NOT_FOUND');

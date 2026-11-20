@@ -1,0 +1,100 @@
+{
+  "profile": "RFC8555_ACME_REVOCATION_OPTIONAL_REASON_ADMISSION",
+  "source": "Original synthetic ES256-signed JWS requests; no signing keys",
+  "capturedAt": 1793675463,
+  "baseURL": "https://acme.example.invalid",
+  "kids": {
+    "owner": "https://acme.example.invalid/account/owner",
+    "other": "https://acme.example.invalid/account/other"
+  },
+  "publicJWKs": {
+    "owner": {
+      "x": "Z8tR3vYFuM6urvQ_vNsOKxrPLizUOCjQ5U-jvmE3WaM",
+      "y": "u1q5tGYyS0OBoGBpU7zFrirNRRRI_fPCXQuEZi0bnho",
+      "crv": "P-256",
+      "kty": "EC"
+    },
+    "other": {
+      "x": "WtXze8dka50qh3WWwjUF_88nv_JM8mpjWhHBeUO1eI8",
+      "y": "xnNttHc-Mp6WFxPiyDMjgKgSIfcHKYqViJ0L1uG3xvE",
+      "crv": "P-256",
+      "kty": "EC"
+    }
+  },
+  "ownedOrder": {
+    "id": "controlled-prior-issued-order",
+    "owner": "https://acme.example.invalid/account/owner",
+    "certificateHash": "425bed07baa79e5a021f3aaaab7fb2c96b96e335016d1ae19139509a536746808c5ac2d1e641d3884fabfe00777a0705d37b80d7bdbda7605d3657133a080acd"
+  },
+  "vectors": [
+    {
+      "id": "owner-native-reason0",
+      "provenance": "UNCHANGED_FROZEN_NATIVE_DTO",
+      "key": "owner",
+      "kid": "https://acme.example.invalid/account/owner",
+      "nonce": {
+        "scope": "acme",
+        "value": "qrkuqZJ1ZW-9wMRiVd2U5Lswls9GmNvLwLI2IrsNzqw",
+        "expires": 1793675763,
+        "consumed": 0
+      },
+      "jws": {
+        "protected": "eyJhbGciOiAiRVMyNTYiLCAia2lkIjogImh0dHBzOi8vYWNtZS5leGFtcGxlLmludmFsaWQvYWNjb3VudC9vd25lciIsICJub25jZSI6ICJxcmt1cVpKMVpXLTl3TVJpVmQyVTVMc3dsczlHbU52THdMSTJJcnNOenF3IiwgInVybCI6ICJodHRwczovL2FjbWUuZXhhbXBsZS5pbnZhbGlkL3Jldm9rZS1jZXJ0In0",
+        "signature": "EhO68UfScxuD1BBbZZJD2iFBLle34YFQeJOzlEJ-St3_-oSjtKMpuLU1cQlzQ0r1PS5jTNoIBC5BoRFRKKoyOA",
+        "payload": "eyJjZXJ0aWZpY2F0ZSI6ICJNSUlCNVRDQ0FZcWdBd0lCQWdJQkFqQUtCZ2dxaGtqT1BRUURBakF0TVNzd0tRWURWUVFERENKTVlXSnpJRTFoYVd4aWIzZ2dTV1JsYm5ScGRIa2dVM2x1ZEdobGRHbGpJRU5CTUI0WERUSTJNVEV3TXpBeU1UUXhNMW9YRFRJMk1URXdNekExTVRjek0xb3dHakVZTUJZR0ExVUVBd3dQVEdGaWN5QnphVzVuYkdVdGMyRnVNRmt3RXdZSEtvWkl6ajBDQVFZSUtvWkl6ajBEQVFjRFFnQUVQaE1ESi1QNWtUVEpnOUc0WGYwVFFvdkwzOGJGUWVrYkNTWk9vbVg5TVNNTWlDeWRQbnc2bkpLZmtxU2NFTTVFMzg0amJQS0V1eXZoQkhnRk0zMFN1Nk9CclRDQnFqQU1CZ05WSFJNQkFmOEVBakFBTUE0R0ExVWREd0VCX3dRRUF3SUhnREFwQmdOVkhRNEVJZ1FnaHdIN0dRQTBNb0QzeVlOeGFpZmE4RmdNT0FXVXZsYzJPOG13eHd2RmRuQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd1F3S3dZRFZSMGpCQ1F3SW9BZzM1WjJHLXdSeGZ4Z0E3Tm56ZTg5VURpZUdCYVhLV0xoeXBmbTcxZUs0V3d3SFFZRFZSMFJCQll3RklFU1FXeHBZMlZBUlhoaGJYQnNaUzVVUlZOVU1Bb0dDQ3FHU000OUJBTUNBMGtBTUVZQ0lRQ1RxUGhqZVlSeFVYY19JUDBoVnBDZXY5MVdiWWREVEhhSUZpblc0bTVBaWdJaEFPbzBsNmREN1JCN19mQkxBVXdCU0RPc0JSUHRCSy1sOG1lUktvUGpJR2RqIiwgInJlYXNvbiI6IDB9"
+      },
+      "expected": {
+        "accepted": true,
+        "reasonPresent": true,
+        "reason": 0,
+        "error": ""
+      }
+    },
+    {
+      "id": "owner-rfc-absent-reason",
+      "provenance": "EXPLICIT_RFC8555_OPTIONAL_ABSENT_REASON_PROJECTION_NATIVE_JWS_SIGNED",
+      "key": "owner",
+      "kid": "https://acme.example.invalid/account/owner",
+      "nonce": {
+        "scope": "acme",
+        "value": "6UE0qQog4C3LqQPwtYwbgt7P_KBryonIQI08wnpmIcs",
+        "expires": 1793675763,
+        "consumed": 0
+      },
+      "jws": {
+        "protected": "eyJhbGciOiAiRVMyNTYiLCAia2lkIjogImh0dHBzOi8vYWNtZS5leGFtcGxlLmludmFsaWQvYWNjb3VudC9vd25lciIsICJub25jZSI6ICI2VUUwcVFvZzRDM0xxUVB3dFl3Ymd0N1BfS0JyeW9uSVFJMDh3bnBtSWNzIiwgInVybCI6ICJodHRwczovL2FjbWUuZXhhbXBsZS5pbnZhbGlkL3Jldm9rZS1jZXJ0In0",
+        "signature": "qCLuEJWOevuDJPjN-yJKS9YKRlaPJ-ymlIIwVXPwyy44RzLFAMiCqdPQcnmvmAHsNCoit_P6VHOB7ORacInyrw",
+        "payload": "eyJjZXJ0aWZpY2F0ZSI6Ik1JSUI1VENDQVlxZ0F3SUJBZ0lCQWpBS0JnZ3Foa2pPUFFRREFqQXRNU3N3S1FZRFZRUUREQ0pNWVdKeklFMWhhV3hpYjNnZ1NXUmxiblJwZEhrZ1UzbHVkR2hsZEdsaklFTkJNQjRYRFRJMk1URXdNekF5TVRReE0xb1hEVEkyTVRFd016QTFNVGN6TTFvd0dqRVlNQllHQTFVRUF3d1BUR0ZpY3lCemFXNW5iR1V0YzJGdU1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRVBoTURKLVA1a1RUSmc5RzRYZjBUUW92TDM4YkZRZWtiQ1NaT29tWDlNU01NaUN5ZFBudzZuSktma3FTY0VNNUUzODRqYlBLRXV5dmhCSGdGTTMwU3U2T0JyVENCcWpBTUJnTlZIUk1CQWY4RUFqQUFNQTRHQTFVZER3RUJfd1FFQXdJSGdEQXBCZ05WSFE0RUlnUWdod0g3R1FBME1vRDN5WU54YWlmYThGZ01PQVdVdmxjMk84bXd4d3ZGZG5Bd0V3WURWUjBsQkF3d0NnWUlLd1lCQlFVSEF3UXdLd1lEVlIwakJDUXdJb0FnMzVaMkctd1J4ZnhnQTdObnplODlVRGllR0JhWEtXTGh5cGZtNzFlSzRXd3dIUVlEVlIwUkJCWXdGSUVTUVd4cFkyVkFSWGhoYlhCc1pTNVVSVk5VTUFvR0NDcUdTTTQ5QkFNQ0Ewa0FNRVlDSVFDVHFQaGplWVJ4VVhjX0lQMGhWcENldjkxV2JZZERUSGFJRmluVzRtNUFpZ0loQU9vMGw2ZEQ3UkI3X2ZCTEFVd0JTRE9zQlJQdEJLLWw4bWVSS29QaklHZGoifQ"
+      },
+      "expected": {
+        "accepted": true,
+        "reasonPresent": false,
+        "reason": null,
+        "error": ""
+      }
+    },
+    {
+      "id": "other-account-same-certificate",
+      "provenance": "UNCHANGED_FROZEN_NATIVE_DTO_OTHER_NATIVE_ACCOUNT_KEY",
+      "key": "other",
+      "kid": "https://acme.example.invalid/account/other",
+      "nonce": {
+        "scope": "acme",
+        "value": "A9SKfVOg_1hps99iug6mgt3CnHX2jANzKmTV-5LgK4Q",
+        "expires": 1793675763,
+        "consumed": 0
+      },
+      "jws": {
+        "protected": "eyJhbGciOiAiRVMyNTYiLCAia2lkIjogImh0dHBzOi8vYWNtZS5leGFtcGxlLmludmFsaWQvYWNjb3VudC9vdGhlciIsICJub25jZSI6ICJBOVNLZlZPZ18xaHBzOTlpdWc2bWd0M0NuSFgyakFOekttVFYtNUxnSzRRIiwgInVybCI6ICJodHRwczovL2FjbWUuZXhhbXBsZS5pbnZhbGlkL3Jldm9rZS1jZXJ0In0",
+        "signature": "I2YqFsEKn76K_NOGQJxC2qfarSFYRwEf8_RuToBhcChiPG90CYq7423-rHXvVTk7bnnmDbT2BJxckp1_otfw9Q",
+        "payload": "eyJjZXJ0aWZpY2F0ZSI6ICJNSUlCNVRDQ0FZcWdBd0lCQWdJQkFqQUtCZ2dxaGtqT1BRUURBakF0TVNzd0tRWURWUVFERENKTVlXSnpJRTFoYVd4aWIzZ2dTV1JsYm5ScGRIa2dVM2x1ZEdobGRHbGpJRU5CTUI0WERUSTJNVEV3TXpBeU1UUXhNMW9YRFRJMk1URXdNekExTVRjek0xb3dHakVZTUJZR0ExVUVBd3dQVEdGaWN5QnphVzVuYkdVdGMyRnVNRmt3RXdZSEtvWkl6ajBDQVFZSUtvWkl6ajBEQVFjRFFnQUVQaE1ESi1QNWtUVEpnOUc0WGYwVFFvdkwzOGJGUWVrYkNTWk9vbVg5TVNNTWlDeWRQbnc2bkpLZmtxU2NFTTVFMzg0amJQS0V1eXZoQkhnRk0zMFN1Nk9CclRDQnFqQU1CZ05WSFJNQkFmOEVBakFBTUE0R0ExVWREd0VCX3dRRUF3SUhnREFwQmdOVkhRNEVJZ1FnaHdIN0dRQTBNb0QzeVlOeGFpZmE4RmdNT0FXVXZsYzJPOG13eHd2RmRuQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd1F3S3dZRFZSMGpCQ1F3SW9BZzM1WjJHLXdSeGZ4Z0E3Tm56ZTg5VURpZUdCYVhLV0xoeXBmbTcxZUs0V3d3SFFZRFZSMFJCQll3RklFU1FXeHBZMlZBUlhoaGJYQnNaUzVVUlZOVU1Bb0dDQ3FHU000OUJBTUNBMGtBTUVZQ0lRQ1RxUGhqZVlSeFVYY19JUDBoVnBDZXY5MVdiWWREVEhhSUZpblc0bTVBaWdJaEFPbzBsNmREN1JCN19mQkxBVXdCU0RPc0JSUHRCSy1sOG1lUktvUGpJR2RqIiwgInJlYXNvbiI6IDF9"
+      },
+      "expected": {
+        "accepted": false,
+        "reasonPresent": true,
+        "reason": 1,
+        "error": "ACME_REVOCATION_AUTHORITY"
+      }
+    }
+  ]
+}
