@@ -4,6 +4,7 @@ import {
   PDFDict,
   PDFArray,
   PDFName,
+  PDFNull,
   PDFRef,
   PDFNumber,
   PDFHexString,
@@ -601,14 +602,37 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
     fieldsSeen = new Set(),
     signatureIDs = new Set(),
     fieldNames = new Set(),
-    signedNames = new Set();
-  function visit(reference, inheritedType, depth = 0, parentName = '') {
+    signedNames = new Set(),
+    leafRepresentations = new Map();
+  const sameFieldValue = (left, right) => {
+    if (left === PDFNull) left = undefined;
+    if (right === PDFNull) right = undefined;
+    if (left === undefined || right === undefined) return left === right;
+    if (left instanceof PDFRef || right instanceof PDFRef)
+      return left instanceof PDFRef && right instanceof PDFRef && refID(left) === refID(right);
+    if (left instanceof PDFName && right instanceof PDFName)
+      return name(left) === name(right);
+    if ((left instanceof PDFString || left instanceof PDFHexString) &&
+        (right instanceof PDFString || right instanceof PDFHexString))
+      return left.decodeText() === right.decodeText();
+    if (left instanceof PDFNumber && right instanceof PDFNumber)
+      return Object.is(left.asNumber(), right.asNumber());
+    return left.constructor === right.constructor && left.toString() === right.toString();
+  };
+  function visit(reference, inheritedType, depth = 0, parentName = '', parentReference, inheritedDefaultValue) {
     check(reference instanceof PDFRef, 'PADES_FIELD_INDIRECT');
     const id = refID(reference);
     check(!fieldsSeen.has(id) && depth <= 20, 'PADES_FIELD_CYCLE_OR_DEPTH');
     fieldsSeen.add(id);
     const field = rev.resolve(reference);
     check(field instanceof PDFDict, 'PADES_FIELD');
+    if (parentReference !== undefined) {
+      const actualParent = get(field, 'Parent');
+      check(
+        actualParent instanceof PDFRef && refID(actualParent) === refID(parentReference),
+        'PADES_FIELD_PARENT',
+      );
+    }
     const partialName = get(field, 'T');
     check(
       partialName === undefined ||
@@ -626,8 +650,31 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
       check(!fieldNames.has(qualifiedName), 'PADES_DUPLICATE_FIELD_NAME');
       fieldNames.add(qualifiedName);
     }
-    const type = name(get(field, 'FT')) ?? inheritedType,
+    const localType = rev.resolve(get(field, 'FT'));
+    check(
+      localType === undefined || localType === PDFNull || localType instanceof PDFName,
+      'PADES_FIELD_TYPE',
+    );
+    const type = name(localType) ?? inheritedType,
       value = get(field, 'V');
+    const localDefaultValue = get(field, 'DV');
+    const defaultValue = localDefaultValue === undefined || rev.resolve(localDefaultValue) === PDFNull
+      ? inheritedDefaultValue : localDefaultValue;
+    if (get(field, 'Kids') === undefined) {
+      const previous = leafRepresentations.get(qualifiedName);
+      if (previous !== undefined) {
+        check(
+          qualifiedName.length > 0 && partialName === undefined && previous.unnamed &&
+            type === previous.type && sameFieldValue(value, previous.value) &&
+            sameFieldValue(defaultValue, previous.defaultValue),
+          'PADES_DUPLICATE_FIELD_NAME',
+        );
+        return;
+      }
+      leafRepresentations.set(qualifiedName, {
+        unnamed: partialName === undefined, type, value, defaultValue,
+      });
+    }
     if (type === 'Sig' && value !== undefined) {
       check(!signedNames.has(qualifiedName), 'PADES_DUPLICATE_FIELD_NAME');
       signedNames.add(qualifiedName);
@@ -747,7 +794,7 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
     const kids = rev.resolve(get(field, 'Kids'));
     if (kids !== undefined) {
       check(kids instanceof PDFArray, 'PADES_FIELD_KIDS');
-      kids.asArray().forEach((kid) => visit(kid, type, depth + 1, qualifiedName));
+      kids.asArray().forEach((kid) => visit(kid, type, depth + 1, qualifiedName, reference, defaultValue));
     }
   }
   rev.fields.forEach((field) => visit(field));

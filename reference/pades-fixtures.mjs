@@ -144,6 +144,9 @@ export function signatureContainer(
     signatureBytes = 8192,
     fieldName,
     parentFieldName,
+    fieldDictionary,
+    parentDictionary,
+    additionalObjects,
     sigFlags = '3',
     extra = '',
     dictionary,
@@ -176,16 +179,19 @@ export function signatureContainer(
   const range = '0 ' + Array(3).fill('0'.repeat(20)).join(' ');
   let body = `<< /Type /${type} /Filter /Adobe.PPKLite /SubFilter /${subFilter}${kind === 'SIGNATURE' && !omitM ? ` /M (D:${date(signingTime)})` : ''}${kind === 'TIMESTAMP' ? ' /V 0' : ''} /ByteRange [${range}] /Contents <${'0'.repeat(signatureBytes * 2)}>${extra ? ` ${extra}` : ''} >>`;
   if (dictionary) body = dictionary(body);
+  const fieldBody = `<< /FT /Sig /T (${fieldName.replace(/[()\\]/g, '_')})${parent === undefined ? '' : ` /Parent ${parent} 0 R`} /V ${sig} 0 R >>`;
+  const parentBody = parent === undefined ? undefined : `<< /T (${parentFieldName.replace(/[()\\]/g, '_')}) /Kids [${field} 0 R] >>`;
   const output = appendRevision(
     pdf,
     [
       { number: sig, body },
       {
         number: field,
-        body: `<< /FT /Sig /T (${fieldName.replace(/[()\\]/g, '_')})${parent === undefined ? '' : ` /Parent ${parent} 0 R`} /V ${sig} 0 R >>`,
+        body: fieldDictionary ? fieldDictionary(fieldBody) : fieldBody,
       },
-      ...(parent === undefined ? [] : [{ number: parent, body: `<< /T (${parentFieldName.replace(/[()\\]/g, '_')}) /Kids [${field} 0 R] >>` }]),
+      ...(parent === undefined ? [] : [{ number: parent, body: parentDictionary ? parentDictionary(parentBody) : parentBody }]),
       { number: form, body: `<< /Fields [${oldFields} ${parent ?? field} 0 R]${sigFlags === null ? '' : ` /SigFlags ${sigFlags}`} >>` },
+      ...(additionalObjects?.({ state, sig, field, parent, form }) ?? []),
       { number: state.root, generation: state.rootGeneration, body: catalog },
     ],
     { objectHeader, objectPrefix, xrefPrefix },
