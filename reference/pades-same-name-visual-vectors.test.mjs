@@ -11,7 +11,7 @@ import { inspectPAdESContainer } from './pades-structure.mjs';
 
 const raw = readFileSync(new URL('./vectors/pades-same-name-visual.json', import.meta.url));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-assert.equal(sha(raw), '38931e29661c05e17094feceea8435842fc1a8f8aa40d13823802bdccfc06c9b');
+assert.equal(sha(raw), '123a38ddc24ef503d3365e90692f0e9f51b1366a3e13e385d59a17e58a7543b8');
 const vectors = JSON.parse(raw);
 assert.equal(vectors.schema, 'certconcord.pades-same-name-visual.v1');
 const load = entry => {
@@ -58,10 +58,16 @@ test('frozen public same-name visual signer and root signatures verify', () => {
   assert(signer.verify(root.publicKey));
 });
 
+const inheritedModes = new Set([
+  'sharedLocalAndInherited', 'sharedInheritedOnly',
+  'differentLocalValue', 'differentLocalType', 'nonWidgetDuplicate',
+]);
 for (const [mode, entry] of Object.entries(vectors.signedPDF))
   test(`frozen signed same-name visual field: ${mode}`, async () => {
     const pdf = load(entry);
-    assert(pdf.includes(Buffer.from('/FT /Sig /Kids [')));
+    const parentField = inheritedModes.has(mode)
+      ? '/FT /Sig /V 6 0 R /Kids [' : '/FT /Sig /Kids [';
+    assert(pdf.includes(Buffer.from(parentField)));
     const signatures = pdfSignatures(pdf);
     assert.equal(signatures.length, 1);
     const [signature] = signatures;

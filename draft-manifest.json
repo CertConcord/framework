@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 14768,
-      "sha256": "4b5cc153911b4a7ef8bd297167e2d31496d4dde64ea8524f5a24cffe27ab5719"
+      "bytes": 14879,
+      "sha256": "e602e0122f8883b4ab16a86b1302fe0bddb5538fc2aa775ef0a924c20215446b"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 306437,
-      "sha256": "8492b563303da3562afbccda584df2a9d8c5ebf5cd28cfaa8de758364294b7a0"
+      "bytes": 306491,
+      "sha256": "da37f914cb21d5bca1c69eaa8135d0c74fb08575fb11ec1432c5f88da4d786aa"
     },
     {
       "path": "reference/README.md",
@@ -1564,6 +1564,11 @@
       "sha256": "82588cff39a3676db17089859ccc4850ae597fef82f50e08b217779320da4bd2"
     },
     {
+      "path": "reference/pades-inherited-value-visual.test.mjs",
+      "bytes": 3271,
+      "sha256": "8e0acdc573f6ac07e47afb8bee8c2d7ab3d3c9f2bcd57bdd74378270737edbf3"
+    },
+    {
       "path": "reference/pades-io.mjs",
       "bytes": 2512,
       "sha256": "0fcc793e371d84f6f88456abea08d01f9b09b5a995cb1db46045941b51d161a1"
@@ -1580,8 +1585,8 @@
     },
     {
       "path": "reference/pades-same-name-visual-vectors.test.mjs",
-      "bytes": 3747,
-      "sha256": "9554dd88f194cf5da596cd0549aa2346902ca3798260a53ff47521941c028c2b"
+      "bytes": 4005,
+      "sha256": "c7d65ef58b6ceac7d5cde4a6d69906d497f2fba5b7d0a0d233ca9f8d301cb77b"
     },
     {
       "path": "reference/pades-same-name-visual.test.mjs",
@@ -1615,8 +1620,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 52430,
-      "sha256": "991940cf9805ccf2450fe87c3c09875da871b0e67d7c2a7c6548682ba584aea4"
+      "bytes": 53130,
+      "sha256": "d5e67a7ee1c7cb096ed4c3f00e10e864e3394a309711eba9be7fa3cfbfb6df67"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -7995,8 +8000,8 @@
     },
     {
       "path": "reference/vectors/pades-same-name-visual.json",
-      "bytes": 124324,
-      "sha256": "38931e29661c05e17094feceea8435842fc1a8f8aa40d13823802bdccfc06c9b"
+      "bytes": 246822,
+      "sha256": "123a38ddc24ef503d3365e90692f0e9f51b1366a3e13e385d59a17e58a7543b8"
     },
     {
       "path": "reference/vectors/pades-signature-version-admission.json",

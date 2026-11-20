@@ -311,6 +311,7 @@
   "reference/pades-field-tree-admission.test.mjs",
   "reference/pades-field-tree-vectors.test.mjs",
   "reference/pades-fixtures.mjs",
+  "reference/pades-inherited-value-visual.test.mjs",
   "reference/pades-io.mjs",
   "reference/pades-lexer.test.mjs",
   "reference/pades-revision-security.test.mjs",

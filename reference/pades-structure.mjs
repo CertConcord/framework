@@ -602,7 +602,7 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
     fieldsSeen = new Set(),
     signatureIDs = new Set(),
     fieldNames = new Set(),
-    signedNames = new Set(),
+    signedNames = new Map(),
     leafRepresentations = new Map();
   const sameFieldValue = (left, right) => {
     if (left === PDFNull) left = undefined;
@@ -619,7 +619,7 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
       return Object.is(left.asNumber(), right.asNumber());
     return left.constructor === right.constructor && left.toString() === right.toString();
   };
-  function visit(reference, inheritedType, depth = 0, parentName = '', parentReference, inheritedDefaultValue) {
+  function visit(reference, inheritedType, depth = 0, parentName = '', parentReference, inheritedDefaultValue, inheritedValue) {
     check(reference instanceof PDFRef, 'PADES_FIELD_INDIRECT');
     const id = refID(reference);
     check(!fieldsSeen.has(id) && depth <= 20, 'PADES_FIELD_CYCLE_OR_DEPTH');
@@ -655,29 +655,42 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
       localType === undefined || localType === PDFNull || localType instanceof PDFName,
       'PADES_FIELD_TYPE',
     );
-    const type = name(localType) ?? inheritedType,
-      value = get(field, 'V');
+    const type = name(localType) ?? inheritedType;
+    const localValue = get(field, 'V');
+    const value = localValue === undefined || rev.resolve(localValue) === PDFNull
+      ? inheritedValue : localValue;
     const localDefaultValue = get(field, 'DV');
     const defaultValue = localDefaultValue === undefined || rev.resolve(localDefaultValue) === PDFNull
       ? inheritedDefaultValue : localDefaultValue;
-    if (get(field, 'Kids') === undefined) {
+    const isLeaf = get(field, 'Kids') === undefined;
+    const isWidget = name(rev.resolve(get(field, 'Subtype'))) === 'Widget';
+    const previousSigned = signedNames.get(qualifiedName);
+    if (previousSigned !== undefined)
+      check(
+        isLeaf && partialName === undefined && isWidget &&
+          type === previousSigned.type && sameFieldValue(value, previousSigned.value) &&
+          sameFieldValue(defaultValue, previousSigned.defaultValue),
+        'PADES_DUPLICATE_FIELD_NAME',
+      );
+    if (isLeaf) {
       const previous = leafRepresentations.get(qualifiedName);
       if (previous !== undefined) {
         check(
           qualifiedName.length > 0 && partialName === undefined && previous.unnamed &&
-            type === previous.type && sameFieldValue(value, previous.value) &&
+            isWidget && previous.widget && type === previous.type &&
+            sameFieldValue(value, previous.value) &&
             sameFieldValue(defaultValue, previous.defaultValue),
           'PADES_DUPLICATE_FIELD_NAME',
         );
         return;
       }
       leafRepresentations.set(qualifiedName, {
-        unnamed: partialName === undefined, type, value, defaultValue,
+        unnamed: partialName === undefined, widget: isWidget, type, value, defaultValue,
       });
     }
     if (type === 'Sig' && value !== undefined) {
-      check(!signedNames.has(qualifiedName), 'PADES_DUPLICATE_FIELD_NAME');
-      signedNames.add(qualifiedName);
+      if (previousSigned !== undefined) return;
+      signedNames.set(qualifiedName, { type, value, defaultValue });
       check(value instanceof PDFRef, 'PADES_SIGNATURE_INDIRECT');
       const signatureID = refID(value),
         signature = rev.resolve(value);
@@ -794,7 +807,8 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
     const kids = rev.resolve(get(field, 'Kids'));
     if (kids !== undefined) {
       check(kids instanceof PDFArray, 'PADES_FIELD_KIDS');
-      kids.asArray().forEach((kid) => visit(kid, type, depth + 1, qualifiedName, reference, defaultValue));
+      kids.asArray().forEach((kid) =>
+        visit(kid, type, depth + 1, qualifiedName, reference, defaultValue, value));
     }
   }
   rev.fields.forEach((field) => visit(field));
