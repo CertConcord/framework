@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305646,
-      "sha256": "19cea0734326d9b7467234ea74c3ee0520226a045bfa0bc65b0b3e83cb48f95c"
+      "bytes": 305756,
+      "sha256": "8fff0ed970c4389e2c9184f2c569f746764df898d396d0168d61a0dcd0ddb39b"
     },
     {
       "path": "reference/README.md",
@@ -1567,6 +1567,11 @@
       "path": "reference/pades-signed-field-structure.test.mjs",
       "bytes": 2505,
       "sha256": "c1efcf4f87bca357d55b5fe260e0e43e9556b10ae2bbd08ae7fc8bac406f592e"
+    },
+    {
+      "path": "reference/pades-signed-field-vectors.test.mjs",
+      "bytes": 3599,
+      "sha256": "e30f48ce1ac1ef5d6ddcfcd122606eba51e46491369b503b057d4ec0e0786554"
     },
     {
       "path": "reference/pades-structure.mjs",
@@ -7937,6 +7942,11 @@
       "path": "reference/vectors/original-status-proof-mtc07-rar2/manifest.json",
       "bytes": 57635,
       "sha256": "b555ebedb7a783d31c08c7870059decf3e5dfec6d9fca23c5d336ac669450480"
+    },
+    {
+      "path": "reference/vectors/pades-signed-field-structure.json",
+      "bytes": 193488,
+      "sha256": "39b8c612fca47850b08707ef6c43041a01d1b87b6246fd1ee3e7f8aaaf792bc1"
     },
     {
       "path": "reference/vectors/pkcs10-structure.json",
