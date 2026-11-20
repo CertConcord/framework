@@ -109,6 +109,7 @@
   "reference/cades-hold-release.test.mjs",
   "reference/cades-interop.test.mjs",
   "reference/cades-material.test.mjs",
+  "reference/cades-printablestring-byte-admission.test.mjs",
   "reference/cades-root-issuer-dn-equivalence.test.mjs",
   "reference/cades-security.test.mjs",
   "reference/cades-signer-crldp.test.mjs",

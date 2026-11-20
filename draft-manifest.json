@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 36537,
-      "sha256": "d0c78856c7329ac224697f59e9b307dcda1f64e3af728f5fb5f38ef50445a9ef"
+      "bytes": 37443,
+      "sha256": "692582b4fc436abd8877df812838b3beb6b153f827d01b2aa99a64996e669070"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305756,
-      "sha256": "8fff0ed970c4389e2c9184f2c569f746764df898d396d0168d61a0dcd0ddb39b"
+      "bytes": 305818,
+      "sha256": "1378dff97844c84bc3b3f8bc69c0cfa21d9678310090c2a7238fdfe4323ed1bf"
     },
     {
       "path": "reference/README.md",
@@ -552,6 +552,11 @@
       "path": "reference/cades-material.test.mjs",
       "bytes": 7423,
       "sha256": "927440b71587c048b1da796de704ef6a6950637657d5a93188c2e94b8277db02"
+    },
+    {
+      "path": "reference/cades-printablestring-byte-admission.test.mjs",
+      "bytes": 5707,
+      "sha256": "13ad1a0c00ee70926a7556c0cfc7f7850af6337972360c7f83fcc617a7d49558"
     },
     {
       "path": "reference/cades-root-issuer-dn-equivalence.test.mjs",
@@ -13365,8 +13370,8 @@
     },
     {
       "path": "reference/x509-name.mjs",
-      "bytes": 5306,
-      "sha256": "ee87377d35be74110c1b124dcf7909485486c08cdfd49457007f98a3a314cc9f"
+      "bytes": 5388,
+      "sha256": "206b257d0f240b12a1cbb425a38b6517a6f24e56c16a4330358264fca0ebe289"
     },
     {
       "path": "reference/x509-name.test.mjs",

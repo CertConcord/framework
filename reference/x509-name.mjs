@@ -110,7 +110,8 @@ function canonicalValue(id, node) {
         try { value = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(node.value); }
         catch { fail(); }
       } else {
-        value = node.value.toString('ascii');
+        // latin1 preserves each original octet; ascii would clear its high bit.
+        value = node.value.toString('latin1');
         if (!/^[A-Za-z0-9 '()+,\-./:=?]+$/.test(value)) fail();
       }
       return `ci:${prepareDirectoryString(value)}`;
