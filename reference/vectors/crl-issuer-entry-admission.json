@@ -1,0 +1,18 @@
+{
+  "profile": "complete direct CRL and selected direct-root CAdES B",
+  "standard": "https://www.rfc-editor.org/rfc/rfc5280.html#section-5.3",
+  "issuer": {
+    "removeFromCRL": "CRL_ENTRY"
+  },
+  "verifier": {
+    "certificateHold": "CRL_REVOKED",
+    "removeFromCRL": "DELTA_CRL_UNSUPPORTED",
+    "badSignature": "CRL_SIGNATURE"
+  },
+  "cades": {
+    "noncriticalEarlier": "CADES_VALID",
+    "noncriticalLater": "CADES_VALID",
+    "criticalEarlier": "CADES_CRL_ENTRY_EXTENSION_UNSUPPORTED"
+  },
+  "controls": "Tests create fresh synthetic signed CRLs. The complete CRL issuer rejects reason 8 before signing; an independently re-signed complete CRL proves verifier rejection. CAdES controls retain one CMS signer and an unrelated revoked serial 77 while changing only invalidityDate value or criticality and CRL signature."
+}

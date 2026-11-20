@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 33842,
-      "sha256": "8cf80de3a7466960a8fabb9472c6ef6b2d4de1a4560cab6f7058eb30740876fb"
+      "bytes": 34936,
+      "sha256": "6c280074ba7a20e6295cf19b9295534be1f50712098e579ccdaefecaf00596fb"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -170,8 +170,8 @@
     },
     {
       "path": "docs/crl-structure.md",
-      "bytes": 5338,
-      "sha256": "59b01f8c1ca8c65fb841f4be0574c723e0f154ae535971461e8bde295453a969"
+      "bytes": 5800,
+      "sha256": "e20ff52765ffdf9b56d7fc4daac5e256086f0e08c25c0fbcf6cedf02648f07a1"
     },
     {
       "path": "docs/csc.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305388,
-      "sha256": "d7435eaecefcc1fb9b6a2b89f1ab99f8a0f73a52eb484765c51903fe762e7be5"
+      "bytes": 305496,
+      "sha256": "90190ddeeaf2c81855d23158b40a5a5ae344030db6e6c055ffae426428c1cf1e"
     },
     {
       "path": "reference/README.md",
@@ -595,8 +595,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 38648,
-      "sha256": "7a58a88670a16d2b9a86f8335ddc6af8fca1b05d0107b7769765aa4e123a614c"
+      "bytes": 38554,
+      "sha256": "5e08121315291e7a73eb23f1b48da0ef92fe09b2fca292595f174b0e9151f77d"
     },
     {
       "path": "reference/cades.mjs",
@@ -737,6 +737,11 @@
       "path": "reference/crl-der-structure.test.mjs",
       "bytes": 5227,
       "sha256": "cdb65d82bf6ba38ccde2ecbcb8cce2db8e8129719651ddb20730cbe99756fec2"
+    },
+    {
+      "path": "reference/crl-issuer-entry-admission.test.mjs",
+      "bytes": 4534,
+      "sha256": "67f7915902f8b714d0f3a48151e853bbc306628b81cc38e179a036ccba05addc"
     },
     {
       "path": "reference/crl-reason-codes.test.mjs",
@@ -2632,6 +2637,11 @@
       "path": "reference/vectors/crl-der-structure.json",
       "bytes": 7987,
       "sha256": "5e69df32de47e8c3197f82e08ba8927231f468817c4eb0c9954ff1e3de0be3e6"
+    },
+    {
+      "path": "reference/vectors/crl-issuer-entry-admission.json",
+      "bytes": 829,
+      "sha256": "4afbeda36ee29a6622efac35ea051c39fd1428083c63072948052a62881740e1"
     },
     {
       "path": "reference/vectors/crl-reason-codes.json",
@@ -13380,8 +13390,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 59442,
-      "sha256": "7817117a5ab63ecbc382489e69103da9d1817ebda434a85b6045fa01d40db109"
+      "bytes": 60062,
+      "sha256": "7370244a1f87d382e078e4e9be362fc8a12f7d99c996362a1b0a38a39eb5e091"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",
