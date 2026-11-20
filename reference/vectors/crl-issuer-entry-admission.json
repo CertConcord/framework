@@ -12,7 +12,9 @@
   "cades": {
     "noncriticalEarlier": "CADES_VALID",
     "noncriticalLater": "CADES_VALID",
+    "matchingBeforeEffective": "VALID",
+    "matchingAfterEffective": "INVALID",
     "criticalEarlier": "CADES_CRL_ENTRY_EXTENSION_UNSUPPORTED"
   },
-  "controls": "Tests create fresh synthetic signed CRLs. The complete CRL issuer rejects reason 8 before signing; an independently re-signed complete CRL proves verifier rejection. CAdES controls retain one CMS signer and an unrelated revoked serial 77 while changing only invalidityDate value or criticality and CRL signature."
+  "controls": "Tests create fresh synthetic signed CRLs. The complete CRL issuer rejects reason 8 before signing; an independently re-signed complete CRL proves verifier rejection. CAdES controls retain one CMS signer and an unrelated revoked serial 77 while changing only invalidityDate value or criticality and CRL signature. Additional signed CRLs put each time ordering on the matching signer serial and check validation immediately before and after the earlier effective time."
 }

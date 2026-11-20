@@ -740,8 +740,8 @@
     },
     {
       "path": "reference/crl-issuer-entry-admission.test.mjs",
-      "bytes": 4534,
-      "sha256": "67f7915902f8b714d0f3a48151e853bbc306628b81cc38e179a036ccba05addc"
+      "bytes": 5421,
+      "sha256": "207684d718dddc6f4f4077666a15db730bee1dff417da65057a46e163566a2d6"
     },
     {
       "path": "reference/crl-reason-codes.test.mjs",
@@ -2640,8 +2640,8 @@
     },
     {
       "path": "reference/vectors/crl-issuer-entry-admission.json",
-      "bytes": 829,
-      "sha256": "4afbeda36ee29a6622efac35ea051c39fd1428083c63072948052a62881740e1"
+      "bytes": 1064,
+      "sha256": "81b3b0861c2b6524497e35cc993e2962c2b2f7d19f96afe41b5184df4f152850"
     },
     {
       "path": "reference/vectors/crl-reason-codes.json",

@@ -48,8 +48,8 @@ test('CAdES complete CRL entry admits noncritical invalidity dates on either sid
     const f = fixture();
     try {
       const cms = f.baseCMS({ prepareCAdESSignature }, { detached: false });
-      const verify = (crl) => verifyCAdES(cms, { content: f.content,
-        minimumLevel: 'B', validationTime: epoch + 40, knowledgeTime: epoch + 40,
+      const verify = (crl, at = epoch + 40) => verifyCAdES(cms, { content: f.content,
+        minimumLevel: 'B', validationTime: at, knowledgeTime: epoch + 40,
         policy: f.policy({ currentMaterial: {
           certificates: [f.root.der, f.signer.der], crls: [crl],
         } }) });
@@ -67,6 +67,23 @@ test('CAdES complete CRL entry admits noncritical invalidity dates on either sid
       }
       assert.equal(verify(earlier).reason, cases.cades.noncriticalEarlier);
       assert.equal(verify(later).reason, cases.cades.noncriticalLater);
+
+      // The same dates on the signer serial must retain the earlier effective time.
+      const matchedLater = f.crl({ utcTime: true, entries: [
+        { serial: f.signer.cert.serial, reason: 1,
+          revokedAt: epoch + 30, invalidityDate: epoch + 50 },
+      ] });
+      const matchedEarlier = f.crl({ utcTime: true, entries: [
+        { serial: f.signer.cert.serial, reason: 1,
+          revokedAt: epoch + 50, invalidityDate: epoch + 30 },
+      ] });
+      for (const raw of [matchedLater, matchedEarlier]) {
+        const node = c.parseDER(raw);
+        assert(verifySignature('sha256', node.children[0].raw, f.root.publicKey,
+          node.children[2].value.subarray(1)));
+        assert.equal(verify(raw, epoch + 20).overall, cases.cades.matchingBeforeEffective);
+        assert.equal(verify(raw, epoch + 40).overall, cases.cades.matchingAfterEffective);
+      }
 
       const original = c.parseDER(earlier);
       const tbsFields = original.children[0].children;
