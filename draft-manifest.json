@@ -1775,8 +1775,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 16241,
-      "sha256": "8c5d7174e1eaeab1379ccaf01b21cc054d85f496c28d87f466698082b0adc14d"
+      "bytes": 16267,
+      "sha256": "6d8247c0ba8e3de555df187636146c4e172244f30d7d0b2bf700513125581de1"
     },
     {
       "path": "reference/rfc3454-tables.mjs",
