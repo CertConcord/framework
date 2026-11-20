@@ -1650,8 +1650,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 23884,
-      "sha256": "553639c743096a64579c1c6352f43c9705744faae41331641118bb9537c89732"
+      "bytes": 24313,
+      "sha256": "9ab910b024189e2cc146d7ccb4e32a9bf4673f32585b3b485e83211ffbc7de0d"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
