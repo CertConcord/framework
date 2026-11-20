@@ -599,7 +599,8 @@ function crlAttribute(node) {
     return value.tag === 0x13 && directoryString({ children: [value] }) &&
       (id !== '2.5.4.6' || value.value.length === 2) &&
       (id !== '2.5.4.20' || (value.value.length <= 32 &&
-        /^[+ 0-9-]+$/.test(value.value.toString('ascii'))));
+        /^[+ 0-9-]+$/.test(value.value.toString('ascii')))) &&
+      (id !== '2.5.4.27' || /^[A-Za-z]+$/.test(value.value.toString('ascii')));
   if (CRL_IA5_NAME_OIDS.has(id))
     return value.tag === 0x16 && value.value.every(byte => byte > 0x20 && byte < 0x7f);
   // Other X.520 names and RFC 4519 uid have known, unselected value syntaxes.
@@ -620,22 +621,42 @@ function crlDNSName(value) {
       /^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(label));
 }
 
+function crlURIChars(text, extra = '') {
+  for (let index = 0; index < text.length; index++) {
+    const char = text[index];
+    if (char === '%') {
+      if (!/^[0-9A-Fa-f]{2}$/.test(text.slice(index + 1, index + 3))) return false;
+      index += 2;
+    } else if (!/^[A-Za-z0-9._~!$&'()*+,;=:@-]$/.test(char) &&
+               !extra.includes(char)) return false;
+  }
+  return true;
+}
+
 function crlAbsoluteURI(value) {
   const text = Buffer.from(value).toString('ascii');
   const colon = text.indexOf(':');
   if (colon <= 0 || colon === text.length - 1 ||
       !/^[A-Za-z][A-Za-z0-9+.-]*$/.test(text.slice(0, colon)) ||
-      !value.every((byte) => byte > 0x20 && byte < 0x7f) ||
-      !/^[A-Za-z0-9._~:/?#\[\]@!$&'()*+,;=%-]+$/.test(text) ||
-      /%(?![0-9A-Fa-f]{2})/.test(text)) return false;
+      !value.every(byte => byte > 0x20 && byte < 0x7f)) return false;
   const part = text.slice(colon + 1);
-  if (/^https?$/i.test(text.slice(0, colon)) && !part.startsWith('//')) return false;
-  if (!part.startsWith('//')) return true;
-  const authority = part.slice(2).split(/[/?#]/, 1)[0];
-  if (!authority || authority.indexOf("@") !== authority.lastIndexOf("@")) return false;
-  const at = authority.indexOf("@");
-  if (at >= 0 && !/^[A-Za-z0-9._~!$&'()*+,;=:%-]*$/.test(authority.slice(0, at)))
-    return false;
+  const hash = part.indexOf('#');
+  const beforeFragment = hash < 0 ? part : part.slice(0, hash);
+  const fragment = hash < 0 ? '' : part.slice(hash + 1);
+  const question = beforeFragment.indexOf('?');
+  const hierarchy = question < 0 ? beforeFragment : beforeFragment.slice(0, question);
+  const query = question < 0 ? '' : beforeFragment.slice(question + 1);
+  if (!crlURIChars(query, '/?') || !crlURIChars(fragment, '/?')) return false;
+  if (/^https?$/i.test(text.slice(0, colon)) && !hierarchy.startsWith('//')) return false;
+  if (!hierarchy.startsWith('//')) return crlURIChars(hierarchy, '/');
+  const afterSlashes = hierarchy.slice(2);
+  const slash = afterSlashes.indexOf('/');
+  const authority = slash < 0 ? afterSlashes : afterSlashes.slice(0, slash);
+  const path = slash < 0 ? '' : afterSlashes.slice(slash);
+  if (!crlURIChars(path, '/') || !authority ||
+      authority.indexOf('@') !== authority.lastIndexOf('@')) return false;
+  const at = authority.indexOf('@');
+  if (at >= 0 && !crlURIChars(authority.slice(0, at))) return false;
   const hostPort = authority.slice(at + 1);
   if (hostPort.startsWith('[')) {
     const close = hostPort.indexOf(']');
@@ -645,7 +666,7 @@ function crlAbsoluteURI(value) {
   }
   const portAt = hostPort.lastIndexOf(':');
   const host = portAt < 0 ? hostPort : hostPort.slice(0, portAt);
-  const port = portAt < 0 ? "" : hostPort.slice(portAt);
+  const port = portAt < 0 ? '' : hostPort.slice(portAt);
   if (!host || (port && !/^:[0-9]*$/.test(port))) return false;
   if (isIP(host) === 4) return true;
   if (/^[0-9.]+$/.test(host)) return false;
@@ -653,6 +674,31 @@ function crlAbsoluteURI(value) {
   return dns.includes('.') && crlDNSName(Buffer.from(dns, 'ascii'));
 }
 
+function crlOtherName(name) {
+  if (name.children?.length !== 2 || name.children[0].tag !== 6 ||
+      !validOIDContents(name.children[0].value) ||
+      name.children[1].tag !== 0xa0 ||
+      name.children[1].children?.length !== 1) return false;
+  const id = oidText(name.children[0]);
+  const inner = name.children[1].children[0];
+  if (id === SMTP_UTF8_NAME) {
+    if (inner.tag !== 0x0c || !directoryString({ children: [inner] }) ||
+        inner.value.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf]))) return false;
+    const mailbox = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(inner.value);
+    const at = mailbox.indexOf('@');
+    const local = mailbox.slice(0, at), domain = mailbox.slice(at + 1);
+    return at > 0 && at === mailbox.lastIndexOf('@') &&
+      Array.from(local).some(char => char.codePointAt(0) > 0x7f) &&
+      /^[\p{L}\p{N}._+-]+$/u.test(local) &&
+      !local.startsWith('.') && !local.endsWith('.') && !local.includes('..') &&
+      domain === domain.toLowerCase() && domain.includes('.') &&
+      Array.from(domain).every(char => char.codePointAt(0) < 0x80) &&
+      crlDNSName(Buffer.from(domain, 'ascii'));
+  }
+  // Other standard id-on value syntaxes are outside this selected CRL profile.
+  if (id.startsWith('1.3.6.1.5.5.7.8.')) return false;
+  return true;
+}
 function crlMailName(value) {
   if (!value.every((byte) => byte < 128)) return false;
   const text = Buffer.from(value).toString('ascii');
@@ -670,10 +716,7 @@ function crlGeneralName(name) {
   if (name.tag === 0x81) return crlMailName(name.value);
   if (name.tag === 0x82) return crlDNSName(name.value);
   if (name.tag === 0x86) return crlAbsoluteURI(name.value);
-  if (name.tag === 0xa0)
-    return name.children?.length === 2 && name.children[0].tag === 6 &&
-      validOIDContents(name.children[0].value) &&
-      name.children[1].tag === 0xa0 && name.children[1].children?.length === 1;
+  if (name.tag === 0xa0) return crlOtherName(name);
   if (name.tag === 0xa3) throw new ProtocolError('CADES_CRL_GENERAL_NAME_UNSUPPORTED');
   if (name.tag === 0xa4)
     return name.children?.length === 1 && name.children[0].tag === 0x30 &&

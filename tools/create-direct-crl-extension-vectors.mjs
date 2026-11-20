@@ -28,12 +28,25 @@ const malformedEDI = c.der(0xa5, c.der(0xa1, c.der(0x13, Buffer.from([0xff]))));
 const validEDI = c.der(0xa5, c.der(0xa1, c.der(0x13, Buffer.from('Issuer', 'ascii'))));
 const numericURI = c.der(0x86, Buffer.from('https://2130706433', 'ascii'));
 const dottedIPv4URI = c.der(0x86, Buffer.from('https://127.0.0.1/delta.crl', 'ascii'));
+const rawPathBracketURI = c.der(0x86, Buffer.from('https://example.com/[', 'ascii'));
+const rawQueryBracketURI = c.der(0x86, Buffer.from('https://example.com/?q=[', 'ascii'));
+const repeatedFragmentURI = c.der(0x86, Buffer.from('https://example.com/#a#b', 'ascii'));
+const encodedPathBracketURI = c.der(0x86, Buffer.from('https://example.com/%5B', 'ascii'));
+const otherNameFor = (id, value) => c.der(0xa0, Buffer.concat([c.oid(id), c.der(0xa0, value)]));
+const smtpBoolean = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x01, Buffer.from([0xff])));
+const smtpEmptyUTF8 = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.alloc(0)));
+const smtpInvalidUTF8 = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from([0xc0, 0xaf])));
+const smtpValidUTF8 = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@example.com', 'utf8')));
+const smtpUnicodeDomain = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@álpha.example', 'utf8')));
+const unknownOtherBoolean = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0xff])));
 const nameFor = (id, value) => c.der(0xa4,
   c.seq(c.der(0x31, c.seq(c.oid(id), value))));
 const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
 const unknownBoolean = nameFor('1.2.3.4.5', c.der(0x01, Buffer.from([0xff])));
 const descriptionBoolean = nameFor('2.5.4.13', c.der(0x01, Buffer.from([0xff])));
 const descriptionUTF8 = nameFor('2.5.4.13', c.der(0x0c, Buffer.from('CRL locator', 'utf8')));
+const destinationNumeric = nameFor('2.5.4.27', c.der(0x13, Buffer.from('1', 'ascii')));
+const destinationAlphabetic = nameFor('2.5.4.27', c.der(0x13, Buffer.from('AASD', 'ascii')));
 const telephoneBoolean = nameFor('2.5.4.20', c.der(0x01, Buffer.from([0xff])));
 const telephonePrintable = nameFor('2.5.4.20', c.der(0x13, Buffer.from('+1 234 567 8901', 'ascii')));
 const destinationBoolean = nameFor('2.5.4.27', c.der(0x01, Buffer.from([0xff])));
@@ -68,6 +81,11 @@ try {
     ['freshestHostlessURI', [freshest([pointFor(hostlessURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestNumericURI', [freshest([pointFor(numericURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestDottedIPv4URI', [freshest([pointFor(dottedIPv4URI)])], 'VALID', 'CADES_VALID'],
+    ['freshestRawPathBracket', [freshest([pointFor(rawPathBracketURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestRepeatedFragment', [freshest([pointFor(repeatedFragmentURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestEncodedPathBracket', [freshest([pointFor(encodedPathBracketURI)])], 'VALID', 'CADES_VALID'],
+    ['freshestSMTPBoolean', [freshest([pointFor(smtpBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestSMTPMailbox', [freshest([pointFor(smtpValidUTF8)])], 'VALID', 'CADES_VALID'],
     ['freshestCNBoolean', [freshest([pointFor(cnBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestDescriptionBoolean', [freshest([pointFor(descriptionBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestTelephoneBoolean', [freshest([pointFor(telephoneBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
@@ -91,6 +109,10 @@ try {
     ['aiaHostlessURI', [aia('1.3.6.1.5.5.7.48.2', hostlessURI)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaNumericURI', [aia('1.3.6.1.5.5.7.48.2', numericURI)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaDottedIPv4URI', [aia('1.3.6.1.5.5.7.48.2', dottedIPv4URI)], 'VALID', 'CADES_VALID'],
+    ['aiaRawPathBracket', [aia('1.3.6.1.5.5.7.48.2', rawPathBracketURI)], 'INVALID', 'CADES_CRL_AIA'],
+    ['aiaRepeatedFragment', [aia('1.3.6.1.5.5.7.48.2', repeatedFragmentURI)], 'INVALID', 'CADES_CRL_AIA'],
+    ['aiaSMTPBoolean', [aia('1.3.6.1.5.5.7.48.2', smtpBoolean)], 'INVALID', 'CADES_CRL_AIA'],
+    ['aiaSMTPMailbox', [aia('1.3.6.1.5.5.7.48.2', smtpValidUTF8)], 'VALID', 'CADES_VALID'],
     ['aiaCNBoolean', [aia('1.3.6.1.5.5.7.48.2', cnBoolean)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaDescriptionBoolean', [aia('1.3.6.1.5.5.7.48.2', descriptionBoolean)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaTelephoneBoolean', [aia('1.3.6.1.5.5.7.48.2', telephoneBoolean)], 'INVALID', 'CADES_CRL_AIA'],
@@ -107,10 +129,20 @@ try {
     ['issuerAltNameHostlessURI', [ian([hostlessURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameNumericURI', [ian([numericURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameDottedIPv4URI', [ian([dottedIPv4URI])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameRawQueryBracket', [ian([rawQueryBracketURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameRepeatedFragment', [ian([repeatedFragmentURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameSMTPBoolean', [ian([smtpBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameSMTPEmpty', [ian([smtpEmptyUTF8])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameSMTPInvalidUTF8', [ian([smtpInvalidUTF8])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameSMTPMailbox', [ian([smtpValidUTF8])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameSMTPUnicodeDomain', [ian([smtpUnicodeDomain])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameUnknownOtherBoolean', [ian([unknownOtherBoolean])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameCNBoolean', [ian([cnBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameDescriptionBoolean', [ian([descriptionBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameTelephoneBoolean', [ian([telephoneBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameDestinationBoolean', [ian([destinationBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameDestinationNumeric', [ian([destinationNumeric])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameDestinationAlphabetic', [ian([destinationAlphabetic])], 'VALID', 'CADES_VALID'],
     ['issuerAltNameHouseBoolean', [ian([houseBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameMemberBoolean', [ian([memberBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameDescriptionUTF8', [ian([descriptionUTF8])], 'VALID', 'CADES_VALID'],

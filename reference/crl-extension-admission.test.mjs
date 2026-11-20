@@ -39,6 +39,17 @@ const hostlessQueryURI = c.der(0x86, Buffer.from('https://?q=1', 'ascii'));
 const x400Tag = c.der(0xa3, c.seq());
 const numericURI = c.der(0x86, Buffer.from('https://2130706433', 'ascii'));
 const dottedIPv4URI = c.der(0x86, Buffer.from('https://127.0.0.1/delta.crl', 'ascii'));
+const rawPathBracketURI = c.der(0x86, Buffer.from('https://example.com/[', 'ascii'));
+const rawQueryBracketURI = c.der(0x86, Buffer.from('https://example.com/?q=[', 'ascii'));
+const repeatedFragmentURI = c.der(0x86, Buffer.from('https://example.com/#a#b', 'ascii'));
+const encodedPathBracketURI = c.der(0x86, Buffer.from('https://example.com/%5B', 'ascii'));
+const otherNameFor = (id, value) => c.der(0xa0, Buffer.concat([c.oid(id), c.der(0xa0, value)]));
+const smtpBoolean = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x01, Buffer.from([0xff])));
+const smtpEmptyUTF8 = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.alloc(0)));
+const smtpInvalidUTF8 = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from([0xc0, 0xaf])));
+const smtpValidUTF8 = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@example.com', 'utf8')));
+const smtpUnicodeDomain = otherNameFor('1.3.6.1.5.5.7.8.9', c.der(0x0c, Buffer.from('ü@álpha.example', 'utf8')));
+const unknownOtherBoolean = otherNameFor('1.2.3.4.6', c.der(0x01, Buffer.from([0xff])));
 const nameFor = (id, value) => c.der(0xa4,
   c.seq(c.der(0x31, c.seq(c.oid(id), value))));
 const cnBoolean = nameFor('2.5.4.3', c.der(0x01, Buffer.from([0xff])));
@@ -51,6 +62,8 @@ const descriptionUTF8 = nameFor('2.5.4.13', c.der(0x0c, Buffer.from('CRL locator
 const telephoneBoolean = nameFor('2.5.4.20', c.der(0x01, Buffer.from([0xff])));
 const telephonePrintable = nameFor('2.5.4.20', c.der(0x13, Buffer.from('+1 234 567 8901', 'ascii')));
 const destinationBoolean = nameFor('2.5.4.27', c.der(0x01, Buffer.from([0xff])));
+const destinationNumeric = nameFor('2.5.4.27', c.der(0x13, Buffer.from('1', 'ascii')));
+const destinationAlphabetic = nameFor('2.5.4.27', c.der(0x13, Buffer.from('AASD', 'ascii')));
 const houseBoolean = nameFor('2.5.4.51', c.der(0x01, Buffer.from([0xff])));
 const memberBoolean = nameFor('2.5.4.31', c.der(0x01, Buffer.from([0xff])));
 const cnRelative = c.seq(c.oid('2.5.4.3'), c.der(0x0c, Buffer.from('A', 'utf8')));
@@ -92,6 +105,11 @@ for (const [name, extensions, overall, reason] of [
   ['hostless Freshest URI locator', [freshest([pointFor(hostlessURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['numeric original Freshest URI host', [freshest([pointFor(numericURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['dotted IPv4 Freshest URI host', [freshest([pointFor(dottedIPv4URI)])], 'VALID', 'CADES_VALID'],
+  ['raw bracket in Freshest URI path', [freshest([pointFor(rawPathBracketURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['repeat hash in Freshest URI fragment', [freshest([pointFor(repeatedFragmentURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['encoded bracket in Freshest URI path', [freshest([pointFor(encodedPathBracketURI)])], 'VALID', 'CADES_VALID'],
+  ['SMTPUTF8 BOOLEAN Freshest otherName', [freshest([pointFor(smtpBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['SMTPUTF8 mailbox Freshest otherName', [freshest([pointFor(smtpValidUTF8)])], 'VALID', 'CADES_VALID'],
   ['CN BOOLEAN Freshest directoryName', [freshest([pointFor(cnBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['description BOOLEAN Freshest directoryName', [freshest([pointFor(descriptionBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['telephoneNumber BOOLEAN Freshest directoryName', [freshest([pointFor(telephoneBoolean)])], 'INVALID', 'CADES_CRL_FRESHEST'],
@@ -116,6 +134,10 @@ for (const [name, extensions, overall, reason] of [
   ['hostless caIssuers URI', [aia(caIssuersOID, hostlessURI)], 'INVALID', 'CADES_CRL_AIA'],
   ['numeric original caIssuers URI host', [aia(caIssuersOID, numericURI)], 'INVALID', 'CADES_CRL_AIA'],
   ['dotted IPv4 caIssuers URI host', [aia(caIssuersOID, dottedIPv4URI)], 'VALID', 'CADES_VALID'],
+  ['raw bracket in caIssuers URI path', [aia(caIssuersOID, rawPathBracketURI)], 'INVALID', 'CADES_CRL_AIA'],
+  ['repeat hash in caIssuers URI fragment', [aia(caIssuersOID, repeatedFragmentURI)], 'INVALID', 'CADES_CRL_AIA'],
+  ['SMTPUTF8 BOOLEAN caIssuers otherName', [aia(caIssuersOID, smtpBoolean)], 'INVALID', 'CADES_CRL_AIA'],
+  ['SMTPUTF8 mailbox caIssuers otherName', [aia(caIssuersOID, smtpValidUTF8)], 'VALID', 'CADES_VALID'],
   ['CN BOOLEAN caIssuers directoryName', [aia(caIssuersOID, cnBoolean)], 'INVALID', 'CADES_CRL_AIA'],
   ['description BOOLEAN caIssuers directoryName', [aia(caIssuersOID, descriptionBoolean)], 'INVALID', 'CADES_CRL_AIA'],
   ['telephoneNumber BOOLEAN caIssuers directoryName', [aia(caIssuersOID, telephoneBoolean)], 'INVALID', 'CADES_CRL_AIA'],
@@ -135,10 +157,20 @@ for (const [name, extensions, overall, reason] of [
   ['hostless CRL issuerAltName URI', [issuerAltName([hostlessURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['numeric original CRL issuerAltName URI host', [issuerAltName([numericURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['dotted IPv4 CRL issuerAltName URI host', [issuerAltName([dottedIPv4URI])], 'VALID', 'CADES_VALID'],
+  ['raw bracket in CRL issuerAltName URI query', [issuerAltName([rawQueryBracketURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['repeat hash in CRL issuerAltName URI fragment', [issuerAltName([repeatedFragmentURI])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['SMTPUTF8 BOOLEAN CRL issuerAltName otherName', [issuerAltName([smtpBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['SMTPUTF8 empty CRL issuerAltName otherName', [issuerAltName([smtpEmptyUTF8])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['SMTPUTF8 invalid bytes CRL issuerAltName otherName', [issuerAltName([smtpInvalidUTF8])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['SMTPUTF8 mailbox CRL issuerAltName otherName', [issuerAltName([smtpValidUTF8])], 'VALID', 'CADES_VALID'],
+  ['SMTPUTF8 Unicode domain CRL issuerAltName otherName', [issuerAltName([smtpUnicodeDomain])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['unknown OID BOOLEAN CRL issuerAltName otherName', [issuerAltName([unknownOtherBoolean])], 'VALID', 'CADES_VALID'],
   ['CN BOOLEAN CRL issuerAltName directoryName', [issuerAltName([cnBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['description BOOLEAN CRL issuerAltName directoryName', [issuerAltName([descriptionBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['telephoneNumber BOOLEAN CRL issuerAltName directoryName', [issuerAltName([telephoneBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['destinationIndicator BOOLEAN CRL issuerAltName directoryName', [issuerAltName([destinationBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['destinationIndicator numeric CRL issuerAltName directoryName', [issuerAltName([destinationNumeric])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['destinationIndicator alphabetic CRL issuerAltName directoryName', [issuerAltName([destinationAlphabetic])], 'VALID', 'CADES_VALID'],
   ['houseIdentifier BOOLEAN CRL issuerAltName directoryName', [issuerAltName([houseBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['member BOOLEAN CRL issuerAltName directoryName', [issuerAltName([memberBoolean])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['description UTF8 CRL issuerAltName directoryName', [issuerAltName([descriptionUTF8])], 'VALID', 'CADES_VALID'],
