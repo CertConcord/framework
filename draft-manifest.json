@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 34936,
-      "sha256": "6c280074ba7a20e6295cf19b9295534be1f50712098e579ccdaefecaf00596fb"
+      "bytes": 36537,
+      "sha256": "d0c78856c7329ac224697f59e9b307dcda1f64e3af728f5fb5f38ef50445a9ef"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305496,
-      "sha256": "90190ddeeaf2c81855d23158b40a5a5ae344030db6e6c055ffae426428c1cf1e"
+      "bytes": 305592,
+      "sha256": "72a46acdcd5da553a689c94ffc478f440240897e4191509dd49c13df6769a234"
     },
     {
       "path": "reference/README.md",
@@ -567,6 +567,11 @@
       "path": "reference/cades-signer-crldp.test.mjs",
       "bytes": 5071,
       "sha256": "452d0df501a366b5b903ea72cb5c8b80e01be8a98a6fffd31ab587360ae1b6ae"
+    },
+    {
+      "path": "reference/cades-signer-ec-spki.test.mjs",
+      "bytes": 9246,
+      "sha256": "65a1132bc225f01fe30694a7f5c587be0b290d2f8806edc01046eb8773af8d91"
     },
     {
       "path": "reference/cades-signer-freshestcrl-cardinality.test.mjs",
@@ -1650,8 +1655,8 @@
     },
     {
       "path": "reference/pki.mjs",
-      "bytes": 23884,
-      "sha256": "553639c743096a64579c1c6352f43c9705744faae41331641118bb9537c89732"
+      "bytes": 24313,
+      "sha256": "9ab910b024189e2cc146d7ccb4e32a9bf4673f32585b3b485e83211ffbc7de0d"
     },
     {
       "path": "reference/postgres-rpc.test.mjs",
@@ -2282,6 +2287,11 @@
       "path": "reference/vectors/cades-signer-crldp.json",
       "bytes": 25881,
       "sha256": "edb1c006c19391929efee32fd4ab2982f2478d0f10c52e171a57972465e91179"
+    },
+    {
+      "path": "reference/vectors/cades-signer-ec-spki.json",
+      "bytes": 19728,
+      "sha256": "390502f1fa424d33b3e10955bddc4d98c48d8a057a34712a3bad9e1ce2ae5798"
     },
     {
       "path": "reference/vectors/cades-signer-freshestcrl-cardinality.json",

@@ -288,6 +288,16 @@ export function parseCertificate(raw) {
         keyFields[1].value[0] === 0,
       'CERTIFICATE_SPKI',
     );
+  if (oidText(keyFields[0].children[0]) === '1.2.840.10045.2.1')
+    // RFC 5480 ECPoint is the signed BIT STRING payload, before native key import.
+    requireThat(
+      keyFields[0].children.length === 2 &&
+        keyFields[0].children[1].tag === 6 &&
+        keyFields[1].value.length > 1 &&
+        keyFields[1].value[0] === 0 &&
+        [0x02, 0x03, 0x04].includes(keyFields[1].value[1]),
+      'CERTIFICATE_SPKI',
+    );
   requireThat(t[3].tag === 0x30 && t[3].children?.length > 0, 'CERTIFICATE_ISSUER_NAME');
   const subjectName = t[5];
   requireThat(subjectName.tag === 0x30 && subjectName.children, 'CERTIFICATE_SUBJECT_NAME');
