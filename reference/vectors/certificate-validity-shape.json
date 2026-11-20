@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "description": "Synthetic signed RFC 5280 Validity SEQUENCE tag and two-member admission",
+  "standards": [
+    "https://www.rfc-editor.org/rfc/rfc5280.html#section-4.1",
+    "https://www.rfc-editor.org/rfc/rfc5912.html#section-14"
+  ],
+  "issuerPublicKeySPKI": "MCowBQYDK2VwAyEAfztKE3iLSecnK81vvWPwZwe3GnFuqHJWW7GHmvmmdLA=",
+  "fixedAt": 1795132800,
+  "cases": [
+    {
+      "id": "canonical",
+      "expectedParseError": null,
+      "certificate": "MIIBbTCCAR+gAwIBAgIDCA6UMAUGAytlcDAoMSYwJAYDVQQDDB1WYWxpZGl0eSBTaGFwZSBGaXh0dXJlIElzc3VlcjAeFw0yNjExMTkyMzU5MDBaFw0yNjExMjAwMTAwMDBaMCgxJjAkBgNVBAMMHVZhbGlkaXR5IFNoYXBlIEZpeHR1cmUgU2lnbmVyMCowBQYDK2VwAyEAD29h1svqAtUbO1+FYKin3dQ4hsTiYGYGeqFnN5py+0ijbDBqMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMCkGA1UdDgQiBCBgQSOwPZcjjW92sLEAXb0T83peWsxOSAXqBxEIQxYRYDAfBgNVHSUEGDAWBhRpgqSbzdjDs5K+16ue27aC/6TKJjAFBgMrZXADQQDUqe4TuRZg2rzheJJucBcxIsDjXbsvCB7X0vPL9TlJOtSk51RmxfqqekUKrHxnGYZ9vX1dyesc0qTeyHVpWacJ",
+      "bytes": 369,
+      "sha256": "b1bcefcb0c6509c60c692074b89e87b0f44411211e51c68ea41ca586efba7e8a",
+      "tbsSHA256": "a31e2b503c1b4d8106043449f57d658c3ed2167c5db06acc56a826243d85672c",
+      "validityTag": 48,
+      "validityMembers": 2
+    },
+    {
+      "id": "set-wrapper",
+      "expectedParseError": "CERTIFICATE_VALIDITY",
+      "certificate": "MIIBbTCCAR+gAwIBAgIDCA6UMAUGAytlcDAoMSYwJAYDVQQDDB1WYWxpZGl0eSBTaGFwZSBGaXh0dXJlIElzc3VlcjEeFw0yNjExMTkyMzU5MDBaFw0yNjExMjAwMTAwMDBaMCgxJjAkBgNVBAMMHVZhbGlkaXR5IFNoYXBlIEZpeHR1cmUgU2lnbmVyMCowBQYDK2VwAyEAD29h1svqAtUbO1+FYKin3dQ4hsTiYGYGeqFnN5py+0ijbDBqMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMCkGA1UdDgQiBCBgQSOwPZcjjW92sLEAXb0T83peWsxOSAXqBxEIQxYRYDAfBgNVHSUEGDAWBhRpgqSbzdjDs5K+16ue27aC/6TKJjAFBgMrZXADQQA2Id/PrNiHL0i1opX0qMzWZkmN2oYgjPuBzEa4KWdUiXoIrbU38a5f5v5mDA9TXlY40V1w2CjiErnTlBWMtn4D",
+      "bytes": 369,
+      "sha256": "152c9dcc7d6ca34bfd23f58f613179fbae6f4c8fee38c3dcc61d3fe158ece1e6",
+      "tbsSHA256": "ec9c200e77e576076dcd37c19624b17f7f048a6d358a9aee047b3655a332c2c0",
+      "validityTag": 49,
+      "validityMembers": 2
+    },
+    {
+      "id": "missing-not-after",
+      "expectedParseError": "CERTIFICATE_VALIDITY",
+      "certificate": "MIIBXjCCARCgAwIBAgIDCA6UMAUGAytlcDAoMSYwJAYDVQQDDB1WYWxpZGl0eSBTaGFwZSBGaXh0dXJlIElzc3VlcjAPFw0yNjExMTkyMzU5MDBaMCgxJjAkBgNVBAMMHVZhbGlkaXR5IFNoYXBlIEZpeHR1cmUgU2lnbmVyMCowBQYDK2VwAyEAD29h1svqAtUbO1+FYKin3dQ4hsTiYGYGeqFnN5py+0ijbDBqMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMCkGA1UdDgQiBCBgQSOwPZcjjW92sLEAXb0T83peWsxOSAXqBxEIQxYRYDAfBgNVHSUEGDAWBhRpgqSbzdjDs5K+16ue27aC/6TKJjAFBgMrZXADQQAywgPOVQ/J2nVmkOXt/OddLAm8Wf7+cIwUbvrtdlYjs7muX3asfTTGlyEI7rKZguehX8Nm2Hz2WcuL2qXfrLwC",
+      "bytes": 354,
+      "sha256": "f177d2a1a6e36566a36e918dcbcaff101c18498e33187ee989d521eac6bf0918",
+      "tbsSHA256": "8a5d5032f436450060a94f6d5b7e559f386624055c5729db12a785e009ba3d48",
+      "validityTag": 48,
+      "validityMembers": 1
+    },
+    {
+      "id": "third-time",
+      "expectedParseError": "CERTIFICATE_VALIDITY",
+      "certificate": "MIIBfDCCAS6gAwIBAgIDCA6UMAUGAytlcDAoMSYwJAYDVQQDDB1WYWxpZGl0eSBTaGFwZSBGaXh0dXJlIElzc3VlcjAtFw0yNjExMTkyMzU5MDBaFw0yNjExMjAwMTAwMDBaFw0yNjExMjAwMTAwMDBaMCgxJjAkBgNVBAMMHVZhbGlkaXR5IFNoYXBlIEZpeHR1cmUgU2lnbmVyMCowBQYDK2VwAyEAD29h1svqAtUbO1+FYKin3dQ4hsTiYGYGeqFnN5py+0ijbDBqMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMCkGA1UdDgQiBCBgQSOwPZcjjW92sLEAXb0T83peWsxOSAXqBxEIQxYRYDAfBgNVHSUEGDAWBhRpgqSbzdjDs5K+16ue27aC/6TKJjAFBgMrZXADQQC6dHourgqUaRqLRVIlSAqlzq29EXHTUt+J4rTzdAfbNJY6BnNxl1d2tRDOo+EtTLhcn0Ay3WSvzk2muUd6qsMN",
+      "bytes": 384,
+      "sha256": "966142dc2c5f70023ac32c08d9cd40fb5430f7ea8f597a9057b0a07715655247",
+      "tbsSHA256": "6b42f8cd1df86a9317941c7f3854741bb719160ea2ad1f0b7811a17e91c0f279",
+      "validityTag": 48,
+      "validityMembers": 3
+    }
+  ]
+}

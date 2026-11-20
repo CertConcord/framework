@@ -310,6 +310,10 @@ export function parseCertificate(raw) {
         );
     }
   }
+  requireThat(
+    t[4].tag === 0x30 && t[4].children?.length === 2,
+    'CERTIFICATE_VALIDITY',
+  );
   const time = (n) => {
     let s = n.value.toString('ascii');
     if (n.tag === 23) {
