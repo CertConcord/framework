@@ -237,7 +237,7 @@ export function ocspCertID({ issuer, issuerPublicKey, serial }) {
 }
 export function ocspRequest(options, { nonce = random() } = {}) {
   const certID = ocspCertID(options);
-  requireThat(nonce.length >= 16 && nonce.length <= 32, 'OCSP_NONCE');
+  requireThat(nonce instanceof Uint8Array && nonce.byteLength === 32, 'OCSP_NONCE');
   return {
     raw: seq(seq(seq(seq(certID)), der(0xa2, seq(extension(nonceOID, octet(nonce)))))),
     nonce,

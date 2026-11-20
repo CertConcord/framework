@@ -219,7 +219,7 @@ test('CRL Time keeps invalidityDate GeneralizedTime-only', () => {
 
 const request = ocspRequest(
   { issuer, issuerPublicKey: key.publicKey, serial: 7 },
-  { nonce: Buffer.alloc(20, 0x63) },
+  { nonce: Buffer.alloc(32, 0x63) },
 );
 function ocspParts(raw) {
   const outer = parseDER(raw),

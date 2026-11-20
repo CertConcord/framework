@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "profile": "ocsp-requester-nonce",
+  "cases": [
+    {
+      "id": "positive32",
+      "request": "MIGSMIGPMFgwVjBUMAsGCWCGSAFlAwQCAQQgyM6Pf2D9fHib1b7wk55u/asozIKHBnn+sL5X43LyHt8EIMR7l8bFwyIfZiX1F3jLIk3/jfEZ0qWuc1Q1bxQEVYoFAgEHojMwMTAvBgkrBgEFBQcwAQIEIgQg/aNJmr9FWZJbQa8v/oLykS3+nYdVru8902I3H8+dDv4=",
+      "requestSHA256": "22c4b29004d20e1c98fd473ae8db1f97633d2943848e1e3733a92fd4ca090864",
+      "nonce": "/aNJmr9FWZJbQa8v/oLykS3+nYdVru8902I3H8+dDv4=",
+      "nonceSHA256": "59bc902c1258ce75dfcba20242c4d627e5e3e22b32309bccd7ecc541883af609"
+    },
+    {
+      "id": "negative16",
+      "request": "MIGBMH8wWDBWMFQwCwYJYIZIAWUDBAIBBCDIzo9/YP18eJvVvvCTnm79qyjMgocGef6wvlfjcvIe3wQgxHuXxsXDIh9mJfUXeMsiTf+N8RnSpa5zVDVvFARVigUCAQeiIzAhMB8GCSsGAQUFBzABAgQSBBD9o0mav0VZkltBry/+gvKR",
+      "requestSHA256": "f0fab3164578a8f34331a46dbe7c9a4f64077f3e497c1311f6d4ee10d8edf610",
+      "nonce": "/aNJmr9FWZJbQa8v/oLykQ==",
+      "nonceSHA256": "614aca1fb1fb1054230757c260649d198fca610055685bde08a822d675aeb823"
+    }
+  ]
+}

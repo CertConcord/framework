@@ -235,8 +235,8 @@
     },
     {
       "path": "docs/ocsp-structure.md",
-      "bytes": 3481,
-      "sha256": "aa66549f12621f7ba335fab2ef72eb97dbf0ac9a0d7c1b867e5a44a515900fc1"
+      "bytes": 3762,
+      "sha256": "a878859d85d2d0d4fd3bf3340bc60d9c1194c0f9c9e22e219c75128f20a2eb88"
     },
     {
       "path": "docs/organization-delegation.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305292,
-      "sha256": "ce72d64d80741d07fcd310bc136084600189f27cb4913b88445c5720c0a40e28"
+      "bytes": 305388,
+      "sha256": "d7435eaecefcc1fb9b6a2b89f1ab99f8a0f73a52eb484765c51903fe762e7be5"
     },
     {
       "path": "reference/README.md",
@@ -531,7 +531,7 @@
     {
       "path": "reference/cades-format.test.mjs",
       "bytes": 5463,
-      "sha256": "527d5cf42ea950984ea27a3cea658da38670dccf09204394c810e0a4b2b60c78"
+      "sha256": "eb11ebe91645decaf8c7d78d166dc4578af3e1fec5389ed2df2957aac7a0b49e"
     },
     {
       "path": "reference/cades-hold-release-vectors.test.mjs",
@@ -761,7 +761,7 @@
     {
       "path": "reference/crl-time-choice.test.mjs",
       "bytes": 11664,
-      "sha256": "246dcf1ec2e8d0a49a69706851803d1fd06bcbe06d486ea86f97e5c134a28146"
+      "sha256": "6abb47de9e861e89b76eee97a0aa151d66ef468019ba7024967689819e01a54b"
     },
     {
       "path": "reference/csc.test.mjs",
@@ -1329,6 +1329,11 @@
       "sha256": "b32f09da0c0e318985bf38515f9ca56000a26310242fde18dbbc31ae761a7b88"
     },
     {
+      "path": "reference/ocsp-requester-nonce.test.mjs",
+      "bytes": 2942,
+      "sha256": "30d9a6946cc56b381edadcf8f0de6d80d05a35f5cac030a549586cf2f5ced111"
+    },
+    {
       "path": "reference/ocsp-revocation-contract.test.mjs",
       "bytes": 8217,
       "sha256": "a1858f87153859a4eb5cd95111cc1400f375a1cb528f501c1fe8f40311a4a4b1"
@@ -1341,7 +1346,7 @@
     {
       "path": "reference/ocsp-structural-admission.test.mjs",
       "bytes": 3462,
-      "sha256": "456b8f36885240eb8b36c4f9b658258587d780674b36042ad23d25e76983133e"
+      "sha256": "5ed92e4ada1d0082a546cc19880b1889ce057cf756cf2665f9dc226e548c9e4c"
     },
     {
       "path": "reference/oid4vp-request-audience.test.mjs",
@@ -1770,8 +1775,8 @@
     },
     {
       "path": "reference/revocation.mjs",
-      "bytes": 16227,
-      "sha256": "ab218c689480b76734127e668ab340646291287fc346059ccd714e3fe68df027"
+      "bytes": 16241,
+      "sha256": "8c5d7174e1eaeab1379ccaf01b21cc054d85f496c28d87f466698082b0adc14d"
     },
     {
       "path": "reference/rfc3454-tables.mjs",
@@ -5422,6 +5427,11 @@
       "path": "reference/vectors/ocsp-null-status.json",
       "bytes": 14039,
       "sha256": "ef6c2e864ad15f23f223d4dbdba5ffd9c22413179ceae33fdc73c1c5fbb9fb23"
+    },
+    {
+      "path": "reference/vectors/ocsp-requester-nonce.json",
+      "bytes": 1039,
+      "sha256": "ef6780817dd10807a15a735aa81e10e3397a8e9a999414ea410cc20f3b547f8b"
     },
     {
       "path": "reference/vectors/ocsp-revocation-contract.json",
@@ -13370,8 +13380,8 @@
     },
     {
       "path": "spec/bindings/DTI-draft-03.md",
-      "bytes": 58657,
-      "sha256": "6a73406ace9a3bbb04c351dad2073639cf5c0ce469cc774e701bc9e01c035f0d"
+      "bytes": 59442,
+      "sha256": "7817117a5ab63ecbc382489e69103da9d1817ebda434a85b6045fa01d40db109"
     },
     {
       "path": "spec/bindings/EBP-draft-03.md",

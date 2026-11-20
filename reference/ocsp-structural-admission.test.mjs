@@ -12,7 +12,7 @@ function fixture() {
   const at = 1_800_000_000;
   const request = ocspRequest(
     { issuer, issuerPublicKey: key.publicKey, serial: 41n },
-    { nonce: Buffer.alloc(16, 0x41) },
+    { nonce: Buffer.alloc(32, 0x41) },
   );
   const response = issueOCSP(request.raw, {
     issuer,
