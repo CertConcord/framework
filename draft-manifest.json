@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 51232,
-      "sha256": "70f7a105671aa40cc0a02201f704e2ff93fe19992a64c295d218e35634ad638a"
+      "bytes": 51893,
+      "sha256": "1e67ce533b10cf17fe1235468b07df1a9a451527e1e9fbaaaf330c1ee405f224"
     },
     {
       "path": "docs/apple-identity.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 302240,
-      "sha256": "2f572d70223723d3570c50c27f8a75d88d0f3d88cbd6d72d275520c484408482"
+      "bytes": 305080,
+      "sha256": "d31c624e7837998f8326c5c3556bf8beabfb92c3562fb2fb08d80acb7b7d81cf"
     },
     {
       "path": "reference/README.md",
@@ -359,14 +359,19 @@
       "sha256": "01df66bc7878c9cea9c16dd36f2e0f7adbe824eccd75ce25092739be6082c92c"
     },
     {
+      "path": "reference/acme-revocation-reason.test.mjs",
+      "bytes": 3727,
+      "sha256": "f0428f95d1a06542a28d1c83189c283122bedd4c7d0f85e08f8ccadd33fed741"
+    },
+    {
       "path": "reference/acme.mjs",
-      "bytes": 25364,
-      "sha256": "ba07a3c3c477ad4fdb0380d0a73a440d0e62a61fa9f996a28ddbc99ab4b93cb3"
+      "bytes": 25534,
+      "sha256": "d62259be16c8a1afd4574a28aa2956dd5348ba2012f7b44cb53559df3446cba1"
     },
     {
       "path": "reference/acme.test.mjs",
-      "bytes": 7788,
-      "sha256": "d82d3618f9632884ac55d7915f3de183b70bf6dff0ad19239b2da27065c563aa"
+      "bytes": 9506,
+      "sha256": "e6d42b0529d0d4992f839a1de21856596295ed4e4e7934726130c62891a48b50"
     },
     {
       "path": "reference/adapter-lock.json",
@@ -2192,6 +2197,11 @@
       "path": "reference/vectors/acme-profile-metadata.json",
       "bytes": 11991,
       "sha256": "6254f5eb0dd9cfc6c0677854ca664b2861db2f4bd4ff6b7217e7ffe151025382"
+    },
+    {
+      "path": "reference/vectors/acme-revocation-reason.json",
+      "bytes": 6532,
+      "sha256": "fb39ad044061c85cbee392469e2e7c7d7ad397761bcc12536a11d040c2f623df"
     },
     {
       "path": "reference/vectors/attestation-extension-admission.json",

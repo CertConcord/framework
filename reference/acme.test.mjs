@@ -6,6 +6,7 @@ import { createCSR } from './enrollment.mjs';
 import { Journal } from './state.mjs';
 import { ACMEClient, ACMEService } from './acme.mjs';
 import { signJWS, publicJWK, thumbprint } from './jose.mjs';
+import { createHash } from 'node:crypto';
 
 function flat(token) {
   const [protectedHeader, payload, signature] = token.split('.');
@@ -53,6 +54,60 @@ function fixture(t, options = {}) {
     );
   return { journal, old, next, baseURL, kid, service, signed, post, rollover };
 }
+
+test('ACME revocation accepts an absent reason without losing its omission semantics', async (t) => {
+  const calls = [],
+    f = fixture(t, { revoke: async (request) => calls.push(request) }),
+    certificate = Buffer.from('synthetic issued certificate'),
+    encoded = b64u(certificate),
+    certificateHash = createHash('sha512').update(certificate).digest();
+  f.journal.put('acme-order', 'issued', {
+    status: 'valid',
+    account: f.kid,
+    certificateHash,
+  });
+
+  for (const payload of [
+    { certificate: encoded },
+    { certificate: encoded, reason: 0 },
+    { certificate: encoded, reason: 1 },
+  ]) {
+    const response = await f.post('/revoke-cert', payload);
+    assert.equal(response.status, 200);
+  }
+  assert.deepEqual(
+    calls.map(({ reason }) => reason),
+    [undefined, 0, 1],
+  );
+  assert.deepEqual(
+    calls.map((call) => Object.hasOwn(call, 'reason')),
+    [false, true, true],
+  );
+  assert(calls.every(({ accountID }) => accountID === f.kid));
+
+  for (const reason of [null, -1, 7, 8, 11, 1.5, '0']) {
+    await assert.rejects(
+      f.post('/revoke-cert', { certificate: encoded, reason }),
+      /ACME_REVOCATION/,
+    );
+  }
+  assert.equal(calls.length, 3);
+
+  const other = f.baseURL + '/account/two';
+  f.journal.put('acme-account', other, {
+    status: 'valid',
+    jwk: publicJWK(f.next.publicKey),
+  });
+  const otherRequest = flat(
+    signJWS({ certificate: encoded }, f.next.privateKey, {
+      url: f.baseURL + '/revoke-cert',
+      kid: other,
+      nonce: f.service.nonce(),
+    }),
+  );
+  await assert.rejects(f.service.handle('/revoke-cert', otherRequest), /ACME_REVOCATION_AUTHORITY/);
+  assert.equal(calls.length, 3);
+});
 
 test('ACME rollover rejects registered replacement keys and preserves both accounts', async (t) => {
   const f = fixture(t),
