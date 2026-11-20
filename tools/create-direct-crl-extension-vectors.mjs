@@ -13,10 +13,20 @@ const artifact = bytes => ({ bytes: bytes.length, sha256: hash(bytes), derBase64
 const uri = c.der(0x86, Buffer.from('https://example.invalid/delta.crl', 'ascii'));
 const pointName = c.der(0xa0, c.der(0xa0, uri));
 const point = c.seq(pointName);
+const pointFor = name => c.seq(c.der(0xa0, c.der(0xa0, name)));
+const malformedIP = c.der(0x87, Buffer.from([0x7f]));
+const validIP = c.der(0x87, Buffer.from([127, 0, 0, 1]));
+const malformedDirectory = c.der(0xa4, c.der(0x05, Buffer.alloc(0)));
+const validDirectory = c.der(0xa4, p.name('Synthetic frozen CRL locator'));
+const relativeURI = c.der(0x86, Buffer.from('delta.crl', 'ascii'));
+const malformedDNS = c.der(0x82, Buffer.from('bad!.example', 'ascii'));
+const malformedMail = c.der(0x81, Buffer.from('issuer.example', 'ascii'));
+const highBitMail = c.der(0x81, Buffer.concat([Buffer.from([0xe3]),
+  Buffer.from('a@issuer.example', 'ascii')]));
 const freshest = (points, critical = false) =>
   p.extension('2.5.29.46', c.seq(...points), critical);
-const aia = method => p.extension('1.3.6.1.5.5.7.1.1',
-  c.seq(c.seq(c.oid(method), uri)));
+const aia = (method, location = uri) => p.extension('1.3.6.1.5.5.7.1.1',
+  c.seq(c.seq(c.oid(method), location)));
 const ian = names => p.extension('2.5.29.18', c.seq(...names));
 
 const api = await loadCAdES();
@@ -30,6 +40,11 @@ try {
     ['baseline', [], 'VALID', 'CADES_VALID'],
     ['freshest', [freshest([point])], 'VALID', 'CADES_VALID'],
     ['freshestTwoLocations', [freshest([point, point])], 'VALID', 'CADES_VALID'],
+    ['freshestValidIP', [freshest([pointFor(validIP)])], 'VALID', 'CADES_VALID'],
+    ['freshestMalformedIP', [freshest([pointFor(malformedIP)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestValidDirectory', [freshest([pointFor(validDirectory)])], 'VALID', 'CADES_VALID'],
+    ['freshestMalformedDirectory', [freshest([pointFor(malformedDirectory)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+    ['freshestRelativeURI', [freshest([pointFor(relativeURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestCritical', [freshest([point], true)], 'UNSUPPORTED', 'CADES_CRL_EXTENSION_UNSUPPORTED'],
     ['freshestEmpty', [freshest([])], 'INVALID', 'CADES_CRL_FRESHEST'],
     ['freshestReasons', [freshest([c.seq(pointName, c.der(0x81, Buffer.from([7, 0x80])))])],
@@ -39,8 +54,17 @@ try {
     ['freshestWithDelta', [freshest([point]), p.extension('2.5.29.27', c.integer(1), true)],
       'UNSUPPORTED', 'CADES_CRL_PROFILE_UNSUPPORTED'],
     ['aiaCaIssuers', [aia('1.3.6.1.5.5.7.48.2')], 'VALID', 'CADES_VALID'],
+    ['aiaValidDirectory', [aia('1.3.6.1.5.5.7.48.2', validDirectory)], 'VALID', 'CADES_VALID'],
+    ['aiaMalformedIP', [aia('1.3.6.1.5.5.7.48.2', malformedIP)], 'INVALID', 'CADES_CRL_AIA'],
+    ['aiaMalformedDirectory', [aia('1.3.6.1.5.5.7.48.2', malformedDirectory)], 'INVALID', 'CADES_CRL_AIA'],
     ['aiaOCSPOnly', [aia('1.3.6.1.5.5.7.48.1')], 'INVALID', 'CADES_CRL_AIA'],
     ['issuerAltName', [ian([uri])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameValidIP', [ian([validIP])], 'VALID', 'CADES_VALID'],
+    ['issuerAltNameMalformedIP', [ian([malformedIP])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameMalformedDirectory', [ian([malformedDirectory])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameMalformedDNS', [ian([malformedDNS])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameMalformedMail', [ian([malformedMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+    ['issuerAltNameHighBitMail', [ian([highBitMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
     ['issuerAltNameEmpty', [ian([])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ])
     cases.push({ id, crl: artifact(f.crl({ extensions })), expected: { overall, reason } });

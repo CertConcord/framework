@@ -145,8 +145,8 @@
     },
     {
       "path": "docs/cades-preservation.md",
-      "bytes": 39147,
-      "sha256": "95a4cfced802c4f76c5a70ddcc03265d20e8bdf56c607fec2a34cb4aaa9fe694"
+      "bytes": 39545,
+      "sha256": "ac571c0621df401121d1a5104d436b18d67a514a0d34a02b193f4eea0b5e625a"
     },
     {
       "path": "docs/certificate-name-admission.md",
@@ -170,8 +170,8 @@
     },
     {
       "path": "docs/crl-structure.md",
-      "bytes": 6859,
-      "sha256": "50fbfd834980f2e4bd722c1ad31cd33d8a36ff090d15e131a4633115a4d712d8"
+      "bytes": 6940,
+      "sha256": "23a1a89da0c495509972728c0890e44a95718c72714bb79837d3315a017048ab"
     },
     {
       "path": "docs/csc.md",
@@ -610,8 +610,8 @@
     },
     {
       "path": "reference/cades-validation.mjs",
-      "bytes": 40303,
-      "sha256": "1b9f450c46e8b1aab118aa60a4d47b177a049dc853059c0463a3f00b8fa47fc8"
+      "bytes": 42565,
+      "sha256": "76474d299936a66b6875307c2505cf8f2c9653543d93603d1aa39c7dc8afa310"
     },
     {
       "path": "reference/cades.mjs",
@@ -755,8 +755,8 @@
     },
     {
       "path": "reference/crl-extension-admission.test.mjs",
-      "bytes": 8212,
-      "sha256": "60b2110f6746cab9bde3a17bd780167af9afa8d61e1f4ff974811e2dde4352f0"
+      "bytes": 10720,
+      "sha256": "1f48319f269940920762cabec4eb03f7c847f2d774cdb77ef9e0614dc4ca1162"
     },
     {
       "path": "reference/crl-issuer-entry-admission.test.mjs",
@@ -841,7 +841,7 @@
     {
       "path": "reference/direct-crl-extension-vectors.test.mjs",
       "bytes": 5434,
-      "sha256": "7f86ebefc058cd58050cdf07495e62151d78d7e2e4716d6c1f8dba33d6d8a26e"
+      "sha256": "ff0259bf3961be7380239e4a9f59eede12b956d831575a7075c97bce91e2bc90"
     },
     {
       "path": "reference/document-demo.mjs",
@@ -2750,8 +2750,8 @@
     },
     {
       "path": "reference/vectors/direct-crl-extension-admission.json",
-      "bytes": 14212,
-      "sha256": "95fa0fb88d7e76b0709a42618e993276a4186bfc6c0166768276cc5400ac1b48"
+      "bytes": 23340,
+      "sha256": "cb2661ffdc6f587852df70a4634e09e893b30d3717e6419ea60f3480aa4eaaa3"
     },
     {
       "path": "reference/vectors/document-acceptance-mtc07-rar2-mdoc2/README.md",
@@ -13745,8 +13745,8 @@
     },
     {
       "path": "tools/create-direct-crl-extension-vectors.mjs",
-      "bytes": 5134,
-      "sha256": "45823b8f1651a926a93434697a7299d82a92d91e6991f7b8a6646e05e63da4d0"
+      "bytes": 7168,
+      "sha256": "3be596f44bfd032a283d66fd5469ec49cfee8a5cabe22afcbc9f2755ad1c8943"
     },
     {
       "path": "tools/create-jose-p256-admission-vectors.mjs",

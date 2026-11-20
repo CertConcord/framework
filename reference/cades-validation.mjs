@@ -551,6 +551,67 @@ function protectionDeadline(policy, cert) {
   return Math.min(...values);
 }
 
+function crlAttribute(node) {
+  return node?.tag === 0x30 && node.children?.length === 2 &&
+    node.children[0].tag === 6 &&
+    validOIDContents(node.children[0].value) &&
+    node.children[1].value.length > 0;
+}
+
+function crlDNSName(value) {
+  const text = Buffer.from(value).toString('ascii');
+  return text.length > 0 && text.length <= 253 &&
+    text.split('.').every((label) => label.length <= 63 &&
+      /^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(label));
+}
+
+function crlAbsoluteURI(value) {
+  const text = Buffer.from(value).toString('ascii');
+  const colon = text.indexOf(':');
+  return colon > 0 && colon < text.length - 1 &&
+    /^[A-Za-z][A-Za-z0-9+.-]*$/.test(text.slice(0, colon)) &&
+    [...text].every((char) => char.charCodeAt(0) > 0x20 && char.charCodeAt(0) < 0x7f) &&
+    !/%(?![0-9A-Fa-f]{2})/.test(text);
+}
+
+function crlMailName(value) {
+  if (!value.every((byte) => byte < 128)) return false;
+  const text = Buffer.from(value).toString('ascii');
+  const at = text.indexOf('@');
+  const local = text.slice(0, at);
+  return at > 0 && at === text.lastIndexOf('@') &&
+    /^[A-Za-z0-9._+-]+$/.test(local) &&
+    !local.startsWith('.') && !local.endsWith('.') &&
+    !local.includes('..') && crlDNSName(Buffer.from(text.slice(at + 1), 'ascii'));
+}
+
+function crlGeneralName(name) {
+  if (!GENERAL_NAME_TAGS.has(name?.tag) || name.value.length === 0 ||
+      !sanLexicalName(name)) return false;
+  if (name.tag === 0x81) return crlMailName(name.value);
+  if (name.tag === 0x82) return crlDNSName(name.value);
+  if (name.tag === 0x86) return crlAbsoluteURI(name.value);
+  if (name.tag === 0xa0)
+    return name.children?.length === 2 && name.children[0].tag === 6 &&
+      validOIDContents(name.children[0].value) &&
+      name.children[1].tag === 0xa0 && name.children[1].children?.length === 1;
+  if (name.tag === 0xa3) return false; // ORAddress is outside this selected profile.
+  if (name.tag === 0xa4)
+    return name.children?.length === 1 && name.children[0].tag === 0x30 &&
+      name.children[0].children?.length > 0 &&
+      name.children[0].children.every((rdn) => rdn.tag === 0x31 &&
+        rdn.children?.length > 0 && rdn.children.every(crlAttribute));
+  if (name.tag === 0xa5)
+    return [1, 2].includes(name.children?.length) &&
+      name.children.at(-1).tag === 0xa1 &&
+      directoryString(name.children.at(-1)) &&
+      (name.children.length === 1 ||
+        (name.children[0].tag === 0xa0 && directoryString(name.children[0])));
+  if (name.tag === 0x87) return [4, 16].includes(name.value.length);
+  if (name.tag === 0x88) return validOIDContents(name.value);
+  return true;
+}
+
 function crlExtensionProfile(id, value) {
   if (id === '2.5.29.46') {
     const points = parseDER(value);
@@ -561,11 +622,9 @@ function crlExtensionProfile(id, value) {
       requireThat(point.tag === 0x30 && point.children.length === 1 &&
         field.tag === 0xa0 && field.children?.length === 1 &&
         ((name.tag === 0xa0 && name.children?.length > 0 &&
-          name.children.every((entry) => GENERAL_NAME_TAGS.has(entry.tag) &&
-            entry.value.length > 0 && sanLexicalName(entry))) ||
+          name.children.every(crlGeneralName)) ||
          (name.tag === 0xa1 && name.children?.length > 0 &&
-          name.children.every((entry) => entry.tag === 0x30 &&
-            entry.children?.length === 2 && entry.children[0].tag === 6))),
+          name.children.every(crlAttribute))),
       'CADES_CRL_FRESHEST');
     }
   } else if (id === '1.3.6.1.5.5.7.1.1') {
@@ -574,14 +633,12 @@ function crlExtensionProfile(id, value) {
       descriptions.children.every((entry) => entry.tag === 0x30 &&
         entry.children?.length === 2 && entry.children[0].tag === 6 &&
         oidText(entry.children[0]) === '1.3.6.1.5.5.7.48.2' &&
-        GENERAL_NAME_TAGS.has(entry.children[1].tag) &&
-        entry.children[1].value.length > 0 && sanLexicalName(entry.children[1])),
+        crlGeneralName(entry.children[1])),
     'CADES_CRL_AIA');
   } else if (id === '2.5.29.18') {
     const names = parseDER(value);
     requireThat(names.tag === 0x30 && names.children?.length > 0 &&
-      names.children.every((name) => GENERAL_NAME_TAGS.has(name.tag) &&
-        name.value.length > 0 && sanLexicalName(name)),
+      names.children.every(crlGeneralName),
     'CADES_CRL_ISSUER_ALT_NAME');
   }
 }

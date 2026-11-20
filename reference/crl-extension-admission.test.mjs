@@ -14,10 +14,22 @@ const ocspOID = '1.3.6.1.5.5.7.48.1';
 const uri = c.der(0x86, Buffer.from('https://example.invalid/delta.crl', 'ascii'));
 const pointName = c.der(0xa0, c.der(0xa0, uri));
 const point = c.seq(pointName);
+const pointFor = name => c.seq(c.der(0xa0, c.der(0xa0, name)));
+const malformedIP = c.der(0x87, Buffer.from([0x7f]));
+const validIP = c.der(0x87, Buffer.from([127, 0, 0, 1]));
+const malformedDirectory = c.der(0xa4, c.der(0x05, Buffer.alloc(0)));
+const validDirectory = c.der(0xa4, p.name('Synthetic CRL locator'));
+const relativeURI = c.der(0x86, Buffer.from('delta.crl', 'ascii'));
+const malformedDNS = c.der(0x82, Buffer.from('bad!.example', 'ascii'));
+const validDNS = c.der(0x82, Buffer.from('issuer.example', 'ascii'));
+const malformedMail = c.der(0x81, Buffer.from('issuer.example', 'ascii'));
+const validMail = c.der(0x81, Buffer.from('ca@issuer.example', 'ascii'));
+const highBitMail = c.der(0x81, Buffer.concat([Buffer.from([0xe3]),
+  Buffer.from('a@issuer.example', 'ascii')]));
 const freshest = (points, critical = false) =>
   p.extension(freshestOID, c.seq(...points), critical);
-const aia = (method) => p.extension('1.3.6.1.5.5.7.1.1',
-  c.seq(c.seq(c.oid(method), uri)));
+const aia = (method, location = uri) => p.extension('1.3.6.1.5.5.7.1.1',
+  c.seq(c.seq(c.oid(method), location)));
 const issuerAltName = (names) => p.extension('2.5.29.18', c.seq(...names));
 
 const api = await loadCAdES();
@@ -41,6 +53,11 @@ for (const [name, extensions, overall, reason] of [
   ['no optional extension', [], 'VALID', 'CADES_VALID'],
   ['noncritical Freshest locator', [freshest([point])], 'VALID', 'CADES_VALID'],
   ['two Freshest locations', [freshest([point, point])], 'VALID', 'CADES_VALID'],
+  ['valid Freshest IP locator', [freshest([pointFor(validIP)])], 'VALID', 'CADES_VALID'],
+  ['one-octet Freshest IP locator', [freshest([pointFor(malformedIP)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['valid Freshest directoryName locator', [freshest([pointFor(validDirectory)])], 'VALID', 'CADES_VALID'],
+  ['NULL Freshest directoryName locator', [freshest([pointFor(malformedDirectory)])], 'INVALID', 'CADES_CRL_FRESHEST'],
+  ['relative Freshest URI locator', [freshest([pointFor(relativeURI)])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['critical Freshest locator', [freshest([point], true)], 'UNSUPPORTED', 'CADES_CRL_EXTENSION_UNSUPPORTED'],
   ['empty Freshest point list', [freshest([])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['Freshest point without a name', [freshest([c.seq()])], 'INVALID', 'CADES_CRL_FRESHEST'],
@@ -48,9 +65,20 @@ for (const [name, extensions, overall, reason] of [
   ['Freshest cRLIssuer field', [freshest([c.seq(pointName, c.der(0xa2, uri))])], 'INVALID', 'CADES_CRL_FRESHEST'],
   ['delta indicator with Freshest', [freshest([point]), p.extension('2.5.29.27', c.integer(1), true)], 'UNSUPPORTED', 'CADES_CRL_PROFILE_UNSUPPORTED'],
   ['valid caIssuers AIA', [aia(caIssuersOID)], 'VALID', 'CADES_VALID'],
+  ['valid caIssuers directoryName', [aia(caIssuersOID, validDirectory)], 'VALID', 'CADES_VALID'],
+  ['one-octet caIssuers IP', [aia(caIssuersOID, malformedIP)], 'INVALID', 'CADES_CRL_AIA'],
+  ['NULL caIssuers directoryName', [aia(caIssuersOID, malformedDirectory)], 'INVALID', 'CADES_CRL_AIA'],
   ['OCSP-only CRL AIA', [aia(ocspOID)], 'INVALID', 'CADES_CRL_AIA'],
   ['empty CRL issuerAltName', [issuerAltName([])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
   ['valid CRL issuerAltName', [issuerAltName([uri])], 'VALID', 'CADES_VALID'],
+  ['valid CRL issuerAltName IP', [issuerAltName([validIP])], 'VALID', 'CADES_VALID'],
+  ['valid CRL issuerAltName DNS', [issuerAltName([validDNS])], 'VALID', 'CADES_VALID'],
+  ['invalid CRL issuerAltName DNS character', [issuerAltName([malformedDNS])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['valid CRL issuerAltName mailbox', [issuerAltName([validMail])], 'VALID', 'CADES_VALID'],
+  ['CRL issuerAltName mailbox without at-sign', [issuerAltName([malformedMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['CRL issuerAltName mailbox with high-bit IA5 byte', [issuerAltName([highBitMail])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['one-octet CRL issuerAltName IP', [issuerAltName([malformedIP])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
+  ['NULL CRL issuerAltName directoryName', [issuerAltName([malformedDirectory])], 'INVALID', 'CADES_CRL_ISSUER_ALT_NAME'],
 ]) {
   test(`issuer-signed complete direct CRL ${name}`, () => {
     const { crl, result } = signedCAdESResult(extensions);

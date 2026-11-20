@@ -12,7 +12,7 @@ import { Journal } from './state.mjs';
 
 const raw = readFileSync(new URL('./vectors/direct-crl-extension-admission.json', import.meta.url));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-assert.equal(sha(raw), '95fa0fb88d7e76b0709a42618e993276a4186bfc6c0166768276cc5400ac1b48');
+assert.equal(sha(raw), 'cb2661ffdc6f587852df70a4634e09e893b30d3717e6419ea60f3480aa4eaaa3');
 const vectors = JSON.parse(raw);
 assert.equal(vectors.schema, 'certconcord.direct-crl-extension-admission.v1');
 assert.equal(vectors.baseMain, '723af0d3aa8912e6c2eb14e05ec53e12f61123d3');
