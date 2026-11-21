@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 303934,
-      "sha256": "94420a93502137b20114b15154dce3a3fddcc9a8ab04996647b9098ddff1316d"
+      "bytes": 304151,
+      "sha256": "a1467a10011f09cee828321398629849b790becc0478174e90dcc29b0b50c369"
     },
     {
       "path": "reference/README.md",
@@ -1570,8 +1570,8 @@
     },
     {
       "path": "reference/pades-fixtures.mjs",
-      "bytes": 15587,
-      "sha256": "82588cff39a3676db17089859ccc4850ae597fef82f50e08b217779320da4bd2"
+      "bytes": 15589,
+      "sha256": "5cf7bc7b9695062f64e761598c8e34d382a7ff20c6aad722af0576d64fb80a21"
     },
     {
       "path": "reference/pades-inherited-value-visual.test.mjs",
@@ -1629,9 +1629,24 @@
       "sha256": "e30f48ce1ac1ef5d6ddcfcd122606eba51e46491369b503b057d4ec0e0786554"
     },
     {
+      "path": "reference/pades-signed-page-text-vectors.test.mjs",
+      "bytes": 3771,
+      "sha256": "346eb58ddd8d92e7ee3fe94d0976044679356dff7b5073b54911fe6075fe6304"
+    },
+    {
+      "path": "reference/pades-signed-text-boundaries.test.mjs",
+      "bytes": 4610,
+      "sha256": "ac59c3f5d93291f2339b9a2e9ed20165911ea82e5380882ac0a910e9571f222f"
+    },
+    {
+      "path": "reference/pades-signed-text-state.test.mjs",
+      "bytes": 1590,
+      "sha256": "65b51c869b85f054e2164265a9fc2c685f216feea312e5057623bef85c94052b"
+    },
+    {
       "path": "reference/pades-structure.mjs",
-      "bytes": 53130,
-      "sha256": "d5e67a7ee1c7cb096ed4c3f00e10e864e3394a309711eba9be7fa3cfbfb6df67"
+      "bytes": 61113,
+      "sha256": "1d09d28d56fdb60b7bb6d64b1a9dfe0f87cd15fade3938f2c20e963376a0d0ba"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -8027,6 +8042,11 @@
       "path": "reference/vectors/pades-signed-field-structure.json",
       "bytes": 193488,
       "sha256": "39b8c612fca47850b08707ef6c43041a01d1b87b6246fd1ee3e7f8aaaf792bc1"
+    },
+    {
+      "path": "reference/vectors/pades-signed-page-text-admission.json",
+      "bytes": 582329,
+      "sha256": "63bc76b1567566c44fc5de085578fb803bb5b281f0abf19c837fc3f946893a61"
     },
     {
       "path": "reference/vectors/pkcs10-structure.json",

@@ -32,8 +32,9 @@ export async function loadPAdES() {
   }
 }
 
-export function plainPDF() {
-  const stream = 'BT /F1 12 Tf 40 120 Td (Independent PAdES fixture) Tj ET\n';
+export function plainPDF({
+  stream = 'BT /F1 12 Tf 40 120 Td (Independent PAdES fixture) Tj ET\n',
+} = {}) {
   const objects = [
     '<< /Type /Catalog /Pages 2 0 R >>',
     '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',

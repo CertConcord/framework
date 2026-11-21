@@ -474,6 +474,7 @@ function parseDocument(input) {
     if (get(rev.catalog, 'Version') && name(get(rev.catalog, 'Version')) !== '1.7')
       diagnostic('PADES_VERSION_UNSUPPORTED');
     inspectCapabilities(rev, diagnostic);
+    inspectSignedPageText(rev, diagnostic);
     rev.form = rev.resolve(get(rev.catalog, 'AcroForm'));
     check(rev.form === undefined || rev.form instanceof PDFDict, 'PADES_ACROFORM');
     if (rev.form && get(rev.form, 'SigFlags') !== undefined) {
@@ -519,6 +520,180 @@ function parseDocument(input) {
     diagnostic('PADES_TIMESTAMP_WITHOUT_APPROVAL', 'INVALID');
   check(signatures.length <= 32, 'PADES_SIGNATURE_LIMIT', 'UNSUPPORTED');
   return { raw, revisions, signatures, modificationPolicy, diagnostics };
+}
+
+const MAX_PAGE_CONTENT = 16 * 1024 * 1024;
+const CONTENT_OPERATORS = new Set([
+  'q', 'Q', 'cm', 'w', 'J', 'j', 'M', 'd', 'ri', 'i', 'gs',
+  'm', 'l', 'c', 'v', 'y', 'h', 're', 'S', 's', 'f', 'F', 'f*',
+  'B', 'B*', 'b', 'b*', 'n', 'W', 'W*', 'BT', 'ET',
+  'Tc', 'Tw', 'Tz', 'TL', 'Tf', 'Tr', 'Ts', 'Td', 'TD',
+  'Tm', 'T*', 'Tj', 'TJ', "'", '"', 'd0', 'd1',
+  'CS', 'cs', 'SC', 'SCN', 'sc', 'scn', 'G', 'g', 'RG',
+  'rg', 'K', 'k', 'sh', 'Do', 'MP', 'DP', 'BMC', 'BDC',
+  'EMC', 'BX', 'EX',
+]);
+
+function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable) {
+  const raw = Buffer.from(bytes);
+  const parser = new StrictObjectParser(
+    raw, 0, context, new WeakMap(), new WeakSet(), { nodes: 0 },
+  );
+  let operands = [], inText = false;
+  const string = value => value instanceof PDFString || value instanceof PDFHexString;
+  const numeric = value => value instanceof PDFNumber && Number.isFinite(value.asNumber());
+  const requireOperands = types => {
+    check(operands.length === types.length, 'PADES_TEXT_OPERAND');
+    for (let i = 0; i < types.length; i++) {
+      const valid = types[i] === 'number' ? numeric(operands[i])
+        : types[i] === 'name' ? operands[i] instanceof PDFName
+          : types[i] === 'string' ? string(operands[i])
+            : false;
+      check(valid, 'PADES_TEXT_OPERAND');
+    }
+  };
+  while (true) {
+    parser.skipWhitespaceAndComments();
+    if (parser.bytes.done()) break;
+    const at = parser.bytes.offset(), byte = raw[at];
+    const keyword = (text) =>
+      raw.subarray(at, at + text.length).toString('ascii') === text &&
+      delimiter(raw[at + text.length]);
+    const objectStart = byte === 47 || byte === 40 || byte === 60 || byte === 91 ||
+      byte === 43 || byte === 45 || byte === 46 || (byte >= 48 && byte <= 57) ||
+      keyword('true') || keyword('false') || keyword('null');
+    if (objectStart) {
+      try {
+        operands.push(parser.parseObject());
+      } catch (error) {
+        if (error instanceof ProtocolError) throw error;
+        throw failure('PADES_CONTENT_TOKEN');
+      }
+      check(operands.length <= 128, 'PADES_CONTENT_OPERAND_LIMIT', 'UNSUPPORTED');
+      continue;
+    }
+    let end = at;
+    while (end < raw.length && !delimiter(raw[end])) end++;
+    check(end > at, 'PADES_CONTENT_TOKEN');
+    const operator = raw.toString('ascii', at, end);
+    check(/^[\x21-\x7e]{1,32}$/.test(operator), 'PADES_CONTENT_OPERATOR');
+    parser.bytes.moveTo(end);
+    if (operator === 'BI') throw failure('PADES_INLINE_IMAGE_UNSUPPORTED', 'UNSUPPORTED');
+    if (!CONTENT_OPERATORS.has(operator)) diagnostic('PADES_CONTENT_OPERATOR_UNSUPPORTED');
+    if (operator === 'BT') {
+      check(operands.length === 0 && !inText, 'PADES_TEXT_BALANCE');
+      inText = true;
+    } else if (operator === 'ET') {
+      check(operands.length === 0 && inText, 'PADES_TEXT_BALANCE');
+      inText = false;
+    } else if (['Tc', 'Tw', 'Tz', 'TL', 'Ts'].includes(operator)) {
+      requireOperands(['number']);
+    } else if (operator === 'Tr') {
+      requireOperands(['number']);
+      check(Number.isInteger(operands[0].asNumber()) &&
+        operands[0].asNumber() >= 0 && operands[0].asNumber() <= 7, 'PADES_TEXT_OPERAND');
+    } else if (operator === 'Tf') {
+      requireOperands(['name', 'number']);
+      check(fontAvailable(name(operands[0])), 'PADES_TEXT_FONT_RESOURCE');
+    } else if (operator === 'Tm') {
+      check(inText, 'PADES_TEXT_SCOPE');
+      requireOperands(Array(6).fill('number'));
+    } else if (operator === 'Td' || operator === 'TD') {
+      check(inText, 'PADES_TEXT_SCOPE');
+      requireOperands(['number', 'number']);
+    } else if (operator === 'T*') {
+      check(inText, 'PADES_TEXT_SCOPE');
+      requireOperands([]);
+    } else if (operator === 'Tj' || operator === "'") {
+      check(inText, 'PADES_TEXT_SCOPE');
+      requireOperands(['string']);
+    } else if (operator === '"') {
+      check(inText, 'PADES_TEXT_SCOPE');
+      requireOperands(['number', 'number', 'string']);
+    } else if (operator === 'TJ') {
+      check(inText && operands.length === 1 && operands[0] instanceof PDFArray,
+        'PADES_TEXT_OPERAND');
+      for (const item of operands[0].asArray())
+        check(string(item) || numeric(item), 'PADES_TEXT_OPERAND');
+    }
+    operands = [];
+  }
+  check(!inText, 'PADES_TEXT_BALANCE');
+  check(operands.length === 0, 'PADES_CONTENT_TRAILING_OPERAND');
+}
+
+function inspectSignedPageText(rev, diagnostic) {
+  const pagesRoot = get(rev.catalog, 'Pages');
+  check(pagesRoot instanceof PDFRef, 'PADES_PAGES_REFERENCE');
+  const seen = new Set();
+  let pageCount = 0, decodedBytes = 0;
+  const streamBytes = reference => {
+    check(reference instanceof PDFRef, 'PADES_PAGE_CONTENT_REFERENCE');
+    const stream = rev.resolve(reference);
+    check(stream instanceof PDFRawStream, 'PADES_PAGE_CONTENT_STREAM');
+    const filterValue = rev.resolve(get(stream.dict, 'Filter'));
+    const filter = filterValue instanceof PDFArray && filterValue.size() === 1
+      ? rev.resolve(filterValue.get(0)) : filterValue;
+    const paramsValue = rev.resolve(get(stream.dict, 'DecodeParms'));
+    const params = paramsValue instanceof PDFArray && paramsValue.size() === 1
+      ? rev.resolve(paramsValue.get(0)) : paramsValue;
+    if (filter !== undefined && name(filter) !== 'FlateDecode') {
+      diagnostic('PADES_PAGE_CONTENT_FILTER_UNSUPPORTED');
+      return undefined;
+    }
+    if (params !== undefined && params !== PDFNull) {
+      diagnostic('PADES_PAGE_CONTENT_FILTER_UNSUPPORTED');
+      return undefined;
+    }
+    let bytes = Buffer.from(stream.getContents());
+    if (filter !== undefined) {
+      try {
+        bytes = inflateSync(bytes, { maxOutputLength: MAX_PAGE_CONTENT });
+      } catch (error) {
+        if (error?.code === 'ERR_BUFFER_TOO_LARGE')
+          throw failure('PADES_PAGE_CONTENT_LIMIT', 'UNSUPPORTED');
+        throw failure('PADES_PAGE_CONTENT_FLATE');
+      }
+    }
+    decodedBytes += bytes.length;
+    check(decodedBytes <= MAX_PAGE_CONTENT, 'PADES_PAGE_CONTENT_LIMIT', 'UNSUPPORTED');
+    return bytes;
+  };
+  const visit = (reference, depth = 0, inheritedResources) => {
+    check(reference instanceof PDFRef, 'PADES_PAGE_TREE_REFERENCE');
+    const id = refID(reference);
+    check(!seen.has(id) && depth <= 64, 'PADES_PAGE_TREE_CYCLE_OR_DEPTH');
+    seen.add(id);
+    const dict = rev.resolve(reference);
+    check(dict instanceof PDFDict, 'PADES_PAGE_TREE_NODE');
+    const resourceValue = get(dict, 'Resources');
+    const resources = resourceValue === undefined ? inheritedResources : rev.resolve(resourceValue);
+    check(resources === undefined || resources instanceof PDFDict, 'PADES_PAGE_RESOURCES');
+    const type = name(get(dict, 'Type'));
+    if (type === 'Pages') {
+      const children = rev.resolve(get(dict, 'Kids'));
+      check(children instanceof PDFArray, 'PADES_PAGE_KIDS');
+      check(children.size() <= MAX_OBJECTS, 'PADES_PAGE_LIMIT', 'UNSUPPORTED');
+      for (const child of children.asArray()) visit(child, depth + 1, resources);
+    } else {
+      check(type === 'Page', 'PADES_PAGE_TYPE');
+      check(++pageCount <= MAX_OBJECTS, 'PADES_PAGE_LIMIT', 'UNSUPPORTED');
+      const value = get(dict, 'Contents');
+      if (value === undefined || rev.resolve(value) === PDFNull) return;
+      const content = rev.resolve(value);
+      const references = content instanceof PDFArray ? content.asArray() : [value];
+      const parts = references.map(streamBytes);
+      if (parts.some(part => part === undefined)) return;
+      const fontAvailable = fontName => {
+        if (!(resources instanceof PDFDict)) return false;
+        const fonts = rev.resolve(get(resources, 'Font'));
+        if (!(fonts instanceof PDFDict)) return false;
+        return rev.resolve(get(fonts, fontName)) instanceof PDFDict;
+      };
+      inspectContentTextOperators(Buffer.concat(parts), dict.context, diagnostic, fontAvailable);
+    }
+  };
+  visit(pagesRoot);
 }
 
 function inspectCapabilities(rev, diagnostic) {
