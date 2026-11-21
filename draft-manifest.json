@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 18902,
-      "sha256": "ab4672f5b52c1aca84a90b892c2b228a4914532ed15560b160a97a9397ce3161"
+      "bytes": 19296,
+      "sha256": "009eae138cc0089d419989e5e026c8602889eb04c3dc5fc4e50900c9345295cc"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -1575,13 +1575,13 @@
     },
     {
       "path": "reference/pades-image-xobject-admission.test.mjs",
-      "bytes": 9436,
-      "sha256": "387d1767c2aab9388805f3cdde32162b6c26c21fb826cf196a7cd1d83a433f79"
+      "bytes": 12145,
+      "sha256": "7d2b279298ab32e7d5dbe90d3370232f28cdfdf6266336c14fc68fb4824556d2"
     },
     {
       "path": "reference/pades-image-xobject-vectors.test.mjs",
       "bytes": 3959,
-      "sha256": "aa40f2cb6b6e9d4c71250128d5fdc5b448f1f47db7b97a273e6a601ea754e3eb"
+      "sha256": "7d8280583b748b4e4b6d8cdc332aaa9dbeb1c94b604c4d328d49d14b37787a06"
     },
     {
       "path": "reference/pades-inherited-value-visual.test.mjs",
@@ -1680,8 +1680,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 71523,
-      "sha256": "7f6424df1fb0534b617e3db31642dac5035672252b514d545a43b1491098818f"
+      "bytes": 72521,
+      "sha256": "ffdee8212566f0a2fa8ad168222e23a5aa02f34b6f16d4619b7522136afb2922"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -8065,8 +8065,8 @@
     },
     {
       "path": "reference/vectors/pades-image-xobject-admission.json",
-      "bytes": 348932,
-      "sha256": "a702475ebf866c80b0686d567443af815d0b9949a11820a0dbb1ef53448c2eb5"
+      "bytes": 497829,
+      "sha256": "b08a2e51b29fd564b9f500342a9a0231e46b3afeae5b9d1127842b9ebfadc078"
     },
     {
       "path": "reference/vectors/pades-page-dictionary-admission.json",

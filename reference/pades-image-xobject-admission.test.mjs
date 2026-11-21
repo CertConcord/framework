@@ -182,3 +182,58 @@ test('unfiltered image samples bind declared dimensions and component count', as
   const valid = await verify(document({ Width: '2' }, { pixels: '\0\0\0\0\0\0' }));
   assert.equal(valid.overall, 'VALID', JSON.stringify(valid));
 });
+
+test('unavailable image filter does not hide independently malformed dictionary fields', async () => {
+  for (const [entry, reason] of [
+    [{ Filter: '/VendorDecoder', BitsPerComponent: 'true' }, 'PADES_IMAGE_BITS_PER_COMPONENT'],
+    [{ Filter: '/VendorDecoder', ColorSpace: '/MissingCS' }, 'PADES_IMAGE_COLORSPACE'],
+    [{ Filter: '/VendorDecoder', Decode: '[true 1 0 1 0 1]' }, 'PADES_IMAGE_DECODE'],
+  ]) {
+    const actual = await verify(document(entry));
+    assert.equal(actual.overall, 'INVALID', JSON.stringify(actual));
+    assert.equal(actual.reason, reason);
+  }
+});
+
+test('effective DefaultRGB resource remaps a selected DeviceRGB image colour space', async () => {
+  const calibrated = await verify(document({}, {
+    resourceColorSpace: '/ColorSpace << /DefaultRGB [/CalRGB << /WhitePoint [1 1 1] >>] >>',
+  }));
+  assert.equal(calibrated.overall, 'UNSUPPORTED', JSON.stringify(calibrated));
+  assert.equal(calibrated.reason, 'PADES_IMAGE_COLORSPACE_UNSUPPORTED');
+  const mismatched = await verify(document({}, {
+    resourceColorSpace: '/ColorSpace << /DefaultRGB /DeviceGray >>',
+  }));
+  assert.equal(mismatched.overall, 'INVALID', JSON.stringify(mismatched));
+  assert.equal(mismatched.reason, 'PADES_IMAGE_COLORSPACE');
+  const identity = await verify(document({}, {
+    resourceColorSpace: '/ColorSpace << /DefaultRGB /DeviceRGB >>',
+  }));
+  assert.equal(identity.overall, 'VALID', JSON.stringify(identity));
+});
+
+test('image bit depth follows the final decoder in a filter chain', async () => {
+  const sample = Buffer.from([0x80]);
+  const flate = deflateSync(sample);
+  const runLengthOfFlate = Buffer.from([flate.length - 1, ...flate, 128]);
+  const image = { Width: '8', Height: '1', ColorSpace: '/DeviceGray',
+    BitsPerComponent: '1' };
+  const valid = await verify(document({ ...image,
+    Filter: '[/RunLengthDecode /FlateDecode]' }, {
+    pixels: runLengthOfFlate.toString('latin1'),
+  }));
+  assert.equal(valid.overall, 'VALID', JSON.stringify(valid));
+  const flateOfRunLength = deflateSync(Buffer.from([0, 0x80, 128]));
+  const invalid = await verify(document({ ...image,
+    Filter: '[/FlateDecode /RunLengthDecode]' }, {
+    pixels: flateOfRunLength.toString('latin1'),
+  }));
+  assert.equal(invalid.overall, 'INVALID', JSON.stringify(invalid));
+  assert.equal(invalid.reason, 'PADES_IMAGE_BITS_PER_COMPONENT');
+  const nonFinalJPX = await verify(document({ ColorSpace: '/DeviceGray',
+    BitsPerComponent: undefined, Filter: '[/JPXDecode /FlateDecode]' }, {
+    pixels: flateOfRunLength.toString('latin1'),
+  }));
+  assert.equal(nonFinalJPX.overall, 'INVALID', JSON.stringify(nonFinalJPX));
+  assert.equal(nonFinalJPX.reason, 'PADES_IMAGE_BITS_PER_COMPONENT');
+});

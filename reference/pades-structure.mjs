@@ -664,17 +664,24 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     : filterValue instanceof PDFArray ? filterValue.asArray().map(value => name(rev.resolve(value)))
       : [name(filterValue)];
   check(filters.every(filter => typeof filter === 'string'), 'PADES_IMAGE_FILTER');
-  if (filters.some(filter => !IMAGE_FILTERS.has(filter) || filter === 'Crypt')) {
-    diagnostic('PADES_IMAGE_FILTER_UNSUPPORTED');
-    return;
-  }
-  const jpx = filters.includes('JPXDecode');
+  const unsupportedFilter = filters.some(
+    filter => !IMAGE_FILTERS.has(filter) || filter === 'Crypt',
+  );
+  const jpx = filters.at(-1) === 'JPXDecode';
   const imageMaskValue = entry('ImageMask');
   check(imageMaskValue === undefined || imageMaskValue instanceof PDFBool, 'PADES_IMAGE_MASK');
   const imageMask = imageMaskValue?.asBoolean() ?? false;
   if (imageMask) check(entry('Mask') === undefined, 'PADES_IMAGE_MASK');
 
-  const colorComponents = (value, seen = new Set()) => {
+  const colorsRaw = get(resources, 'ColorSpace');
+  const resourceColors = () => {
+    if (colorsRaw === undefined || undefinedRef(rev, colorsRaw)) return undefined;
+    const colors = rev.resolve(colorsRaw);
+    if (colors === PDFNull) return undefined;
+    check(colors instanceof PDFDict, 'PADES_IMAGE_COLORSPACE');
+    return colors;
+  };
+  const colorComponents = (value, seen = new Set(), allowDefault = true) => {
     if (value instanceof PDFArray) {
       const family = name(rev.resolve(value.get(0)));
       check(['CalGray', 'CalRGB', 'Lab', 'ICCBased', 'Indexed', 'Separation',
@@ -684,18 +691,31 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     }
     const colorName = name(value);
     check(colorName !== undefined && colorName !== 'Pattern', 'PADES_IMAGE_COLORSPACE');
-    if (colorName === 'DeviceGray') return 1;
-    if (colorName === 'DeviceRGB') return 3;
-    if (colorName === 'DeviceCMYK') return 4;
+    const deviceComponents = { DeviceGray: 1, DeviceRGB: 3, DeviceCMYK: 4 };
+    if (Object.hasOwn(deviceComponents, colorName)) {
+      const components = deviceComponents[colorName];
+      if (allowDefault) {
+        const defaultRaw = get(resourceColors(), `Default${colorName.slice(6)}`);
+        if (defaultRaw !== undefined && !undefinedRef(rev, defaultRaw)) {
+          const resolved = rev.resolve(defaultRaw);
+          if (resolved !== PDFNull) {
+            const defaultComponents = colorComponents(resolved, seen, false);
+            if (defaultComponents === undefined) return undefined;
+            check(defaultComponents === components, 'PADES_IMAGE_COLORSPACE');
+          }
+        }
+      }
+      return components;
+    }
     check(!seen.has(colorName), 'PADES_IMAGE_COLORSPACE');
     seen.add(colorName);
-    const colors = rev.resolve(get(resources, 'ColorSpace'));
+    const colors = resourceColors();
     check(colors instanceof PDFDict, 'PADES_IMAGE_COLORSPACE');
     const member = get(colors, colorName);
     check(member !== undefined && !undefinedRef(rev, member), 'PADES_IMAGE_COLORSPACE');
     const resolved = rev.resolve(member);
     check(resolved !== PDFNull, 'PADES_IMAGE_COLORSPACE');
-    return colorComponents(resolved, seen);
+    return colorComponents(resolved, seen, allowDefault);
   };
   const colorValue = entry('ColorSpace');
   if (imageMask) check(colorValue === undefined, 'PADES_IMAGE_COLORSPACE');
@@ -714,9 +734,10 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     }
   }
   if (bits !== undefined) {
-    if (filters.some(filter => ['CCITTFaxDecode', 'JBIG2Decode'].includes(filter)))
+    const sampleFilter = filters.at(-1);
+    if (['CCITTFaxDecode', 'JBIG2Decode'].includes(sampleFilter))
       check(bits === 1, 'PADES_IMAGE_BITS_PER_COMPONENT');
-    if (filters.some(filter => ['DCTDecode', 'RunLengthDecode'].includes(filter)))
+    if (['DCTDecode', 'RunLengthDecode'].includes(sampleFilter))
       check(bits === 8, 'PADES_IMAGE_BITS_PER_COMPONENT');
   }
 
@@ -737,6 +758,7 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     check(expected <= 64n * 1024n * 1024n, 'PADES_IMAGE_LIMIT', 'UNSUPPORTED');
     check(BigInt(stream.getContents().length) === expected, 'PADES_IMAGE_DATA_LENGTH');
   }
+  if (unsupportedFilter) diagnostic('PADES_IMAGE_FILTER_UNSUPPORTED');
 }
 
 function inspectSignedPageText(rev, diagnostic, integerObjects) {
