@@ -539,7 +539,7 @@ const CONTENT_OPERATORS = new Set([
   'EMC', 'BX', 'EX',
 ]);
 
-function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable) {
+function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable, resourceAvailable) {
   const raw = Buffer.from(bytes);
   const parser = new StrictObjectParser(
     raw, 0, context, new WeakMap(), new WeakSet(), { nodes: 0 },
@@ -600,6 +600,16 @@ function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable) 
     } else if (operator === 'Tf') {
       requireOperands(['name', 'number']);
       check(fontAvailable(name(operands[0])), 'PADES_TEXT_FONT_RESOURCE');
+    } else if (operator === 'gs' || operator === 'sh' || operator === 'Do') {
+      check(operands.length === 1 && operands[0] instanceof PDFName,
+        'PADES_PAGE_RESOURCE_MEMBER');
+      const category = operator === 'gs' ? 'ExtGState'
+        : operator === 'sh' ? 'Shading' : 'XObject';
+      check(resourceAvailable(category, name(operands[0])), 'PADES_PAGE_RESOURCE_MEMBER');
+    } else if (operator === 'scn' || operator === 'SCN') {
+      const patternName = operands.at(-1);
+      if (patternName instanceof PDFName)
+        check(resourceAvailable('Pattern', name(patternName)), 'PADES_PAGE_RESOURCE_MEMBER');
     } else if (operator === 'Tm') {
       check(inText, 'PADES_TEXT_SCOPE');
       requireOperands(Array(6).fill('number'));
@@ -737,7 +747,22 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
         if (!(fonts instanceof PDFDict)) return false;
         return rev.resolve(get(fonts, fontName)) instanceof PDFDict;
       };
-      inspectContentTextOperators(Buffer.concat(parts), dict.context, diagnostic, fontAvailable);
+      const resourceAvailable = (category, resourceName) => {
+        const categoryValue = get(resources, category);
+        if (categoryValue === undefined || undefinedRef(rev, categoryValue)) return false;
+        const members = rev.resolve(categoryValue);
+        if (!(members instanceof PDFDict)) return false;
+        const value = get(members, resourceName);
+        if (value === undefined || value === PDFNull || undefinedRef(rev, value)) return false;
+        const resolved = rev.resolve(value);
+        if (category === 'ExtGState') return resolved instanceof PDFDict;
+        if (category === 'Shading' || category === 'Pattern')
+          return resolved instanceof PDFDict || resolved instanceof PDFRawStream;
+        return resolved instanceof PDFRawStream;
+      };
+      inspectContentTextOperators(
+        Buffer.concat(parts), dict.context, diagnostic, fontAvailable, resourceAvailable,
+      );
       return 1;
     }
   };
@@ -746,6 +771,24 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
 
 function inspectCapabilities(rev, diagnostic) {
   const visited = new Set();
+  const resourceDictionaries = new WeakSet(), memberDictionaries = new WeakSet();
+  const categories = new Set(['ExtGState', 'Shading', 'Pattern', 'XObject']);
+  for (const entry of rev.active.values()) {
+    const page = entry.used ? entry.def.object : undefined;
+    if (!(page instanceof PDFDict) || !['Page', 'Pages'].includes(name(get(page, 'Type'))))
+      continue;
+    const resourceValue = get(page, 'Resources');
+    if (resourceValue === undefined || undefinedRef(rev, resourceValue)) continue;
+    const resources = rev.resolve(resourceValue);
+    if (!(resources instanceof PDFDict)) continue;
+    resourceDictionaries.add(resources);
+    for (const category of categories) {
+      const value = get(resources, category);
+      if (value === undefined || undefinedRef(rev, value)) continue;
+      const members = rev.resolve(value);
+      if (members instanceof PDFDict) memberDictionaries.add(members);
+    }
+  }
   function visit(object, depth = 0) {
     check(depth <= 64, 'PADES_OBJECT_LIMIT', 'UNSUPPORTED');
     if (!object || visited.has(object)) return;
@@ -798,7 +841,11 @@ function inspectCapabilities(rev, diagnostic) {
         const pageEntry = type === 'Page' || type === 'Pages';
         const optionalPageKey = ['Rotate', 'MediaBox', 'Resources'].includes(key.decodeText()) ||
           (type === 'Pages' && key.decodeText() === 'Parent');
-        if (!(pageEntry && optionalPageKey && undefinedRef(rev, value)))
+        const optionalResourceReference = undefinedRef(rev, value) &&
+          ((resourceDictionaries.has(dict) && categories.has(key.decodeText())) ||
+            memberDictionaries.has(dict));
+        if (!(undefinedRef(rev, value) && pageEntry && optionalPageKey) &&
+            !optionalResourceReference)
           visit(value, depth + 1);
       }
     } else if (object instanceof PDFArray)
