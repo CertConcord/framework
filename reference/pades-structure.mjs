@@ -681,11 +681,14 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     check(colors instanceof PDFDict, 'PADES_IMAGE_COLORSPACE');
     return colors;
   };
-  const colorComponents = (value, seen = new Set(), allowDefault = true) => {
+  const colorComponents = (value, seen = new Set(), allowDefault = true,
+    defaultSpace = false) => {
     if (value instanceof PDFArray) {
       const family = name(rev.resolve(value.get(0)));
       check(['CalGray', 'CalRGB', 'Lab', 'ICCBased', 'Indexed', 'Separation',
         'DeviceN'].includes(family), 'PADES_IMAGE_COLORSPACE');
+      if (defaultSpace)
+        check(!['Lab', 'Indexed'].includes(family), 'PADES_IMAGE_COLORSPACE');
       diagnostic('PADES_IMAGE_COLORSPACE_UNSUPPORTED');
       return undefined;
     }
@@ -699,7 +702,7 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
         if (defaultRaw !== undefined && !undefinedRef(rev, defaultRaw)) {
           const resolved = rev.resolve(defaultRaw);
           if (resolved !== PDFNull) {
-            const defaultComponents = colorComponents(resolved, seen, false);
+            const defaultComponents = colorComponents(resolved, seen, false, true);
             if (defaultComponents === undefined) return undefined;
             check(defaultComponents === components, 'PADES_IMAGE_COLORSPACE');
           }
@@ -715,7 +718,7 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     check(member !== undefined && !undefinedRef(rev, member), 'PADES_IMAGE_COLORSPACE');
     const resolved = rev.resolve(member);
     check(resolved !== PDFNull, 'PADES_IMAGE_COLORSPACE');
-    return colorComponents(resolved, seen, allowDefault);
+    return colorComponents(resolved, seen, allowDefault, defaultSpace);
   };
   const colorValue = entry('ColorSpace');
   if (imageMask) check(colorValue === undefined, 'PADES_IMAGE_COLORSPACE');
