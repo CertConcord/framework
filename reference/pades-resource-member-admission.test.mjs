@@ -13,6 +13,18 @@ const shading = '<< /ShadingType 2 /ColorSpace /DeviceRGB /Coords [0 0 100 0] ' 
   '/Function << /FunctionType 2 /Domain [0 1] /C0 [1 0 0] /C1 [0 0 1] /N 1 >> ' +
   '/Extend [true true] >>';
 const formStream = '40 50 100 80 re f\n';
+const meshData = Buffer.from([
+  0, 10, 10, 255, 0, 0,
+  0, 200, 10, 0, 255, 0,
+  0, 100, 200, 0, 0, 255,
+]);
+const mesh = {
+  kind: 'Shading', name: 'Mesh1', content: '/Mesh1 sh\n',
+  objects: [{ number: 6, body: `<< /ShadingType 4 /ColorSpace /DeviceRGB ` +
+    `/BitsPerCoordinate 8 /BitsPerComponent 8 /BitsPerFlag 8 ` +
+    `/Decode [0 255 0 255 0 1 0 1 0 1] /Length ${meshData.length} >>\n` +
+    `stream\n${meshData.toString('latin1')}\nendstream` }],
+};
 const cases = [
   {
     kind: 'ExtGState', name: 'GS1', content: 'q /GS1 gs 0 0 0 rg 40 50 100 80 re f Q\n',
@@ -124,6 +136,15 @@ test('stroking pattern SCN binds the selected Pattern resource', async () => {
   const positive = await verify(document(pattern, '6 0 R', content));
   assert.equal(positive.overall, 'VALID', JSON.stringify(positive));
   const negative = await verify(document(pattern, 'null', content));
+  assert.equal(negative.overall, 'INVALID', JSON.stringify(negative));
+  assert.equal(negative.reason, 'PADES_PAGE_RESOURCE_MEMBER');
+});
+
+test('signed type 4 mesh shading stream is a valid referenced member', async () => {
+  const positive = await verify(document(mesh, '6 0 R'));
+  assert.equal(positive.overall, 'VALID', JSON.stringify(positive));
+  assert.equal(positive.reason, 'PADES_VALID');
+  const negative = await verify(document(mesh, 'null'));
   assert.equal(negative.overall, 'INVALID', JSON.stringify(negative));
   assert.equal(negative.reason, 'PADES_PAGE_RESOURCE_MEMBER');
 });

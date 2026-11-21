@@ -755,8 +755,8 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
         const value = get(members, resourceName);
         if (value === undefined || value === PDFNull || undefinedRef(rev, value)) return false;
         const resolved = rev.resolve(value);
-        if (category === 'ExtGState' || category === 'Shading') return resolved instanceof PDFDict;
-        if (category === 'Pattern')
+        if (category === 'ExtGState') return resolved instanceof PDFDict;
+        if (category === 'Shading' || category === 'Pattern')
           return resolved instanceof PDFDict || resolved instanceof PDFRawStream;
         return resolved instanceof PDFRawStream;
       };

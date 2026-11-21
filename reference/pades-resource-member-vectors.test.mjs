@@ -10,7 +10,7 @@ import { loadPAdES, pdfSignatures } from './pades-fixtures.mjs';
 
 const raw = readFileSync(new URL('./vectors/pades-resource-member-admission.json', import.meta.url));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-assert.equal(sha(raw), '3f32454d82cd2fd5118f70a47f583f5e29edee2ee137a9c9f8646cb80f07287e');
+assert.equal(sha(raw), '3bc8c0e7dd55377358d7093c020bfee68e0179dc1ddea0bf1253d9585c5748d9');
 const vectors = JSON.parse(raw);
 assert.equal(vectors.schema, 'certconcord.pades-resource-member-admission.v1');
 assert.equal(vectors.baseMain, 'af0d8b0d7b56c2bc37cfc36b488a6eedaba6b871');
