@@ -474,7 +474,7 @@ function parseDocument(input) {
     if (get(rev.catalog, 'Version') && name(get(rev.catalog, 'Version')) !== '1.7')
       diagnostic('PADES_VERSION_UNSUPPORTED');
     inspectCapabilities(rev, diagnostic);
-    inspectSignedPageText(rev, diagnostic);
+    inspectSignedPageText(rev, diagnostic, integerObjects);
     rev.form = rev.resolve(get(rev.catalog, 'AcroForm'));
     check(rev.form === undefined || rev.form instanceof PDFDict, 'PADES_ACROFORM');
     if (rev.form && get(rev.form, 'SigFlags') !== undefined) {
@@ -622,11 +622,27 @@ function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable) 
   check(operands.length === 0, 'PADES_CONTENT_TRAILING_OPERAND');
 }
 
-function inspectSignedPageText(rev, diagnostic) {
+function inspectSignedPageText(rev, diagnostic, integerObjects) {
   const pagesRoot = get(rev.catalog, 'Pages');
   check(pagesRoot instanceof PDFRef, 'PADES_PAGES_REFERENCE');
   const seen = new Set();
   let pageCount = 0, decodedBytes = 0;
+  const checkedMediaBox = value => {
+    const rectangle = rev.resolve(value);
+    check(rectangle instanceof PDFArray && rectangle.size() === 4, 'PADES_PAGE_MEDIABOX');
+    for (const item of rectangle.asArray()) {
+      const coordinate = rev.resolve(item);
+      check(coordinate instanceof PDFNumber && Number.isFinite(coordinate.asNumber()),
+        'PADES_PAGE_MEDIABOX');
+    }
+    return rectangle;
+  };
+  const checkedRotate = value => {
+    const rotation = rev.resolve(value);
+    check(rotation instanceof PDFNumber && integerObjects.has(rotation), 'PADES_PAGE_ROTATE');
+    const degrees = rotation.asNumber();
+    check(Number.isSafeInteger(degrees) && degrees % 90 === 0, 'PADES_PAGE_ROTATE');
+  };
   const streamBytes = reference => {
     check(reference instanceof PDFRef, 'PADES_PAGE_CONTENT_REFERENCE');
     const stream = rev.resolve(reference);
@@ -659,7 +675,7 @@ function inspectSignedPageText(rev, diagnostic) {
     check(decodedBytes <= MAX_PAGE_CONTENT, 'PADES_PAGE_CONTENT_LIMIT', 'UNSUPPORTED');
     return bytes;
   };
-  const visit = (reference, depth = 0, inheritedResources) => {
+  const visit = (reference, depth = 0, inheritedResources, inheritedMediaBox, parentReference) => {
     check(reference instanceof PDFRef, 'PADES_PAGE_TREE_REFERENCE');
     const id = refID(reference);
     check(!seen.has(id) && depth <= 64, 'PADES_PAGE_TREE_CYCLE_OR_DEPTH');
@@ -669,21 +685,39 @@ function inspectSignedPageText(rev, diagnostic) {
     const resourceValue = get(dict, 'Resources');
     const resources = resourceValue === undefined ? inheritedResources : rev.resolve(resourceValue);
     check(resources === undefined || resources instanceof PDFDict, 'PADES_PAGE_RESOURCES');
+    const mediaValue = get(dict, 'MediaBox');
+    const mediaBox = mediaValue === undefined ? inheritedMediaBox : checkedMediaBox(mediaValue);
+    const rotateValue = get(dict, 'Rotate');
+    if (rotateValue !== undefined) checkedRotate(rotateValue);
     const type = name(get(dict, 'Type'));
     if (type === 'Pages') {
+      const parent = get(dict, 'Parent');
+      if (depth === 0) check(parent === undefined, 'PADES_PAGE_TREE_PARENT');
+      else check(parent instanceof PDFRef && refID(parent) === refID(parentReference),
+        'PADES_PAGE_TREE_PARENT');
       const children = rev.resolve(get(dict, 'Kids'));
       check(children instanceof PDFArray, 'PADES_PAGE_KIDS');
       check(children.size() <= MAX_OBJECTS, 'PADES_PAGE_LIMIT', 'UNSUPPORTED');
-      for (const child of children.asArray()) visit(child, depth + 1, resources);
+      const count = sourceInteger(rev.resolve(get(dict, 'Count')), 'PADES_PAGE_TREE_COUNT', integerObjects);
+      let actual = 0;
+      for (const child of children.asArray())
+        actual += visit(child, depth + 1, resources, mediaBox, reference);
+      check(count === actual, 'PADES_PAGE_TREE_COUNT');
+      return actual;
     } else {
       check(type === 'Page', 'PADES_PAGE_TYPE');
+      const parent = get(dict, 'Parent');
+      check(parent instanceof PDFRef && refID(parent) === refID(parentReference),
+        'PADES_PAGE_PARENT');
+      check(mediaBox instanceof PDFArray, 'PADES_PAGE_MEDIABOX');
+      check(resources instanceof PDFDict, 'PADES_PAGE_RESOURCES');
       check(++pageCount <= MAX_OBJECTS, 'PADES_PAGE_LIMIT', 'UNSUPPORTED');
       const value = get(dict, 'Contents');
-      if (value === undefined || rev.resolve(value) === PDFNull) return;
+      if (value === undefined || rev.resolve(value) === PDFNull) return 1;
       const content = rev.resolve(value);
       const references = content instanceof PDFArray ? content.asArray() : [value];
       const parts = references.map(streamBytes);
-      if (parts.some(part => part === undefined)) return;
+      if (parts.some(part => part === undefined)) return 1;
       const fontAvailable = fontName => {
         if (!(resources instanceof PDFDict)) return false;
         const fonts = rev.resolve(get(resources, 'Font'));
@@ -691,6 +725,7 @@ function inspectSignedPageText(rev, diagnostic) {
         return rev.resolve(get(fonts, fontName)) instanceof PDFDict;
       };
       inspectContentTextOperators(Buffer.concat(parts), dict.context, diagnostic, fontAvailable);
+      return 1;
     }
   };
   visit(pagesRoot);
