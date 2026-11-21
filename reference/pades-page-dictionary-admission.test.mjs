@@ -31,6 +31,12 @@ test('signed Page Rotate accepts local and inherited integer multiples of 90', a
   await signedDecision(appendRevision(plainPDF(), [
     { number: 3, body: page({ rotate: '/Rotate -90' }) },
   ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 3, body: page({ rotate: '/Rotate null' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 2, body: pages('/Rotate null') },
+  ]), 'VALID', 'PADES_VALID');
 });
 
 test('signed Page Rotate rejects an array and a non-multiple of 90', async () => {
@@ -64,6 +70,13 @@ test('signed Page MediaBox accepts local and inherited four-number rectangles', 
   await signedDecision(appendRevision(plainPDF(), [
     { number: 3, body: page({ media: '/MediaBox [300 200 0 0]' }) },
   ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 2, body: pages('/MediaBox [0 0 300 200]') },
+    { number: 3, body: page({ media: '/MediaBox null' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 2, body: pages('/MediaBox null') },
+  ]), 'VALID', 'PADES_VALID');
 });
 
 test('signed Page MediaBox rejects missing or malformed effective rectangles', async () => {
@@ -75,6 +88,9 @@ test('signed Page MediaBox rejects missing or malformed effective rectangles', a
   ]), 'INVALID', 'PADES_PAGE_MEDIABOX');
   await signedDecision(appendRevision(plainPDF(), [
     { number: 3, body: page({ media: '/MediaBox [0 0 true 200]' }) },
+  ]), 'INVALID', 'PADES_PAGE_MEDIABOX');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 3, body: page({ media: '/MediaBox null' }) },
   ]), 'INVALID', 'PADES_PAGE_MEDIABOX');
 });
 
@@ -89,6 +105,16 @@ test('signed Page Resources must resolve even without text operators', async () 
   ]), 'VALID', 'PADES_VALID');
   await signedDecision(appendRevision(noResources, [
     { number: 3, body: page({ resources: '' }) },
+  ]), 'INVALID', 'PADES_PAGE_RESOURCES');
+  await signedDecision(appendRevision(noResources, [
+    { number: 2, body: pages('/Resources << >>') },
+    { number: 3, body: page({ resources: '/Resources null' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(noResources, [
+    { number: 2, body: pages('/Resources null') },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(noResources, [
+    { number: 3, body: page({ resources: '/Resources null' }) },
   ]), 'INVALID', 'PADES_PAGE_RESOURCES');
 });
 
@@ -111,6 +137,9 @@ test('signed root Pages prohibits Parent and nested Pages binds its parent', asy
   await signedDecision(appendRevision(plainPDF(), [
     { number: 2, body: '<< /Type /Pages /Kids [3 0 R] /Count 1 /Parent 4 0 R >>' },
   ]), 'INVALID', 'PADES_PAGE_TREE_PARENT');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 2, body: '<< /Type /Pages /Kids [3 0 R] /Count 1 /Parent null >>' },
+  ]), 'VALID', 'PADES_VALID');
   await signedDecision(appendRevision(plainPDF(), [
     { number: 2, body: '<< /Type /Pages /Kids [6 0 R] /Count 1 >>' },
     { number: 6, body: '<< /Type /Pages /Parent 4 0 R /Kids [3 0 R] /Count 1 >>' },

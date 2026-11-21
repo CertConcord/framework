@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 15809,
-      "sha256": "9fde671370b3529ec67068daed0026c74dd5760aad4425ee705482b31b426b5a"
+      "bytes": 15888,
+      "sha256": "f4a38d8f46ed8ffa53647bdb1808dfdf9bac62fe373b56416309949d842ba1d5"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -1590,8 +1590,8 @@
     },
     {
       "path": "reference/pades-page-dictionary-admission.test.mjs",
-      "bytes": 5468,
-      "sha256": "3caade4fce59223d31e9843c2092e6668c62dd561e83e2066ba49c3714b20b2b"
+      "bytes": 6891,
+      "sha256": "ebd5464e82d3561a6b1e6644eac3b07788dcd48301ce67ca7ceeae386762934a"
     },
     {
       "path": "reference/pades-page-dictionary-vectors.test.mjs",
