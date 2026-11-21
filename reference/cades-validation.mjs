@@ -1,4 +1,6 @@
 import { X509Certificate, verify as verifySignature } from 'node:crypto';
+import { isIP } from 'node:net';
+import { domainToASCII, domainToUnicode } from 'node:url';
 import {
   parseDER,
   oidText,
@@ -21,6 +23,29 @@ const SMTP_UTF8_NAME = '1.3.6.1.5.5.7.8.9';
 const RSA_KEY = '1.2.840.113549.1.1.1';
 const GENERAL_NAME_TAGS = new Set([0xa0, 0x81, 0x82, 0xa3, 0xa4, 0xa5, 0x86, 0x87, 0x88]);
 const DIRECTORY_STRING_TAGS = new Set([0x0c, 0x13, 0x14, 0x1c, 0x1e]);
+const CRL_DIRECTORY_NAME_OIDS = new Set([
+  '2.5.4.3', '2.5.4.4', '2.5.4.7', '2.5.4.8', '2.5.4.9',
+  '2.5.4.10', '2.5.4.11', '2.5.4.12', '2.5.4.41',
+  '2.5.4.13', '2.5.4.15', '2.5.4.17', '2.5.4.18', '2.5.4.19',
+  '2.5.4.42', '2.5.4.43', '2.5.4.44', '2.5.4.51', '2.5.4.65',
+]);
+const CRL_PRINTABLE_NAME_OIDS = new Set([
+  '2.5.4.5', '2.5.4.6', '2.5.4.20', '2.5.4.27', '2.5.4.46',
+]);
+const CRL_IA5_NAME_OIDS = new Set([
+  '0.9.2342.19200300.100.1.25', '1.2.840.113549.1.9.1',
+]);
+// RFC 5280 Appendix A.1 names and email; X.520 telephone; RFC 4519 DNS label.
+// Appendix A.1 measures string bounds in characters, not DER octets.
+const CRL_ATTRIBUTE_MAX_LENGTH = new Map([
+  ['2.5.4.41', 32768], ['2.5.4.4', 32768],
+  ['2.5.4.42', 32768], ['2.5.4.43', 32768], ['2.5.4.44', 32768],
+  ['2.5.4.3', 64], ['2.5.4.7', 128], ['2.5.4.8', 128],
+  ['2.5.4.10', 64], ['2.5.4.11', 64], ['2.5.4.12', 64],
+  ['2.5.4.65', 128], ['2.5.4.5', 64], ['2.5.4.6', 2],
+  ['2.5.4.20', 32], ['0.9.2342.19200300.100.1.25', 63],
+  ['1.2.840.113549.1.9.1', 255],
+]);
 const mailPurpose = (purpose) => ['SMIME_SIGNING', 'SMIME_RECIPIENT_ENCRYPTION'].includes(purpose);
 const outcome = (overall, reason, details = {}) => ({ overall, reason, ...details });
 const instant = (value) => Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
@@ -144,9 +169,32 @@ function sanLexicalName(name) {
 }
 
 function directoryString(wrapper) {
-  return wrapper.children?.length === 1 &&
-    DIRECTORY_STRING_TAGS.has(wrapper.children[0].tag) &&
-    wrapper.children[0].value.length > 0;
+  const node = wrapper.children?.length === 1 ? wrapper.children[0] : null;
+  if (!node || !DIRECTORY_STRING_TAGS.has(node.tag) || !node.value.length) return false;
+  if (node.tag === 0x13)
+    return /^[A-Za-z0-9 '()+,\-./:=?]+$/.test(node.value.toString('latin1'));
+  if (node.tag === 0x0c) {
+    try { new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(node.value); }
+    catch { return false; }
+    return true;
+  }
+  if (node.tag === 0x1e) {
+    if (node.value.length % 2 !== 0) return false;
+    for (let i = 0; i < node.value.length; i += 2) {
+      const cp = node.value.readUInt16BE(i);
+      if (cp >= 0xd800 && cp <= 0xdfff) return false;
+    }
+    return true;
+  }
+  if (node.tag === 0x1c) {
+    if (node.value.length % 4 !== 0) return false;
+    for (let i = 0; i < node.value.length; i += 4) {
+      const cp = node.value.readUInt32BE(i);
+      if (cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff)) return false;
+    }
+    return true;
+  }
+  throw new ProtocolError('CADES_CRL_GENERAL_NAME_UNSUPPORTED'); // TeletexString
 }
 
 function recipientKey(cert) {
@@ -551,6 +599,249 @@ function protectionDeadline(policy, cert) {
   return Math.min(...values);
 }
 
+function crlAttributeLength(value) {
+  if (value.tag === 0x0c)
+    return Array.from(new TextDecoder('utf-8', { fatal: true, ignoreBOM: true })
+      .decode(value.value)).length;
+  if (value.tag === 0x1e) return value.value.length / 2;
+  if (value.tag === 0x1c) return value.value.length / 4;
+  return value.value.length;
+}
+
+function crlAttributeWithinBound(id, value) {
+  const maximum = CRL_ATTRIBUTE_MAX_LENGTH.get(id);
+  return maximum === undefined || crlAttributeLength(value) <= maximum;
+}
+
+function crlAttribute(node) {
+  if (node?.tag !== 0x30 || node.children?.length !== 2 ||
+      node.children[0].tag !== 6 || !validOIDContents(node.children[0].value))
+    return false;
+  const id = oidText(node.children[0]), value = node.children[1];
+  if (!value.value.length) return false;
+  if (CRL_DIRECTORY_NAME_OIDS.has(id))
+    return DIRECTORY_STRING_TAGS.has(value.tag) && directoryString({ children: [value] }) &&
+      crlAttributeWithinBound(id, value);
+  if (CRL_PRINTABLE_NAME_OIDS.has(id))
+    return value.tag === 0x13 && directoryString({ children: [value] }) &&
+      crlAttributeWithinBound(id, value) &&
+      (id !== '2.5.4.6' || value.value.length === 2) &&
+      (id !== '2.5.4.20' || /^[+ 0-9-]+$/.test(value.value.toString('ascii'))) &&
+      (id !== '2.5.4.27' || /^[A-Za-z]+$/.test(value.value.toString('ascii')));
+  if (CRL_IA5_NAME_OIDS.has(id)) {
+    if (value.tag !== 0x16 || !value.value.every(byte => byte > 0x20 && byte < 0x7f) ||
+        !crlAttributeWithinBound(id, value))
+      return false;
+    if (id === '0.9.2342.19200300.100.1.25')
+      return crlDNSLabel(value.value.toString('ascii'));
+    return crlMailName(value.value);
+  }
+  // Other X.520 names and RFC 4519 uid have known, unselected value syntaxes.
+  if (id.startsWith('2.5.4.') || id === '0.9.2342.19200300.100.1.1') return false;
+  return crlOpaqueOtherName(value);
+}
+
+function crlOrderedAttributes(children) {
+  return children?.length > 0 && children.every(crlAttribute) &&
+    children.every((entry, index) => index === 0 ||
+      Buffer.compare(children[index - 1].raw, entry.raw) <= 0);
+}
+
+function crlDNSLabel(label) {
+  if (label.length < 1 || label.length > 63 ||
+      !/^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(label)) return false;
+  if (label.slice(2, 4) !== '--') return true; // NR-LDH
+  const lower = label.toLowerCase();
+  if (!lower.startsWith('xn--')) return false;
+  const unicode = domainToUnicode(lower);
+  return unicode && unicode !== lower && unicode === unicode.normalize('NFC') &&
+    unicode.slice(2, 4) !== '--' && domainToASCII(unicode) === lower &&
+    /^[\p{L}\p{N}\p{M}-]+$/u.test(unicode) &&
+    !/^[\p{M}-]/u.test(unicode) && !unicode.endsWith('-');
+}
+
+function crlDNSName(value) {
+  if (!value.every(byte => byte < 0x80)) return false;
+  const text = Buffer.from(value).toString('ascii');
+  return text.length > 0 && text.length <= 253 &&
+    text.split('.').every(crlDNSLabel);
+}
+
+function crlURIChars(text, extra = '') {
+  for (let index = 0; index < text.length; index++) {
+    const char = text[index];
+    if (char === '%') {
+      if (!/^[0-9A-Fa-f]{2}$/.test(text.slice(index + 1, index + 3))) return false;
+      index += 2;
+    } else if (!/^[A-Za-z0-9._~!$&'()*+,;=:@-]$/.test(char) &&
+               !extra.includes(char)) return false;
+  }
+  return true;
+}
+
+function crlAbsoluteURI(value) {
+  const text = Buffer.from(value).toString('ascii');
+  const colon = text.indexOf(':');
+  if (colon <= 0 || colon === text.length - 1 ||
+      !/^[A-Za-z][A-Za-z0-9+.-]*$/.test(text.slice(0, colon)) ||
+      !value.every(byte => byte > 0x20 && byte < 0x7f)) return false;
+  const part = text.slice(colon + 1);
+  const hash = part.indexOf('#');
+  const beforeFragment = hash < 0 ? part : part.slice(0, hash);
+  const fragment = hash < 0 ? '' : part.slice(hash + 1);
+  const question = beforeFragment.indexOf('?');
+  const hierarchy = question < 0 ? beforeFragment : beforeFragment.slice(0, question);
+  const query = question < 0 ? '' : beforeFragment.slice(question + 1);
+  if (!crlURIChars(query, '/?') || !crlURIChars(fragment, '/?')) return false;
+  if (/^https?$/i.test(text.slice(0, colon)) && !hierarchy.startsWith('//')) return false;
+  if (!hierarchy.startsWith('//')) return crlURIChars(hierarchy, '/');
+  const afterSlashes = hierarchy.slice(2);
+  const slash = afterSlashes.indexOf('/');
+  const authority = slash < 0 ? afterSlashes : afterSlashes.slice(0, slash);
+  const path = slash < 0 ? '' : afterSlashes.slice(slash);
+  if (!crlURIChars(path, '/') || !authority ||
+      authority.indexOf('@') !== authority.lastIndexOf('@')) return false;
+  const at = authority.indexOf('@');
+  if (at >= 0 && !crlURIChars(authority.slice(0, at))) return false;
+  const hostPort = authority.slice(at + 1);
+  if (hostPort.startsWith('[')) {
+    const close = hostPort.indexOf(']');
+    if (close < 0 || isIP(hostPort.slice(1, close)) !== 6) return false;
+    const port = hostPort.slice(close + 1);
+    return !port || /^:[0-9]*$/.test(port);
+  }
+  const portAt = hostPort.lastIndexOf(':');
+  const host = portAt < 0 ? hostPort : hostPort.slice(0, portAt);
+  const port = portAt < 0 ? '' : hostPort.slice(portAt);
+  if (!host || (port && !/^:[0-9]*$/.test(port))) return false;
+  if (isIP(host) === 4) return true;
+  if (/^[0-9.]+$/.test(host)) return false;
+  const dns = host.endsWith('.') ? host.slice(0, -1) : host;
+  return dns.includes('.') && crlDNSName(Buffer.from(dns, 'ascii'));
+}
+
+function crlSMTPDomain(domain) {
+  if (domain !== domain.toLowerCase() || !domain.includes('.') ||
+      !Array.from(domain).every(char => char.codePointAt(0) < 0x80) ||
+      !crlDNSName(Buffer.from(domain, 'ascii'))) return false;
+  return true;
+}
+
+// The selected opaque otherName subset admits canonical universal DER values.
+// Unknown contextual/private tag syntaxes remain outside this CRL profile.
+function crlOpaqueOtherName(node) {
+  const bytes = node.value;
+  if (node.tag === 0x01) return bytes.length === 1 && [0x00, 0xff].includes(bytes[0]);
+  if (node.tag === 0x02) return bytes.length > 0; // parseDER checks minimal INTEGER.
+  if (node.tag === 0x03) return bytes.length > 0 && bytes[0] <= 7 &&
+    (bytes.length > 1 || bytes[0] === 0) &&
+    (bytes[0] === 0 || (bytes.at(-1) & ((1 << bytes[0]) - 1)) === 0);
+  if (node.tag === 0x04) return true;
+  if (node.tag === 0x05) return bytes.length === 0;
+  if (node.tag === 0x06) return validOIDContents(bytes);
+  if (node.tag === 0x0a) return bytes.length > 0 &&
+    (bytes.length === 1 || !((bytes[0] === 0 && !(bytes[1] & 0x80)) ||
+      (bytes[0] === 0xff && (bytes[1] & 0x80))));
+  if (node.tag === 0x0c) {
+    try { new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes); }
+    catch { return false; }
+    return true;
+  }
+  if (node.tag === 0x13) return /^[A-Za-z0-9 '()+,\-./:=?]*$/.test(bytes.toString('latin1'));
+  if (node.tag === 0x16) return bytes.every(byte => byte < 0x80);
+  if (node.tag === 0x30 || node.tag === 0x31)
+    return node.children?.every(crlOpaqueOtherName) ?? false;
+  return false;
+}
+
+function crlOtherName(name) {
+  if (name.children?.length !== 2 || name.children[0].tag !== 6 ||
+      !validOIDContents(name.children[0].value) ||
+      name.children[1].tag !== 0xa0 ||
+      name.children[1].children?.length !== 1) return false;
+  const id = oidText(name.children[0]);
+  const inner = name.children[1].children[0];
+  if (id === SMTP_UTF8_NAME) {
+    if (inner.tag !== 0x0c || !directoryString({ children: [inner] }) ||
+        inner.value.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf]))) return false;
+    const mailbox = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(inner.value);
+    const at = mailbox.indexOf('@');
+    const local = mailbox.slice(0, at), domain = mailbox.slice(at + 1);
+    return at > 0 && at === mailbox.lastIndexOf('@') &&
+      Array.from(local).some(char => char.codePointAt(0) > 0x7f) &&
+      /^[\p{L}\p{N}._+-]+$/u.test(local) &&
+      !local.startsWith('.') && !local.endsWith('.') && !local.includes('..') &&
+      crlSMTPDomain(domain);
+  }
+  // Other standard id-on value syntaxes are outside this selected CRL profile.
+  if (id.startsWith('1.3.6.1.5.5.7.8.')) return false;
+  return crlOpaqueOtherName(inner);
+}
+function crlMailName(value) {
+  if (!value.every((byte) => byte < 128)) return false;
+  const text = Buffer.from(value).toString('ascii');
+  const at = text.indexOf('@');
+  const local = text.slice(0, at);
+  return at > 0 && at === text.lastIndexOf('@') &&
+    /^[A-Za-z0-9._+-]+$/.test(local) &&
+    !local.startsWith('.') && !local.endsWith('.') &&
+    !local.includes('..') && crlDNSName(Buffer.from(text.slice(at + 1), 'ascii'));
+}
+
+function crlGeneralName(name) {
+  if (!GENERAL_NAME_TAGS.has(name?.tag) || name.value.length === 0 ||
+      !sanLexicalName(name)) return false;
+  if (name.tag === 0x81) return crlMailName(name.value);
+  if (name.tag === 0x82) return crlDNSName(name.value);
+  if (name.tag === 0x86) return crlAbsoluteURI(name.value);
+  if (name.tag === 0xa0) return crlOtherName(name);
+  if (name.tag === 0xa3) throw new ProtocolError('CADES_CRL_GENERAL_NAME_UNSUPPORTED');
+  if (name.tag === 0xa4)
+    return name.children?.length === 1 && name.children[0].tag === 0x30 &&
+      name.children[0].children?.length > 0 &&
+      name.children[0].children.every((rdn) => rdn.tag === 0x31 &&
+        crlOrderedAttributes(rdn.children));
+  if (name.tag === 0xa5)
+    return [1, 2].includes(name.children?.length) &&
+      name.children.at(-1).tag === 0xa1 &&
+      directoryString(name.children.at(-1)) &&
+      (name.children.length === 1 ||
+        (name.children[0].tag === 0xa0 && directoryString(name.children[0])));
+  if (name.tag === 0x87) return [4, 16].includes(name.value.length);
+  if (name.tag === 0x88) return validOIDContents(name.value);
+  return true;
+}
+
+function crlExtensionProfile(id, value) {
+  if (id === '2.5.29.46') {
+    const points = parseDER(value);
+    requireThat(points.tag === 0x30 && points.children?.length > 0,
+      'CADES_CRL_FRESHEST');
+    for (const point of points.children) {
+      const field = point.children?.[0], name = field?.children?.[0];
+      requireThat(point.tag === 0x30 && point.children.length === 1 &&
+        field.tag === 0xa0 && field.children?.length === 1 &&
+        ((name.tag === 0xa0 && name.children?.length > 0 &&
+          name.children.every(crlGeneralName)) ||
+         (name.tag === 0xa1 && crlOrderedAttributes(name.children))),
+      'CADES_CRL_FRESHEST');
+    }
+  } else if (id === '1.3.6.1.5.5.7.1.1') {
+    const descriptions = parseDER(value);
+    requireThat(descriptions.tag === 0x30 && descriptions.children?.length > 0 &&
+      descriptions.children.every((entry) => entry.tag === 0x30 &&
+        entry.children?.length === 2 && entry.children[0].tag === 6 &&
+        oidText(entry.children[0]) === '1.3.6.1.5.5.7.48.2' &&
+        crlGeneralName(entry.children[1])),
+    'CADES_CRL_AIA');
+  } else if (id === '2.5.29.18') {
+    const names = parseDER(value);
+    requireThat(names.tag === 0x30 && names.children?.length > 0 &&
+      names.children.every(crlGeneralName),
+    'CADES_CRL_ISSUER_ALT_NAME');
+  }
+}
+
 function parseCRL(raw, issuer) {
   const root = parseDER(raw),
     parts = root.children;
@@ -604,13 +895,14 @@ function parseCRL(raw, issuer) {
   const ext = extensions(fields[index].children[0]);
   for (const [id, value] of ext) {
     requireThat(
-      !['2.5.29.27', '2.5.29.28', '2.5.29.46'].includes(id),
+      !['2.5.29.27', '2.5.29.28'].includes(id),
       'CADES_CRL_PROFILE_UNSUPPORTED',
     );
     requireThat(
       !value.critical || ['2.5.29.20', '2.5.29.35'].includes(id),
       'CADES_CRL_EXTENSION_UNSUPPORTED',
     );
+    crlExtensionProfile(id, value.value);
   }
   authorityKeyBinding(ext.get('2.5.29.35'), issuer);
   requireThat(ext.has('2.5.29.20') && !ext.get('2.5.29.20').critical, 'CADES_CRL_NUMBER_REQUIRED');
