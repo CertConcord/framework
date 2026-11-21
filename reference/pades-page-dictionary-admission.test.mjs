@@ -146,3 +146,69 @@ test('signed root Pages prohibits Parent and nested Pages binds its parent', asy
     { number: 3, body: page({ parent: '/Parent 6 0 R' }) },
   ]), 'INVALID', 'PADES_PAGE_TREE_PARENT');
 });
+
+test('signed indirect null Rotate and root Parent are omitted', async () => {
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 6, body: 'null' },
+    { number: 3, body: page({ rotate: '/Rotate 6 0 R' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 6, body: 'null' },
+    { number: 2, body: pages('/Rotate 6 0 R /Parent 6 0 R') },
+  ]), 'VALID', 'PADES_VALID');
+});
+
+test('signed indirect null MediaBox inherits or fails when no effective rectangle exists', async () => {
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 6, body: 'null' },
+    { number: 2, body: pages('/MediaBox [0 0 300 200]') },
+    { number: 3, body: page({ media: '/MediaBox 6 0 R' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 6, body: 'null' },
+    { number: 3, body: page({ media: '/MediaBox 6 0 R' }) },
+  ]), 'INVALID', 'PADES_PAGE_MEDIABOX');
+});
+
+test('signed indirect null Resources inherits or fails when no effective dictionary exists', async () => {
+  const noText = plainPDF({ stream: 'q Q\n' });
+  await signedDecision(appendRevision(noText, [
+    { number: 6, body: 'null' },
+    { number: 2, body: pages('/Resources << >>') },
+    { number: 3, body: page({ resources: '/Resources 6 0 R' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(noText, [
+    { number: 6, body: 'null' },
+    { number: 3, body: page({ resources: '/Resources 6 0 R' }) },
+  ]), 'INVALID', 'PADES_PAGE_RESOURCES');
+});
+
+test('signed undefined indirect Rotate and root Parent are omitted', async () => {
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 3, body: page({ rotate: '/Rotate 99 0 R' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 2, body: pages('/Parent 99 0 R') },
+  ]), 'VALID', 'PADES_VALID');
+});
+
+test('signed undefined indirect MediaBox inherits or fails without an effective rectangle', async () => {
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 2, body: pages('/MediaBox [0 0 300 200]') },
+    { number: 3, body: page({ media: '/MediaBox 99 0 R' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(plainPDF(), [
+    { number: 3, body: page({ media: '/MediaBox 99 0 R' }) },
+  ]), 'INVALID', 'PADES_PAGE_MEDIABOX');
+});
+
+test('signed undefined indirect Resources inherits or fails without an effective dictionary', async () => {
+  const noText = plainPDF({ stream: 'q Q\n' });
+  await signedDecision(appendRevision(noText, [
+    { number: 2, body: pages('/Resources << >>') },
+    { number: 3, body: page({ resources: '/Resources 99 0 R' }) },
+  ]), 'VALID', 'PADES_VALID');
+  await signedDecision(appendRevision(noText, [
+    { number: 3, body: page({ resources: '/Resources 99 0 R' }) },
+  ]), 'INVALID', 'PADES_PAGE_RESOURCES');
+});

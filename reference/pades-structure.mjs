@@ -29,6 +29,11 @@ const get = (dict, key) => dict?.get(PDFName.of(key));
 const name = (value) => (value instanceof PDFName ? value.decodeText() : undefined);
 const number = (value) => (value instanceof PDFNumber ? value.asNumber() : NaN);
 const refID = (value) => (value instanceof PDFRef ? value.toString() : undefined);
+const undefinedRef = (rev, value) => {
+  if (!(value instanceof PDFRef)) return false;
+  const entry = rev.active.get(value.objectNumber);
+  return !entry?.used || entry.generation !== value.generationNumber;
+};
 const report = (overall, reason) => ({ overall, status: overall, reason });
 function failure(code, overall = 'INVALID') {
   const error = new ProtocolError(code);
@@ -627,6 +632,13 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
   check(pagesRoot instanceof PDFRef, 'PADES_PAGES_REFERENCE');
   const seen = new Set();
   let pageCount = 0, decodedBytes = 0;
+  const optionalPageEntry = (dict, key) => {
+    const value = get(dict, key);
+    if (value === undefined) return undefined;
+    if (undefinedRef(rev, value)) return undefined;
+    const resolved = rev.resolve(value);
+    return resolved === PDFNull ? undefined : resolved;
+  };
   const checkedMediaBox = value => {
     const rectangle = rev.resolve(value);
     check(rectangle instanceof PDFArray && rectangle.size() === 4, 'PADES_PAGE_MEDIABOX');
@@ -682,17 +694,18 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
     seen.add(id);
     const dict = rev.resolve(reference);
     check(dict instanceof PDFDict, 'PADES_PAGE_TREE_NODE');
-    const resourceValue = get(dict, 'Resources');
-    const resources = resourceValue === undefined ? inheritedResources : rev.resolve(resourceValue);
+    const resourceValue = optionalPageEntry(dict, 'Resources');
+    const resources = resourceValue === undefined ? inheritedResources : resourceValue;
     check(resources === undefined || resources instanceof PDFDict, 'PADES_PAGE_RESOURCES');
-    const mediaValue = get(dict, 'MediaBox');
+    const mediaValue = optionalPageEntry(dict, 'MediaBox');
     const mediaBox = mediaValue === undefined ? inheritedMediaBox : checkedMediaBox(mediaValue);
-    const rotateValue = get(dict, 'Rotate');
+    const rotateValue = optionalPageEntry(dict, 'Rotate');
     if (rotateValue !== undefined) checkedRotate(rotateValue);
     const type = name(get(dict, 'Type'));
     if (type === 'Pages') {
       const parent = get(dict, 'Parent');
-      if (depth === 0) check(parent === undefined, 'PADES_PAGE_TREE_PARENT');
+      if (depth === 0) check(optionalPageEntry(dict, 'Parent') === undefined,
+        'PADES_PAGE_TREE_PARENT');
       else check(parent instanceof PDFRef && refID(parent) === refID(parentReference),
         'PADES_PAGE_TREE_PARENT');
       const children = rev.resolve(get(dict, 'Kids'));
@@ -782,7 +795,11 @@ function inspectCapabilities(rev, diagnostic) {
           ['F', 'FFilter', 'FDecodeParms'].includes(key.decodeText())
         )
           diagnostic('PADES_EXTERNAL_STREAM_UNSUPPORTED');
-        visit(value, depth + 1);
+        const pageEntry = type === 'Page' || type === 'Pages';
+        const optionalPageKey = ['Rotate', 'MediaBox', 'Resources'].includes(key.decodeText()) ||
+          (type === 'Pages' && key.decodeText() === 'Parent');
+        if (!(pageEntry && optionalPageKey && undefinedRef(rev, value)))
+          visit(value, depth + 1);
       }
     } else if (object instanceof PDFArray)
       object.asArray().forEach((item) => visit(item, depth + 1));
