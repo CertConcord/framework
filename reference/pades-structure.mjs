@@ -7,6 +7,7 @@ import {
   PDFNull,
   PDFRef,
   PDFNumber,
+  PDFBool,
   PDFHexString,
   PDFString,
   PDFRawStream,
@@ -637,6 +638,107 @@ function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable, 
   check(operands.length === 0, 'PADES_CONTENT_TRAILING_OPERAND');
 }
 
+const IMAGE_FILTERS = new Set([
+  'ASCIIHexDecode', 'ASCII85Decode', 'LZWDecode', 'FlateDecode',
+  'RunLengthDecode', 'CCITTFaxDecode', 'JBIG2Decode', 'DCTDecode',
+  'JPXDecode', 'Crypt',
+]);
+
+function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects) {
+  const dict = stream.dict;
+  const entry = key => {
+    const raw = get(dict, key);
+    if (raw === undefined || undefinedRef(rev, raw)) return undefined;
+    const value = rev.resolve(raw);
+    return value === PDFNull ? undefined : value;
+  };
+  const type = entry('Type');
+  check(type === undefined || name(type) === 'XObject', 'PADES_IMAGE_TYPE');
+  const width = sourceInteger(entry('Width'), 'PADES_IMAGE_WIDTH', integerObjects);
+  const height = sourceInteger(entry('Height'), 'PADES_IMAGE_HEIGHT', integerObjects);
+  check(width > 0, 'PADES_IMAGE_WIDTH');
+  check(height > 0, 'PADES_IMAGE_HEIGHT');
+
+  const filterValue = entry('Filter');
+  const filters = filterValue === undefined ? []
+    : filterValue instanceof PDFArray ? filterValue.asArray().map(value => name(rev.resolve(value)))
+      : [name(filterValue)];
+  check(filters.every(filter => typeof filter === 'string'), 'PADES_IMAGE_FILTER');
+  if (filters.some(filter => !IMAGE_FILTERS.has(filter) || filter === 'Crypt')) {
+    diagnostic('PADES_IMAGE_FILTER_UNSUPPORTED');
+    return;
+  }
+  const jpx = filters.includes('JPXDecode');
+  const imageMaskValue = entry('ImageMask');
+  check(imageMaskValue === undefined || imageMaskValue instanceof PDFBool, 'PADES_IMAGE_MASK');
+  const imageMask = imageMaskValue?.asBoolean() ?? false;
+  if (imageMask) check(entry('Mask') === undefined, 'PADES_IMAGE_MASK');
+
+  const colorComponents = (value, seen = new Set()) => {
+    if (value instanceof PDFArray) {
+      const family = name(rev.resolve(value.get(0)));
+      check(['CalGray', 'CalRGB', 'Lab', 'ICCBased', 'Indexed', 'Separation',
+        'DeviceN'].includes(family), 'PADES_IMAGE_COLORSPACE');
+      diagnostic('PADES_IMAGE_COLORSPACE_UNSUPPORTED');
+      return undefined;
+    }
+    const colorName = name(value);
+    check(colorName !== undefined && colorName !== 'Pattern', 'PADES_IMAGE_COLORSPACE');
+    if (colorName === 'DeviceGray') return 1;
+    if (colorName === 'DeviceRGB') return 3;
+    if (colorName === 'DeviceCMYK') return 4;
+    check(!seen.has(colorName), 'PADES_IMAGE_COLORSPACE');
+    seen.add(colorName);
+    const colors = rev.resolve(get(resources, 'ColorSpace'));
+    check(colors instanceof PDFDict, 'PADES_IMAGE_COLORSPACE');
+    const member = get(colors, colorName);
+    check(member !== undefined && !undefinedRef(rev, member), 'PADES_IMAGE_COLORSPACE');
+    const resolved = rev.resolve(member);
+    check(resolved !== PDFNull, 'PADES_IMAGE_COLORSPACE');
+    return colorComponents(resolved, seen);
+  };
+  const colorValue = entry('ColorSpace');
+  if (imageMask) check(colorValue === undefined, 'PADES_IMAGE_COLORSPACE');
+  else if (!jpx) check(colorValue !== undefined, 'PADES_IMAGE_COLORSPACE');
+  const components = imageMask ? 1 : colorValue === undefined ? undefined
+    : colorComponents(colorValue);
+
+  const bitsValue = entry('BitsPerComponent');
+  let bits;
+  if (!jpx) {
+    if (imageMask && bitsValue === undefined) bits = 1;
+    else {
+      bits = sourceInteger(bitsValue, 'PADES_IMAGE_BITS_PER_COMPONENT', integerObjects);
+      check(imageMask ? bits === 1 : [1, 2, 4, 8, 16].includes(bits),
+        'PADES_IMAGE_BITS_PER_COMPONENT');
+    }
+  }
+  if (bits !== undefined) {
+    if (filters.some(filter => ['CCITTFaxDecode', 'JBIG2Decode'].includes(filter)))
+      check(bits === 1, 'PADES_IMAGE_BITS_PER_COMPONENT');
+    if (filters.some(filter => ['DCTDecode', 'RunLengthDecode'].includes(filter)))
+      check(bits === 8, 'PADES_IMAGE_BITS_PER_COMPONENT');
+  }
+
+  const decode = entry('Decode');
+  if (decode !== undefined && (imageMask || !jpx)) {
+    check(decode instanceof PDFArray, 'PADES_IMAGE_DECODE');
+    const values = decode.asArray().map(value => number(rev.resolve(value)));
+    check(values.every(Number.isFinite), 'PADES_IMAGE_DECODE');
+    if (imageMask)
+      check(values.length === 2 && ((values[0] === 0 && values[1] === 1) ||
+        (values[0] === 1 && values[1] === 0)), 'PADES_IMAGE_DECODE');
+    else if (components !== undefined)
+      check(values.length === 2 * components, 'PADES_IMAGE_DECODE');
+  }
+  if (filters.length === 0 && components !== undefined && bits !== undefined) {
+    const rowBytes = (BigInt(width) * BigInt(components) * BigInt(bits) + 7n) / 8n;
+    const expected = rowBytes * BigInt(height);
+    check(expected <= 64n * 1024n * 1024n, 'PADES_IMAGE_LIMIT', 'UNSUPPORTED');
+    check(BigInt(stream.getContents().length) === expected, 'PADES_IMAGE_DATA_LENGTH');
+  }
+}
+
 function inspectSignedPageText(rev, diagnostic, integerObjects) {
   const pagesRoot = get(rev.catalog, 'Pages');
   check(pagesRoot instanceof PDFRef, 'PADES_PAGES_REFERENCE');
@@ -758,7 +860,13 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
         if (category === 'ExtGState') return resolved instanceof PDFDict;
         if (category === 'Shading' || category === 'Pattern')
           return resolved instanceof PDFDict || resolved instanceof PDFRawStream;
-        return resolved instanceof PDFRawStream;
+        if (!(resolved instanceof PDFRawStream)) return false;
+        const subtype = name(rev.resolve(get(resolved.dict, 'Subtype')));
+        if (subtype === 'Image')
+          inspectImageXObject(rev, resources, resolved, diagnostic, integerObjects);
+        else if (subtype === 'PS') diagnostic('PADES_XOBJECT_SUBTYPE_UNSUPPORTED');
+        else check(subtype === 'Form', 'PADES_XOBJECT_SUBTYPE');
+        return true;
       };
       inspectContentTextOperators(
         Buffer.concat(parts), dict.context, diagnostic, fontAvailable, resourceAvailable,
