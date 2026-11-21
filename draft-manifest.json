@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 16279,
-      "sha256": "a76b0789e82e03f7d720ad71db9418164849311c86698d33d97b28391f7c02d4"
+      "bytes": 17152,
+      "sha256": "b07a7ea89bbf673e151dfddfa99f0ce7b4fc89af69a2de224c8c294cdcd0a3cb"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 304441,
-      "sha256": "23087dde7fbfa016ef5271af745735ae01b21edbaacab257e901137ba1d81751"
+      "bytes": 304611,
+      "sha256": "a5f6ab1e9f46715a31dde6094f84d1a05e6c43b83ddcafca566ab576b37b0190"
     },
     {
       "path": "reference/README.md",
@@ -1604,6 +1604,16 @@
       "sha256": "226c0777ed5b10640ceaaeebcffb8fd8dd44c2e71e43581600609608262d945f"
     },
     {
+      "path": "reference/pades-resource-member-admission.test.mjs",
+      "bytes": 6091,
+      "sha256": "ca681a0671bdad3b1978cd34dd95634d4e060756b058536e64a0e54437716e18"
+    },
+    {
+      "path": "reference/pades-resource-member-vectors.test.mjs",
+      "bytes": 3880,
+      "sha256": "31798191f4c2f5858e9550d6479c8bfe2c806d483ad5f12abbb3f759d6ca39c3"
+    },
+    {
       "path": "reference/pades-revision-security.test.mjs",
       "bytes": 3683,
       "sha256": "2396da03237104ad898dd266dc7d3ebbdbabb5049159e4e15a600137ecc32b60"
@@ -1660,8 +1670,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 63797,
-      "sha256": "507c1f573715a33f2aad29636d3f3b2dfca9d8bb7b23853b0dc33411628667f3"
+      "bytes": 66425,
+      "sha256": "bd2f3088892f2035e63db4016554e2b0668a9984d9c51f6a0406d564d7ce44a7"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -8052,6 +8062,11 @@
       "path": "reference/vectors/pades-page-indirect-null-admission.json",
       "bytes": 393222,
       "sha256": "84fcac1510224eaee1219fde640081e9a194db4b9ea8210d5044c3f8dd94ab03"
+    },
+    {
+      "path": "reference/vectors/pades-resource-member-admission.json",
+      "bytes": 200355,
+      "sha256": "3f32454d82cd2fd5118f70a47f583f5e29edee2ee137a9c9f8646cb80f07287e"
     },
     {
       "path": "reference/vectors/pades-same-name-visual.json",
