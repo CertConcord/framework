@@ -783,6 +783,9 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
 function inspectAxialType2Function(rev, resources, shading, diagnostic, integerObjects) {
   const shadingDict = shading instanceof PDFRawStream ? shading.dict : shading;
   if (number(rev.resolve(get(shadingDict, 'ShadingType'))) !== 2) return;
+  check(shading instanceof PDFDict, 'PADES_SHADING_TYPE');
+  check(sourceInteger(rev.resolve(get(shadingDict, 'ShadingType')),
+    'PADES_SHADING_TYPE', integerObjects) === 2, 'PADES_SHADING_TYPE');
   const rawFunction = get(shadingDict, 'Function');
   check(rawFunction !== undefined && !undefinedRef(rev, rawFunction),
     'PADES_TYPE2_FUNCTION_TYPE');
@@ -799,21 +802,33 @@ function inspectAxialType2Function(rev, resources, shading, diagnostic, integerO
     diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
     return;
   }
-  const numericArray = (key, required) => {
-    const raw = get(resolved, key);
-    check(!required || raw !== undefined, `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
-    if (raw === undefined) return undefined;
+  const numericArray = (dict, key, required, code) => {
+    const raw = get(dict, key);
+    if (raw === undefined || undefinedRef(rev, raw)) {
+      check(!required, code);
+      return undefined;
+    }
     const value = rev.resolve(raw);
-    check(value instanceof PDFArray, `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
+    if (value === PDFNull) {
+      check(!required, code);
+      return undefined;
+    }
+    check(value instanceof PDFArray, code);
     const values = value.asArray().map(item => number(rev.resolve(item)));
-    check(values.length > 0 && values.every(Number.isFinite),
-      `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
+    check(values.length > 0 && values.every(Number.isFinite), code);
     return values;
   };
-  const domain = numericArray('Domain', true);
+  const functionArray = (key, required) => numericArray(resolved, key, required,
+    `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
+  const shadingDomain = numericArray(shadingDict, 'Domain', false, 'PADES_SHADING_DOMAIN') ?? [0, 1];
+  check(shadingDomain.length === 2 && shadingDomain[0] <= shadingDomain[1],
+    'PADES_SHADING_DOMAIN');
+  const domain = functionArray('Domain', true);
   check(domain.length === 2 && domain[0] <= domain[1], 'PADES_TYPE2_FUNCTION_DOMAIN');
-  const c0 = numericArray('C0', false) ?? [0];
-  const c1 = numericArray('C1', false) ?? [1];
+  check(domain[0] <= shadingDomain[0] && domain[1] >= shadingDomain[1],
+    'PADES_TYPE2_FUNCTION_DOMAIN');
+  const c0 = functionArray('C0', false) ?? [0];
+  const c1 = functionArray('C1', false) ?? [1];
   check(c0.length === c1.length, 'PADES_TYPE2_FUNCTION_C1');
   check(c0.length <= 32, 'PADES_TYPE2_FUNCTION_LIMIT', 'UNSUPPORTED');
   const exponent = number(rev.resolve(get(resolved, 'N')));
@@ -821,7 +836,7 @@ function inspectAxialType2Function(rev, resources, shading, diagnostic, integerO
   check(Number.isInteger(exponent) || domain[0] >= 0, 'PADES_TYPE2_FUNCTION_DOMAIN');
   check(exponent >= 0 || domain[0] > 0 || domain[1] < 0,
     'PADES_TYPE2_FUNCTION_DOMAIN');
-  const range = numericArray('Range', false);
+  const range = functionArray('Range', false);
   if (range !== undefined) {
     check(range.length === 2 * c0.length, 'PADES_TYPE2_FUNCTION_RANGE');
     for (let i = 0; i < range.length; i += 2)

@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 20312,
-      "sha256": "c1ed57f411eff5bbfe21ea93b68c6390fb1a0b262aa192782007a9a99838a1e7"
+      "bytes": 20551,
+      "sha256": "968a252b321b1f4ee8dc08532dc9a40252a2465065a51272259707ff35b204fb"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -1680,8 +1680,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 76896,
-      "sha256": "1693f4652d25a964fe1965085f37e19bd70db9adb0a189a7c4c8c0648ceceee4"
+      "bytes": 77540,
+      "sha256": "1b4ebbc7c9a96ad53f20d462fa695f542bebf41af88eef7eec2021b62af31e80"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -1695,18 +1695,18 @@
     },
     {
       "path": "reference/pades-type2-function-admission.test.mjs",
-      "bytes": 3697,
-      "sha256": "f6786d3d83d409845132465d4f735b7ef3ae674b555fbc18b5f4ebb87729c057"
+      "bytes": 5607,
+      "sha256": "c29d53d35bbd98fa1369852d36a117c61cc3bd065303f49c0d5bc69a272445c0"
     },
     {
       "path": "reference/pades-type2-function-fixture.mjs",
-      "bytes": 1109,
-      "sha256": "9731c896b43e13ed5e76015c4bbc5862593ad4da2a9909bd32fa491ff40d1b30"
+      "bytes": 1309,
+      "sha256": "2d2df65a043727be8d350744408edd8f0d7b90c98d63b9ba47f91e3a6795736b"
     },
     {
       "path": "reference/pades-type2-function-vectors.test.mjs",
       "bytes": 3974,
-      "sha256": "d10ed52ea6269181ddb752463e308e0c644d66c3654e301bbc487cb7d6139d3d"
+      "sha256": "c8d59a5ad5476ee3aa54ad92af9d89e6d596c7a6f017328e67a8a2d44ec59af9"
     },
     {
       "path": "reference/pades-worker.mjs",
@@ -8120,8 +8120,8 @@
     },
     {
       "path": "reference/vectors/pades-type2-function-admission.json",
-      "bytes": 349176,
-      "sha256": "a1f94d44533f76e088a984dcf910b3c37739b389546debb6825ec85e62344736"
+      "bytes": 597451,
+      "sha256": "901e16da16feb5723fc7ee4ca438c1c53884007b4c6af07afa04665e63e1dacc"
     },
     {
       "path": "reference/vectors/pkcs10-structure.json",

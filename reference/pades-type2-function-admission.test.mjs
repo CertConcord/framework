@@ -43,7 +43,8 @@ for (const [title, entries, reason] of [
 test('Type 2 defaults and negative exponent retain valid domain boundaries', async () => {
   await expect(document({ C0: undefined, C1: undefined, Range: undefined },
     { colorSpace: '/DeviceGray' }), 'VALID', 'PADES_VALID');
-  await expect(document({ N: '-1', Domain: '[1 2]' }), 'VALID', 'PADES_VALID');
+  await expect(document({ N: '-1', Domain: '[1 2]' }, { shadingDomain: '[1 2]' }),
+    'VALID', 'PADES_VALID');
   await expect(document({ N: '0.5' }), 'VALID', 'PADES_VALID');
   await expect(document({ N: '0.5', Domain: '[-1 1]' }),
     'INVALID', 'PADES_TYPE2_FUNCTION_DOMAIN');
@@ -74,4 +75,40 @@ test('source integer, ordered domain and range cardinality are required', async 
   await expect(document({ FunctionType: '2.0' }), 'INVALID', 'PADES_TYPE2_FUNCTION_TYPE');
   await expect(document({ Domain: '[1 0]' }), 'INVALID', 'PADES_TYPE2_FUNCTION_DOMAIN');
   await expect(document({ Range: '[0 1]' }), 'INVALID', 'PADES_TYPE2_FUNCTION_RANGE');
+});
+
+test('optional null entries are omissions, including through indirect references', async () => {
+  await expect(document({ C0: 'null', C1: 'null', Range: 'null' },
+    { colorSpace: '/DeviceGray' }), 'VALID', 'PADES_VALID');
+  await expect(document({ C0: '7 0 R', C1: '8 0 R', Range: '9 0 R' },
+    { colorSpace: '/DeviceGray', objects: [
+      { number: 7, body: 'null' }, { number: 8, body: 'null' },
+      { number: 9, body: 'null' },
+    ] }), 'VALID', 'PADES_VALID');
+  await expect(document({ Domain: 'null' }), 'INVALID', 'PADES_TYPE2_FUNCTION_DOMAIN');
+  await expect(document({ Domain: '7 0 R' },
+    { objects: [{ number: 7, body: 'null' }] }),
+  'INVALID', 'PADES_TYPE2_FUNCTION_DOMAIN');
+});
+
+test('function domain covers the effective axial shading domain', async () => {
+  await expect(document({ Domain: '[-1 2]' }), 'VALID', 'PADES_VALID');
+  await expect(document({ Domain: '[0.25 0.75]' }),
+    'INVALID', 'PADES_TYPE2_FUNCTION_DOMAIN');
+  await expect(document({ Domain: '[1 2]' }, { shadingDomain: '[1 2]' }),
+    'VALID', 'PADES_VALID');
+  await expect(document({ Domain: '[1.5 2]' }, { shadingDomain: '[1 2]' }),
+    'INVALID', 'PADES_TYPE2_FUNCTION_DOMAIN');
+  await expect(document({}, { shadingDomain: 'null' }), 'VALID', 'PADES_VALID');
+  await expect(document({}, { shadingDomain: '7 0 R',
+    objects: [{ number: 7, body: 'null' }] }), 'VALID', 'PADES_VALID');
+  await expect(document({}, { shadingDomain: '[1 0]' }),
+    'INVALID', 'PADES_SHADING_DOMAIN');
+});
+
+test('axial shading is a dictionary with source integer ShadingType 2', async () => {
+  await expect(document({}, { shadingStream: true }), 'INVALID', 'PADES_SHADING_TYPE');
+  await expect(document({}, { shadingType: '2.0' }), 'INVALID', 'PADES_SHADING_TYPE');
+  await expect(document({}, { shadingType: '7 0 R',
+    objects: [{ number: 7, body: '2' }] }), 'VALID', 'PADES_VALID');
 });
