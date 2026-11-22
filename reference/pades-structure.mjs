@@ -778,6 +778,70 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
   if (unsupportedFilter) diagnostic('PADES_IMAGE_FILTER_UNSUPPORTED');
 }
 
+// Admit only a directly selected axial shading with one Type 2 function.
+// Other function families and function arrays need a separate rendering contract.
+function inspectAxialType2Function(rev, resources, shading, diagnostic, integerObjects) {
+  const shadingDict = shading instanceof PDFRawStream ? shading.dict : shading;
+  if (number(rev.resolve(get(shadingDict, 'ShadingType'))) !== 2) return;
+  const rawFunction = get(shadingDict, 'Function');
+  check(rawFunction !== undefined && !undefinedRef(rev, rawFunction),
+    'PADES_TYPE2_FUNCTION_TYPE');
+  const resolved = rev.resolve(rawFunction);
+  if (resolved instanceof PDFArray || resolved instanceof PDFRawStream) {
+    diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
+    return;
+  }
+  check(resolved instanceof PDFDict, 'PADES_TYPE2_FUNCTION_TYPE');
+  const functionType = sourceInteger(rev.resolve(get(resolved, 'FunctionType')),
+    'PADES_TYPE2_FUNCTION_TYPE', integerObjects);
+  if (functionType !== 2) {
+    check([0, 3, 4].includes(functionType), 'PADES_TYPE2_FUNCTION_TYPE');
+    diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
+    return;
+  }
+  const numericArray = (key, required) => {
+    const raw = get(resolved, key);
+    check(!required || raw !== undefined, `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
+    if (raw === undefined) return undefined;
+    const value = rev.resolve(raw);
+    check(value instanceof PDFArray, `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
+    const values = value.asArray().map(item => number(rev.resolve(item)));
+    check(values.length > 0 && values.every(Number.isFinite),
+      `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
+    return values;
+  };
+  const domain = numericArray('Domain', true);
+  check(domain.length === 2 && domain[0] <= domain[1], 'PADES_TYPE2_FUNCTION_DOMAIN');
+  const c0 = numericArray('C0', false) ?? [0];
+  const c1 = numericArray('C1', false) ?? [1];
+  check(c0.length === c1.length, 'PADES_TYPE2_FUNCTION_C1');
+  check(c0.length <= 32, 'PADES_TYPE2_FUNCTION_LIMIT', 'UNSUPPORTED');
+  const exponent = number(rev.resolve(get(resolved, 'N')));
+  check(Number.isFinite(exponent), 'PADES_TYPE2_FUNCTION_N');
+  check(Number.isInteger(exponent) || domain[0] >= 0, 'PADES_TYPE2_FUNCTION_DOMAIN');
+  check(exponent >= 0 || domain[0] > 0 || domain[1] < 0,
+    'PADES_TYPE2_FUNCTION_DOMAIN');
+  const range = numericArray('Range', false);
+  if (range !== undefined) {
+    check(range.length === 2 * c0.length, 'PADES_TYPE2_FUNCTION_RANGE');
+    for (let i = 0; i < range.length; i += 2)
+      check(range[i] <= range[i + 1], 'PADES_TYPE2_FUNCTION_RANGE');
+  }
+  const colorSpace = name(rev.resolve(get(shadingDict, 'ColorSpace')));
+  const components = { DeviceGray: 1, DeviceRGB: 3, DeviceCMYK: 4 }[colorSpace];
+  if (components === undefined) diagnostic('PADES_SHADING_COLORSPACE_UNSUPPORTED');
+  else {
+    check(c0.length === components, 'PADES_TYPE2_FUNCTION_C1');
+    const colorResources = rev.resolve(get(resources, 'ColorSpace'));
+    if (colorResources instanceof PDFDict) {
+      const defaultColor = get(colorResources, `Default${colorSpace.slice(6)}`);
+      if (defaultColor !== undefined && !undefinedRef(rev, defaultColor) &&
+          rev.resolve(defaultColor) !== PDFNull)
+        diagnostic('PADES_SHADING_COLORSPACE_UNSUPPORTED');
+    }
+  }
+}
+
 function inspectSignedPageText(rev, diagnostic, integerObjects) {
   const pagesRoot = get(rev.catalog, 'Pages');
   check(pagesRoot instanceof PDFRef, 'PADES_PAGES_REFERENCE');
@@ -897,8 +961,12 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
         if (value === undefined || value === PDFNull || undefinedRef(rev, value)) return false;
         const resolved = rev.resolve(value);
         if (category === 'ExtGState') return resolved instanceof PDFDict;
-        if (category === 'Shading' || category === 'Pattern')
-          return resolved instanceof PDFDict || resolved instanceof PDFRawStream;
+        if (category === 'Shading' || category === 'Pattern') {
+          const typed = resolved instanceof PDFDict || resolved instanceof PDFRawStream;
+          if (typed && category === 'Shading')
+            inspectAxialType2Function(rev, resources, resolved, diagnostic, integerObjects);
+          return typed;
+        }
         if (!(resolved instanceof PDFRawStream)) return false;
         const subtype = name(rev.resolve(get(resolved.dict, 'Subtype')));
         if (subtype === 'Image')
