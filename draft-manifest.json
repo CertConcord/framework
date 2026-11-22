@@ -220,8 +220,8 @@
     },
     {
       "path": "docs/implementation.md",
-      "bytes": 27484,
-      "sha256": "341028f766df9f2eb5506e554170d613579c1a2cdaa19a450ed40bdf30b002a6"
+      "bytes": 28297,
+      "sha256": "86f5ad79e4e9ccbb92ea75d6667173e6359cf78df65d73db346c904cfead9933"
     },
     {
       "path": "docs/jose-p256-admission.md",
@@ -680,8 +680,8 @@
     },
     {
       "path": "reference/client-auth-error.test.mjs",
-      "bytes": 3150,
-      "sha256": "6b580e2d6d31db92c9c930c8abf81f710aa905f17268f60183300656ae374da8"
+      "bytes": 5513,
+      "sha256": "10cacaffb7f3eb919a5b75877e6a650566a28589fe30f238ebf5fa304cdaa722"
     },
     {
       "path": "reference/cmp.mjs",
@@ -1385,8 +1385,8 @@
     },
     {
       "path": "reference/openid.mjs",
-      "bytes": 48286,
-      "sha256": "a63adfcc8f0d4a237650d7dff51307d68b0d4c599befcd293bfe8d4dcd771f50"
+      "bytes": 48693,
+      "sha256": "1a01f30bff77b5d81aed711e80676aaad4450032988a30cf2034a3c6505a4829"
     },
     {
       "path": "reference/openssl.test.mjs",

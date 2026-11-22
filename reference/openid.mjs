@@ -396,11 +396,19 @@ export class CredentialIssuer {
       );
       let a;
       try {
-        a = verifyJWT(params.client_assertion, client.publicKey, {
-          typ: 'JWT',
+        const assertion = verifyJWT(params.client_assertion, client.publicKey, {
           audience: this.issuer,
           maxAge: 60,
-        }).claims;
+        });
+        // Client authentication uses the issuer as its sole audience; grant JWTs have separate rules.
+        requireThat(assertion.claims.aud === this.issuer, 'JWT_AUDIENCE');
+        requireThat(
+          assertion.header.typ === undefined ||
+            assertion.header.typ === 'JWT' ||
+            assertion.header.typ === 'client-authentication+jwt',
+          'JWS_TYPE',
+        );
+        a = assertion.claims;
       } catch (cause) {
         const error = new ProtocolError('invalid_client');
         error.cause = cause;
