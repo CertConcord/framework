@@ -1575,13 +1575,13 @@
     },
     {
       "path": "reference/pades-image-xobject-admission.test.mjs",
-      "bytes": 12630,
-      "sha256": "88e9bbcf9715ba560e1df9065064998ab517ce29da01cfc0a905d82700e49d5f"
+      "bytes": 13154,
+      "sha256": "548df37e4ce45b0d0e5e4e56e84750f79c1749b9eac9c2b6244c44158248f3e1"
     },
     {
       "path": "reference/pades-image-xobject-vectors.test.mjs",
       "bytes": 3959,
-      "sha256": "08d51334cf5ffb1084bfbf1f529b10c73e9118c5785cd5bedf9bb8eeda5b7c0c"
+      "sha256": "6aaf8b0145c8472f6163f1f6e1a1b1973200b7467e0147f3dad48847c00d850b"
     },
     {
       "path": "reference/pades-inherited-value-visual.test.mjs",
@@ -1680,8 +1680,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 72670,
-      "sha256": "81a983f33248dea668f33c31f47c575ac172b3ab073ddad34d203bb9b288d892"
+      "bytes": 73420,
+      "sha256": "594e55dabef272870ad6d88c4693058fe8eb0110941713d2128cc90d0695c95d"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -8065,8 +8065,8 @@
     },
     {
       "path": "reference/vectors/pades-image-xobject-admission.json",
-      "bytes": 547440,
-      "sha256": "1b77c416ea1f3aafbf82197a141ddae21640ead3cf9525cc0602c96619702001"
+      "bytes": 646712,
+      "sha256": "de34d5cc9da5c8a20dcbc467cf494308ab5592a10033cb85c0f1588964b19e6f"
     },
     {
       "path": "reference/vectors/pades-page-dictionary-admission.json",

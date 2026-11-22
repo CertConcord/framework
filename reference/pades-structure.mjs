@@ -682,13 +682,27 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     return colors;
   };
   const colorComponents = (value, seen = new Set(), allowDefault = true,
-    defaultSpace = false) => {
+    expectedDefaultComponents) => {
     if (value instanceof PDFArray) {
       const family = name(rev.resolve(value.get(0)));
       check(['CalGray', 'CalRGB', 'Lab', 'ICCBased', 'Indexed', 'Separation',
         'DeviceN'].includes(family), 'PADES_IMAGE_COLORSPACE');
-      if (defaultSpace)
+      if (expectedDefaultComponents !== undefined) {
         check(!['Lab', 'Indexed'].includes(family), 'PADES_IMAGE_COLORSPACE');
+        const knownComponents = { CalGray: 1, CalRGB: 3, Separation: 1 };
+        let components = knownComponents[family];
+        if (family === 'ICCBased') {
+          const profile = rev.resolve(value.get(1));
+          if (profile instanceof PDFRawStream)
+            components = sourceInteger(rev.resolve(get(profile.dict, 'N')),
+              'PADES_IMAGE_COLORSPACE', integerObjects);
+        } else if (family === 'DeviceN') {
+          const names = rev.resolve(value.get(1));
+          if (names instanceof PDFArray) components = names.size();
+        }
+        if (components !== undefined)
+          check(components === expectedDefaultComponents, 'PADES_IMAGE_COLORSPACE');
+      }
       diagnostic('PADES_IMAGE_COLORSPACE_UNSUPPORTED');
       return undefined;
     }
@@ -702,7 +716,7 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
         if (defaultRaw !== undefined && !undefinedRef(rev, defaultRaw)) {
           const resolved = rev.resolve(defaultRaw);
           if (resolved !== PDFNull) {
-            const defaultComponents = colorComponents(resolved, seen, false, true);
+            const defaultComponents = colorComponents(resolved, seen, false, components);
             if (defaultComponents === undefined) return undefined;
             check(defaultComponents === components, 'PADES_IMAGE_COLORSPACE');
           }
@@ -718,7 +732,7 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     check(member !== undefined && !undefinedRef(rev, member), 'PADES_IMAGE_COLORSPACE');
     const resolved = rev.resolve(member);
     check(resolved !== PDFNull, 'PADES_IMAGE_COLORSPACE');
-    return colorComponents(resolved, seen, allowDefault, defaultSpace);
+    return colorComponents(resolved, seen, allowDefault, expectedDefaultComponents);
   };
   const colorValue = entry('ColorSpace');
   if (imageMask) check(colorValue === undefined, 'PADES_IMAGE_COLORSPACE');

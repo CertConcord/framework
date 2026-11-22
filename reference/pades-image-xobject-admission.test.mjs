@@ -215,6 +215,16 @@ test('effective DefaultRGB resource remaps a selected DeviceRGB image colour spa
   }));
   assert.equal(mismatched.overall, 'INVALID', JSON.stringify(mismatched));
   assert.equal(mismatched.reason, 'PADES_IMAGE_COLORSPACE');
+  for (const [entries, options] of [
+    [{}, { resourceColorSpace:
+      '/ColorSpace << /DefaultRGB [/CalGray << /WhitePoint [1 1 1] >>] >>' }],
+    [{ ColorSpace: '/DeviceGray' }, { pixels: '\0', resourceColorSpace:
+      '/ColorSpace << /DefaultGray /CS1 /CS1 [/CalRGB << /WhitePoint [1 1 1] >>] >>' }],
+  ]) {
+    const wrongCount = await verify(document(entries, options));
+    assert.equal(wrongCount.overall, 'INVALID', JSON.stringify(wrongCount));
+    assert.equal(wrongCount.reason, 'PADES_IMAGE_COLORSPACE');
+  }
   const identity = await verify(document({}, {
     resourceColorSpace: '/ColorSpace << /DefaultRGB /DeviceRGB >>',
   }));
