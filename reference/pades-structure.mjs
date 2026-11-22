@@ -782,26 +782,11 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
 // Other function families and function arrays need a separate rendering contract.
 function inspectAxialType2Function(rev, resources, shading, diagnostic, integerObjects) {
   const shadingDict = shading instanceof PDFRawStream ? shading.dict : shading;
-  if (number(rev.resolve(get(shadingDict, 'ShadingType'))) !== 2) return;
+  const shadingType = sourceInteger(rev.resolve(get(shadingDict, 'ShadingType')),
+    'PADES_SHADING_TYPE', integerObjects);
+  check(shadingType >= 1 && shadingType <= 7, 'PADES_SHADING_TYPE');
+  if (shadingType !== 2) return;
   check(shading instanceof PDFDict, 'PADES_SHADING_TYPE');
-  check(sourceInteger(rev.resolve(get(shadingDict, 'ShadingType')),
-    'PADES_SHADING_TYPE', integerObjects) === 2, 'PADES_SHADING_TYPE');
-  const rawFunction = get(shadingDict, 'Function');
-  check(rawFunction !== undefined && !undefinedRef(rev, rawFunction),
-    'PADES_TYPE2_FUNCTION_TYPE');
-  const resolved = rev.resolve(rawFunction);
-  if (resolved instanceof PDFArray || resolved instanceof PDFRawStream) {
-    diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
-    return;
-  }
-  check(resolved instanceof PDFDict, 'PADES_TYPE2_FUNCTION_TYPE');
-  const functionType = sourceInteger(rev.resolve(get(resolved, 'FunctionType')),
-    'PADES_TYPE2_FUNCTION_TYPE', integerObjects);
-  if (functionType !== 2) {
-    check([0, 3, 4].includes(functionType), 'PADES_TYPE2_FUNCTION_TYPE');
-    diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
-    return;
-  }
   const numericArray = (dict, key, required, code) => {
     const raw = get(dict, key);
     if (raw === undefined || undefinedRef(rev, raw)) {
@@ -818,6 +803,36 @@ function inspectAxialType2Function(rev, resources, shading, diagnostic, integerO
     check(values.length > 0 && values.every(Number.isFinite), code);
     return values;
   };
+  check(numericArray(shadingDict, 'Coords', true, 'PADES_SHADING_COORDS').length === 4,
+    'PADES_SHADING_COORDS');
+  const bbox = numericArray(shadingDict, 'BBox', false, 'PADES_SHADING_BBOX');
+  if (bbox !== undefined) check(bbox.length === 4, 'PADES_SHADING_BBOX');
+  const rawExtend = get(shadingDict, 'Extend');
+  if (rawExtend !== undefined && !undefinedRef(rev, rawExtend)) {
+    const extend = rev.resolve(rawExtend);
+    if (extend !== PDFNull) {
+      check(extend instanceof PDFArray && extend.size() === 2,
+        'PADES_SHADING_EXTEND');
+      check(extend.asArray().every(item => rev.resolve(item) instanceof PDFBool),
+        'PADES_SHADING_EXTEND');
+    }
+  }
+  const rawFunction = get(shadingDict, 'Function');
+  check(rawFunction !== undefined && !undefinedRef(rev, rawFunction),
+    'PADES_TYPE2_FUNCTION_TYPE');
+  const resolved = rev.resolve(rawFunction);
+  if (resolved instanceof PDFArray || resolved instanceof PDFRawStream) {
+    diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
+    return;
+  }
+  check(resolved instanceof PDFDict, 'PADES_TYPE2_FUNCTION_TYPE');
+  const functionType = sourceInteger(rev.resolve(get(resolved, 'FunctionType')),
+    'PADES_TYPE2_FUNCTION_TYPE', integerObjects);
+  if (functionType !== 2) {
+    check([0, 3, 4].includes(functionType), 'PADES_TYPE2_FUNCTION_TYPE');
+    diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
+    return;
+  }
   const functionArray = (key, required) => numericArray(resolved, key, required,
     `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
   const shadingDomain = numericArray(shadingDict, 'Domain', false, 'PADES_SHADING_DOMAIN') ?? [0, 1];

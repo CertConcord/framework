@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 20551,
-      "sha256": "968a252b321b1f4ee8dc08532dc9a40252a2465065a51272259707ff35b204fb"
+      "bytes": 21154,
+      "sha256": "be83c22d129656eaac8fce551ae28a16eaf5290ebfb4714ce36e5275017c3ad3"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 304990,
-      "sha256": "da710494f3986f6ab8ff860e230dff1ddbc603e8527d59b1eef8d85d5939d273"
+      "bytes": 305154,
+      "sha256": "7c166d18fca6ef3810c1085656364186f68e3b755fe904f08d0333e592fe5adf"
     },
     {
       "path": "reference/README.md",
@@ -1544,6 +1544,16 @@
       "sha256": "88f1ee1e2756405221bcd46fff7daa66fdc41e3038667fad1938031afc8da2e0"
     },
     {
+      "path": "reference/pades-axial-shading-admission.test.mjs",
+      "bytes": 2684,
+      "sha256": "57292635f456e649ddc41b4b2c526ecdab5842c0b04676036e3fe61658e9bd5d"
+    },
+    {
+      "path": "reference/pades-axial-shading-vectors.test.mjs",
+      "bytes": 2074,
+      "sha256": "6e75847bc6a76f24dd226fe7a0f16ff97e8b240cac3ca93f27c2e352a73c6616"
+    },
+    {
       "path": "reference/pades-capabilities.test.mjs",
       "bytes": 8759,
       "sha256": "fe94b5151b28bfeb6f74e1c80d489475eadffddf47bfeaa5414e6213445fd8a2"
@@ -1680,8 +1690,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 77540,
-      "sha256": "1b4ebbc7c9a96ad53f20d462fa695f542bebf41af88eef7eec2021b62af31e80"
+      "bytes": 78231,
+      "sha256": "ae541df0e0a0a58553462914b55a707bb4ac6b60b2ccc078dd1a0af610062973"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -1700,8 +1710,8 @@
     },
     {
       "path": "reference/pades-type2-function-fixture.mjs",
-      "bytes": 1309,
-      "sha256": "2d2df65a043727be8d350744408edd8f0d7b90c98d63b9ba47f91e3a6795736b"
+      "bytes": 1493,
+      "sha256": "de547821f5ce3d5c54aa3df2f253387457c3c70f9ccf54fbd18428682c2dc00d"
     },
     {
       "path": "reference/pades-type2-function-vectors.test.mjs",
@@ -8072,6 +8082,11 @@
       "path": "reference/vectors/original-status-proof-mtc07-rar2/manifest.json",
       "bytes": 57635,
       "sha256": "b555ebedb7a783d31c08c7870059decf3e5dfec6d9fca23c5d336ac669450480"
+    },
+    {
+      "path": "reference/vectors/pades-axial-shading-admission.json",
+      "bytes": 191956,
+      "sha256": "95facb69b9db62b6c6f2261c9ca271855ea088b1ee5a4f8bc6dd1506c7dde44b"
     },
     {
       "path": "reference/vectors/pades-field-tree-admission.json",
