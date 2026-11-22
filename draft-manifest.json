@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 17198,
-      "sha256": "2feb5d087c4bc68d12bb292521427188473a2729599d6420cb893dcb132a14fb"
+      "bytes": 19254,
+      "sha256": "639ad9142fab9f6d08d8ab11595a49e6c44978e72c7cd0ec391a7ea9811ce43a"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 304611,
-      "sha256": "a5f6ab1e9f46715a31dde6094f84d1a05e6c43b83ddcafca566ab576b37b0190"
+      "bytes": 304775,
+      "sha256": "029c7150406934658def2f07cc4468d1c866e7085434817c98055ee294df20f4"
     },
     {
       "path": "reference/README.md",
@@ -1574,6 +1574,16 @@
       "sha256": "5cf7bc7b9695062f64e761598c8e34d382a7ff20c6aad722af0576d64fb80a21"
     },
     {
+      "path": "reference/pades-image-xobject-admission.test.mjs",
+      "bytes": 13154,
+      "sha256": "548df37e4ce45b0d0e5e4e56e84750f79c1749b9eac9c2b6244c44158248f3e1"
+    },
+    {
+      "path": "reference/pades-image-xobject-vectors.test.mjs",
+      "bytes": 3959,
+      "sha256": "6aaf8b0145c8472f6163f1f6e1a1b1973200b7467e0147f3dad48847c00d850b"
+    },
+    {
       "path": "reference/pades-inherited-value-visual.test.mjs",
       "bytes": 3271,
       "sha256": "8e0acdc573f6ac07e47afb8bee8c2d7ab3d3c9f2bcd57bdd74378270737edbf3"
@@ -1670,8 +1680,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 66425,
-      "sha256": "7d2c977e269f28223be77530fa48c26da62cbe0a107aad69a8348b71ad5461de"
+      "bytes": 73420,
+      "sha256": "594e55dabef272870ad6d88c4693058fe8eb0110941713d2128cc90d0695c95d"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -8052,6 +8062,11 @@
       "path": "reference/vectors/pades-field-tree-admission.json",
       "bytes": 74067,
       "sha256": "7bb5dc58ac3692d294882cee7937b9de74e54a7b0fa1656d0d22e648f7f1b29f"
+    },
+    {
+      "path": "reference/vectors/pades-image-xobject-admission.json",
+      "bytes": 646712,
+      "sha256": "de34d5cc9da5c8a20dcbc467cf494308ab5592a10033cb85c0f1588964b19e6f"
     },
     {
       "path": "reference/vectors/pades-page-dictionary-admission.json",
