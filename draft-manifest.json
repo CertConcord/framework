@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 19254,
-      "sha256": "639ad9142fab9f6d08d8ab11595a49e6c44978e72c7cd0ec391a7ea9811ce43a"
+      "bytes": 20551,
+      "sha256": "968a252b321b1f4ee8dc08532dc9a40252a2465065a51272259707ff35b204fb"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 304775,
-      "sha256": "029c7150406934658def2f07cc4468d1c866e7085434817c98055ee294df20f4"
+      "bytes": 304990,
+      "sha256": "da710494f3986f6ab8ff860e230dff1ddbc603e8527d59b1eef8d85d5939d273"
     },
     {
       "path": "reference/README.md",
@@ -1680,8 +1680,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 73420,
-      "sha256": "594e55dabef272870ad6d88c4693058fe8eb0110941713d2128cc90d0695c95d"
+      "bytes": 77540,
+      "sha256": "1b4ebbc7c9a96ad53f20d462fa695f542bebf41af88eef7eec2021b62af31e80"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -1692,6 +1692,21 @@
       "path": "reference/pades-time-boundaries.test.mjs",
       "bytes": 5144,
       "sha256": "25339cf90aa62671d76905356997b1f9b53eed9ce7a961f90eca09a3f589510e"
+    },
+    {
+      "path": "reference/pades-type2-function-admission.test.mjs",
+      "bytes": 5607,
+      "sha256": "c29d53d35bbd98fa1369852d36a117c61cc3bd065303f49c0d5bc69a272445c0"
+    },
+    {
+      "path": "reference/pades-type2-function-fixture.mjs",
+      "bytes": 1309,
+      "sha256": "2d2df65a043727be8d350744408edd8f0d7b90c98d63b9ba47f91e3a6795736b"
+    },
+    {
+      "path": "reference/pades-type2-function-vectors.test.mjs",
+      "bytes": 3974,
+      "sha256": "c8d59a5ad5476ee3aa54ad92af9d89e6d596c7a6f017328e67a8a2d44ec59af9"
     },
     {
       "path": "reference/pades-worker.mjs",
@@ -8102,6 +8117,11 @@
       "path": "reference/vectors/pades-signed-page-text-admission.json",
       "bytes": 582329,
       "sha256": "63bc76b1567566c44fc5de085578fb803bb5b281f0abf19c837fc3f946893a61"
+    },
+    {
+      "path": "reference/vectors/pades-type2-function-admission.json",
+      "bytes": 597451,
+      "sha256": "901e16da16feb5723fc7ee4ca438c1c53884007b4c6af07afa04665e63e1dacc"
     },
     {
       "path": "reference/vectors/pkcs10-structure.json",
