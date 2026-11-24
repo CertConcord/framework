@@ -900,6 +900,46 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
     const degrees = rotation.asNumber();
     check(Number.isSafeInteger(degrees) && degrees % 90 === 0, 'PADES_PAGE_ROTATE');
   };
+  const checkedLineArray = (value, length, code) => {
+    const array = rev.resolve(value);
+    check(array instanceof PDFArray && array.size() === length, code);
+    for (const item of array.asArray())
+      check(Number.isFinite(number(rev.resolve(item))), code);
+  };
+  const inspectLineAnnotations = page => {
+    const annotations = optionalPageEntry(page, 'Annots');
+    if (!(annotations instanceof PDFArray)) return;
+    for (const entry of annotations.asArray()) {
+      const annotation = rev.resolve(entry);
+      if (!(annotation instanceof PDFDict) ||
+          name(rev.resolve(get(annotation, 'Subtype'))) !== 'Line') continue;
+      // An appearance stream overrides these dictionary fields; it needs its own admission.
+      if (optionalPageEntry(annotation, 'AP') !== undefined) {
+        diagnostic('PADES_LINE_AP_UNSUPPORTED');
+        continue;
+      }
+      checkedLineArray(get(annotation, 'L'), 4, 'PADES_LINE_L');
+      const endings = optionalPageEntry(annotation, 'LE');
+      if (endings !== undefined) {
+        check(endings instanceof PDFArray && endings.size() === 2, 'PADES_LINE_LE');
+        const styles = new Set(['None', 'Square', 'Circle', 'Diamond', 'OpenArrow',
+          'ClosedArrow', 'Butt', 'ROpenArrow', 'RClosedArrow', 'Slash']);
+        for (const item of endings.asArray())
+          check(styles.has(name(rev.resolve(item))), 'PADES_LINE_LE');
+      }
+      const leader = optionalPageEntry(annotation, 'LL');
+      if (leader !== undefined)
+        check(Number.isFinite(number(leader)), 'PADES_LINE_LL');
+      const extension = optionalPageEntry(annotation, 'LLE');
+      if (extension !== undefined) {
+        check(leader !== undefined && Number.isFinite(number(extension)) &&
+          number(extension) >= 0, 'PADES_LINE_LLE');
+      }
+      const captionOffset = optionalPageEntry(annotation, 'CO');
+      if (captionOffset !== undefined)
+        checkedLineArray(captionOffset, 2, 'PADES_LINE_CO');
+    }
+  };
   const streamBytes = reference => {
     check(reference instanceof PDFRef, 'PADES_PAGE_CONTENT_REFERENCE');
     const stream = rev.resolve(reference);
@@ -970,6 +1010,7 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
       check(mediaBox instanceof PDFArray, 'PADES_PAGE_MEDIABOX');
       check(resources instanceof PDFDict, 'PADES_PAGE_RESOURCES');
       check(++pageCount <= MAX_OBJECTS, 'PADES_PAGE_LIMIT', 'UNSUPPORTED');
+      inspectLineAnnotations(dict);
       const value = get(dict, 'Contents');
       if (value === undefined || rev.resolve(value) === PDFNull) return 1;
       const content = rev.resolve(value);
