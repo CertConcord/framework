@@ -9,7 +9,7 @@ import { loadPAdES, pdfSignatures } from './pades-fixtures.mjs';
 
 const raw = readFileSync(new URL('./vectors/pades-line-annotation-admission.json', import.meta.url));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-assert.equal(sha(raw), '15146a4129e93d2f74c78fa3c5fd618122fd5f997a8d3f0e1d3f51ccbd95be71');
+assert.equal(sha(raw), 'f89b784fd86236c7c903f416c9015456240eeb271eb9c2e446c1ea20c3de1f47');
 const vectors = JSON.parse(raw);
 assert.equal(vectors.schema, 'certconcord.pades-line-annotation-admission.v1');
 assert.equal(vectors.baseMain, '891ff4ed5ad92df67b7403c161324963ea7244ac');

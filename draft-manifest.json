@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 22077,
-      "sha256": "845875f9cc2010c2e2cf817f2ff1a49db4bd07d1b1bed002f53bd0ced9bf6385"
+      "bytes": 22421,
+      "sha256": "6322c5afee6eae966c69651eea1ee0ebd83a30593c7be599098f51a0e6c6e98e"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -1611,7 +1611,7 @@
     {
       "path": "reference/pades-line-annotation-vectors.test.mjs",
       "bytes": 3950,
-      "sha256": "88e55426d60532a58c9c9b7c4ca48be6488f3480b137433cea72cdbdff357839"
+      "sha256": "d81fb81136407986c75047eb655480baf7c1b289acd483450ce08512fc79b407"
     },
     {
       "path": "reference/pades-page-dictionary-admission.test.mjs",
@@ -1695,8 +1695,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 80235,
-      "sha256": "6ac001885dc6ede8fd2d20ab2c7b70ffb2ed05312b9dca695097be10e7964d29"
+      "bytes": 81115,
+      "sha256": "25b9e520eb980f44907556aa78105defcae7f508cad8d8fb8797ac078c72563a"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -8105,8 +8105,8 @@
     },
     {
       "path": "reference/vectors/pades-line-annotation-admission.json",
-      "bytes": 341536,
-      "sha256": "15146a4129e93d2f74c78fa3c5fd618122fd5f997a8d3f0e1d3f51ccbd95be71"
+      "bytes": 487236,
+      "sha256": "f89b784fd86236c7c903f416c9015456240eeb271eb9c2e446c1ea20c3de1f47"
     },
     {
       "path": "reference/vectors/pades-page-dictionary-admission.json",

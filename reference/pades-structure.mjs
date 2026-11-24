@@ -938,6 +938,23 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
       const captionOffset = optionalPageEntry(annotation, 'CO');
       if (captionOffset !== undefined)
         checkedLineArray(captionOffset, 2, 'PADES_LINE_CO');
+      const borderStyle = optionalPageEntry(annotation, 'BS');
+      if (borderStyle !== undefined) {
+        check(borderStyle instanceof PDFDict, 'PADES_LINE_BS');
+        const width = optionalPageEntry(borderStyle, 'W');
+        if (width !== undefined)
+          check(Number.isFinite(number(width)), 'PADES_LINE_BS_W');
+        const style = optionalPageEntry(borderStyle, 'S');
+        if (style !== undefined)
+          check(name(style) !== undefined, 'PADES_LINE_BS_S');
+        const dash = optionalPageEntry(borderStyle, 'D');
+        if (dash !== undefined) {
+          check(dash instanceof PDFArray, 'PADES_LINE_BS_D');
+          const lengths = dash.asArray().map(item => number(rev.resolve(item)));
+          check(lengths.every(value => Number.isFinite(value) && value >= 0) &&
+            lengths.some(value => value > 0), 'PADES_LINE_BS_D');
+        }
+      }
     }
   };
   const streamBytes = reference => {
