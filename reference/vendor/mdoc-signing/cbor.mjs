@@ -135,7 +135,18 @@ export function unembed(value) {
   return decode(value.value);
 }
 export function coseKey(jwk) {
-  requireThat(jwk.kty === 'EC' && jwk.crv === 'P-256' && !jwk.d, 'COSE_KEY');
+  if (jwk?.kty === 'AKP') {
+    const algorithm = { 'ML-DSA-65': -49, 'ML-DSA-87': -50 }[jwk.alg];
+    const pub = unb64u(jwk.pub);
+    requireThat(algorithm && pub.length === (algorithm === -49 ? 1952 : 2592) && !jwk.priv &&
+      Object.keys(jwk).every(key => ['kty', 'alg', 'pub'].includes(key)), 'COSE_KEY');
+    let publicKey;
+    try { publicKey = createPublicKey({ key: jwk, format: 'jwk' }); }
+    catch { requireThat(false, 'COSE_KEY'); }
+    requireThat(publicKey.asymmetricKeyType === jwk.alg.toLowerCase(), 'COSE_KEY');
+    return new Map([[1, 7], [3, algorithm], [-1, pub]]);
+  }
+  requireThat(jwk?.kty === 'EC' && jwk.crv === 'P-256' && !jwk.d, 'COSE_KEY');
   const x = unb64u(jwk.x),
     y = unb64u(jwk.y);
   requireThat(x.length === 32 && y.length === 32, 'COSE_POINT');
@@ -147,6 +158,14 @@ export function coseKey(jwk) {
   ]);
 }
 export function coseJWK(key) {
+  if (get(key, 1) === 7) {
+    const algorithm = get(key, 3);
+    const name = { '-49': 'ML-DSA-65', '-50': 'ML-DSA-87' }[algorithm];
+    requireThat(name && key.size === 3 && Buffer.isBuffer(get(key, -1)) && !key.has(-2), 'COSE_KEY');
+    const jwk = { kty: 'AKP', alg: name, pub: b64u(get(key, -1)) };
+    coseKey(jwk);
+    return jwk;
+  }
   requireThat(get(key, 1) === 2 && get(key, -1) === 1 && !key.has(-4), 'COSE_KEY');
   const jwk = { kty: 'EC', crv: 'P-256', x: b64u(get(key, -2)), y: b64u(get(key, -3)) };
   coseKey(jwk);

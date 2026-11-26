@@ -43,24 +43,24 @@
     {
       "name": "mdoc-signing",
       "repository": "https://github.com/CertConcord/mdoc-signing",
-      "commit": "18c903b3bcfe6ff9508527a8add61e33294c793d",
-      "edition": "draft-02",
+      "commit": "c4905d70ce0033457c439b405b82e71d4c914bf8",
+      "edition": "draft-03",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/mdoc-signing/draft.md",
-          "sha256": "d46475dc193a9e96b648bc4ac603164b8f6d3a6a70afe51006b9a361b6b722ae"
+          "sha256": "1924e611fc52ce255ab5934a3ddbcca91091c29d4c10927ed6a113aab279511e"
         },
         {
           "source": "sources.json",
           "path": "spec/external/mdoc-signing/sources.json",
-          "sha256": "18969a19279bef50f4c074004b84e385a6e920a57537a9aacb19a8722ef8d606"
+          "sha256": "7d2b4b3b65bd0be8a63b69f812edb2734815d61fc27b9496caf653224587d675"
         },
         {
           "source": "cases.json",
           "path": "spec/external/mdoc-signing/cases.json",
-          "sha256": "d63a2f33118779ae36861b5d00f78c7fba015b9fa135e1d35e2a3cdfda3ca735"
+          "sha256": "1d41a98782de05e98bd8d7c7129ddf380431b7d41f03c528298d86ceca34ff64"
         },
         {
           "source": "NOTICE",
@@ -75,12 +75,12 @@
         {
           "source": "reference/base.mjs",
           "path": "reference/vendor/mdoc-signing/base.mjs",
-          "sha256": "a602bb6bd7c405c188208ce61629d49a8a6ba7cd3c358f6fe742b05bb623ca79"
+          "sha256": "969317c9959a78fc5f6943f54782b33aef0920256d5ba2c3d939d8f0d4f2b278"
         },
         {
           "source": "reference/cbor.mjs",
           "path": "reference/vendor/mdoc-signing/cbor.mjs",
-          "sha256": "4ab9a7b0152818574e192de3cc23a2be16d6a2671052ed1afa486bccbbce5dc8"
+          "sha256": "2721947bff02d895348f6235328acbf921f2e811e4f00777f44833fde763a230"
         },
         {
           "source": "reference/errors.mjs",
@@ -100,7 +100,7 @@
         {
           "source": "vectors/manifest.json",
           "path": "spec/external/mdoc-signing/vectors/manifest.json",
-          "sha256": "cec70e368eac1e35321128c7b2586d0868931695dac13e614dfc03cbffbab120"
+          "sha256": "1056140adb67d1700e728c463c4f3dbefef15544f5b73c3d91deba420ce3c4ca"
         },
         {
           "source": "vectors/classification.json",
@@ -116,6 +116,31 @@
           "source": "vectors/issuer-facts.json",
           "path": "spec/external/mdoc-signing/vectors/issuer-facts.json",
           "sha256": "1c300512e0b280a96d9269c192ec480dcd210389affab8c4377beed6a6d77498"
+        },
+        {
+          "source": "reference/holder-auth.mjs",
+          "path": "reference/vendor/mdoc-signing/holder-auth.mjs",
+          "sha256": "483ff76242ea4ee6ebc4c5d204e1ddead26a9a847a23d58aa908dd66b4f5ed75"
+        },
+        {
+          "source": "vectors/holder-auth.json",
+          "path": "spec/external/mdoc-signing/vectors/holder-auth.json",
+          "sha256": "d7e7040693da0be8e10beb114d5a23253ca5b4b6ab18f1386324ea3980539efb"
+        },
+        {
+          "source": "vectors/pqc-base.json",
+          "path": "spec/external/mdoc-signing/vectors/pqc-base.json",
+          "sha256": "1dd13ce98e98d2045f7a0c4bd9238bd72a9ae22d8dc46b9aec80f1033d854330"
+        },
+        {
+          "source": "reference/standards-research-2026-11-24.md",
+          "path": "spec/external/mdoc-signing/reference/standards-research-2026-11-24.md",
+          "sha256": "ce2c4eb289ba68662f896a5eb89cd9c3ff0479cda6c7a0edac4904fd58ed9323"
+        },
+        {
+          "source": "reference/pqc-research-2026-11-25.md",
+          "path": "spec/external/mdoc-signing/reference/pqc-research-2026-11-25.md",
+          "sha256": "0dbbe7d880743baafd6ddaaad59429eb4537066557e834bd702e59282e0dc21c"
         }
       ]
     },

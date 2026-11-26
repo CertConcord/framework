@@ -105,8 +105,8 @@
     },
     {
       "path": "components.lock.json",
-      "bytes": 9359,
-      "sha256": "843ddfe95a097f63e8d7f56bd62999e2f0caf5da78eaef0d57869a55bab01ef5"
+      "bytes": 10553,
+      "sha256": "016ef1aee57952424569baa1361bd40d46da42a30417f135efbdfaf90c2de354"
     },
     {
       "path": "docs/acme-csr-identifiers.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305268,
-      "sha256": "add3278f7132b0bce9d41b762f8443799ce6cda79c38201fc329640b5e63193f"
+      "bytes": 305649,
+      "sha256": "48631378ee725d0d4cd6272eb81df908d028e902e9aff74f24799932bf8aea73"
     },
     {
       "path": "reference/README.md",
@@ -705,8 +705,8 @@
     },
     {
       "path": "reference/component-integration.test.mjs",
-      "bytes": 4897,
-      "sha256": "b71851da186711f0c969a79c57f327d759740f59fb1fd91acc7be7d14ba10f5a"
+      "bytes": 5695,
+      "sha256": "b5f505cd73ec4400adf7d51251d2cabfd39bd912e44028885f27d36661e3b3b3"
     },
     {
       "path": "reference/containers.test.mjs",
@@ -1222,6 +1222,16 @@
       "path": "reference/mdoc-pki.mjs",
       "bytes": 4047,
       "sha256": "a62bc3e26fdce8ef8117693f75ff826bb1f8f0cf3d8b04c47726618637ca4ec5"
+    },
+    {
+      "path": "reference/mdoc-signing-pq.mjs",
+      "bytes": 5243,
+      "sha256": "f81b5965cbbb1dbc200abddf88f5882d712d708bbefff013f96b73e84eab0859"
+    },
+    {
+      "path": "reference/mdoc-signing-pq.test.mjs",
+      "bytes": 7215,
+      "sha256": "cfe76d9bfd874325ee8e76ed113f10086b748df51701b9cb7394235d09faf9ad"
     },
     {
       "path": "reference/mdoc.mjs",
@@ -13470,18 +13480,23 @@
     },
     {
       "path": "reference/vendor/mdoc-signing/base.mjs",
-      "bytes": 20362,
-      "sha256": "a602bb6bd7c405c188208ce61629d49a8a6ba7cd3c358f6fe742b05bb623ca79"
+      "bytes": 23795,
+      "sha256": "969317c9959a78fc5f6943f54782b33aef0920256d5ba2c3d939d8f0d4f2b278"
     },
     {
       "path": "reference/vendor/mdoc-signing/cbor.mjs",
-      "bytes": 5719,
-      "sha256": "4ab9a7b0152818574e192de3cc23a2be16d6a2671052ed1afa486bccbbce5dc8"
+      "bytes": 6655,
+      "sha256": "2721947bff02d895348f6235328acbf921f2e811e4f00777f44833fde763a230"
     },
     {
       "path": "reference/vendor/mdoc-signing/errors.mjs",
       "bytes": 299,
       "sha256": "b5a6b8b16ea6b24d6dd1596e33407ad9080550e7bf90445e9714e53bff69b495"
+    },
+    {
+      "path": "reference/vendor/mdoc-signing/holder-auth.mjs",
+      "bytes": 6190,
+      "sha256": "483ff76242ea4ee6ebc4c5d204e1ddead26a9a847a23d58aa908dd66b4f5ed75"
     },
     {
       "path": "reference/vendor/mdoc-signing/key-relation.mjs",
@@ -13665,18 +13680,28 @@
     },
     {
       "path": "spec/external/mdoc-signing/cases.json",
-      "bytes": 19026,
-      "sha256": "d63a2f33118779ae36861b5d00f78c7fba015b9fa135e1d35e2a3cdfda3ca735"
+      "bytes": 23910,
+      "sha256": "1d41a98782de05e98bd8d7c7129ddf380431b7d41f03c528298d86ceca34ff64"
     },
     {
       "path": "spec/external/mdoc-signing/draft.md",
-      "bytes": 19922,
-      "sha256": "d46475dc193a9e96b648bc4ac603164b8f6d3a6a70afe51006b9a361b6b722ae"
+      "bytes": 25449,
+      "sha256": "1924e611fc52ce255ab5934a3ddbcca91091c29d4c10927ed6a113aab279511e"
+    },
+    {
+      "path": "spec/external/mdoc-signing/reference/pqc-research-2026-11-25.md",
+      "bytes": 9284,
+      "sha256": "0dbbe7d880743baafd6ddaaad59429eb4537066557e834bd702e59282e0dc21c"
+    },
+    {
+      "path": "spec/external/mdoc-signing/reference/standards-research-2026-11-24.md",
+      "bytes": 11331,
+      "sha256": "ce2c4eb289ba68662f896a5eb89cd9c3ff0479cda6c7a0edac4904fd58ed9323"
     },
     {
       "path": "spec/external/mdoc-signing/sources.json",
-      "bytes": 2703,
-      "sha256": "18969a19279bef50f4c074004b84e385a6e920a57537a9aacb19a8722ef8d606"
+      "bytes": 2954,
+      "sha256": "7d2b4b3b65bd0be8a63b69f812edb2734815d61fc27b9496caf653224587d675"
     },
     {
       "path": "spec/external/mdoc-signing/vectors/base.json",
@@ -13699,14 +13724,24 @@
       "sha256": "75ac64b7288f36dd3d73cc4517c94fbb1b9cf161d51fcf92e446b56fc298af1a"
     },
     {
+      "path": "spec/external/mdoc-signing/vectors/holder-auth.json",
+      "bytes": 195113,
+      "sha256": "d7e7040693da0be8e10beb114d5a23253ca5b4b6ab18f1386324ea3980539efb"
+    },
+    {
       "path": "spec/external/mdoc-signing/vectors/issuer-facts.json",
       "bytes": 16441,
       "sha256": "1c300512e0b280a96d9269c192ec480dcd210389affab8c4377beed6a6d77498"
     },
     {
       "path": "spec/external/mdoc-signing/vectors/manifest.json",
-      "bytes": 550,
-      "sha256": "cec70e368eac1e35321128c7b2586d0868931695dac13e614dfc03cbffbab120"
+      "bytes": 747,
+      "sha256": "1056140adb67d1700e728c463c4f3dbefef15544f5b73c3d91deba420ce3c4ca"
+    },
+    {
+      "path": "spec/external/mdoc-signing/vectors/pqc-base.json",
+      "bytes": 292385,
+      "sha256": "1dd13ce98e98d2045f7a0c4bd9238bd72a9ae22d8dc46b9aec80f1033d854330"
     },
     {
       "path": "spec/external/mtc-document-validation/NOTICE",

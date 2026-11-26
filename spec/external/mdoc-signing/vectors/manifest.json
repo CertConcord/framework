@@ -5,6 +5,8 @@
     "vectors/classification.json": "874ef12a917b0f8d3479ca2545a172369d65c2708664f0bcc6b1717d4f511a7f",
     "vectors/document-classification.json": "75ac64b7288f36dd3d73cc4517c94fbb1b9cf161d51fcf92e446b56fc298af1a",
     "vectors/issuer-facts.json": "1c300512e0b280a96d9269c192ec480dcd210389affab8c4377beed6a6d77498",
-    "vectors/cbor-text.json": "76dfc807d5c0ca9dcf3c439f08656dfe97ed064de22fb70e7a1c18a5b760b570"
+    "vectors/cbor-text.json": "76dfc807d5c0ca9dcf3c439f08656dfe97ed064de22fb70e7a1c18a5b760b570",
+    "vectors/holder-auth.json": "d7e7040693da0be8e10beb114d5a23253ca5b4b6ab18f1386324ea3980539efb",
+    "vectors/pqc-base.json": "1dd13ce98e98d2045f7a0c4bd9238bd72a9ae22d8dc46b9aec80f1033d854330"
   }
 }
