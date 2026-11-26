@@ -260,8 +260,8 @@
     },
     {
       "path": "docs/passkey-signing.md",
-      "bytes": 8667,
-      "sha256": "5d1e947b5a651a573c9c3957789515c597f082e51d44b4813ac9405cbc1c4a14"
+      "bytes": 8312,
+      "sha256": "1127787a57b255bfe05124b985d9691c2638d57bb7f4a4ef4d73af344d10117b"
     },
     {
       "path": "docs/research.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "docs/upstream-baseline.md",
-      "bytes": 40363,
-      "sha256": "cd9b236faf3f6ba48c0788d90b0aff86ae667d0a8bef0c200c57dfb6ddf72d09"
+      "bytes": 39873,
+      "sha256": "ca1c6b8dd61f9a032bc425463952f3f0712022804315c1fbb63f0bea489bbd6b"
     },
     {
       "path": "docs/webauthn-authenticator-extensions.md",
@@ -2145,13 +2145,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 43509,
-      "sha256": "aa64fa5736236d454cfe407abbdeb4011637b16834b22427a7ec725accd10ad5"
+      "bytes": 42885,
+      "sha256": "0d446dff34e99dc556b0e6ea10187100b0548fedd49b7e50fd1bc6498ebf00da"
     },
     {
       "path": "reference/sources.mjs",
-      "bytes": 17051,
-      "sha256": "086a20d8451c4efeba1e33e8aace32219e15e35c4bc9c4c763ab16102fa5cd80"
+      "bytes": 16705,
+      "sha256": "c7b901a7b4c08431490ee93036536cdbe8b6470aa6b835d38dc479b42646c5dd"
     },
     {
       "path": "reference/state-security.test.mjs",

@@ -469,18 +469,6 @@
       "bytes": 14235
     },
     {
-      "id": "passSignProposal",
-      "url": "https://raw.githubusercontent.com/codedpills/pass-sign/4ae5a3d077040632b0885947b63329ba99413fb3/docs/research/deliverables/doc-5-protocol-proposal.md",
-      "sha256": "51349416841a710b4658ae7e4359b69bab6a3cf6219fc18c1052ff935b910801",
-      "bytes": 21047
-    },
-    {
-      "id": "passSignRFC",
-      "url": "https://raw.githubusercontent.com/codedpills/pass-sign/4ae5a3d077040632b0885947b63329ba99413fb3/docs/research/deliverables/doc-6-rfc-draft-v0.1.md",
-      "sha256": "6a257416597a20eb91d4a246ef9a7f9f83c440cdc100233d9c311c9f38a1154d",
-      "bytes": 33025
-    },
-    {
       "id": "rawSigningV4",
       "url": "https://yubicolabs.github.io/webauthn-sign-extension/4/",
       "sha256": "29359265d3b0f3dbc738482d4a33865beeb5c698e38651d2d12f14b7b5e6d86c",
