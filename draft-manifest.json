@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305774,
-      "sha256": "8d1c7129ccdda8145c93eb8bdfa62b38ca4f597b56e3808dfbcac35356c9e523"
+      "bytes": 305896,
+      "sha256": "577aea01098c9f298cac5c735007ee68d4be8141e807b01a366c7675fc8f150d"
     },
     {
       "path": "reference/README.md",
@@ -1594,6 +1594,11 @@
       "sha256": "5cf7bc7b9695062f64e761598c8e34d382a7ff20c6aad722af0576d64fb80a21"
     },
     {
+      "path": "reference/pades-freetext-annotation-vectors.test.mjs",
+      "bytes": 4916,
+      "sha256": "d656fe13c4ae20768e34bc0490b03afa02e6f0962d14b37c848ae02819cd0db0"
+    },
+    {
       "path": "reference/pades-image-xobject-admission.test.mjs",
       "bytes": 13154,
       "sha256": "548df37e4ce45b0d0e5e4e56e84750f79c1749b9eac9c2b6244c44158248f3e1"
@@ -1705,8 +1710,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 81115,
-      "sha256": "25b9e520eb980f44907556aa78105defcae7f508cad8d8fb8797ac078c72563a"
+      "bytes": 84375,
+      "sha256": "d0c166526f7c940829450590887e151d3b94b05f647a135013782115c2e92629"
     },
     {
       "path": "reference/pades-structure.test.mjs",
@@ -8112,6 +8117,11 @@
       "path": "reference/vectors/pades-field-tree-admission.json",
       "bytes": 74067,
       "sha256": "7bb5dc58ac3692d294882cee7937b9de74e54a7b0fa1656d0d22e648f7f1b29f"
+    },
+    {
+      "path": "reference/vectors/pades-freetext-annotation-admission.json",
+      "bytes": 343885,
+      "sha256": "5ab31accc5bd3006ad5698c1e09d1a556cef822de5bc8f144b37b38a4f7a20b3"
     },
     {
       "path": "reference/vectors/pades-image-xobject-admission.json",

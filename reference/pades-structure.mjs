@@ -957,6 +957,69 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
       }
     }
   };
+  const inspectFreeTextAnnotations = page => {
+    const annotations = optionalPageEntry(page, 'Annots');
+    if (!(annotations instanceof PDFArray)) return;
+    for (const entry of annotations.asArray()) {
+      const annotation = rev.resolve(entry);
+      if (!(annotation instanceof PDFDict) ||
+          name(rev.resolve(get(annotation, 'Subtype'))) !== 'FreeText') continue;
+      // An appearance stream takes precedence over the text and border fields.
+      if (optionalPageEntry(annotation, 'AP') !== undefined) {
+        diagnostic('PADES_FREETEXT_AP_UNSUPPORTED');
+        continue;
+      }
+      const contents = optionalPageEntry(annotation, 'Contents');
+      if (contents !== undefined)
+        check(contents instanceof PDFString || contents instanceof PDFHexString,
+          'PADES_FREETEXT_CONTENTS');
+      const appearance = optionalPageEntry(annotation, 'DA');
+      check(appearance instanceof PDFString || appearance instanceof PDFHexString,
+        'PADES_FREETEXT_DA');
+      const flags = optionalPageEntry(annotation, 'F');
+      if (flags !== undefined)
+        sourceInteger(flags, 'PADES_FREETEXT_F', integerObjects);
+      const quadding = optionalPageEntry(annotation, 'Q');
+      if (quadding !== undefined)
+        check(sourceInteger(quadding, 'PADES_FREETEXT_Q', integerObjects) <= 2,
+          'PADES_FREETEXT_Q');
+      const borderStyle = optionalPageEntry(annotation, 'BS');
+      if (borderStyle !== undefined) {
+        check(borderStyle instanceof PDFDict, 'PADES_FREETEXT_BS');
+        const width = optionalPageEntry(borderStyle, 'W');
+        if (width !== undefined)
+          check(Number.isFinite(number(width)), 'PADES_FREETEXT_BS_W');
+        const style = optionalPageEntry(borderStyle, 'S');
+        if (style !== undefined)
+          check(name(style) !== undefined, 'PADES_FREETEXT_BS_S');
+        const dash = optionalPageEntry(borderStyle, 'D');
+        if (dash !== undefined) {
+          check(dash instanceof PDFArray, 'PADES_FREETEXT_BS_D');
+          const lengths = dash.asArray().map(item => number(rev.resolve(item)));
+          check(lengths.every(value => Number.isFinite(value) && value >= 0) &&
+            (lengths.length === 0 || lengths.some(value => value > 0)),
+          'PADES_FREETEXT_BS_D');
+        }
+      } else {
+        // ISO 32000-1 Table 164 ignores Border when BS supplies the border style.
+        const border = optionalPageEntry(annotation, 'Border');
+        if (border !== undefined) {
+          check(border instanceof PDFArray && [3, 4].includes(border.size()),
+            'PADES_FREETEXT_BORDER');
+          for (const item of border.asArray().slice(0, 3))
+            check(Number.isFinite(number(rev.resolve(item))), 'PADES_FREETEXT_BORDER');
+          if (border.size() === 4) {
+            const dash = rev.resolve(border.get(3));
+            check(dash instanceof PDFArray, 'PADES_FREETEXT_BORDER');
+            const lengths = dash.asArray().map(item => number(rev.resolve(item)));
+            check(lengths.every(value => Number.isFinite(value) && value >= 0) &&
+              (lengths.length === 0 || lengths.some(value => value > 0)),
+            'PADES_FREETEXT_BORDER');
+          }
+        }
+      }
+    }
+  };
   const streamBytes = reference => {
     check(reference instanceof PDFRef, 'PADES_PAGE_CONTENT_REFERENCE');
     const stream = rev.resolve(reference);
@@ -1028,6 +1091,7 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
       check(resources instanceof PDFDict, 'PADES_PAGE_RESOURCES');
       check(++pageCount <= MAX_OBJECTS, 'PADES_PAGE_LIMIT', 'UNSUPPORTED');
       inspectLineAnnotations(dict);
+      inspectFreeTextAnnotations(dict);
       const value = get(dict, 'Contents');
       if (value === undefined || rev.resolve(value) === PDFNull) return 1;
       const content = rev.resolve(value);
