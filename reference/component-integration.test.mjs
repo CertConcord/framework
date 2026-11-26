@@ -54,6 +54,7 @@ for (const id of [
         stateTime: vector.stateTime,
         knowledgeTime: vector.knowledgeTime,
         statusEvidence: vector.statusEvidence,
+        allowLegacyClassical: true,
         authorizeIssuer: (context) => {
           const leaf = new X509Certificate(context.certificate),
             admitted =
@@ -80,6 +81,25 @@ for (const id of [
     if (vector.expected.reason && id !== 'status-missing')
       assert.equal(actual.reason, vector.expected.reason);
   });
+
+test('candidate component requires explicit selection for historical v2 credentials', () => {
+  const vector = vectors.cases.find((item) => item.id === 'independent-ml-dsa-65');
+  const certificate = Buffer.from(vector.certificate, 'hex');
+  const actual = evaluateSignedDocument(
+    Buffer.from(vector.document, 'hex'),
+    Buffer.from(vector.signature, 'hex'),
+    Buffer.from(vector.credential, 'hex'),
+    {
+      certificate,
+      issuerKey: new X509Certificate(certificate).publicKey,
+      profileID: vector.profileID,
+      documentKeyMode: vector.documentKeyMode,
+      stateTime: vector.stateTime,
+      knowledgeTime: vector.knowledgeTime,
+    },
+  );
+  assert.deepEqual(actual, { overall: 'UNSUPPORTED', reason: 'MDOC_PROFILE_UNSUPPORTED' });
+});
 
 test('mdoc status TTL is authenticated and cannot erase invalid or revoked evidence', () => {
   const key = generate('ec'),

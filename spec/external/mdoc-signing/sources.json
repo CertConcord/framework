@@ -1,5 +1,5 @@
 {
-  "reviewDate": "2026-10-07",
+  "reviewDate": "2026-11-25",
   "sources": [
     {
       "id": "rfc9052",
@@ -56,9 +56,13 @@
   ],
   "reviewScope": [
     "ISO catalog metadata",
-    "public WG10 certificate binding and revocation sections",
+    "public WG10 certificate binding, revocation, DeviceSigned and device authentication sections",
     "RFC 9360 x5t",
-    "status-list-21 selected JWT binding"
+    "status-list-21 selected JWT binding",
+    "RFC 9964 ML-DSA COSE AKP and JWS algorithms",
+    "RFC 9881 ML-DSA X.509 signatures and public keys",
+    "NIST FIPS 204 pure ML-DSA",
+    "public WG10 algorithm-suite boundary for issuerAuth and DeviceAuth"
   ],
   "publishedBaseline": {
     "status": "published; DIS successor under development",
