@@ -105,8 +105,8 @@
     },
     {
       "path": "components.lock.json",
-      "bytes": 10553,
-      "sha256": "016ef1aee57952424569baa1361bd40d46da42a30417f135efbdfaf90c2de354"
+      "bytes": 10797,
+      "sha256": "04ce736d98888933fda16c23f7dbe2db7f99e282281b9e3740d01afb2b57c145"
     },
     {
       "path": "docs/acme-csr-identifiers.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305649,
-      "sha256": "48631378ee725d0d4cd6272eb81df908d028e902e9aff74f24799932bf8aea73"
+      "bytes": 305774,
+      "sha256": "8d1c7129ccdda8145c93eb8bdfa62b38ca4f597b56e3808dfbcac35356c9e523"
     },
     {
       "path": "reference/README.md",
@@ -2327,6 +2327,11 @@
       "path": "reference/timestamp.mjs",
       "bytes": 15903,
       "sha256": "ba62bc11ac68aa29ea68691f1f28612e72d6a6016c37f4b2f04199d33d844b97"
+    },
+    {
+      "path": "reference/tlog-key-discovery-integration.test.mjs",
+      "bytes": 2914,
+      "sha256": "4924b21110bb113334640bbaaf9a4f800889dcc3c59bbfa9d5cb53c9bce4e1b6"
     },
     {
       "path": "reference/tpm-simulator-check.mjs",
@@ -13510,8 +13515,8 @@
     },
     {
       "path": "reference/vendor/tlog-cosignature-ml-dsa/extension.mjs",
-      "bytes": 1670,
-      "sha256": "2ea3330baca32277e2132eba6707d4ee8627f216079233e07f7202d35d76d09e"
+      "bytes": 2762,
+      "sha256": "4d5aa3e75efd4776beec211f320bd69404ce65dc93871f8b222fa73865ed9ed2"
     },
     {
       "path": "reference/vendor/tlog-cosignature-ml-dsa/transport.mjs",
@@ -13815,13 +13820,13 @@
     },
     {
       "path": "spec/external/tlog-cosignature-ml-dsa/cases.json",
-      "bytes": 2881,
-      "sha256": "009e4c0cee05cf4a284a4ca8007141badf58ae56de6833f768f2a52f515fc20f"
+      "bytes": 4224,
+      "sha256": "aae15c8d1909fc8550c02f3f1867258c570ce56d02c180636290ec77a1d8dc35"
     },
     {
       "path": "spec/external/tlog-cosignature-ml-dsa/draft.md",
-      "bytes": 8208,
-      "sha256": "4efdf9f5d117ded475e0cd5897a2fe158bd0b535bd8c2b8999b0792d5ea34f94"
+      "bytes": 8929,
+      "sha256": "67c3dd0d38c1083add4794bb7ebcb655ce16035366b486d1c31381f285712442"
     },
     {
       "path": "spec/external/tlog-cosignature-ml-dsa/sources.json",
@@ -13829,9 +13834,14 @@
       "sha256": "676d7a3aea4314e49056a004e8bc32c608d07aa07a810ac1294df7a5d91b5e99"
     },
     {
+      "path": "spec/external/tlog-cosignature-ml-dsa/vectors/key-discovery.json",
+      "bytes": 15878,
+      "sha256": "592e4d7edc4b6bd311d8dce08d55e7aa7050cf8df1bff18381edc7a57d8ce7d8"
+    },
+    {
       "path": "spec/external/tlog-cosignature-ml-dsa/vectors/manifest.json",
-      "bytes": 236,
-      "sha256": "4ab9b6a3cbeba388feddfab27dd55f4ccaa31fdd9db5fd22d5630e0525d78d4d"
+      "bytes": 338,
+      "sha256": "feb8fc380a09a257dc5fcec37292f17a9aef064b6c36276e62bfc62fc8e53a72"
     },
     {
       "path": "spec/external/tlog-cosignature-ml-dsa/vectors/prefix.json",

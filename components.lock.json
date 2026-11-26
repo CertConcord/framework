@@ -147,14 +147,14 @@
     {
       "name": "tlog-cosignature-ml-dsa",
       "repository": "https://github.com/CertConcord/tlog-cosignature-ml-dsa",
-      "commit": "c5266dfe267e028b36b0e5aec14cf91193651ffa",
+      "commit": "fae98db0560a0676a0a7781ef56cb116643919e1",
       "edition": "draft-02",
       "role": "selected-draft",
       "files": [
         {
           "source": "draft.md",
           "path": "spec/external/tlog-cosignature-ml-dsa/draft.md",
-          "sha256": "4efdf9f5d117ded475e0cd5897a2fe158bd0b535bd8c2b8999b0792d5ea34f94"
+          "sha256": "67c3dd0d38c1083add4794bb7ebcb655ce16035366b486d1c31381f285712442"
         },
         {
           "source": "sources.json",
@@ -164,7 +164,7 @@
         {
           "source": "cases.json",
           "path": "spec/external/tlog-cosignature-ml-dsa/cases.json",
-          "sha256": "009e4c0cee05cf4a284a4ca8007141badf58ae56de6833f768f2a52f515fc20f"
+          "sha256": "aae15c8d1909fc8550c02f3f1867258c570ce56d02c180636290ec77a1d8dc35"
         },
         {
           "source": "NOTICE",
@@ -174,7 +174,7 @@
         {
           "source": "reference/extension.mjs",
           "path": "reference/vendor/tlog-cosignature-ml-dsa/extension.mjs",
-          "sha256": "2ea3330baca32277e2132eba6707d4ee8627f216079233e07f7202d35d76d09e"
+          "sha256": "4d5aa3e75efd4776beec211f320bd69404ce65dc93871f8b222fa73865ed9ed2"
         },
         {
           "source": "vectors/prefix.json",
@@ -194,7 +194,12 @@
         {
           "source": "vectors/manifest.json",
           "path": "spec/external/tlog-cosignature-ml-dsa/vectors/manifest.json",
-          "sha256": "4ab9b6a3cbeba388feddfab27dd55f4ccaa31fdd9db5fd22d5630e0525d78d4d"
+          "sha256": "feb8fc380a09a257dc5fcec37292f17a9aef064b6c36276e62bfc62fc8e53a72"
+        },
+        {
+          "source": "vectors/key-discovery.json",
+          "path": "spec/external/tlog-cosignature-ml-dsa/vectors/key-discovery.json",
+          "sha256": "592e4d7edc4b6bd311d8dce08d55e7aa7050cf8df1bff18381edc7a57d8ce7d8"
         }
       ]
     },

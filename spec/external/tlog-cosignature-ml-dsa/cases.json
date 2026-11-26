@@ -116,6 +116,56 @@
       "id": "witness-only-log-checkpoint",
       "expected": "CHECKPOINT_LOG_SIGNATURE_REQUIRED",
       "vector": "vectors/transport.json"
+    },
+    {
+      "id": "key-discovery-exact",
+      "expected": "VALID",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-mixed-registry",
+      "expected": "VALID",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-unknown",
+      "expected": "NOTE_KEY_UNKNOWN",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-other-name",
+      "expected": "NOTE_KEY_UNKNOWN",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-altered-hint",
+      "expected": "NOTE_KEY_UNKNOWN",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-duplicate-hint",
+      "expected": "NOTE_KEY_AMBIGUOUS",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-ml-dsa-44-only",
+      "expected": "NOTE_KEY_UNKNOWN",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-unrelated-utf8-name",
+      "expected": "VALID",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-selected-utf8-name",
+      "expected": "SUBTREE_NAME",
+      "vector": "vectors/key-discovery.json"
+    },
+    {
+      "id": "key-discovery-short-hint",
+      "expected": "NOTE_KEY_ID",
+      "vector": "vectors/key-discovery.json"
     }
   ]
 }

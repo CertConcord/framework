@@ -1,4 +1,4 @@
-import {createHash,createPublicKey,verify} from 'node:crypto';
+import {createHash,createPublicKey,KeyObject,verify} from 'node:crypto';
 const requireValue = (condition,code) => {if(!condition){const e=new Error(code);e.code=code;throw e;}};
 const u64 = n => {n=BigInt(n);requireValue(n>=0n&&n<=0xffffffffffffffffn,'SUBTREE_INTEGER');const b=Buffer.alloc(8);b.writeBigUInt64BE(n);return b;};
 const text = s => {requireValue(typeof s==='string'&&/^[\x21-\x2a\x2c-\x7e]{1,255}$/.test(s),'SUBTREE_NAME');const b=Buffer.from(s);return Buffer.concat([Buffer.from([b.length]),b]);};
@@ -10,6 +10,26 @@ export function mlDsa87KeyID(name,key) {
     Buffer.from('certconcord/tlog-ml-dsa-87/v1\n'),Buffer.from(name+'\n'),
     publicKey.export({type:'spki',format:'der'}),
   ])).digest().subarray(0,4);
+}
+// The caller admits the candidates and selects this experimental profile first.
+// A four-byte hint cannot establish trust or resolve a collision by itself.
+export function selectMlDsa87Key(name,keyHint,candidates) {
+  text(name);
+  requireValue(Buffer.isBuffer(keyHint)&&keyHint.length===4,'NOTE_KEY_ID');
+  requireValue(Array.isArray(candidates)&&candidates.length<=64,'NOTE_KEY_CANDIDATES');
+  let selected;
+  for(const candidate of candidates) {
+    requireValue(candidate&&typeof candidate==='object','NOTE_KEY_CANDIDATES');
+    requireValue(typeof candidate.name==='string','NOTE_KEY_CANDIDATES');
+    if(candidate.name!==name)continue;
+    requireValue(candidate.publicKey instanceof KeyObject&&candidate.publicKey.type==='public','NOTE_KEY_CANDIDATES');
+    if(candidate.publicKey.asymmetricKeyType!=='ml-dsa-87')continue;
+    if(!mlDsa87KeyID(name,candidate.publicKey).equals(keyHint))continue;
+    requireValue(selected===undefined,'NOTE_KEY_AMBIGUOUS');
+    selected=candidate.publicKey;
+  }
+  requireValue(selected!==undefined,'NOTE_KEY_UNKNOWN');
+  return selected;
 }
 export function subtreeInput({name,origin,start=0n,end,root,timestamp=0}) {
   start=BigInt(start);end=BigInt(end);timestamp=BigInt(timestamp);
