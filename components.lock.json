@@ -233,31 +233,31 @@
       ]
     },
     {
-      "name": "passsign-evidence",
-      "repository": "https://github.com/CertConcord/passsign-evidence",
-      "commit": "38c8dbc9ec95dcce4b55e209cd6b9dee9a00265a",
+      "name": "webauthn-sign-evidence",
+      "repository": "https://github.com/CertConcord/webauthn-sign-evidence",
+      "commit": "23192ec8cffdf165c1f13067ef170628e1ecb488",
       "edition": "draft-01",
-      "role": "proposed-amendment",
+      "role": "experimental-research",
       "files": [
         {
           "source": "draft.md",
-          "path": "spec/external/passsign-evidence/draft.md",
-          "sha256": "24a055453efd3d4cc5f38427a16a6afc54f8f8c8e16f4b12a6768ad936f1f1d3"
+          "path": "spec/external/webauthn-sign-evidence/draft.md",
+          "sha256": "e5aca8436770bf4b26abfef6652b332f4d2ca6fff1e7be02878bc68131d5a4c9"
         },
         {
           "source": "sources.json",
-          "path": "spec/external/passsign-evidence/sources.json",
-          "sha256": "49b5b6edc9547a174f80930564cd8af536864776c0e96e03fee3ac9e573468b1"
+          "path": "spec/external/webauthn-sign-evidence/sources.json",
+          "sha256": "1edc7dd04b204219dafa595956245a6568a94340cb92ff427b226de479749eae"
         },
         {
           "source": "cases.json",
-          "path": "spec/external/passsign-evidence/cases.json",
-          "sha256": "b8d60de749c67d9e4367ddc89c560f7c72a62d64efecb7cc176e6f0f9d01a34c"
+          "path": "spec/external/webauthn-sign-evidence/cases.json",
+          "sha256": "5cc23780f455befe61ed2f59283917b74bdfe41a17dbcd2524e4107d7ea564ad"
         },
         {
           "source": "NOTICE",
-          "path": "spec/external/passsign-evidence/NOTICE",
-          "sha256": "ae7d5fc6be75b46ef7486bf59aeb75bf96d07a5a05e65999e3edd856117a6e02"
+          "path": "spec/external/webauthn-sign-evidence/NOTICE",
+          "sha256": "e9030f862643e816c47c48e8925e037a69878796369eb3703e8818774df04406"
         }
       ]
     }

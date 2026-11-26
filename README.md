@@ -45,7 +45,7 @@ EUDI, government mDL and photoID are optional interoperability environments and 
 
 ## Independent drafts
 
-The framework composes separately maintained [MTC document validation](https://github.com/CertConcord/mtc-document-validation), [mdoc signing certificates](https://github.com/CertConcord/mdoc-signing) and [ML-DSA-87 cosignature](https://github.com/CertConcord/tlog-cosignature-ml-dsa) drafts. Focused [signing-context](https://github.com/CertConcord/signing-context) and [PassSign evidence](https://github.com/CertConcord/passsign-evidence) amendments remain proposals.
+The framework composes separately maintained [MTC document validation](https://github.com/CertConcord/mtc-document-validation), [mdoc signing certificates](https://github.com/CertConcord/mdoc-signing) and [ML-DSA-87 cosignature](https://github.com/CertConcord/tlog-cosignature-ml-dsa) drafts. The [signing-context](https://github.com/CertConcord/signing-context) amendment remains a proposal; [WebAuthn sign-extension evidence](https://github.com/CertConcord/webauthn-sign-evidence) is separate experimental research, not an adopted browser API or document-signature profile.
 
 The [component map](docs/components.md) identifies canonical ownership, exact commits, local snapshots and integration roles. Independent drafts do not require this framework's governance. All application tracks retain the same certificate trust core.
 

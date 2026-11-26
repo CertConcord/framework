@@ -90,8 +90,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 10906,
-      "sha256": "bd665d002a41042df343b60665a6de6f4de0b21c3cdcd57a91cce4143b413112"
+      "bytes": 11106,
+      "sha256": "07f2d615b1de8dd1b210afc7d27c5113c9b1e15e2b4b4c0c2f063db718542821"
     },
     {
       "path": "SECURITY.md",
@@ -105,8 +105,8 @@
     },
     {
       "path": "components.lock.json",
-      "bytes": 10797,
-      "sha256": "04ce736d98888933fda16c23f7dbe2db7f99e282281b9e3740d01afb2b57c145"
+      "bytes": 11095,
+      "sha256": "1d22a1f237fb998ce65df774126b5806ba28592624e18c64e6fede70b4a0bab5"
     },
     {
       "path": "docs/acme-csr-identifiers.md",
@@ -155,13 +155,13 @@
     },
     {
       "path": "docs/components.md",
-      "bytes": 5451,
-      "sha256": "d534b275e34c024dc7034cfdf749b480dd82042e3ab331c38617f88d0a8c5969"
+      "bytes": 5543,
+      "sha256": "05bd8572cff696e083c37c4cede37eeaa5dfacff3480d3920df74357acb2c86c"
     },
     {
       "path": "docs/composition-review.md",
-      "bytes": 25980,
-      "sha256": "7f9f2a460f472513e14678dbf98ca0e75207f2b888074bb3e78a6869ed0ff5f8"
+      "bytes": 26125,
+      "sha256": "37bf6c55c498b0ba7c25cece1278f83eb8f3ecd1566f64bd9f06699462950800"
     },
     {
       "path": "docs/conformance-marks.md",
@@ -305,8 +305,8 @@
     },
     {
       "path": "docs/upstream-baseline.md",
-      "bytes": 40155,
-      "sha256": "9494609850f07b28e565a8ac09b8014a3c41a61343606cd729be7c58318bdb55"
+      "bytes": 40363,
+      "sha256": "cd9b236faf3f6ba48c0788d90b0aff86ae667d0a8bef0c200c57dfb6ddf72d09"
     },
     {
       "path": "docs/webauthn-authenticator-extensions.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 305896,
-      "sha256": "577aea01098c9f298cac5c735007ee68d4be8141e807b01a366c7675fc8f150d"
+      "bytes": 308723,
+      "sha256": "9133a06344dd2e7de385744152088460c33daa6fd44175f996f8801ce93d142e"
     },
     {
       "path": "reference/README.md",
@@ -13784,26 +13784,6 @@
       "sha256": "1fa1109943584eba1e5e28966e30ed25d3571ef63921553196dcba3c9123ea79"
     },
     {
-      "path": "spec/external/passsign-evidence/NOTICE",
-      "bytes": 391,
-      "sha256": "ae7d5fc6be75b46ef7486bf59aeb75bf96d07a5a05e65999e3edd856117a6e02"
-    },
-    {
-      "path": "spec/external/passsign-evidence/cases.json",
-      "bytes": 621,
-      "sha256": "b8d60de749c67d9e4367ddc89c560f7c72a62d64efecb7cc176e6f0f9d01a34c"
-    },
-    {
-      "path": "spec/external/passsign-evidence/draft.md",
-      "bytes": 4592,
-      "sha256": "24a055453efd3d4cc5f38427a16a6afc54f8f8c8e16f4b12a6768ad936f1f1d3"
-    },
-    {
-      "path": "spec/external/passsign-evidence/sources.json",
-      "bytes": 876,
-      "sha256": "49b5b6edc9547a174f80930564cd8af536864776c0e96e03fee3ac9e573468b1"
-    },
-    {
       "path": "spec/external/signing-context/NOTICE",
       "bytes": 384,
       "sha256": "3996035a53efab280429f5e9899edc94e00156c85c11f70a8928968e9c7febb2"
@@ -13862,6 +13842,26 @@
       "path": "spec/external/tlog-cosignature-ml-dsa/vectors/transport.json",
       "bytes": 114925,
       "sha256": "cfb88d8554f5da27a9433bb363204940d8eab16f4769f1acf42b71cb013951f4"
+    },
+    {
+      "path": "spec/external/webauthn-sign-evidence/NOTICE",
+      "bytes": 300,
+      "sha256": "e9030f862643e816c47c48e8925e037a69878796369eb3703e8818774df04406"
+    },
+    {
+      "path": "spec/external/webauthn-sign-evidence/cases.json",
+      "bytes": 627,
+      "sha256": "5cc23780f455befe61ed2f59283917b74bdfe41a17dbcd2524e4107d7ea564ad"
+    },
+    {
+      "path": "spec/external/webauthn-sign-evidence/draft.md",
+      "bytes": 5687,
+      "sha256": "e5aca8436770bf4b26abfef6652b332f4d2ca6fff1e7be02878bc68131d5a4c9"
+    },
+    {
+      "path": "spec/external/webauthn-sign-evidence/sources.json",
+      "bytes": 1790,
+      "sha256": "1edc7dd04b204219dafa595956245a6568a94340cb92ff427b226de479749eae"
     },
     {
       "path": "spec/mdoc-certificates.md",

@@ -1,0 +1,3 @@
+CertConcord WebAuthn sign extension evidence research
+
+This repository contains original experimental text and synthetic vectors. W3C WebAuthn and YubicoLabs materials are linked by pinned commit and retain their respective licenses and draft status; no upstream text is copied into this repository.
