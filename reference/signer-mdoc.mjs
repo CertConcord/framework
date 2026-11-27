@@ -414,11 +414,16 @@ function inspectPersonalMdoc(
     credentialLogTrust,
     docType = SIGNER_DOCTYPE,
     certificateProfile = 'ISO_MDOC',
-    at = now(),
-    knowledgeTime = at,
+    knowledgeTime,
+    at = knowledgeTime,
   },
   evaluation,
 ) {
+  requireThat(
+    Number.isSafeInteger(knowledgeTime) && knowledgeTime >= 0 &&
+      Number.isSafeInteger(at) && at >= 0 && at <= knowledgeTime,
+    'PERSONAL_MDOC_KNOWLEDGE_TIME',
+  );
   evaluationPhase(evaluation, 'issuerTrust');
   requireThat(
     parseCertificate(sealCertificate).publicKey.asymmetricKeyType === 'ml-dsa-87',

@@ -11,6 +11,27 @@ import { publicJWK } from './jose.mjs';
 import { readControl } from './state.mjs';
 
 const clone = (value) => c.decodeCBOR(c.dcbor(value));
+
+test('signed historical personal mdoc requires explicit evidence knowledge time', async () => {
+  await runFoundationDemo({
+    activationMode: 'HUMAN_WEBAUTHN',
+    trustedTime: true,
+    onComplete: async (result) => {
+      const statusToken = result.issuer.status.token();
+      const status = JSON.parse(Buffer.from(statusToken.split('.')[1], 'base64url'));
+      const at = status.iat;
+      const trust = { ...result.credentialTrust, seal: result.seal, statusToken, at };
+      assert.throws(() => verifyPersonalMdoc(result.credential, trust),
+        { code: 'PERSONAL_MDOC_KNOWLEDGE_TIME' });
+      const current = verifyPersonalMdoc(result.credential, { ...trust, knowledgeTime: at });
+      assert.equal(current.statusAssessment.overall, 'VALID');
+      assert.throws(() => verifyPersonalMdoc(result.credential,
+        { ...trust, knowledgeTime: at + status.ttl + 1 }),
+      { code: 'STATUS_LIST_STALE' });
+    },
+  });
+});
+
 const uriCases = [
   ['HTTP', 'http://status.example/list'],
   ['relative', '/status/1'],
@@ -48,7 +69,8 @@ async function withCredentials(callback) {
     activationMode: 'HUMAN_WEBAUTHN',
     trustedTime: true,
     onComplete: async (r) => {
-      const trust = { ...r.credentialTrust, seal: r.seal, statusToken: r.issuer.status.token() };
+      const trust = { ...r.credentialTrust, seal: r.seal,
+        statusToken: r.issuer.status.token(), knowledgeTime: c.now() };
       const original = verifyPersonalMdoc(r.credential, trust);
       const originalSeal = readControl(r.seal, 'MdocCredentialSeal', trust.sealCertificate);
       const status = original.claims.status;
@@ -90,7 +112,7 @@ async function withCredentials(callback) {
           },
           r.issuer.sealKey,
         );
-        const selectedTrust = { ...trust, seal };
+        const selectedTrust = { ...trust, seal, knowledgeTime: c.now() };
         const math = verifyIssuerSigned(credential, {
           issuerKey: trust.issuerPublicKey,
           certificate: trust.issuerCertificate,
