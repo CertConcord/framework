@@ -28,9 +28,14 @@ import {
   evaluatedCheck,
 } from '../verification-result.mjs';
 
+import { snapshotTrust } from './trust-snapshot.mjs';
+
 export const profiles = Object.freeze(['CMS', 'MDOC']);
 export { createOrganizationHistoryVerifier } from '../organization-history.mjs';
 export { createOrganizationHistorySource } from '../organization-history-source.mjs';
+function protectedAuthorityResolver(resolver) {
+  return typeof resolver === 'function' ? (query) => resolver(snapshotTrust(query)) : resolver;
+}
 const plans = Object.freeze({
   CMS: [
     'certconcord-ecp-cms-attested-draft-03',
@@ -50,6 +55,7 @@ const plans = Object.freeze({
 // It reuses the selected primitives and status-authority checks, returns no
 // permission or credential facts, and never invents missing content or trust.
 function availableChecks(format, values, trust, evaluation, imprintComplete) {
+  const authorityResolver = protectedAuthorityResolver(trust.authorityResolver);
   const failures = [],
     controls = {};
   const check = (dimension, callback) => {
@@ -297,7 +303,7 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
         issuerID: selected.issuerID,
         representation: selected.representation,
       };
-      requireAuthority(evaluation.authority(trust.authorityResolver), {
+      requireAuthority(evaluation.authority(authorityResolver), {
         certificate: trust.receiptCertificate,
         role: 'RECEIPT_AUTHORITY',
         scope,
@@ -312,7 +318,7 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
         // Only authenticated, presently known authority statements may establish
         // revocation. A pin or self-declared status signer is not admission.
         if (statement.publishedAt <= knowledgeTime)
-          requireAuthority(evaluation.authority(trust.authorityResolver), {
+          requireAuthority(evaluation.authority(authorityResolver), {
             certificate,
             role: 'STATUS_AUTHORITY',
             scope,
@@ -389,8 +395,9 @@ const completedReasons = Object.freeze({
 });
 
 /** Construct a verifier from relying-party authority and policy. Evidence cannot supply these inputs. */
-export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
+export function createVerifier({ format, trust: suppliedTrust, maxBytes = 16 * 1024 * 1024 }) {
   requireThat(profiles.includes(format), 'SDK_FORMAT');
+  const trust = snapshotTrust(suppliedTrust);
   requireThat(
     trust &&
       Buffer.isBuffer(trust.trustDomainID) &&
@@ -434,8 +441,10 @@ export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
       );
   }
   const verify = format === 'CMS' ? verifySignaturePackage : verifyMdocSignaturePackage;
+  const selectedTrust = trust;
   return Object.freeze({
     verify(bytes) {
+      const trust = snapshotTrust(selectedTrust);
       const evaluation = new VerificationEvaluation();
       let inspected,
         profile = null;
@@ -459,7 +468,12 @@ export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
         requireThat(inspected.missingTypes.length === 0, 'ECP_MISSING_OBJECT');
         const result = verify(
           bundle,
-          { ...trust, authorityResolver: evaluation.authority(trust.authorityResolver) },
+          {
+            ...trust,
+            authorityResolver: evaluation.authority(
+              protectedAuthorityResolver(trust.authorityResolver),
+            ),
+          },
           evaluation,
         );
         for (const [dimension, reason] of Object.entries(completedReasons))

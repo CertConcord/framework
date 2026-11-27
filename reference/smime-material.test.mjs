@@ -355,7 +355,7 @@ test('expired root and its current issuer appointment are isolated from status a
     ca: true,
     eku: null,
     emails: [],
-    notAfter: at,
+    notAfter: at - 1,
   });
   const leaf = f.certificate('Expired Root Sender', { issuer: root, key: f.signer });
   const policy = f.policy(SIGNING, {
