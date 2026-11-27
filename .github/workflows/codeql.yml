@@ -38,7 +38,7 @@ jobs:
       packages: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+      - uses: github/codeql-action/init@915412ff23e8b7659517e607487dbeae018f2934
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build }}
@@ -59,6 +59,6 @@ jobs:
         run: |
           swiftc reference/native/apple/AppleSecureEnclave.swift reference/native/apple/main.swift -o "$RUNNER_TEMP/certconcord-holder"
           xcodebuild -project reference/native/apple/CertConcordHolder.xcodeproj -target CertConcordHolder -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO build
-      - uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+      - uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934
         with:
           category: /language:${{ matrix.language }}
