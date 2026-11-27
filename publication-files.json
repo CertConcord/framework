@@ -324,6 +324,7 @@
   "reference/pades-io.mjs",
   "reference/pades-lexer.test.mjs",
   "reference/pades-line-annotation-vectors.test.mjs",
+  "reference/pades-ocg-default-admission.test.mjs",
   "reference/pades-page-dictionary-admission.test.mjs",
   "reference/pades-page-dictionary-vectors.test.mjs",
   "reference/pades-page-indirect-null-vectors.test.mjs",
