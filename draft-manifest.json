@@ -135,8 +135,8 @@
     },
     {
       "path": "docs/authority-validation.md",
-      "bytes": 9432,
-      "sha256": "aa6cfa0eb59495603f2f2ee478d4d80f0fabd3374ae977a799f23d2bc5671435"
+      "bytes": 10889,
+      "sha256": "e37fa08771af596cae8dd87918a0d5090f7af4e8fd412014523a93e6572faa8c"
     },
     {
       "path": "docs/benchmarks.md",
@@ -1980,8 +1980,8 @@
     },
     {
       "path": "reference/sdk-authority-callback-contract.test.mjs",
-      "bytes": 2103,
-      "sha256": "36fb3a399d8c0f890f5eb6dbc672c6f04d6a37978383461fc7a88182a7b3d618"
+      "bytes": 3859,
+      "sha256": "2342ba6c2b08847fa827ac12fe6ebec76aacbdfedd7c4c81fa0e3221fce01ede"
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
@@ -2000,8 +2000,8 @@
     },
     {
       "path": "reference/sdk/README.md",
-      "bytes": 10667,
-      "sha256": "5b2f7f33a0ea5e3f65070be4a336928a7963c6b5c493de0dda6acacc3c8597b0"
+      "bytes": 10759,
+      "sha256": "27471d6d7d949a41dbb5a5557918a521d431123728e496849bf440ca79cf7d37"
     },
     {
       "path": "reference/sdk/build.mjs",
@@ -2020,8 +2020,8 @@
     },
     {
       "path": "reference/sdk/index.mjs",
-      "bytes": 20030,
-      "sha256": "fde4d98b14aec6fc9e7b9376e125a17cfdf36c94ab90d8e89b3be35f745cf54b"
+      "bytes": 20268,
+      "sha256": "e313b12f64451288b4032139049c559304ae157923352ad4070a51982675a4b2"
     },
     {
       "path": "reference/sdk/organization-consumer.mjs",
@@ -13900,8 +13900,8 @@
     },
     {
       "path": "spec/trust-core.md",
-      "bytes": 10664,
-      "sha256": "91fdc04d7bdca144e2806d4f8dedc6f338d2d485473ac72f6bf518b1bcf6362b"
+      "bytes": 10906,
+      "sha256": "1ea14098edddb3ab3ac72ea0e2b5a1d41b104423fe53ff94940c1c3b7dc45375"
     },
     {
       "path": "tools/check.mjs",

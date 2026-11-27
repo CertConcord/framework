@@ -33,6 +33,9 @@ import { snapshotTrust } from './trust-snapshot.mjs';
 export const profiles = Object.freeze(['CMS', 'MDOC']);
 export { createOrganizationHistoryVerifier } from '../organization-history.mjs';
 export { createOrganizationHistorySource } from '../organization-history-source.mjs';
+function protectedAuthorityResolver(resolver) {
+  return typeof resolver === 'function' ? (query) => resolver(snapshotTrust(query)) : resolver;
+}
 const plans = Object.freeze({
   CMS: [
     'certconcord-ecp-cms-attested-draft-03',
@@ -464,7 +467,12 @@ export function createVerifier({ format, trust: suppliedTrust, maxBytes = 16 * 1
         requireThat(inspected.missingTypes.length === 0, 'ECP_MISSING_OBJECT');
         const result = verify(
           bundle,
-          { ...trust, authorityResolver: evaluation.authority(trust.authorityResolver) },
+          {
+            ...trust,
+            authorityResolver: evaluation.authority(
+              protectedAuthorityResolver(trust.authorityResolver),
+            ),
+          },
           evaluation,
         );
         for (const [dimension, reason] of Object.entries(completedReasons))

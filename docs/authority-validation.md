@@ -30,15 +30,15 @@ These bounds have different meanings. Evaluation uses the exact state time for
 the operation and the selected knowledge time for information availability; a
 fractional proof bound is not rounded into a neighboring certificate second.
 
-| Bound | Admission at its upper endpoint |
-| --- | --- |
-| X.509 `notAfter` | Included, as required by [RFC 5280 §4.1.2.5](https://www.rfc-editor.org/rfc/rfc5280#section-4.1.2.5). A selected certificate authority can act at this instant if every other bound still admits it. |
-| Authority appointment `validUntil` | Excluded. A renewal must cover the endpoint itself. |
-| Authority `algorithmValidUntil` | Excluded. The algorithm is no longer selected at that instant. |
-| Status `nextUpdate` at knowledge time | Excluded. The status is stale at that instant. |
-| MTC subtree cache `expiresAt` | Excluded. A cache entry cannot extend certificate validity. |
-| Native mdoc credential `validUntil` | Excluded. It remains independent of the issuer certificate endpoint. |
-| Trusted proof upper bound against a TSA certificate | Must be strictly before `notAfter`, because the upper bound is a conservative bound for an unknown actual generation instant, not the exact certificate-use instant. |
+| Bound                                               | Admission at its upper endpoint                                                                                                                                                                      |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| X.509 `notAfter`                                    | Included, as required by [RFC 5280 §4.1.2.5](https://www.rfc-editor.org/rfc/rfc5280#section-4.1.2.5). A selected certificate authority can act at this instant if every other bound still admits it. |
+| Authority appointment `validUntil`                  | Excluded. A renewal must cover the endpoint itself.                                                                                                                                                  |
+| Authority `algorithmValidUntil`                     | Excluded. The algorithm is no longer selected at that instant.                                                                                                                                       |
+| Status `nextUpdate` at knowledge time               | Excluded. The status is stale at that instant.                                                                                                                                                       |
+| MTC subtree cache `expiresAt`                       | Excluded. A cache entry cannot extend certificate validity.                                                                                                                                          |
+| Native mdoc credential `validUntil`                 | Excluded. It remains independent of the issuer certificate endpoint.                                                                                                                                 |
+| Trusted proof upper bound against a TSA certificate | Must be strictly before `notAfter`, because the upper bound is a conservative bound for an unknown actual generation instant, not the exact certificate-use instant.                                 |
 
 For a composed decision, every applicable bound must admit the same selected
 state and knowledge times. An inclusive certificate endpoint does not extend an
@@ -79,7 +79,10 @@ Production callers must establish that boundary before constructing the verifier
 The SDK copies closed trust data at construction and copies that private data
 for each evaluation. Callback functions retain their identity and can observe
 live external state; the caller is responsible for the immutable source revision
-described above. Recreate the verifier for a deliberate trust or policy update.
+described above. Each authority resolver invocation receives a copy of its
+query data, including nested bytes, so callback mutation cannot rewrite the
+selected evaluation. Recreate the verifier for a deliberate trust or policy
+update.
 
 `KeyID` remains SHA-512 of the original DER SubjectPublicKeyInfo. If an explicitly
 selected policy admits different encodings of the same mathematical public key,

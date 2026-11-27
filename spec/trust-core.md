@@ -28,7 +28,10 @@ trust domain, authority identity, role and scope; select one source revision
 throughout an evaluation; preserve later-known negative history; and treat
 unavailable, stale or asynchronous decisions as non-VALID. It MUST retain the
 source revision and decision inputs needed to audit the selected result. This
-does not make an arbitrary callback response self-authenticating.
+does not make an arbitrary callback response self-authenticating. An external
+callback MUST receive query data isolated from the selected evaluation's
+private trust bytes. These rules elaborate CC-CORE-01, CC-CORE-06, CC-CORE-07
+and CC-CORE-09.
 
 Time bounds retain their defined types during composition. X.509 `notAfter` is
 inclusive under [RFC 5280 §4.1.2.5](https://www.rfc-editor.org/rfc/rfc5280#section-4.1.2.5).
@@ -36,7 +39,8 @@ Appointment, algorithm and status freshness deadlines are exclusive, as are
 the selected MTC cache and mdoc credential deadlines. A conservative proof
 upper bound MUST fall strictly before a selected timestamp certificate's
 `notAfter` when that bound stands for an uncertain actual generation instant.
-The inclusive certificate endpoint does not extend any exclusive bound.
+The inclusive certificate endpoint does not extend any exclusive bound. These
+time rules refine CC-CORE-05, CC-CORE-06 and CC-CORE-09.
 
 ## Logical credential model
 
