@@ -1980,8 +1980,8 @@
     },
     {
       "path": "reference/sdk-authority-callback-contract.test.mjs",
-      "bytes": 3859,
-      "sha256": "2342ba6c2b08847fa827ac12fe6ebec76aacbdfedd7c4c81fa0e3221fce01ede"
+      "bytes": 5728,
+      "sha256": "e86a596903bd343fc9d2d8146f7be0f9a75f713d8f3dfa1f2f9401c99c7af8ce"
     },
     {
       "path": "reference/sdk-conformance.test.mjs",
@@ -2020,8 +2020,8 @@
     },
     {
       "path": "reference/sdk/index.mjs",
-      "bytes": 20268,
-      "sha256": "e313b12f64451288b4032139049c559304ae157923352ad4070a51982675a4b2"
+      "bytes": 20337,
+      "sha256": "d756994a4baea3e254411cabc3822bce4ec90c0e9959c668b8bad04cbc2f3a15"
     },
     {
       "path": "reference/sdk/organization-consumer.mjs",

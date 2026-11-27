@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { dcbor } from './core.mjs';
 import { runDemo } from './demo.mjs';
+import { runDocumentDemo } from './document-demo.mjs';
 import { runFoundationDemo } from './foundation-demo.mjs';
 import { createVerifier } from './sdk/index.mjs';
 
@@ -102,3 +103,48 @@ for (const format of ['CMS', 'MDOC'])
       assert.deepEqual(fixture.trust.trustDomainID, selectedDomain);
     },
   );
+
+for (const [name, makeFixture, targetRole] of [
+  ['receipt', runDemo, 'RECEIPT_AUTHORITY'],
+  ['status', runDocumentDemo, 'STATUS_AUTHORITY'],
+])
+  test('CMS missing authorization fallback isolates ' + name + ' authority query', async () => {
+    const fixture = await makeFixture();
+    const bundle = {
+      ...fixture.bundle,
+      objects: fixture.bundle.objects.filter((entry) => entry.type !== 'RegistrationAuthorization'),
+    };
+    const bytes = dcbor(bundle);
+    const selectedDomain = Buffer.from(fixture.trust.trustDomainID);
+    const baseline = createVerifier({ format: 'CMS', trust: fixture.trust }).verify(bytes);
+    assert.equal(baseline.overall, 'INDETERMINATE');
+    assert.equal(baseline.reason, 'ECP_MISSING_OBJECT');
+
+    const selectedAuthority = fixture.trust.authorityResolver;
+    let mutations = 0;
+    let queries = 0;
+    const observed = createVerifier({
+      format: 'CMS',
+      trust: {
+        ...fixture.trust,
+        authorityResolver(query) {
+          queries++;
+          assert.deepEqual(query.scope.trustDomainID, selectedDomain);
+          if (query.role === targetRole && mutations === 0) {
+            query.scope.trustDomainID.fill(0);
+            mutations++;
+            return selectedAuthority({
+              ...query,
+              scope: { ...query.scope, trustDomainID: Buffer.from(selectedDomain) },
+            });
+          }
+          return selectedAuthority(query);
+        },
+      },
+    }).verify(bytes);
+    assert.equal(mutations, 1, targetRole + ' fallback must be exercised');
+    assert(queries >= (targetRole === 'STATUS_AUTHORITY' ? 2 : 1));
+    assert.equal(observed.overall, baseline.overall, observed.reason);
+    assert.equal(observed.reason, baseline.reason);
+    assert.deepEqual(fixture.trust.trustDomainID, selectedDomain);
+  });

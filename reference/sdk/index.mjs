@@ -55,6 +55,7 @@ const plans = Object.freeze({
 // It reuses the selected primitives and status-authority checks, returns no
 // permission or credential facts, and never invents missing content or trust.
 function availableChecks(format, values, trust, evaluation, imprintComplete) {
+  const authorityResolver = protectedAuthorityResolver(trust.authorityResolver);
   const failures = [],
     controls = {};
   const check = (dimension, callback) => {
@@ -302,7 +303,7 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
         issuerID: selected.issuerID,
         representation: selected.representation,
       };
-      requireAuthority(evaluation.authority(trust.authorityResolver), {
+      requireAuthority(evaluation.authority(authorityResolver), {
         certificate: trust.receiptCertificate,
         role: 'RECEIPT_AUTHORITY',
         scope,
@@ -317,7 +318,7 @@ function availableChecks(format, values, trust, evaluation, imprintComplete) {
         // Only authenticated, presently known authority statements may establish
         // revocation. A pin or self-declared status signer is not admission.
         if (statement.publishedAt <= knowledgeTime)
-          requireAuthority(evaluation.authority(trust.authorityResolver), {
+          requireAuthority(evaluation.authority(authorityResolver), {
             certificate,
             role: 'STATUS_AUTHORITY',
             scope,
