@@ -572,6 +572,7 @@ export async function runFoundationDemo({
             ...credentialTrust,
             seal: c.unb64u(item.certconcord_credential_seal),
             statusToken: issuer.status.token(),
+            knowledgeTime: c.now(),
           }),
       }),
       offer = issuer.offer({ csr, rar: identity.rar, bindingID: binding.bindingID }),
@@ -590,6 +591,7 @@ export async function runFoundationDemo({
         ...credentialTrust,
         seal,
         statusToken: issuer.status.token(),
+        knowledgeTime: c.now(),
       });
     if (passkeyRegistry) {
       passkeyRegistry.mdocVerifier = (raw, options) => {
@@ -598,6 +600,7 @@ export async function runFoundationDemo({
           ...credentialTrust,
           ...options,
           statusToken: issuer.status.token(),
+          knowledgeTime: c.now(),
         });
       };
       passkeyRegistry.activateMdoc(passkeyBindingID, { credential, seal, rar: identity.rar });

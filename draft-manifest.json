@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/adapters.md",
-      "bytes": 52643,
-      "sha256": "09ed1c20913be43023d13cfbc7d8728fc9c7b40ad02f2d6906471a693c35032b"
+      "bytes": 53021,
+      "sha256": "293bda4cac358785e3f56291449adb0271cfd6e142af5c2cb114ed6ce8948cb3"
     },
     {
       "path": "docs/apple-identity.md",
@@ -995,8 +995,8 @@
     },
     {
       "path": "reference/foundation-demo.mjs",
-      "bytes": 33963,
-      "sha256": "b1831310cf5050a6c18e4854c6711e47451d30c0eb59f41681b32203e70c2b70"
+      "bytes": 34065,
+      "sha256": "b996dc439ed17154f275a7240d8666b585ceb6574b1fd2d96b38e6569de98e42"
     },
     {
       "path": "reference/foundation-security.test.mjs",
@@ -1210,8 +1210,8 @@
     },
     {
       "path": "reference/mdoc-certified-contract.test.mjs",
-      "bytes": 12342,
-      "sha256": "9652f5eaeaf7be9970980e33d17e3ea6cde1b4314596c316d131fb299dc694fc"
+      "bytes": 13337,
+      "sha256": "60d6cfff19486beeac21c3ca8a5f84d51d1653794ac94da0e385b20c1ee63c6a"
     },
     {
       "path": "reference/mdoc-document-boundary.test.mjs",
@@ -1770,8 +1770,8 @@
     },
     {
       "path": "reference/passkey.test.mjs",
-      "bytes": 28181,
-      "sha256": "3310840c16c43e5324519f404687f92354d61fa4c145984f520215350604bea7"
+      "bytes": 28224,
+      "sha256": "3b2627283aa5705229a546176b2dd568cdedb2f15ef20592b313fd4e26dcb1f4"
     },
     {
       "path": "reference/pdf-isolation.mjs",
@@ -1885,8 +1885,8 @@
     },
     {
       "path": "reference/registration-authorization.test.mjs",
-      "bytes": 21131,
-      "sha256": "d9abe8582d9a69e1a64be7efccd2a520dde3871e88b70d69dc675c053b33bd06"
+      "bytes": 21163,
+      "sha256": "844ae0329c48cf8a26f8462d1e45135f82b0be42dc6476e6ab3472450b51b3a3"
     },
     {
       "path": "reference/registry.json",
@@ -2045,8 +2045,8 @@
     },
     {
       "path": "reference/signer-mdoc.mjs",
-      "bytes": 35130,
-      "sha256": "635f5b54088e42768055150531b335580b8cfc58fa873abb5610861f37e837c1"
+      "bytes": 35320,
+      "sha256": "85cb22e727dcda2d9780edc34c054eb0dda91fab1f7d80a51b236c5b8918255e"
     },
     {
       "path": "reference/smime-adapter-common.mjs",

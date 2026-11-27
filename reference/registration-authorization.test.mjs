@@ -339,6 +339,7 @@ test('identity registration authority emits schema2 for a complete native mdoc d
         ...result.credentialTrust,
         seal: result.seal,
         statusToken: result.issuer.status.token(),
+        knowledgeTime: c.now(),
       });
       const registration = readControl(
         result.enrollment.rar,
