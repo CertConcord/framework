@@ -208,6 +208,35 @@ test('complete DOCUMENT authority and status queries use authenticated outward e
   });
 });
 
+test('DOCUMENT proof upper bound cannot equal the selected TSA certificate notAfter', async () => {
+  await runDemo({
+    trustedTime: true,
+    activationMode: 'HUMAN_WEBAUTHN',
+    onComplete: async (r) => {
+      const epoch = c.now();
+      const f = fixture({ epoch, notAfter: epoch + 1 });
+      const token = f.sign(documentTimestampImprint('CMS', r.bundle.objects), p.OID.sha512,
+        { millis: 999, accuracyMicros: 1000 });
+      const info = a.parseTSTInfo(p.verifyCMS(token, { expectedContentType: p.OID.tstInfo }).content);
+      assert.equal(info.poeUpperBound, epoch + 1);
+      const objects = r.bundle.objects.map((o) =>
+        o.type === 'DocumentTimestamp' ? evidenceLeaf(o.type, token) : o);
+      const bundle = createEvidencePackage(r.bundle.plan.profile, objects);
+      const trust = {
+        ...r.trust,
+        knowledgeTime: epoch + 1,
+        timestamp: f.trust,
+        authorityResolver: (query) => query.role === 'TIMESTAMP_AUTHORITY'
+          ? { overall: 'VALID', reason: 'SYNTHETIC_TSA_APPOINTMENT' }
+          : r.trust.authorityResolver(query),
+      };
+      const result = createVerifier({ format: 'CMS', trust }).verify(c.dcbor(bundle));
+      assert.equal(result.overall, 'INVALID');
+      assert.equal(result.reason, 'DOCUMENT_TIMESTAMP_INTERVAL');
+    },
+  });
+});
+
 test('Framework lifetime adapter retains each independent chain and protection gate', () => {
   const records = [
       {

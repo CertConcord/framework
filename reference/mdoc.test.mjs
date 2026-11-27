@@ -114,6 +114,23 @@ test('framework issuance binds the exact DS certificate through the component pr
     { code: 'MDOC_VALIDITY' },
   );
 });
+test('shortened mdoc credential validity excludes its endpoint before certificate expiry', () => {
+  const f = fixture();
+  const validUntil = now() + 600;
+  const credential = m.issueMdoc({
+    claims: { qualification: 'CERTCONCORD-IAL2' },
+    holderJWK: publicJWK(f.holder.publicKey),
+    certificate: f.cert,
+    privateKey: f.issuer.privateKey,
+    validUntil,
+  });
+  assert.equal(m.verifyIssuerSigned(credential, {
+    issuerKey: f.issuer.publicKey, certificate: f.cert, at: validUntil - 1,
+  }).validity.validUntil, validUntil);
+  assert.throws(() => m.verifyIssuerSigned(credential, {
+    issuerKey: f.issuer.publicKey, certificate: f.cert, at: validUntil,
+  }), { code: 'MDOC_EXPIRED' });
+});
 test('mdoc issuer digest, selective disclosure and OpenID4VP device binding', async () => {
   const f = fixture(),
     recipient = generate('ec'),

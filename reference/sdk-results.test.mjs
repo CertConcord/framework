@@ -9,6 +9,27 @@ import { runFoundationDemo } from './foundation-demo.mjs';
 import { createVerifier } from './sdk/index.mjs';
 import { decodeJWS, signJWS } from './jose.mjs';
 
+test('SDK binds closed trust bytes at construction across CMS and mdoc', async () => {
+  for (const format of ['CMS', 'MDOC']) {
+    const r = format === 'CMS' ? await runDemo() : await runFoundationDemo();
+    const bytes = dcbor(r.bundle);
+    const correctDomain = Buffer.from(r.trust.trustDomainID);
+    const verifier = createVerifier({ format, trust: r.trust });
+    assert.equal(verifier.verify(bytes).overall, 'VALID');
+    r.trust.trustDomainID.fill(0);
+    assert.equal(verifier.verify(bytes).overall, 'VALID');
+
+    const wrongDomain = Buffer.alloc(32);
+    const wrongVerifier = createVerifier({
+      format,
+      trust: { ...r.trust, trustDomainID: wrongDomain },
+    });
+    assert.equal(wrongVerifier.verify(bytes).overall, 'INVALID');
+    correctDomain.copy(wrongDomain);
+    assert.equal(wrongVerifier.verify(bytes).overall, 'INVALID');
+  }
+});
+
 function replacePlan(bundle, changes) {
   return { ...bundle, plan: { ...bundle.plan, ...changes } };
 }

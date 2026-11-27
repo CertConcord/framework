@@ -17,6 +17,27 @@ This document defines common draft requirements for every CertConcord applicatio
 | CC-CORE-09 | A version change MUST preserve unambiguous historical interpretation: original bytes, identifiers, relevant authority/status history and a declared supported verification path and retention scope. New revisions MUST NOT silently reinterpret old proofs.                                                                                                                                |
 | CC-CORE-10 | New application profiles MUST select this core and declare their additional subject qualification, purpose, operation, container, status and evidence rules. Reuse of a subject or key across purposes requires explicit policy and cryptographic justification; shared semantics do not imply unrestricted key reuse.                                                                      |
 
+The relying party MUST select authenticated trust and policy independently of
+the submitted evidence. An implementation that retains a verifier instance MUST
+bind its configured data bytes and nested policy values to that selection;
+mutation of caller-owned objects after construction MUST NOT silently change
+the selection. A deliberate pin or policy rotation uses a new verifier
+selection. External callable authority and status sources remain separately
+authenticated policy inputs. A deployment MUST bind each source to tenant,
+trust domain, authority identity, role and scope; select one source revision
+throughout an evaluation; preserve later-known negative history; and treat
+unavailable, stale or asynchronous decisions as non-VALID. It MUST retain the
+source revision and decision inputs needed to audit the selected result. This
+does not make an arbitrary callback response self-authenticating.
+
+Time bounds retain their defined types during composition. X.509 `notAfter` is
+inclusive under [RFC 5280 §4.1.2.5](https://www.rfc-editor.org/rfc/rfc5280#section-4.1.2.5).
+Appointment, algorithm and status freshness deadlines are exclusive, as are
+the selected MTC cache and mdoc credential deadlines. A conservative proof
+upper bound MUST fall strictly before a selected timestamp certificate's
+`notAfter` when that bound stands for an uncertain actual generation instant.
+The inclusive certificate endpoint does not extend any exclusive bound.
+
 ## Logical credential model
 
 A credential records a subject reference and qualification scope; a key representation and possession/custody evidence; an issuer and trust-domain context; permitted operations and relying-party restrictions; suite/profile identifiers; issuance, lifetime and status references; and required transparency/evidence bindings. Each concrete representation MUST state how these fields are authenticated and which fields are critical. Unknown critical semantics prevent acceptance.

@@ -24,6 +24,63 @@ conflicting evidence prevents acceptance. Unknown critical semantics are
 unsupported. An established cryptographic or authorization failure remains
 invalid even when other evidence is unavailable.
 
+## Time boundary types
+
+These bounds have different meanings. Evaluation uses the exact state time for
+the operation and the selected knowledge time for information availability; a
+fractional proof bound is not rounded into a neighboring certificate second.
+
+| Bound | Admission at its upper endpoint |
+| --- | --- |
+| X.509 `notAfter` | Included, as required by [RFC 5280 §4.1.2.5](https://www.rfc-editor.org/rfc/rfc5280#section-4.1.2.5). A selected certificate authority can act at this instant if every other bound still admits it. |
+| Authority appointment `validUntil` | Excluded. A renewal must cover the endpoint itself. |
+| Authority `algorithmValidUntil` | Excluded. The algorithm is no longer selected at that instant. |
+| Status `nextUpdate` at knowledge time | Excluded. The status is stale at that instant. |
+| MTC subtree cache `expiresAt` | Excluded. A cache entry cannot extend certificate validity. |
+| Native mdoc credential `validUntil` | Excluded. It remains independent of the issuer certificate endpoint. |
+| Trusted proof upper bound against a TSA certificate | Must be strictly before `notAfter`, because the upper bound is a conservative bound for an unknown actual generation instant, not the exact certificate-use instant. |
+
+For a composed decision, every applicable bound must admit the same selected
+state and knowledge times. An inclusive certificate endpoint does not extend an
+exclusive appointment, algorithm, status, credential or cache deadline.
+
+## External authority and status source contract
+
+The reference verifier checks the selected authority decision and, when using
+`createAuthorityResolver`, the status statement's key, domain, schema and time
+binding. It does not authenticate an arbitrary caller-supplied callback result.
+Production callers must establish that boundary before constructing the verifier:
+
+1. Load authority appointments and status from a configured, authenticated
+   source. Preserve exact signed bytes or an equivalent authenticated provenance
+   record; do not read a trust source URL, tenant or authority from the evidence
+   being evaluated. Bind the source to the selected trust domain, tenant,
+   authority key ID, role and full scope. A domain-wide grant must be explicit.
+2. Select one immutable source revision and one knowledge snapshot for each
+   verification. The callback must answer every authority query in that
+   verification from that revision, even if a newer revision arrives during the
+   call. State time is the historical operation time; knowledge time is the
+   information cutoff. Later-known compromise must remain available for a
+   later-K re-evaluation without rewriting the earlier-K result.
+3. Enforce a monotonic source revision and knowledge time within each tenant and
+   trust domain. A rotation or policy change creates a new configured verifier;
+   do not mutate the selected trust object or swap its callback closure in
+   place. Retain the older revision when a historical K must be reproduced.
+4. Treat missing, stale, conflicting, unauthenticated, asynchronous or throwing
+   callback data as non-VALID. A temporary source outage cannot reuse the last
+   positive decision beyond its authenticated coverage. Revocation and known
+   compromise remain negative across later appointments for that key.
+5. Keep an audit record of the selected source identity and revision, tenant,
+   trust domain, knowledge time, requested state time, authority key ID, role,
+   scope, decision, status publication time and coverage bound. This record is
+   operational evidence, not a new signed CertConcord artifact or a substitute
+   for the original input and authenticated status bytes.
+
+The SDK copies closed trust data at construction and copies that private data
+for each evaluation. Callback functions retain their identity and can observe
+live external state; the caller is responsible for the immutable source revision
+described above. Recreate the verifier for a deliberate trust or policy update.
+
 `KeyID` remains SHA-512 of the original DER SubjectPublicKeyInfo. If an explicitly
 selected policy admits different encodings of the same mathematical public key,
 an applicable `INVALID/AUTHORITY_REVOKED` decision also applies to a known,

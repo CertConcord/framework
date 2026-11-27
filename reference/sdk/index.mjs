@@ -28,6 +28,8 @@ import {
   evaluatedCheck,
 } from '../verification-result.mjs';
 
+import { snapshotTrust } from './trust-snapshot.mjs';
+
 export const profiles = Object.freeze(['CMS', 'MDOC']);
 export { createOrganizationHistoryVerifier } from '../organization-history.mjs';
 export { createOrganizationHistorySource } from '../organization-history-source.mjs';
@@ -389,8 +391,9 @@ const completedReasons = Object.freeze({
 });
 
 /** Construct a verifier from relying-party authority and policy. Evidence cannot supply these inputs. */
-export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
+export function createVerifier({ format, trust: suppliedTrust, maxBytes = 16 * 1024 * 1024 }) {
   requireThat(profiles.includes(format), 'SDK_FORMAT');
+  const trust = snapshotTrust(suppliedTrust);
   requireThat(
     trust &&
       Buffer.isBuffer(trust.trustDomainID) &&
@@ -434,8 +437,10 @@ export function createVerifier({ format, trust, maxBytes = 16 * 1024 * 1024 }) {
       );
   }
   const verify = format === 'CMS' ? verifySignaturePackage : verifyMdocSignaturePackage;
+  const selectedTrust = trust;
   return Object.freeze({
     verify(bytes) {
+      const trust = snapshotTrust(selectedTrust);
       const evaluation = new VerificationEvaluation();
       let inspected,
         profile = null;

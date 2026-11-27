@@ -27,7 +27,8 @@ test('control authority pins require role, scope, certificate validity and knowl
   assert.equal(resolve({ ...f.query, scope: { ...f.query.scope, profileID: 'CERTCONCORD-ORG-SEAL-v1' } }).reason, 'AUTHORITY_SCOPE');
   assert.equal(resolve({ ...f.query, scope: { ...f.query.scope, trustDomainID: c.random() } }).reason, 'AUTHORITY_SCOPE');
   assert.equal(resolve({ ...f.query, stateTime: 1799999999 }).reason, 'AUTHORITY_NOT_YET_VALID');
-  assert.equal(resolve({ ...f.query, stateTime: 1800001000, knowledgeTime: 1800001000 }).reason, 'AUTHORITY_EXPIRED');
+  assert.equal(resolve({ ...f.query, stateTime: 1800001000, knowledgeTime: 1800001000 }).overall, 'VALID');
+  assert.equal(resolve({ ...f.query, stateTime: 1800001000.125, knowledgeTime: 1800001000.125 }).reason, 'AUTHORITY_EXPIRED');
   assert.equal(resolve({ ...f.query, knowledgeTime: 1800003000 }).overall, 'INDETERMINATE');
   assert.equal(resolve({ ...f.query, knowledgeTime: 1800000010 }).overall, 'VALID');
 });

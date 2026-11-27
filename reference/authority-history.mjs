@@ -165,7 +165,7 @@ export function createAuthorityResolver({ trustDomainID, authorities }) {
       Object.entries(grant).every(([key, value]) => Object.hasOwn(scope, key) && same(value, scope[key]))));
     if (!scoped.length) return result('INVALID', 'AUTHORITY_SCOPE');
     const active = scoped.filter((r) => stateTime >= r.validFrom && stateTime < r.validUntil &&
-      (!r.parsed || (stateTime >= r.parsed.notBefore && stateTime < r.parsed.notAfter)));
+      (!r.parsed || (stateTime >= r.parsed.notBefore && stateTime <= r.parsed.notAfter)));
     if (!active.length && scoped.every((r) => stateTime < Math.max(r.validFrom, r.parsed?.notBefore ?? 0)))
       return result('INVALID', 'AUTHORITY_NOT_YET_VALID');
     if (!active.length) return result('INVALID', 'AUTHORITY_EXPIRED');
