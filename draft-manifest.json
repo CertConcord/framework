@@ -255,8 +255,8 @@
     },
     {
       "path": "docs/pades-preservation.md",
-      "bytes": 22421,
-      "sha256": "6322c5afee6eae966c69651eea1ee0ebd83a30593c7be599098f51a0e6c6e98e"
+      "bytes": 23250,
+      "sha256": "ddddbe71b0c07342516d524419464b2572032fc286d6a99b4e85cce3ee451cae"
     },
     {
       "path": "docs/passkey-signing.md",
@@ -335,8 +335,8 @@
     },
     {
       "path": "publication-files.json",
-      "bytes": 308916,
-      "sha256": "9a02bdf2f69f0680b807f39ea6227ba5e6d75d1d0f37097306774574f7d9c93e"
+      "bytes": 306157,
+      "sha256": "4d23091ff9a0f527004bb492105842157da2aeddd5c78a7c754f43c07aab58b5"
     },
     {
       "path": "reference/README.md",
@@ -1634,6 +1634,11 @@
       "sha256": "d81fb81136407986c75047eb655480baf7c1b289acd483450ce08512fc79b407"
     },
     {
+      "path": "reference/pades-ocg-default-admission.test.mjs",
+      "bytes": 3807,
+      "sha256": "2bf1a79e029b57d4523da582ba43952338a962d0312a8bd96f1c5f7b7adf6c92"
+    },
+    {
       "path": "reference/pades-page-dictionary-admission.test.mjs",
       "bytes": 9792,
       "sha256": "b029b95ac09b67fb44d54c7036746c3e0b6e8c6abd556ca1b5d273da5202094f"
@@ -1715,8 +1720,8 @@
     },
     {
       "path": "reference/pades-structure.mjs",
-      "bytes": 84375,
-      "sha256": "d0c166526f7c940829450590887e151d3b94b05f647a135013782115c2e92629"
+      "bytes": 87519,
+      "sha256": "f6ef86b96102364c529396a16f157111306674d1818e5390d2f0728550422f79"
     },
     {
       "path": "reference/pades-structure.test.mjs",
