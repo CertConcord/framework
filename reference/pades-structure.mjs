@@ -307,7 +307,8 @@ function parseDocument(input) {
     if (!diagnostics.some((item) => item.reason === reason && item.overall === overall))
       diagnostics.push(report(overall, reason));
   };
-  const parser = (offset) => new StrictObjectParser(raw, offset, context, spans, integerObjects, budget);
+  const parser = (offset) =>
+    new StrictObjectParser(raw, offset, context, spans, integerObjects, budget);
   const text = raw.toString('latin1');
   const firstParser = parser(0);
   firstParser.skipWhitespaceAndComments();
@@ -479,12 +480,17 @@ function parseDocument(input) {
     );
     if (get(rev.catalog, 'Version') && name(get(rev.catalog, 'Version')) !== '1.7')
       diagnostic('PADES_VERSION_UNSUPPORTED');
+    inspectDefaultOptionalContent(rev);
     inspectCapabilities(rev, diagnostic);
     inspectSignedPageText(rev, diagnostic, integerObjects);
     rev.form = rev.resolve(get(rev.catalog, 'AcroForm'));
     check(rev.form === undefined || rev.form instanceof PDFDict, 'PADES_ACROFORM');
     if (rev.form && get(rev.form, 'SigFlags') !== undefined) {
-      const flags = sourceInteger(rev.resolve(get(rev.form, 'SigFlags')), 'PADES_SIG_FLAGS', integerObjects);
+      const flags = sourceInteger(
+        rev.resolve(get(rev.form, 'SigFlags')),
+        'PADES_SIG_FLAGS',
+        integerObjects,
+      );
       check(flags <= 3, 'PADES_SIG_FLAGS');
     }
     rev.fieldsValue = get(rev.form, 'Fields');
@@ -530,44 +536,121 @@ function parseDocument(input) {
 
 const MAX_PAGE_CONTENT = 16 * 1024 * 1024;
 const CONTENT_OPERATORS = new Set([
-  'q', 'Q', 'cm', 'w', 'J', 'j', 'M', 'd', 'ri', 'i', 'gs',
-  'm', 'l', 'c', 'v', 'y', 'h', 're', 'S', 's', 'f', 'F', 'f*',
-  'B', 'B*', 'b', 'b*', 'n', 'W', 'W*', 'BT', 'ET',
-  'Tc', 'Tw', 'Tz', 'TL', 'Tf', 'Tr', 'Ts', 'Td', 'TD',
-  'Tm', 'T*', 'Tj', 'TJ', "'", '"', 'd0', 'd1',
-  'CS', 'cs', 'SC', 'SCN', 'sc', 'scn', 'G', 'g', 'RG',
-  'rg', 'K', 'k', 'sh', 'Do', 'MP', 'DP', 'BMC', 'BDC',
-  'EMC', 'BX', 'EX',
+  'q',
+  'Q',
+  'cm',
+  'w',
+  'J',
+  'j',
+  'M',
+  'd',
+  'ri',
+  'i',
+  'gs',
+  'm',
+  'l',
+  'c',
+  'v',
+  'y',
+  'h',
+  're',
+  'S',
+  's',
+  'f',
+  'F',
+  'f*',
+  'B',
+  'B*',
+  'b',
+  'b*',
+  'n',
+  'W',
+  'W*',
+  'BT',
+  'ET',
+  'Tc',
+  'Tw',
+  'Tz',
+  'TL',
+  'Tf',
+  'Tr',
+  'Ts',
+  'Td',
+  'TD',
+  'Tm',
+  'T*',
+  'Tj',
+  'TJ',
+  "'",
+  '"',
+  'd0',
+  'd1',
+  'CS',
+  'cs',
+  'SC',
+  'SCN',
+  'sc',
+  'scn',
+  'G',
+  'g',
+  'RG',
+  'rg',
+  'K',
+  'k',
+  'sh',
+  'Do',
+  'MP',
+  'DP',
+  'BMC',
+  'BDC',
+  'EMC',
+  'BX',
+  'EX',
 ]);
 
 function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable, resourceAvailable) {
   const raw = Buffer.from(bytes);
-  const parser = new StrictObjectParser(
-    raw, 0, context, new WeakMap(), new WeakSet(), { nodes: 0 },
-  );
-  let operands = [], inText = false;
-  const string = value => value instanceof PDFString || value instanceof PDFHexString;
-  const numeric = value => value instanceof PDFNumber && Number.isFinite(value.asNumber());
-  const requireOperands = types => {
+  const parser = new StrictObjectParser(raw, 0, context, new WeakMap(), new WeakSet(), {
+    nodes: 0,
+  });
+  let operands = [],
+    inText = false;
+  const string = (value) => value instanceof PDFString || value instanceof PDFHexString;
+  const numeric = (value) => value instanceof PDFNumber && Number.isFinite(value.asNumber());
+  const requireOperands = (types) => {
     check(operands.length === types.length, 'PADES_TEXT_OPERAND');
     for (let i = 0; i < types.length; i++) {
-      const valid = types[i] === 'number' ? numeric(operands[i])
-        : types[i] === 'name' ? operands[i] instanceof PDFName
-          : types[i] === 'string' ? string(operands[i])
-            : false;
+      const valid =
+        types[i] === 'number'
+          ? numeric(operands[i])
+          : types[i] === 'name'
+            ? operands[i] instanceof PDFName
+            : types[i] === 'string'
+              ? string(operands[i])
+              : false;
       check(valid, 'PADES_TEXT_OPERAND');
     }
   };
   while (true) {
     parser.skipWhitespaceAndComments();
     if (parser.bytes.done()) break;
-    const at = parser.bytes.offset(), byte = raw[at];
+    const at = parser.bytes.offset(),
+      byte = raw[at];
     const keyword = (text) =>
       raw.subarray(at, at + text.length).toString('ascii') === text &&
       delimiter(raw[at + text.length]);
-    const objectStart = byte === 47 || byte === 40 || byte === 60 || byte === 91 ||
-      byte === 43 || byte === 45 || byte === 46 || (byte >= 48 && byte <= 57) ||
-      keyword('true') || keyword('false') || keyword('null');
+    const objectStart =
+      byte === 47 ||
+      byte === 40 ||
+      byte === 60 ||
+      byte === 91 ||
+      byte === 43 ||
+      byte === 45 ||
+      byte === 46 ||
+      (byte >= 48 && byte <= 57) ||
+      keyword('true') ||
+      keyword('false') ||
+      keyword('null');
     if (objectStart) {
       try {
         operands.push(parser.parseObject());
@@ -596,16 +679,18 @@ function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable, 
       requireOperands(['number']);
     } else if (operator === 'Tr') {
       requireOperands(['number']);
-      check(Number.isInteger(operands[0].asNumber()) &&
-        operands[0].asNumber() >= 0 && operands[0].asNumber() <= 7, 'PADES_TEXT_OPERAND');
+      check(
+        Number.isInteger(operands[0].asNumber()) &&
+          operands[0].asNumber() >= 0 &&
+          operands[0].asNumber() <= 7,
+        'PADES_TEXT_OPERAND',
+      );
     } else if (operator === 'Tf') {
       requireOperands(['name', 'number']);
       check(fontAvailable(name(operands[0])), 'PADES_TEXT_FONT_RESOURCE');
     } else if (operator === 'gs' || operator === 'sh' || operator === 'Do') {
-      check(operands.length === 1 && operands[0] instanceof PDFName,
-        'PADES_PAGE_RESOURCE_MEMBER');
-      const category = operator === 'gs' ? 'ExtGState'
-        : operator === 'sh' ? 'Shading' : 'XObject';
+      check(operands.length === 1 && operands[0] instanceof PDFName, 'PADES_PAGE_RESOURCE_MEMBER');
+      const category = operator === 'gs' ? 'ExtGState' : operator === 'sh' ? 'Shading' : 'XObject';
       check(resourceAvailable(category, name(operands[0])), 'PADES_PAGE_RESOURCE_MEMBER');
     } else if (operator === 'scn' || operator === 'SCN') {
       const patternName = operands.at(-1);
@@ -627,8 +712,10 @@ function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable, 
       check(inText, 'PADES_TEXT_SCOPE');
       requireOperands(['number', 'number', 'string']);
     } else if (operator === 'TJ') {
-      check(inText && operands.length === 1 && operands[0] instanceof PDFArray,
-        'PADES_TEXT_OPERAND');
+      check(
+        inText && operands.length === 1 && operands[0] instanceof PDFArray,
+        'PADES_TEXT_OPERAND',
+      );
       for (const item of operands[0].asArray())
         check(string(item) || numeric(item), 'PADES_TEXT_OPERAND');
     }
@@ -639,14 +726,21 @@ function inspectContentTextOperators(bytes, context, diagnostic, fontAvailable, 
 }
 
 const IMAGE_FILTERS = new Set([
-  'ASCIIHexDecode', 'ASCII85Decode', 'LZWDecode', 'FlateDecode',
-  'RunLengthDecode', 'CCITTFaxDecode', 'JBIG2Decode', 'DCTDecode',
-  'JPXDecode', 'Crypt',
+  'ASCIIHexDecode',
+  'ASCII85Decode',
+  'LZWDecode',
+  'FlateDecode',
+  'RunLengthDecode',
+  'CCITTFaxDecode',
+  'JBIG2Decode',
+  'DCTDecode',
+  'JPXDecode',
+  'Crypt',
 ]);
 
 function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects) {
   const dict = stream.dict;
-  const entry = key => {
+  const entry = (key) => {
     const raw = get(dict, key);
     if (raw === undefined || undefinedRef(rev, raw)) return undefined;
     const value = rev.resolve(raw);
@@ -660,12 +754,18 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
   check(height > 0, 'PADES_IMAGE_HEIGHT');
 
   const filterValue = entry('Filter');
-  const filters = filterValue === undefined ? []
-    : filterValue instanceof PDFArray ? filterValue.asArray().map(value => name(rev.resolve(value)))
-      : [name(filterValue)];
-  check(filters.every(filter => typeof filter === 'string'), 'PADES_IMAGE_FILTER');
+  const filters =
+    filterValue === undefined
+      ? []
+      : filterValue instanceof PDFArray
+        ? filterValue.asArray().map((value) => name(rev.resolve(value)))
+        : [name(filterValue)];
+  check(
+    filters.every((filter) => typeof filter === 'string'),
+    'PADES_IMAGE_FILTER',
+  );
   const unsupportedFilter = filters.some(
-    filter => !IMAGE_FILTERS.has(filter) || filter === 'Crypt',
+    (filter) => !IMAGE_FILTERS.has(filter) || filter === 'Crypt',
   );
   const jpx = filters.at(-1) === 'JPXDecode';
   const imageMaskValue = entry('ImageMask');
@@ -681,12 +781,20 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     check(colors instanceof PDFDict, 'PADES_IMAGE_COLORSPACE');
     return colors;
   };
-  const colorComponents = (value, seen = new Set(), allowDefault = true,
-    expectedDefaultComponents) => {
+  const colorComponents = (
+    value,
+    seen = new Set(),
+    allowDefault = true,
+    expectedDefaultComponents,
+  ) => {
     if (value instanceof PDFArray) {
       const family = name(rev.resolve(value.get(0)));
-      check(['CalGray', 'CalRGB', 'Lab', 'ICCBased', 'Indexed', 'Separation',
-        'DeviceN'].includes(family), 'PADES_IMAGE_COLORSPACE');
+      check(
+        ['CalGray', 'CalRGB', 'Lab', 'ICCBased', 'Indexed', 'Separation', 'DeviceN'].includes(
+          family,
+        ),
+        'PADES_IMAGE_COLORSPACE',
+      );
       if (expectedDefaultComponents !== undefined) {
         check(!['Lab', 'Indexed'].includes(family), 'PADES_IMAGE_COLORSPACE');
         const knownComponents = { CalGray: 1, CalRGB: 3, Separation: 1 };
@@ -694,8 +802,11 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
         if (family === 'ICCBased') {
           const profile = rev.resolve(value.get(1));
           if (profile instanceof PDFRawStream)
-            components = sourceInteger(rev.resolve(get(profile.dict, 'N')),
-              'PADES_IMAGE_COLORSPACE', integerObjects);
+            components = sourceInteger(
+              rev.resolve(get(profile.dict, 'N')),
+              'PADES_IMAGE_COLORSPACE',
+              integerObjects,
+            );
         } else if (family === 'DeviceN') {
           const names = rev.resolve(value.get(1));
           if (names instanceof PDFArray) components = names.size();
@@ -737,8 +848,11 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
   const colorValue = entry('ColorSpace');
   if (imageMask) check(colorValue === undefined, 'PADES_IMAGE_COLORSPACE');
   else if (!jpx) check(colorValue !== undefined, 'PADES_IMAGE_COLORSPACE');
-  const components = imageMask ? 1 : colorValue === undefined ? undefined
-    : colorComponents(colorValue);
+  const components = imageMask
+    ? 1
+    : colorValue === undefined
+      ? undefined
+      : colorComponents(colorValue);
 
   const bitsValue = entry('BitsPerComponent');
   let bits;
@@ -746,8 +860,10 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
     if (imageMask && bitsValue === undefined) bits = 1;
     else {
       bits = sourceInteger(bitsValue, 'PADES_IMAGE_BITS_PER_COMPONENT', integerObjects);
-      check(imageMask ? bits === 1 : [1, 2, 4, 8, 16].includes(bits),
-        'PADES_IMAGE_BITS_PER_COMPONENT');
+      check(
+        imageMask ? bits === 1 : [1, 2, 4, 8, 16].includes(bits),
+        'PADES_IMAGE_BITS_PER_COMPONENT',
+      );
     }
   }
   if (bits !== undefined) {
@@ -761,11 +877,14 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
   const decode = entry('Decode');
   if (decode !== undefined && (imageMask || !jpx)) {
     check(decode instanceof PDFArray, 'PADES_IMAGE_DECODE');
-    const values = decode.asArray().map(value => number(rev.resolve(value)));
+    const values = decode.asArray().map((value) => number(rev.resolve(value)));
     check(values.every(Number.isFinite), 'PADES_IMAGE_DECODE');
     if (imageMask)
-      check(values.length === 2 && ((values[0] === 0 && values[1] === 1) ||
-        (values[0] === 1 && values[1] === 0)), 'PADES_IMAGE_DECODE');
+      check(
+        values.length === 2 &&
+          ((values[0] === 0 && values[1] === 1) || (values[0] === 1 && values[1] === 0)),
+        'PADES_IMAGE_DECODE',
+      );
     else if (components !== undefined)
       check(values.length === 2 * components, 'PADES_IMAGE_DECODE');
   }
@@ -782,8 +901,11 @@ function inspectImageXObject(rev, resources, stream, diagnostic, integerObjects)
 // Other function families and function arrays need a separate rendering contract.
 function inspectAxialType2Function(rev, resources, shading, diagnostic, integerObjects) {
   const shadingDict = shading instanceof PDFRawStream ? shading.dict : shading;
-  const shadingType = sourceInteger(rev.resolve(get(shadingDict, 'ShadingType')),
-    'PADES_SHADING_TYPE', integerObjects);
+  const shadingType = sourceInteger(
+    rev.resolve(get(shadingDict, 'ShadingType')),
+    'PADES_SHADING_TYPE',
+    integerObjects,
+  );
   check(shadingType >= 1 && shadingType <= 7, 'PADES_SHADING_TYPE');
   if (shadingType !== 2) return;
   check(shading instanceof PDFDict, 'PADES_SHADING_TYPE');
@@ -799,49 +921,57 @@ function inspectAxialType2Function(rev, resources, shading, diagnostic, integerO
       return undefined;
     }
     check(value instanceof PDFArray, code);
-    const values = value.asArray().map(item => number(rev.resolve(item)));
+    const values = value.asArray().map((item) => number(rev.resolve(item)));
     check(values.length > 0 && values.every(Number.isFinite), code);
     return values;
   };
-  check(numericArray(shadingDict, 'Coords', true, 'PADES_SHADING_COORDS').length === 4,
-    'PADES_SHADING_COORDS');
+  check(
+    numericArray(shadingDict, 'Coords', true, 'PADES_SHADING_COORDS').length === 4,
+    'PADES_SHADING_COORDS',
+  );
   const bbox = numericArray(shadingDict, 'BBox', false, 'PADES_SHADING_BBOX');
   if (bbox !== undefined) check(bbox.length === 4, 'PADES_SHADING_BBOX');
   const rawExtend = get(shadingDict, 'Extend');
   if (rawExtend !== undefined && !undefinedRef(rev, rawExtend)) {
     const extend = rev.resolve(rawExtend);
     if (extend !== PDFNull) {
-      check(extend instanceof PDFArray && extend.size() === 2,
-        'PADES_SHADING_EXTEND');
-      check(extend.asArray().every(item => rev.resolve(item) instanceof PDFBool),
-        'PADES_SHADING_EXTEND');
+      check(extend instanceof PDFArray && extend.size() === 2, 'PADES_SHADING_EXTEND');
+      check(
+        extend.asArray().every((item) => rev.resolve(item) instanceof PDFBool),
+        'PADES_SHADING_EXTEND',
+      );
     }
   }
   const rawFunction = get(shadingDict, 'Function');
-  check(rawFunction !== undefined && !undefinedRef(rev, rawFunction),
-    'PADES_TYPE2_FUNCTION_TYPE');
+  check(rawFunction !== undefined && !undefinedRef(rev, rawFunction), 'PADES_TYPE2_FUNCTION_TYPE');
   const resolved = rev.resolve(rawFunction);
   if (resolved instanceof PDFArray || resolved instanceof PDFRawStream) {
     diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
     return;
   }
   check(resolved instanceof PDFDict, 'PADES_TYPE2_FUNCTION_TYPE');
-  const functionType = sourceInteger(rev.resolve(get(resolved, 'FunctionType')),
-    'PADES_TYPE2_FUNCTION_TYPE', integerObjects);
+  const functionType = sourceInteger(
+    rev.resolve(get(resolved, 'FunctionType')),
+    'PADES_TYPE2_FUNCTION_TYPE',
+    integerObjects,
+  );
   if (functionType !== 2) {
     check([0, 3, 4].includes(functionType), 'PADES_TYPE2_FUNCTION_TYPE');
     diagnostic('PADES_SHADING_FUNCTION_UNSUPPORTED');
     return;
   }
-  const functionArray = (key, required) => numericArray(resolved, key, required,
-    `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
-  const shadingDomain = numericArray(shadingDict, 'Domain', false, 'PADES_SHADING_DOMAIN') ?? [0, 1];
-  check(shadingDomain.length === 2 && shadingDomain[0] <= shadingDomain[1],
-    'PADES_SHADING_DOMAIN');
+  const functionArray = (key, required) =>
+    numericArray(resolved, key, required, `PADES_TYPE2_FUNCTION_${key.toUpperCase()}`);
+  const shadingDomain = numericArray(shadingDict, 'Domain', false, 'PADES_SHADING_DOMAIN') ?? [
+    0, 1,
+  ];
+  check(shadingDomain.length === 2 && shadingDomain[0] <= shadingDomain[1], 'PADES_SHADING_DOMAIN');
   const domain = functionArray('Domain', true);
   check(domain.length === 2 && domain[0] <= domain[1], 'PADES_TYPE2_FUNCTION_DOMAIN');
-  check(domain[0] <= shadingDomain[0] && domain[1] >= shadingDomain[1],
-    'PADES_TYPE2_FUNCTION_DOMAIN');
+  check(
+    domain[0] <= shadingDomain[0] && domain[1] >= shadingDomain[1],
+    'PADES_TYPE2_FUNCTION_DOMAIN',
+  );
   const c0 = functionArray('C0', false) ?? [0];
   const c1 = functionArray('C1', false) ?? [1];
   check(c0.length === c1.length, 'PADES_TYPE2_FUNCTION_C1');
@@ -849,8 +979,7 @@ function inspectAxialType2Function(rev, resources, shading, diagnostic, integerO
   const exponent = number(rev.resolve(get(resolved, 'N')));
   check(Number.isFinite(exponent), 'PADES_TYPE2_FUNCTION_N');
   check(Number.isInteger(exponent) || domain[0] >= 0, 'PADES_TYPE2_FUNCTION_DOMAIN');
-  check(exponent >= 0 || domain[0] > 0 || domain[1] < 0,
-    'PADES_TYPE2_FUNCTION_DOMAIN');
+  check(exponent >= 0 || domain[0] > 0 || domain[1] < 0, 'PADES_TYPE2_FUNCTION_DOMAIN');
   const range = functionArray('Range', false);
   if (range !== undefined) {
     check(range.length === 2 * c0.length, 'PADES_TYPE2_FUNCTION_RANGE');
@@ -865,18 +994,61 @@ function inspectAxialType2Function(rev, resources, shading, diagnostic, integerO
     const colorResources = rev.resolve(get(resources, 'ColorSpace'));
     if (colorResources instanceof PDFDict) {
       const defaultColor = get(colorResources, `Default${colorSpace.slice(6)}`);
-      if (defaultColor !== undefined && !undefinedRef(rev, defaultColor) &&
-          rev.resolve(defaultColor) !== PDFNull)
+      if (
+        defaultColor !== undefined &&
+        !undefinedRef(rev, defaultColor) &&
+        rev.resolve(defaultColor) !== PDFNull
+      )
         diagnostic('PADES_SHADING_COLORSPACE_UNSUPPORTED');
     }
   }
+}
+
+function inspectDefaultOptionalContent(rev) {
+  const optional = (dict, key) => {
+    const value = get(dict, key);
+    if (value === undefined || value === PDFNull || undefinedRef(rev, value)) return undefined;
+    const resolved = rev.resolve(value);
+    return resolved === PDFNull ? undefined : resolved;
+  };
+  const properties = optional(rev.catalog, 'OCProperties');
+  if (properties === undefined) return;
+  check(properties instanceof PDFDict, 'PADES_OCG_PROPERTIES');
+
+  // ISO 32000-1 Tables 100 and 101 bind the default configuration to the
+  // document's registered indirect OCGs. Alternate configurations may set
+  // BaseState OFF; the default configuration may not.
+  const groups = optional(properties, 'OCGs');
+  check(groups instanceof PDFArray, 'PADES_OCG_GROUPS');
+  const groupRefs = new Set();
+  for (const item of groups.asArray()) {
+    check(item instanceof PDFRef, 'PADES_OCG_GROUPS');
+    const group = rev.resolve(item);
+    check(group instanceof PDFDict && name(get(group, 'Type')) === 'OCG', 'PADES_OCG_GROUPS');
+    groupRefs.add(refID(item));
+  }
+
+  const defaults = optional(properties, 'D');
+  check(defaults instanceof PDFDict, 'PADES_OCG_DEFAULT');
+  const baseState = optional(defaults, 'BaseState');
+  if (baseState !== undefined) check(name(baseState) === 'ON', 'PADES_OCG_DEFAULT_BASE_STATE');
+  for (const key of ['ON', 'OFF']) {
+    const value = optional(defaults, key);
+    if (value === undefined) continue;
+    check(value instanceof PDFArray, `PADES_OCG_DEFAULT_${key}`);
+    for (const item of value.asArray())
+      check(item instanceof PDFRef && groupRefs.has(refID(item)), `PADES_OCG_DEFAULT_${key}`);
+  }
+  const intent = optional(defaults, 'Intent');
+  if (intent !== undefined) check(name(intent) === 'View', 'PADES_OCG_DEFAULT_INTENT');
 }
 
 function inspectSignedPageText(rev, diagnostic, integerObjects) {
   const pagesRoot = get(rev.catalog, 'Pages');
   check(pagesRoot instanceof PDFRef, 'PADES_PAGES_REFERENCE');
   const seen = new Set();
-  let pageCount = 0, decodedBytes = 0;
+  let pageCount = 0,
+    decodedBytes = 0;
   const optionalPageEntry = (dict, key) => {
     const value = get(dict, key);
     if (value === undefined) return undefined;
@@ -884,17 +1056,19 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
     const resolved = rev.resolve(value);
     return resolved === PDFNull ? undefined : resolved;
   };
-  const checkedMediaBox = value => {
+  const checkedMediaBox = (value) => {
     const rectangle = rev.resolve(value);
     check(rectangle instanceof PDFArray && rectangle.size() === 4, 'PADES_PAGE_MEDIABOX');
     for (const item of rectangle.asArray()) {
       const coordinate = rev.resolve(item);
-      check(coordinate instanceof PDFNumber && Number.isFinite(coordinate.asNumber()),
-        'PADES_PAGE_MEDIABOX');
+      check(
+        coordinate instanceof PDFNumber && Number.isFinite(coordinate.asNumber()),
+        'PADES_PAGE_MEDIABOX',
+      );
     }
     return rectangle;
   };
-  const checkedRotate = value => {
+  const checkedRotate = (value) => {
     const rotation = rev.resolve(value);
     check(rotation instanceof PDFNumber && integerObjects.has(rotation), 'PADES_PAGE_ROTATE');
     const degrees = rotation.asNumber();
@@ -903,16 +1077,18 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
   const checkedLineArray = (value, length, code) => {
     const array = rev.resolve(value);
     check(array instanceof PDFArray && array.size() === length, code);
-    for (const item of array.asArray())
-      check(Number.isFinite(number(rev.resolve(item))), code);
+    for (const item of array.asArray()) check(Number.isFinite(number(rev.resolve(item))), code);
   };
-  const inspectLineAnnotations = page => {
+  const inspectLineAnnotations = (page) => {
     const annotations = optionalPageEntry(page, 'Annots');
     if (!(annotations instanceof PDFArray)) return;
     for (const entry of annotations.asArray()) {
       const annotation = rev.resolve(entry);
-      if (!(annotation instanceof PDFDict) ||
-          name(rev.resolve(get(annotation, 'Subtype'))) !== 'Line') continue;
+      if (
+        !(annotation instanceof PDFDict) ||
+        name(rev.resolve(get(annotation, 'Subtype'))) !== 'Line'
+      )
+        continue;
       // An appearance stream overrides these dictionary fields; it needs its own admission.
       if (optionalPageEntry(annotation, 'AP') !== undefined) {
         diagnostic('PADES_LINE_AP_UNSUPPORTED');
@@ -922,48 +1098,62 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
       const endings = optionalPageEntry(annotation, 'LE');
       if (endings !== undefined) {
         check(endings instanceof PDFArray && endings.size() === 2, 'PADES_LINE_LE');
-        const styles = new Set(['None', 'Square', 'Circle', 'Diamond', 'OpenArrow',
-          'ClosedArrow', 'Butt', 'ROpenArrow', 'RClosedArrow', 'Slash']);
+        const styles = new Set([
+          'None',
+          'Square',
+          'Circle',
+          'Diamond',
+          'OpenArrow',
+          'ClosedArrow',
+          'Butt',
+          'ROpenArrow',
+          'RClosedArrow',
+          'Slash',
+        ]);
         for (const item of endings.asArray())
           check(styles.has(name(rev.resolve(item))), 'PADES_LINE_LE');
       }
       const leader = optionalPageEntry(annotation, 'LL');
-      if (leader !== undefined)
-        check(Number.isFinite(number(leader)), 'PADES_LINE_LL');
+      if (leader !== undefined) check(Number.isFinite(number(leader)), 'PADES_LINE_LL');
       const extension = optionalPageEntry(annotation, 'LLE');
       if (extension !== undefined) {
-        check(leader !== undefined && Number.isFinite(number(extension)) &&
-          number(extension) >= 0, 'PADES_LINE_LLE');
+        check(
+          leader !== undefined && Number.isFinite(number(extension)) && number(extension) >= 0,
+          'PADES_LINE_LLE',
+        );
       }
       const captionOffset = optionalPageEntry(annotation, 'CO');
-      if (captionOffset !== undefined)
-        checkedLineArray(captionOffset, 2, 'PADES_LINE_CO');
+      if (captionOffset !== undefined) checkedLineArray(captionOffset, 2, 'PADES_LINE_CO');
       const borderStyle = optionalPageEntry(annotation, 'BS');
       if (borderStyle !== undefined) {
         check(borderStyle instanceof PDFDict, 'PADES_LINE_BS');
         const width = optionalPageEntry(borderStyle, 'W');
-        if (width !== undefined)
-          check(Number.isFinite(number(width)), 'PADES_LINE_BS_W');
+        if (width !== undefined) check(Number.isFinite(number(width)), 'PADES_LINE_BS_W');
         const style = optionalPageEntry(borderStyle, 'S');
-        if (style !== undefined)
-          check(name(style) !== undefined, 'PADES_LINE_BS_S');
+        if (style !== undefined) check(name(style) !== undefined, 'PADES_LINE_BS_S');
         const dash = optionalPageEntry(borderStyle, 'D');
         if (dash !== undefined) {
           check(dash instanceof PDFArray, 'PADES_LINE_BS_D');
-          const lengths = dash.asArray().map(item => number(rev.resolve(item)));
-          check(lengths.every(value => Number.isFinite(value) && value >= 0) &&
-            lengths.some(value => value > 0), 'PADES_LINE_BS_D');
+          const lengths = dash.asArray().map((item) => number(rev.resolve(item)));
+          check(
+            lengths.every((value) => Number.isFinite(value) && value >= 0) &&
+              lengths.some((value) => value > 0),
+            'PADES_LINE_BS_D',
+          );
         }
       }
     }
   };
-  const inspectFreeTextAnnotations = page => {
+  const inspectFreeTextAnnotations = (page) => {
     const annotations = optionalPageEntry(page, 'Annots');
     if (!(annotations instanceof PDFArray)) return;
     for (const entry of annotations.asArray()) {
       const annotation = rev.resolve(entry);
-      if (!(annotation instanceof PDFDict) ||
-          name(rev.resolve(get(annotation, 'Subtype'))) !== 'FreeText') continue;
+      if (
+        !(annotation instanceof PDFDict) ||
+        name(rev.resolve(get(annotation, 'Subtype'))) !== 'FreeText'
+      )
+        continue;
       // An appearance stream takes precedence over the text and border fields.
       if (optionalPageEntry(annotation, 'AP') !== undefined) {
         diagnostic('PADES_FREETEXT_AP_UNSUPPORTED');
@@ -971,65 +1161,75 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
       }
       const contents = optionalPageEntry(annotation, 'Contents');
       if (contents !== undefined)
-        check(contents instanceof PDFString || contents instanceof PDFHexString,
-          'PADES_FREETEXT_CONTENTS');
+        check(
+          contents instanceof PDFString || contents instanceof PDFHexString,
+          'PADES_FREETEXT_CONTENTS',
+        );
       const appearance = optionalPageEntry(annotation, 'DA');
-      check(appearance instanceof PDFString || appearance instanceof PDFHexString,
-        'PADES_FREETEXT_DA');
+      check(
+        appearance instanceof PDFString || appearance instanceof PDFHexString,
+        'PADES_FREETEXT_DA',
+      );
       const flags = optionalPageEntry(annotation, 'F');
-      if (flags !== undefined)
-        sourceInteger(flags, 'PADES_FREETEXT_F', integerObjects);
+      if (flags !== undefined) sourceInteger(flags, 'PADES_FREETEXT_F', integerObjects);
       const quadding = optionalPageEntry(annotation, 'Q');
       if (quadding !== undefined)
-        check(sourceInteger(quadding, 'PADES_FREETEXT_Q', integerObjects) <= 2,
-          'PADES_FREETEXT_Q');
+        check(sourceInteger(quadding, 'PADES_FREETEXT_Q', integerObjects) <= 2, 'PADES_FREETEXT_Q');
       const borderStyle = optionalPageEntry(annotation, 'BS');
       if (borderStyle !== undefined) {
         check(borderStyle instanceof PDFDict, 'PADES_FREETEXT_BS');
         const width = optionalPageEntry(borderStyle, 'W');
-        if (width !== undefined)
-          check(Number.isFinite(number(width)), 'PADES_FREETEXT_BS_W');
+        if (width !== undefined) check(Number.isFinite(number(width)), 'PADES_FREETEXT_BS_W');
         const style = optionalPageEntry(borderStyle, 'S');
-        if (style !== undefined)
-          check(name(style) !== undefined, 'PADES_FREETEXT_BS_S');
+        if (style !== undefined) check(name(style) !== undefined, 'PADES_FREETEXT_BS_S');
         const dash = optionalPageEntry(borderStyle, 'D');
         if (dash !== undefined) {
           check(dash instanceof PDFArray, 'PADES_FREETEXT_BS_D');
-          const lengths = dash.asArray().map(item => number(rev.resolve(item)));
-          check(lengths.every(value => Number.isFinite(value) && value >= 0) &&
-            (lengths.length === 0 || lengths.some(value => value > 0)),
-          'PADES_FREETEXT_BS_D');
+          const lengths = dash.asArray().map((item) => number(rev.resolve(item)));
+          check(
+            lengths.every((value) => Number.isFinite(value) && value >= 0) &&
+              (lengths.length === 0 || lengths.some((value) => value > 0)),
+            'PADES_FREETEXT_BS_D',
+          );
         }
       } else {
         // ISO 32000-1 Table 164 ignores Border when BS supplies the border style.
         const border = optionalPageEntry(annotation, 'Border');
         if (border !== undefined) {
-          check(border instanceof PDFArray && [3, 4].includes(border.size()),
-            'PADES_FREETEXT_BORDER');
+          check(
+            border instanceof PDFArray && [3, 4].includes(border.size()),
+            'PADES_FREETEXT_BORDER',
+          );
           for (const item of border.asArray().slice(0, 3))
             check(Number.isFinite(number(rev.resolve(item))), 'PADES_FREETEXT_BORDER');
           if (border.size() === 4) {
             const dash = rev.resolve(border.get(3));
             check(dash instanceof PDFArray, 'PADES_FREETEXT_BORDER');
-            const lengths = dash.asArray().map(item => number(rev.resolve(item)));
-            check(lengths.every(value => Number.isFinite(value) && value >= 0) &&
-              (lengths.length === 0 || lengths.some(value => value > 0)),
-            'PADES_FREETEXT_BORDER');
+            const lengths = dash.asArray().map((item) => number(rev.resolve(item)));
+            check(
+              lengths.every((value) => Number.isFinite(value) && value >= 0) &&
+                (lengths.length === 0 || lengths.some((value) => value > 0)),
+              'PADES_FREETEXT_BORDER',
+            );
           }
         }
       }
     }
   };
-  const streamBytes = reference => {
+  const streamBytes = (reference) => {
     check(reference instanceof PDFRef, 'PADES_PAGE_CONTENT_REFERENCE');
     const stream = rev.resolve(reference);
     check(stream instanceof PDFRawStream, 'PADES_PAGE_CONTENT_STREAM');
     const filterValue = rev.resolve(get(stream.dict, 'Filter'));
-    const filter = filterValue instanceof PDFArray && filterValue.size() === 1
-      ? rev.resolve(filterValue.get(0)) : filterValue;
+    const filter =
+      filterValue instanceof PDFArray && filterValue.size() === 1
+        ? rev.resolve(filterValue.get(0))
+        : filterValue;
     const paramsValue = rev.resolve(get(stream.dict, 'DecodeParms'));
-    const params = paramsValue instanceof PDFArray && paramsValue.size() === 1
-      ? rev.resolve(paramsValue.get(0)) : paramsValue;
+    const params =
+      paramsValue instanceof PDFArray && paramsValue.size() === 1
+        ? rev.resolve(paramsValue.get(0))
+        : paramsValue;
     if (filter !== undefined && name(filter) !== 'FlateDecode') {
       diagnostic('PADES_PAGE_CONTENT_FILTER_UNSUPPORTED');
       return undefined;
@@ -1069,14 +1269,21 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
     const type = name(get(dict, 'Type'));
     if (type === 'Pages') {
       const parent = get(dict, 'Parent');
-      if (depth === 0) check(optionalPageEntry(dict, 'Parent') === undefined,
-        'PADES_PAGE_TREE_PARENT');
-      else check(parent instanceof PDFRef && refID(parent) === refID(parentReference),
-        'PADES_PAGE_TREE_PARENT');
+      if (depth === 0)
+        check(optionalPageEntry(dict, 'Parent') === undefined, 'PADES_PAGE_TREE_PARENT');
+      else
+        check(
+          parent instanceof PDFRef && refID(parent) === refID(parentReference),
+          'PADES_PAGE_TREE_PARENT',
+        );
       const children = rev.resolve(get(dict, 'Kids'));
       check(children instanceof PDFArray, 'PADES_PAGE_KIDS');
       check(children.size() <= MAX_OBJECTS, 'PADES_PAGE_LIMIT', 'UNSUPPORTED');
-      const count = sourceInteger(rev.resolve(get(dict, 'Count')), 'PADES_PAGE_TREE_COUNT', integerObjects);
+      const count = sourceInteger(
+        rev.resolve(get(dict, 'Count')),
+        'PADES_PAGE_TREE_COUNT',
+        integerObjects,
+      );
       let actual = 0;
       for (const child of children.asArray())
         actual += visit(child, depth + 1, resources, mediaBox, reference);
@@ -1085,8 +1292,10 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
     } else {
       check(type === 'Page', 'PADES_PAGE_TYPE');
       const parent = get(dict, 'Parent');
-      check(parent instanceof PDFRef && refID(parent) === refID(parentReference),
-        'PADES_PAGE_PARENT');
+      check(
+        parent instanceof PDFRef && refID(parent) === refID(parentReference),
+        'PADES_PAGE_PARENT',
+      );
       check(mediaBox instanceof PDFArray, 'PADES_PAGE_MEDIABOX');
       check(resources instanceof PDFDict, 'PADES_PAGE_RESOURCES');
       check(++pageCount <= MAX_OBJECTS, 'PADES_PAGE_LIMIT', 'UNSUPPORTED');
@@ -1097,8 +1306,8 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
       const content = rev.resolve(value);
       const references = content instanceof PDFArray ? content.asArray() : [value];
       const parts = references.map(streamBytes);
-      if (parts.some(part => part === undefined)) return 1;
-      const fontAvailable = fontName => {
+      if (parts.some((part) => part === undefined)) return 1;
+      const fontAvailable = (fontName) => {
         if (!(resources instanceof PDFDict)) return false;
         const fonts = rev.resolve(get(resources, 'Font'));
         if (!(fonts instanceof PDFDict)) return false;
@@ -1128,7 +1337,11 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
         return true;
       };
       inspectContentTextOperators(
-        Buffer.concat(parts), dict.context, diagnostic, fontAvailable, resourceAvailable,
+        Buffer.concat(parts),
+        dict.context,
+        diagnostic,
+        fontAvailable,
+        resourceAvailable,
       );
       return 1;
     }
@@ -1138,7 +1351,8 @@ function inspectSignedPageText(rev, diagnostic, integerObjects) {
 
 function inspectCapabilities(rev, diagnostic) {
   const visited = new Set();
-  const resourceDictionaries = new WeakSet(), memberDictionaries = new WeakSet();
+  const resourceDictionaries = new WeakSet(),
+    memberDictionaries = new WeakSet();
   const categories = new Set(['ExtGState', 'Shading', 'Pattern', 'XObject']);
   for (const entry of rev.active.values()) {
     const page = entry.used ? entry.def.object : undefined;
@@ -1206,13 +1420,17 @@ function inspectCapabilities(rev, diagnostic) {
         )
           diagnostic('PADES_EXTERNAL_STREAM_UNSUPPORTED');
         const pageEntry = type === 'Page' || type === 'Pages';
-        const optionalPageKey = ['Rotate', 'MediaBox', 'Resources'].includes(key.decodeText()) ||
+        const optionalPageKey =
+          ['Rotate', 'MediaBox', 'Resources'].includes(key.decodeText()) ||
           (type === 'Pages' && key.decodeText() === 'Parent');
-        const optionalResourceReference = undefinedRef(rev, value) &&
+        const optionalResourceReference =
+          undefinedRef(rev, value) &&
           ((resourceDictionaries.has(dict) && categories.has(key.decodeText())) ||
             memberDictionaries.has(dict));
-        if (!(undefinedRef(rev, value) && pageEntry && optionalPageKey) &&
-            !optionalResourceReference)
+        if (
+          !(undefinedRef(rev, value) && pageEntry && optionalPageKey) &&
+          !optionalResourceReference
+        )
           visit(value, depth + 1);
       }
     } else if (object instanceof PDFArray)
@@ -1251,16 +1469,25 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
     if (left === undefined || right === undefined) return left === right;
     if (left instanceof PDFRef || right instanceof PDFRef)
       return left instanceof PDFRef && right instanceof PDFRef && refID(left) === refID(right);
-    if (left instanceof PDFName && right instanceof PDFName)
-      return name(left) === name(right);
-    if ((left instanceof PDFString || left instanceof PDFHexString) &&
-        (right instanceof PDFString || right instanceof PDFHexString))
+    if (left instanceof PDFName && right instanceof PDFName) return name(left) === name(right);
+    if (
+      (left instanceof PDFString || left instanceof PDFHexString) &&
+      (right instanceof PDFString || right instanceof PDFHexString)
+    )
       return left.decodeText() === right.decodeText();
     if (left instanceof PDFNumber && right instanceof PDFNumber)
       return Object.is(left.asNumber(), right.asNumber());
     return left.constructor === right.constructor && left.toString() === right.toString();
   };
-  function visit(reference, inheritedType, depth = 0, parentName = '', parentReference, inheritedDefaultValue, inheritedValue) {
+  function visit(
+    reference,
+    inheritedType,
+    depth = 0,
+    parentName = '',
+    parentReference,
+    inheritedDefaultValue,
+    inheritedValue,
+  ) {
     check(reference instanceof PDFRef, 'PADES_FIELD_INDIRECT');
     const id = refID(reference);
     check(!fieldsSeen.has(id) && depth <= 20, 'PADES_FIELD_CYCLE_OR_DEPTH');
@@ -1284,9 +1511,7 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
     const component = partialName?.decodeText();
     check(component === undefined || !component.includes('.'), 'PADES_FIELD_NAME');
     const qualifiedName =
-      component === undefined
-        ? parentName
-        : [parentName, component].filter(Boolean).join('.');
+      component === undefined ? parentName : [parentName, component].filter(Boolean).join('.');
     if (partialName !== undefined) {
       check(!fieldNames.has(qualifiedName), 'PADES_DUPLICATE_FIELD_NAME');
       fieldNames.add(qualifiedName);
@@ -1298,18 +1523,23 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
     );
     const type = name(localType) ?? inheritedType;
     const localValue = get(field, 'V');
-    const value = localValue === undefined || rev.resolve(localValue) === PDFNull
-      ? inheritedValue : localValue;
+    const value =
+      localValue === undefined || rev.resolve(localValue) === PDFNull ? inheritedValue : localValue;
     const localDefaultValue = get(field, 'DV');
-    const defaultValue = localDefaultValue === undefined || rev.resolve(localDefaultValue) === PDFNull
-      ? inheritedDefaultValue : localDefaultValue;
+    const defaultValue =
+      localDefaultValue === undefined || rev.resolve(localDefaultValue) === PDFNull
+        ? inheritedDefaultValue
+        : localDefaultValue;
     const isLeaf = get(field, 'Kids') === undefined;
     const isWidget = name(rev.resolve(get(field, 'Subtype'))) === 'Widget';
     const previousSigned = signedNames.get(qualifiedName);
     if (previousSigned !== undefined)
       check(
-        isLeaf && partialName === undefined && isWidget &&
-          type === previousSigned.type && sameFieldValue(value, previousSigned.value) &&
+        isLeaf &&
+          partialName === undefined &&
+          isWidget &&
+          type === previousSigned.type &&
+          sameFieldValue(value, previousSigned.value) &&
           sameFieldValue(defaultValue, previousSigned.defaultValue),
         'PADES_DUPLICATE_FIELD_NAME',
       );
@@ -1317,8 +1547,12 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
       const previous = leafRepresentations.get(qualifiedName);
       if (previous !== undefined) {
         check(
-          qualifiedName.length > 0 && partialName === undefined && previous.unnamed &&
-            isWidget && previous.widget && type === previous.type &&
+          qualifiedName.length > 0 &&
+            partialName === undefined &&
+            previous.unnamed &&
+            isWidget &&
+            previous.widget &&
+            type === previous.type &&
             sameFieldValue(value, previous.value) &&
             sameFieldValue(defaultValue, previous.defaultValue),
           'PADES_DUPLICATE_FIELD_NAME',
@@ -1326,7 +1560,11 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
         return;
       }
       leafRepresentations.set(qualifiedName, {
-        unnamed: partialName === undefined, widget: isWidget, type, value, defaultValue,
+        unnamed: partialName === undefined,
+        widget: isWidget,
+        type,
+        value,
+        defaultValue,
       });
     }
     if (type === 'Sig' && value !== undefined) {
@@ -1345,7 +1583,8 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
       const typeValue = get(signature, 'Type'),
         kind = name(typeValue) === 'DocTimeStamp' ? 'TIMESTAMP' : 'SIGNATURE';
       check(
-        typeValue === undefined || name(typeValue) === (kind === 'TIMESTAMP' ? 'DocTimeStamp' : 'Sig'),
+        typeValue === undefined ||
+          name(typeValue) === (kind === 'TIMESTAMP' ? 'DocTimeStamp' : 'Sig'),
         'PADES_SIGNATURE_TYPE',
       );
       check(get(signature, 'Filter') instanceof PDFName, 'PADES_SIGNATURE_FILTER');
@@ -1392,7 +1631,9 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
           diagnostic('PADES_SIGNATURE_EXTENSION_UNSUPPORTED');
       const ranges = get(signature, 'ByteRange');
       check(ranges instanceof PDFArray && ranges.size() === 4, 'PADES_BYTE_RANGE');
-      const byteRange = ranges.asArray().map((v) => sourceInteger(v, 'PADES_BYTE_RANGE', integerObjects));
+      const byteRange = ranges
+        .asArray()
+        .map((v) => sourceInteger(v, 'PADES_BYTE_RANGE', integerObjects));
       const [start, firstLength, secondStart, secondLength] = byteRange;
       check(
         start === 0 &&
@@ -1448,8 +1689,11 @@ function collectSignatures(rev, raw, spans, integerObjects, revisions, index, di
     const kids = rev.resolve(get(field, 'Kids'));
     if (kids !== undefined) {
       check(kids instanceof PDFArray, 'PADES_FIELD_KIDS');
-      kids.asArray().forEach((kid) =>
-        visit(kid, type, depth + 1, qualifiedName, reference, defaultValue, value));
+      kids
+        .asArray()
+        .forEach((kid) =>
+          visit(kid, type, depth + 1, qualifiedName, reference, defaultValue, value),
+        );
     }
   }
   rev.fields.forEach((field) => visit(field));
