@@ -21,7 +21,7 @@
     {
       "path": ".github/workflows/codeql.yml",
       "bytes": 2194,
-      "sha256": "11bed89abaf41978ac27d965260e0b8594ca9022b7dd1e0eabb7cd812af41ad1"
+      "sha256": "2669cce0fb0124194cba8a5a9765d768255f4e4bcd7d63fda83ea3f91cc28482"
     },
     {
       "path": ".github/workflows/contributions.yml",
@@ -36,7 +36,7 @@
     {
       "path": ".github/workflows/security.yml",
       "bytes": 3806,
-      "sha256": "171927b0ed0cac2702c2d1064336a01a10c3066d3771ad7b2d736a79f6255952"
+      "sha256": "e377af07461349e61ad2c9bde1c879465cc22983b39bbfea821c19d9c691d1ad"
     },
     {
       "path": ".gitignore",
@@ -326,7 +326,7 @@
     {
       "path": "package-lock.json",
       "bytes": 94485,
-      "sha256": "08a25be85efc01972eeee5d5a70fc462f948d6e827d5e89c3dca972b3010571f"
+      "sha256": "bf9ee76327cd7ddb6f9898d1c62c828dac065da51291acb675e52ac122a1f41a"
     },
     {
       "path": "package.json",
@@ -375,8 +375,8 @@
     },
     {
       "path": "reference/adapter-lock.json",
-      "bytes": 46678,
-      "sha256": "4799016692c2dada38f52bce216f847583c81b919b0b4be4e87d26008c89be28"
+      "bytes": 49934,
+      "sha256": "9bea65185b05209cb25aae336270cec9b0d22a8aefe009f6fade82c13d70cd8f"
     },
     {
       "path": "reference/adapters-network.test.mjs",
@@ -1326,7 +1326,7 @@
     {
       "path": "reference/native/android/build.gradle.kts",
       "bytes": 70,
-      "sha256": "fee04f42234f4725ea2fe99e1983402b0756b4b3f43ee804cada0e0b7679d2ec"
+      "sha256": "fb01eec6f637f8935019344e044de9c65d1b5b8325a64c55289bc601ee619d98"
     },
     {
       "path": "reference/native/android/settings.gradle.kts",
@@ -1556,7 +1556,7 @@
     {
       "path": "reference/package.json",
       "bytes": 1489,
-      "sha256": "88f1ee1e2756405221bcd46fff7daa66fdc41e3038667fad1938031afc8da2e0"
+      "sha256": "1b98c9b2181b3540929fd0374d0b7d1f498f3df12324d7993a6ee1578dbe2cb5"
     },
     {
       "path": "reference/pades-axial-shading-admission.test.mjs",
@@ -2170,13 +2170,13 @@
     },
     {
       "path": "reference/source-lock.json",
-      "bytes": 42885,
-      "sha256": "0d446dff34e99dc556b0e6ea10187100b0548fedd49b7e50fd1bc6498ebf00da"
+      "bytes": 42912,
+      "sha256": "f1694073f4fd727768541e05a5aa8cfa3cff9998a69b7c825ec5f5a4c9d285b8"
     },
     {
       "path": "reference/sources.mjs",
       "bytes": 16705,
-      "sha256": "c7b901a7b4c08431490ee93036536cdbe8b6470aa6b835d38dc479b42646c5dd"
+      "sha256": "bcc29a9f5c82dd0695e8e624ac7aa7c77cef777de787b1a883bbf83161cd039f"
     },
     {
       "path": "reference/state-security.test.mjs",

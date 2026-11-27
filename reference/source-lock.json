@@ -897,13 +897,13 @@
       "retrievedAt": "2026-10-07T21:39:53.185Z"
     },
     {
-      "id": "mailsplit5430",
-      "url": "https://registry.npmjs.org/@zone-eu/mailsplit/-/mailsplit-5.4.30.tgz",
-      "sha256": "40f703ff2ddf2f9ca1caec05837a5a2a0da54d081d1f2ea86494c7944606a074",
-      "bytes": 32342,
-      "retrievedAt": "2026-11-11T19:29:04.257Z",
-      "license": "MIT",
-      "integrity": "sha512-qN0KT6/ziAFvo5TzscaqpurIJaJQEXPPtqBZnpyhiGrACOKLDVMV6Lm57kXt5e/8zZUWoYiSC8oKl/aewtrJDQ=="
+      "id": "mailsplit5431",
+      "url": "https://registry.npmjs.org/@zone-eu/mailsplit/-/mailsplit-5.4.31.tgz",
+      "sha256": "2ae07acf658ceaa7dd032230e408f7aea8d32faa797d23ea826aab5277340f2b",
+      "bytes": 32389,
+      "retrievedAt": "2026-11-27T15:51:03.800708Z",
+      "license": "(MIT OR EUPL-1.1+)",
+      "integrity": "sha512-P031SeyobwXE/aZf1f/hN9RZm/t8ZSibCUYA7Us6Fory4b1p5HxNEA08YcfTynkPnvJ3nFjMFguwSp30TXc4Tw=="
     },
     {
       "id": "encodingJapanese250",
@@ -933,31 +933,31 @@
       "integrity": "sha512-Nyh3H90B3gRtrcxIe56Ayy7635J0jmh6AbxbQgQae8wrSPQMH5wFqJChiMTB13yKG512L3YspbA5DzumhFTITA=="
     },
     {
-      "id": "libmime564",
-      "url": "https://registry.npmjs.org/libmime/-/libmime-5.6.4.tgz",
-      "sha256": "0609eb5106027093ebc19a157b399cdc6687e47bf9bdc9f1a90e7cd4abf04a92",
-      "bytes": 89639,
-      "retrievedAt": "2026-11-11T19:29:04.352Z",
+      "id": "libmime565",
+      "url": "https://registry.npmjs.org/libmime/-/libmime-5.6.5.tgz",
+      "sha256": "e27978970b58d4a486b54ba64f2967a8f37a0a7171956405f4a5303929864ad4",
+      "bytes": 89735,
+      "retrievedAt": "2026-11-27T15:51:03.800708Z",
       "license": "MIT",
-      "integrity": "sha512-QWiiwq3ujIUSsCCjFDldDN7FfXuLYSTnEln0oeYfOjgqyVlRV6WQ3UyJ/paguoz8Ynxy1s7k3kh6xomS3bJkCw=="
+      "integrity": "sha512-2mbKYlwUP2mWys7kUE0MBHNdOndOe++8TIdmGXtt/hMYWSgbjHkSIXyC4jCpVSc/sAox3GSxWn1dSmyiQimLNA=="
     },
     {
-      "id": "libqp301",
-      "url": "https://registry.npmjs.org/libqp/-/libqp-3.0.1.tgz",
-      "sha256": "9a5d6fecfef2c559bcfeadf4e6134851eefad87e0657892cc16aef2e21ac8c27",
-      "bytes": 12617,
-      "retrievedAt": "2026-10-28T17:39:58.869Z",
+      "id": "libqp302",
+      "url": "https://registry.npmjs.org/libqp/-/libqp-3.0.2.tgz",
+      "sha256": "2b0db8260a7975883318c1530f3b441d670507b038611ba3e2ffafc619c1b387",
+      "bytes": 14111,
+      "retrievedAt": "2026-11-27T15:51:03.800708Z",
       "license": "MIT",
-      "integrity": "sha512-7QZxpPX25pga1WiMueduWxmrHMVBFrZPH6ZUaozGYa/H98JH6NVBSET3qVw+4NxzoraIW7rJ81YxSU9IalvCpg=="
+      "integrity": "sha512-24oL5vCMpFd6lGLbD3vPrmcAEGFScDPX9eARY8TXsRVBSde93xP2iG7+8pg5M56Yiu9Uy14hCVN1E+yj5LMtyQ=="
     },
     {
-      "id": "nodemailer1050",
-      "url": "https://registry.npmjs.org/nodemailer/-/nodemailer-10.5.0.tgz",
-      "sha256": "ff20e6d822a2f4bb311572311d2231fc39925896bf754b59803017a85696134d",
-      "bytes": 412406,
-      "retrievedAt": "2026-11-18T15:53:19.099Z",
+      "id": "nodemailer1061",
+      "url": "https://registry.npmjs.org/nodemailer/-/nodemailer-10.6.1.tgz",
+      "sha256": "7b1a6615b333c7f09c5a3e9147085f6c762eb2ace4abde0341a9e0dd4bf02af8",
+      "bytes": 414022,
+      "retrievedAt": "2026-11-27T15:51:03.800708Z",
       "license": "MIT-0",
-      "integrity": "sha512-L/w/HH5MqpzMDuZD7fQdt/+KqymuvrpaApaIjAH2XA3ILePwlcvXCVVvP75xVrXCEt2ggK2marrrHHFB5Qu0kA=="
+      "integrity": "sha512-d7kfFfS/tR4Aca+SBvRaQ+MXKNv7d2JiRe5TxaRcFT/kYMh4GGPnW9aKksTIEvyEbA7d/7HYWE4YPDEHxzJj/g=="
     },
     {
       "id": "saferBuffer212",
