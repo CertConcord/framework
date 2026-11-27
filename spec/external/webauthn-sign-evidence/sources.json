@@ -1,0 +1,45 @@
+{
+  "reviewDate": "2026-11-24",
+  "sources": [
+    {
+      "id": "w3cSignBranch",
+      "repository": "w3c/webauthn",
+      "commit": "28e878d6b31130a3621c0eb793529a65bf3dc162",
+      "path": "index.bs",
+      "url": "https://github.com/w3c/webauthn/blob/28e878d6b31130a3621c0eb793529a65bf3dc162/index.bs",
+      "sha256": "afa96f650bfaafa309cb62a5d1a01d39fc6b00e026b8bd66def4509f431c5fc3",
+      "bytes": 696191
+    },
+    {
+      "id": "w3cPr2078",
+      "url": "https://github.com/w3c/webauthn/pull/2078",
+      "head": "28e878d6b31130a3621c0eb793529a65bf3dc162",
+      "stateAtReview": "open-draft"
+    },
+    {
+      "id": "w3cPr2078EditorComment",
+      "url": "https://github.com/w3c/webauthn/pull/2078#issuecomment-6631619923",
+      "author": "emlun",
+      "createdAt": "2026-11-04T13:16:09Z",
+      "bodySha256": "2e24119f3ae05ca21e0f2350128316cce8691e7466c341046283f90658e220c3"
+    },
+    {
+      "id": "yubicoDraft",
+      "repository": "YubicoLabs/webauthn-sign-extension",
+      "commit": "39e302df661204ca8cde96d045fb524d56115e93",
+      "path": "index.bs",
+      "url": "https://github.com/YubicoLabs/webauthn-sign-extension/blob/39e302df661204ca8cde96d045fb524d56115e93/index.bs",
+      "sha256": "1e98048d06672060366b9b03a0d5820bb9917e510deeaa3d7929bddd027f8d96",
+      "bytes": 757233
+    },
+    {
+      "id": "yubicoExplainer",
+      "repository": "YubicoLabs/webauthn-sign-extension",
+      "commit": "39e302df661204ca8cde96d045fb524d56115e93",
+      "path": "explainers/raw-signing-extension.md",
+      "url": "https://github.com/YubicoLabs/webauthn-sign-extension/blob/39e302df661204ca8cde96d045fb524d56115e93/explainers/raw-signing-extension.md",
+      "sha256": "1a238c521c126f853bb92d8c41ef98418a468c45d621d5982f03b6c9ad922236",
+      "bytes": 25063
+    }
+  ]
+}

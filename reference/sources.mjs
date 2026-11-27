@@ -104,10 +104,6 @@ export const sources = {
   rawSigningV5:
     'https://raw.githubusercontent.com/yubicolabs/webauthn-sign-extension/812b911a2a5d737d2ebdb91ead8bfd78f8277710/index.bs',
   rawSigningV4: 'https://yubicolabs.github.io/webauthn-sign-extension/4/',
-  passSignRFC:
-    'https://raw.githubusercontent.com/codedpills/pass-sign/4ae5a3d077040632b0885947b63329ba99413fb3/docs/research/deliverables/doc-6-rfc-draft-v0.1.md',
-  passSignProposal:
-    'https://raw.githubusercontent.com/codedpills/pass-sign/4ae5a3d077040632b0885947b63329ba99413fb3/docs/research/deliverables/doc-5-protocol-proposal.md',
   mtc: 'https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-07.txt',
   mtcEditor:
     'https://raw.githubusercontent.com/ietf-plants-wg/merkle-tree-certs/44b1c0b8c54669a35e8d9e96f0e55bb3cab67757/draft-ietf-plants-merkle-tree-certs.md',

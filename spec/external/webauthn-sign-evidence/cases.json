@@ -1,0 +1,13 @@
+{
+  "scope": "synthetic direct-input signature semantics; no WebAuthn runtime",
+  "cases": [
+    {"id": "exact-tbs-and-key", "expected": "VALID"},
+    {"id": "changed-tbs-octet", "expected": "INVALID"},
+    {"id": "wrong-signing-key", "expected": "INVALID"},
+    {"id": "digest-instead-of-original-tbs", "expected": "INVALID"},
+    {"id": "utf8-reencoding", "expected": "INVALID"},
+    {"id": "assertion-signature-is-not-direct-signature", "expected": "INVALID"},
+    {"id": "challenge-is-not-tbs", "expected": "INVALID"},
+    {"id": "signature-does-not-repair-missing-policy-evidence", "expected": "POLICY_UNSATISFIED"}
+  ]
+}
